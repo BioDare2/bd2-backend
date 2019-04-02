@@ -1,0 +1,23 @@
+Arabidopsis thaliana
+Brassica rapa
+Danio rerio
+Drosophila melanogaster
+Glycine max
+Homo sapiens
+Lemna gibba
+Lemna minor
+Marchantia polymorpha
+Medicago truncatula
+Mus musculus
+Nannochloropsis
+Neurospora crassa
+Ostreococcus tauri
+Phaeodactylum tricornutum
+Physcometrella patens
+Picea abies
+Rattus norvegicus
+Saccharomyces cerevisiae
+Synechococcus elongatus
+Synthetic data
+Daphnia pulex
+Daphnia magna
