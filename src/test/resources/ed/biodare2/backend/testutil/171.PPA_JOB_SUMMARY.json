@@ -1,0 +1,23 @@
+{
+  "jobId" : 171,
+  "state" : "FINISHED",
+  "submitted" : 1497049394003,
+  "modified" : null,
+  "completed" : 1497049396628,
+  "message" : "Attention: 0; ",
+  "lastError" : null,
+  "attentionCount" : 4,
+  "failures" : 0,
+  "needsAttention" : true,
+  "closed" : true,
+  "summary" : "linear dtr min-max p(18.0-35.0)",
+  "method" : "NLLS",
+  "dataWindow" : "min-max",
+  "dataWindowStart" : 0.0,
+  "dataWindowEnd" : 0.0,
+  "min_period" : 18.0,
+  "max_period" : 35.0,
+  "dataSetId" : "10050_LIN_DTR",
+  "dataSetType" : "LIN_DTR",
+  "dataSetTypeName" : "linear dtr"
+}

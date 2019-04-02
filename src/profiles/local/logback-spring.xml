@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="OPER_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    
+    <!--
+    <appender name="OPERATIONS_SIZE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>OPERATIONS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>OPERATIONS.%i.log</fileNamePattern>
+            </rollingPolicy>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>10MB</MaxFileSize>
+            </triggeringPolicy>
+    </appender>
+    
+    <appender name="ANALYSIS_SIZE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>ANALYSIS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+                <fileNamePattern>ANALYSIS.%i.log</fileNamePattern>
+            </rollingPolicy>
+            <triggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+                    <MaxFileSize>10MB</MaxFileSize>
+            </triggeringPolicy>
+    </appender>    -->
+    
+    <!--
+    
+    <appender name="ANALYSIS_DATE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>ANALYSIS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>ANALYSIS.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+    </appender> --> 
+    
+    <!--
+    <appender name="OPERATIONS_DATE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>${LOG_PATH}/OPERATIONS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>OPERATIONS.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+    </appender>  
+    -->
+    
+    
+    <logger name="operations" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>    
+    
+    <logger name="analysis" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>   
+    
+    <logger name="security" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>        
+    
+    
+
+</configuration>
+    

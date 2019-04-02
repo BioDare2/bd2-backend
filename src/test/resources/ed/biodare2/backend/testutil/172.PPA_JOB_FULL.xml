@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<jobSummary xmlns:ns2="http://param.dom.robust.ed" closed="true" attention="true" attCount="1" failures="0">
+    <job id="172"/>
+    <status state="FINISHED" submitted="2017-06-10T00:03:25.988+01:00" completed="2017-06-10T00:03:26.612+01:00">
+        <message>Attention: 0; </message>
+    </status>
+    <params>
+        <p n="DW_END" v="0.0"/>
+        <p n="METHOD_ID" v="MESA"/>
+        <p n="DATA_SET_ID" v="10050_LIN_DTR"/>
+        <p n="min_period" v="18.0"/>
+        <p n="DW_START" v="1.0"/>
+        <p n="DATA_SET_TYPE_NAME" v="linear dtr"/>
+        <p n="PARAMS_SUMMARY" v="linear dtr min-max p(18.0-35.0)"/>
+        <p n="METHOD_NAME" v="MESA"/>
+        <p n="DATA_SET_TYPE" v="LIN_DTR"/>
+        <p n="max_period" v="35.0"/>
+    </params>
+</jobSummary>

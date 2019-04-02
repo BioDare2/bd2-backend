@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:jobRequest xmlns:ns2="http://param.dom.robust.ed" xmlns:ns3="http://job.dom.jobcenter.robust.ed" m="NLLS" priority="0" extId="10050">
+    <params>
+        <p n="DW_END" v="0.0"/>
+        <p n="DATA_SET_ID" v="10050_LIN_DTR"/>
+        <p n="JOB_ID" v="171"/>
+        <p n="min_period" v="18.0"/>
+        <p n="DW_START" v="0.0"/>
+        <p n="DATA_SET_TYPE" v="LIN_DTR"/>
+        <p n="max_period" v="35.0"/>
+        <p n="DATA_IDS" v="1,2,3,4,5,6,7,8,9,10,11,12,"/>
+    </params>
+</ns3:jobRequest>

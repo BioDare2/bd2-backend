@@ -1,0 +1,48 @@
+
+
+labeling ppa jobs
+
+replacing data and deleting jobs should update experimenet hasJob state 
+
+
+change the page layout
+
+
+add backing up on safe ppa artifacts (at least one cpy)
+
+MFF does not rounds phases
+
+remove explicit hibernate version once springboot updates it.
+
+Check plotting and value=changed error, 
+Reduce the refresh overhead when ts plotting
+feeding experiment observable instead of using the service
+
+Updating the account does not reflect in the loggedin user
+
+Deleting new experiments
+
+Experiments list to show only first part of description
+
+Formating in descriptions
+
+Add paramaters to measurement
+
+Add validation to measurement components and service (biodar-exp-rc5)
+
+
+Error messages
+
+Security(NotSufficientRights) exception logging
+Throttle loggins
+
+Contribution - Add funder button without margin, but depends on screen funding without space
+
+(a) starts new group after empty cell even if label in next column is the same. Should default to include in same group and Ignore the column with empty label. Or ask user. Not a high priority but likely useful.
+-- NOT planning on dealing with disjointed ranges
+
+The screen for selecting time window and period limits seemed to respond very slowly, 
+I guess it was refreshing graphs. As I tried to edit the time window boxes, 
+I made several errors because insertion point didn't follow clicks quickly enough.
+-- Improved a bit by adding debouncing, are reusing plots component on new data.
+

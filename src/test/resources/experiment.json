@@ -1,0 +1,86 @@
+{
+  "id" : 12,
+  "generalDesc" : {
+    "name" : "Test experiment",
+    "purpose" : "To check code",
+    "description" : "A description",
+    "comments" : "A commment"
+  },
+  "contributionDesc" : {
+    "authors" : [ {
+      "firstName" : "Fisttest",
+      "lastName" : "Lasttest",
+      "id" : "test",
+      "externalService" : "biodare2",
+      "externalPath" : "biodare/account/test"
+    } ],
+    "curators" : [ {
+      "firstName" : "Fistcurator",
+      "lastName" : "Lastcurator",
+      "id" : "curator",
+      "externalService" : "biodare2",
+      "externalPath" : "biodare/account/curator"
+    } ],
+    "institutions" : [ {
+      "name" : "Cambridge",
+      "longName" : "University Cambridge",
+      "address" : "Cambridge in Edinburgh",
+      "web" : "www.Cambridge.ed.ac"
+    } ],
+    "fundings" : [ {
+      "institution" : {
+        "name" : "UoE",
+        "longName" : "University UoE",
+        "address" : "UoE in Edinburgh",
+        "web" : "www.UoE.ed.ac"
+      },
+      "grantNr" : "123"
+    } ]
+  },
+  "measurementDesc" : {
+    "technique" : "Luciferase luminescence",
+    "equipment" : "Topcount 1",
+    "description" : " A description",
+    "parameters" : {
+      "parametersTable" : [ {
+        "name" : "last",
+        "value" : "a value",
+        "label" : "last",
+        "unit" : null
+      }, {
+        "name" : "first",
+        "value" : "2",
+        "label" : "first param",
+        "unit" : "a unit"
+      }, {
+        "name" : "second",
+        "value" : "3",
+        "label" : "2n param",
+        "unit" : null
+      }, {
+        "name" : "empty",
+        "value" : null,
+        "label" : "empty",
+        "unit" : null
+      } ]
+    }
+  },
+  "growthEnvironments" : {
+    "environments" : [ {
+      "name" : "LL",
+      "description" : "Desc"
+    }, {
+      "name" : "LD",
+      "description" : null
+    } ]
+  },
+  "experimentalEnvironments" : {
+    "environments" : [ {
+      "name" : "LL",
+      "description" : "Desc"
+    }, {
+      "name" : "LD",
+      "description" : null
+    } ]
+  }
+}

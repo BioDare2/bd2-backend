@@ -1,0 +1,104 @@
+{
+ "id":3967,
+ "versionId":"1.0.5",
+ "generalDesc":{
+  "name":"Flis et al. TiMet clock gene comparison across photoperiods",
+  "purpose":"TiMet clock gene expression profiles, baseline comparison across photoperiods in Col wild-type plants, under 6, 8, 12 and 18 h photoperiod. These data define the response of the clock genes under different photoperiods, where other analysis in the TiMet project studied proteome and metabolite levels. Absolute expression levels were compared, as RNA copies per gFW or per cell.",
+  "description":"Literature data from: 'Photoperiod-dependent changes in the phase of core clock transcripts and global transcriptional outputs at dawn and dusk in Arabidopsis'\n\t    by: Anna Flis.\n\t    \n\t    Col plants were grown in soil under 6, 8, 12 and 18h photoperiod for 21 days, and duplicate samples were harvested at 2 h intervals though a 24 h cycle. qRT-PCR with absolute calibration to spiked-in standards returned RNA copy number per gramme Fresh Weight of rosette tissue. Cell number was separately estimated at 25,000,000 per gFW.",
+  "comments":"TiMet experiment WP1.2B.\nData file \"TiMet 1.2 - Photoperiod exp - metabolites and transcripts.xlsx;calculations\" 2013\nGrowth conditions:\nNo separate growth condition; const. 18.0C W: DD\nExperimental conditions:\n6L:18D; diurn. 20.0C:18.0C 06:00:18:00 W: LD 06:00:18:00\n---\n8L:16D; diurn. 20.0C:18.0C 08:00:16:00 W: LD 08:00:16:00\n---\n12L:12D; diurn. 20.0C:18.0C 12:00:12:00 W: LD 12:00:12:00\n---\n18L:6D; diurn. 20.0C:18.0C 18:00:06:00 W: LD 18:00:06:00"
+ },
+ "contributionDesc":{
+  "authors":[{
+   "id":null,
+   "login":null,
+   "firstName":"Anna",
+   "lastName":"Flis",
+   "ORCID":null
+  },{
+   "id":null,
+   "login":null,
+   "firstName":"Virginie",
+   "lastName":"Mengin",
+   "ORCID":null
+  },{
+   "id":null,
+   "login":null,
+   "firstName":"Ronan",
+   "lastName":"Sulpice",
+   "ORCID":null
+  },{
+   "id":null,
+   "login":null,
+   "firstName":"Mark",
+   "lastName":"Stitt",
+   "ORCID":null
+  }],
+  "curators":[{
+   "id":null,
+   "login":null,
+   "firstName":"Andrew J.",
+   "lastName":"Millar",
+   "ORCID":null
+  },{
+   "id":null,
+   "login":null,
+   "firstName":"PubMed ID:",
+   "lastName":"27075884",
+   "ORCID":null
+  }],
+  "institutions":[{
+   "name":"Max Planck Inst. Golm",
+   "longName":"Max Planck Inst. Golm"
+  }],
+  "fundings":[ ]
+ },
+ "experimentalDetails":{
+  "measurementDesc":{
+   "technique":"RT-PCR",
+   "equipment":"384-well plates (ABI PRISM 7900).",
+   "description":"Literature data from:\nFor absolute quantification, 8 ArrayControl RNA Spikes (Applied Biosystems) were added before RNA extraction and cDNA synthesis (Piques et al. 2009). DNA was removed from samples using TURBO DNA-freeTM kit (Applied Biosystems) following the supplied protocol. The RNA concentration was determined using a Nano-Drop ND-1000 UV-Vis spectrophotometer (Nano-Drop Technologies). Reverse transcription was performed using SuperScript III First-Standard Synthesis System Kit (Invitrogen) in a 384 well 384-well plate with an ABI PRISM 7900 HT sequence detection system, Applied Biosystems Deutschland, Darmstadt, Germany). The PCR mix was prepared using Power SYBR Green PCR Master Mix (Applied Biosystems, Deutschland) and pipetted into the wells using pipetting robot PerkinElmer Evolution P3 Precision Pipetting Platform (PerkinElmer Life Science, Rodgau-Jügesheim, Germany). Primers used for qRT-PCR are given in Supplemental Table S1. Data analysis was performed using SDS 2.4 software (Applied Biosystems Deutschland).\nAbsolute calibration using the spiked-in standards returned RNA copy number per gramme Fresh Weight of rosette tissue. Cell number was separately estimated at 25,000,000 per gFW.\nsee below\nFor harvesting, rosettes were cut at ground level, placed in plastic scintillation vials and immediately frozen in liquid nitrogen. During the dark phase the plants were sampled in the presence of low-intensity green lamp. Plant material was stored at -80°C. Plant material was homogenized using a Ball-Mill (Retch, Germany). Around 50 mg of material from each sample was manually aliquoted into 2 mL Eppendorf tubes while frozen. RNA was extracted using RNeasy Plant Mini Kit (QIAGEN) by following the manufacturer’s instructions. RNA quality was monitored using the Agilent 2100 Bioanalyzer.",
+   "parameters":[ ]
+  },
+  "growthEnvironments":{
+   "environments":[ ]
+  },
+  "experimentalEnvironments":{
+   "environments":[ ]
+  },
+  "executionDate":[2016,1,1]
+ },
+ "characteristic":{
+  "hasAttachments":false,
+  "hasTSData":false,
+  "hasPPAJobs":false,
+  "hasDataFiles":false,
+  "attachmentsSize":0,
+  "biodare1Id":0
+ },
+ "bioDescription":{
+  "bios":[ ]
+ },
+ "bioSummary":{
+  "dataCategories":[ ],
+  "labels":[ ],
+  "species":[ ],
+  "ecotypes":[ ],
+  "genotypes":[ ],
+  "markers":[ ],
+  "lines":[ ],
+  "growthStages":[ ],
+  "tagTypes":[ ],
+  "materialTypes":[ ],
+  "materialOrigins":[ ],
+  "customTags":[ ],
+  "externalIds":[ ]
+ },
+ "species":"Arabidopsis thaliana",
+ "dataCategory":"DELAYED_FLUORESCENCE",
+ "provenance":{
+  "created":[2016,3,9,17,49,48],
+  "createdBy":"Andrew Millar",
+  "modified":[2016,4,17,18,21,18],
+  "modifiedBy":"Andrew Millar"
+ }
+}

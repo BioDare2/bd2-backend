@@ -1,0 +1,102 @@
+<div>
+  <h2>Phase and amplitude calculation explained</h2>
+  <p>Each of the analysis methods had its own way of estimating and reporting the phase.
+    Since we recommend using more than one method, some unified way of treating phases was necessary.
+  </p>
+
+  <h4>Phase range</h4>
+  <p>First to note is that, phases now are always reported in the range from 0 to period:<br/>
+    <code>phase ϵ [0,period)</code><br/>
+  so it should roughly coincide with the time of the peak.
+</p>
+
+  <p>It differs from some mathematical approaches in which phase was from –period/2,period/2,
+    but it is more natural and easier to interpret.
+    If you start recording your data in 12:12LD conditions (so period is 24h) from time 0,
+    and observe peaks in data at time 4, 28, 52, then the phase would be 4 (for example like for CCA1).
+    If your data peaks at 18, 42, 66, 90, then your phase would be 18 (for example like for TOC1).
+</p>
+  <h4>Phase relation</h4>
+
+  <p>But what if the data starts at 30h or was analysed with data window from 30.
+    Since, the data are periodic, and the period is already estimated, it is possible to back calculate the data to the 0.
+    For example for data that peaks at 31, 55, 79, 103, BioDare will report phase as 7 relative to 0 (if period was 24h).
+</p>
+  <p>This way of reporting phase is called: <code>Phase relative to zero</code> in the screen that presents results of period analysis.
+</p>
+
+  <p>Another option is: <code>Phase relative to data window</code>. Simply it reports where the data peaks
+    relative to the beginning of the data window.
+    Using the examples from the above for CCA1 and TOC1,
+    if the data were analysed with data window starting at 20, the phases will be 8 for CCA1
+    (cause the first peak is at time 28 which is 8 hours apart from the data window) and 22 for TOC1.
+</p>
+
+  <p><strong>So which one you should use.</strong> It depends :)</p>
+  <p>
+    Generally, the data window is chosen for technical reasons,
+    in order to select the longest data subset of decent quality (for example escaping the first few hours
+    cause of the transition effect or cutting the last few cause of the noise). <br>
+    In such a case,
+    the start of data window has no "biological" or "external" meaning and reporting phase relative to it will be pointless,
+    as it will change from experiment to experiment.
+  </p>
+  <p>At the same time, if you use <code>offset</code> parameter correctly, the 0 in data has some significance like
+  subjective dawn, or drug addition, so reporting phase relative to 0 is like reporting phase relative to that external event.</p>
+  <p>However, if your data or analysis window starts late, for example at 80 hours, then the phase had to be back calculated to 0,
+    and any errors in period estimate were contributing to that backcalculation (with exception of FFT NLLS).
+    In that case, using data window that starts at 72 hours (so it stills, coincides with the external ZT), allows us to avoid those errors and
+    still report phase relative to the external event.
+  </p>
+  <p>To sum up:
+  </p>
+  <ul>
+    <li>if data window is chosen arbitrary use phase relative to 0</li>
+    <li>if data window start has some external meaning i.e. subjective dawn, use phase relative to data window</li>
+  </ul>
+
+
+  <h4>Phase units</h4>
+  <p>Phase can be reported in <code>absolute</code> (simple hours) or <code>circadian units</code>. Circadian unit is 1/24 of the free running period and it allows
+  comparison of peaking times independently of the period. For example if WT has period of 24h and peak time (phase) at 6, while the toc1 mutant
+  has period of 20h and peak time at 5, then both lines have the same phase in circadian units (6) as they peak at 1/4 at their respective oscilation circle.</p>
+
+  <h4>Phase calculation</h4>
+  <p>But how the phase is calculated, there are 4 possible options,
+</p>
+
+  <ul>
+    <li>Phase by fit
+</li><li>Phase by first peak
+</li><li>Phase by average peak,
+</li><li>Phase method specific.</li>
+  </ul>
+
+  <p>In the <strong>phase by fit method</strong>, one cosine function having period matching the estimated data period is fitted to the data. Fitting procedure finds phase and amplitude parameters of the cosine that follows the data the most closely, and reports those values as phase and amplitude. Such phase value is well defined, but it may not coincide with the peaks in the data if the signals are not symmetrical. Because of that caution should be taken when comparing the phases of timeseries with completely different waveforms.
+  </p>
+  <p><strong>Phase by first peak</strong>, as the name suggests finds, reports the phase as the time at which the first peak is found (potentially back calculated to 0). However, the fit produced by a method is used to find the peak not the original input data.
+</p>
+  <p><strong>Phase by average peak</strong>, finds all the peaks in the produced fit, averages their times (with the respect to cyclic nature of the data) and report the averaged value.
+</p>
+  <p><strong>Phase method specific</strong> reports the phase using the original approach to phase estimation for the given algorithm:
+</p>
+
+  <ul>
+    <li>FFT NNLS – it is the phase of the main circadian component found by the method. If FFT NLLS finds only one component, the value should be the same as phase by fit, otherwise they may be slightly different.
+</li><li>Spectrum Resampling – similarly, it also can fit up to 5 cosine components to the data, and the phase of the main one is reported.
+</li><li>MFourFit – the original method uses the time of first peak in the fit, so it is same a phase by first peak (or phase by average peak, since MFourFit fit has the same shape in each cycle) .
+</li><li>The original algorithms for ER Periodogram, LS Periodogram and MESA did not specify any phase estimation method, and phase by average peak is assumed for these methods.
+</li>
+  </ul>
+
+  <h4>Amplitude</h4>
+  <p>Amplitude depends on the estimation method for the phase:</p>
+
+  <ul>
+    <li>Phase by fit – it is amplitude of the fitted cosine
+  </li><li>Phase by first peak – amplitude is calculated using the first troth and peak
+  </li><li>Phase by average peak – amplitude is calculated using troth and peak values in each cycle, and averaging them.
+  </li>
+  </ul>
+
+</div>

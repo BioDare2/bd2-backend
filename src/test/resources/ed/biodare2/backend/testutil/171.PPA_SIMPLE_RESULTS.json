@@ -1,0 +1,640 @@
+{
+  "jobId" : 171,
+  "results" : [ {
+    "jobId" : 171,
+    "dataId" : 1,
+    "rawId" : 1,
+    "bioId" : 1,
+    "envId" : 1,
+    "orgId" : "B",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.03,
+    "GOF" : 0.12,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 25.04,
+    "perE" : 0.1,
+    "ph2Z" : {
+      "m" : 0.87,
+      "f" : 0.87,
+      "p" : 0.9,
+      "a" : 0.86
+    },
+    "ph2W" : {
+      "m" : 0.87,
+      "f" : 0.87,
+      "p" : 0.9,
+      "a" : 0.86
+    },
+    "ph2ZCir" : {
+      "m" : 0.83,
+      "f" : 0.83,
+      "p" : 0.86,
+      "a" : 0.82
+    },
+    "ph2WCir" : {
+      "m" : 0.83,
+      "f" : 0.83,
+      "p" : 0.86,
+      "a" : 0.82
+    },
+    "phE" : 0.27,
+    "phECir" : 0.25,
+    "amp" : {
+      "m" : 0.99,
+      "f" : 0.99,
+      "p" : 0.99,
+      "a" : 0.99
+    },
+    "ampE" : 0.033079
+  }, {
+    "jobId" : 171,
+    "dataId" : 2,
+    "rawId" : 2,
+    "bioId" : 1,
+    "envId" : 1,
+    "orgId" : "C",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.03,
+    "GOF" : 0.11,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 25.57,
+    "perE" : 0.09,
+    "ph2Z" : {
+      "m" : 1.32,
+      "f" : 1.33,
+      "p" : 1.3,
+      "a" : 1.32
+    },
+    "ph2W" : {
+      "m" : 1.32,
+      "f" : 1.33,
+      "p" : 1.3,
+      "a" : 1.32
+    },
+    "ph2ZCir" : {
+      "m" : 1.24,
+      "f" : 1.25,
+      "p" : 1.22,
+      "a" : 1.24
+    },
+    "ph2WCir" : {
+      "m" : 1.24,
+      "f" : 1.25,
+      "p" : 1.22,
+      "a" : 1.24
+    },
+    "phE" : 0.25,
+    "phECir" : 0.23,
+    "amp" : {
+      "m" : 1.48,
+      "f" : 1.48,
+      "p" : 1.48,
+      "a" : 1.48
+    },
+    "ampE" : 0.044921
+  }, {
+    "jobId" : 171,
+    "dataId" : 3,
+    "rawId" : 3,
+    "bioId" : 1,
+    "envId" : 1,
+    "orgId" : "D",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.02,
+    "GOF" : 0.07,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 26.06,
+    "perE" : 0.06,
+    "ph2Z" : {
+      "m" : 1.88,
+      "f" : 1.87,
+      "p" : 1.9,
+      "a" : 1.89
+    },
+    "ph2W" : {
+      "m" : 1.88,
+      "f" : 1.87,
+      "p" : 1.9,
+      "a" : 1.89
+    },
+    "ph2ZCir" : {
+      "m" : 1.73,
+      "f" : 1.72,
+      "p" : 1.75,
+      "a" : 1.74
+    },
+    "ph2WCir" : {
+      "m" : 1.73,
+      "f" : 1.72,
+      "p" : 1.75,
+      "a" : 1.74
+    },
+    "phE" : 0.16,
+    "phECir" : 0.14,
+    "amp" : {
+      "m" : 1.99,
+      "f" : 1.99,
+      "p" : 1.99,
+      "a" : 1.99
+    },
+    "ampE" : 0.038171
+  }, {
+    "jobId" : 171,
+    "dataId" : 4,
+    "rawId" : 4,
+    "bioId" : 2,
+    "envId" : 2,
+    "orgId" : "E",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.04,
+    "GOF" : 0.11,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 27.91,
+    "perE" : 0.1,
+    "ph2Z" : {
+      "m" : 12.16,
+      "f" : 12.24,
+      "p" : 12.0,
+      "a" : 12.13
+    },
+    "ph2W" : {
+      "m" : 12.16,
+      "f" : 12.24,
+      "p" : 12.0,
+      "a" : 12.13
+    },
+    "ph2ZCir" : {
+      "m" : 10.46,
+      "f" : 10.53,
+      "p" : 10.32,
+      "a" : 10.43
+    },
+    "ph2WCir" : {
+      "m" : 10.46,
+      "f" : 10.53,
+      "p" : 10.32,
+      "a" : 10.43
+    },
+    "phE" : 0.25,
+    "phECir" : 0.21,
+    "amp" : {
+      "m" : 0.95,
+      "f" : 0.94,
+      "p" : 0.97,
+      "a" : 0.97
+    },
+    "ampE" : 0.036933
+  }, {
+    "jobId" : 171,
+    "dataId" : 5,
+    "rawId" : 5,
+    "bioId" : 2,
+    "envId" : 2,
+    "orgId" : "F",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.05,
+    "GOF" : 0.19,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 28.11,
+    "perE" : 0.18,
+    "ph2Z" : {
+      "m" : 12.7,
+      "f" : 12.71,
+      "p" : 12.7,
+      "a" : 12.69
+    },
+    "ph2W" : {
+      "m" : 12.7,
+      "f" : 12.71,
+      "p" : 12.7,
+      "a" : 12.69
+    },
+    "ph2ZCir" : {
+      "m" : 10.84,
+      "f" : 10.85,
+      "p" : 10.84,
+      "a" : 10.83
+    },
+    "ph2WCir" : {
+      "m" : 10.84,
+      "f" : 10.85,
+      "p" : 10.84,
+      "a" : 10.83
+    },
+    "phE" : 0.45,
+    "phECir" : 0.39,
+    "amp" : {
+      "m" : 0.95,
+      "f" : 0.95,
+      "p" : 0.95,
+      "a" : 0.95
+    },
+    "ampE" : 0.050205
+  }, {
+    "jobId" : 171,
+    "dataId" : 6,
+    "rawId" : 6,
+    "bioId" : 2,
+    "envId" : 2,
+    "orgId" : "G",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.03,
+    "GOF" : 0.1,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 27.72,
+    "perE" : 0.09,
+    "ph2Z" : {
+      "m" : 11.65,
+      "f" : 11.65,
+      "p" : 11.6,
+      "a" : 11.64
+    },
+    "ph2W" : {
+      "m" : 11.65,
+      "f" : 11.65,
+      "p" : 11.6,
+      "a" : 11.64
+    },
+    "ph2ZCir" : {
+      "m" : 10.09,
+      "f" : 10.09,
+      "p" : 10.04,
+      "a" : 10.08
+    },
+    "ph2WCir" : {
+      "m" : 10.09,
+      "f" : 10.09,
+      "p" : 10.04,
+      "a" : 10.08
+    },
+    "phE" : 0.23,
+    "phECir" : 0.2,
+    "amp" : {
+      "m" : 0.89,
+      "f" : 0.89,
+      "p" : 0.89,
+      "a" : 0.89
+    },
+    "ampE" : 0.024527
+  }, {
+    "jobId" : 171,
+    "dataId" : 7,
+    "rawId" : 7,
+    "bioId" : 3,
+    "envId" : 3,
+    "orgId" : "H",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : true,
+    "failed" : false,
+    "ERR" : 0.0,
+    "GOF" : 0.0,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 20.0,
+    "perE" : 0.0,
+    "ph2Z" : {
+      "m" : 18.0,
+      "f" : 18.11,
+      "p" : 18.0,
+      "a" : 18.8
+    },
+    "ph2W" : {
+      "m" : 18.0,
+      "f" : 18.11,
+      "p" : 18.0,
+      "a" : 18.8
+    },
+    "ph2ZCir" : {
+      "m" : 21.6,
+      "f" : 21.73,
+      "p" : 21.6,
+      "a" : 22.56
+    },
+    "ph2WCir" : {
+      "m" : 21.6,
+      "f" : 21.73,
+      "p" : 21.6,
+      "a" : 22.56
+    },
+    "phE" : 0.0,
+    "phECir" : 0.0,
+    "amp" : {
+      "m" : 2.0,
+      "f" : 2.07,
+      "p" : 2.66,
+      "a" : 2.31
+    },
+    "ampE" : 1.0023970656891645E-4
+  }, {
+    "jobId" : 171,
+    "dataId" : 8,
+    "rawId" : 8,
+    "bioId" : 3,
+    "envId" : 3,
+    "orgId" : "I",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : true,
+    "failed" : false,
+    "ERR" : 0.0,
+    "GOF" : 0.0,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 20.0,
+    "perE" : 0.0,
+    "ph2Z" : {
+      "m" : 18.0,
+      "f" : 18.08,
+      "p" : 18.0,
+      "a" : 18.82
+    },
+    "ph2W" : {
+      "m" : 18.0,
+      "f" : 18.08,
+      "p" : 18.0,
+      "a" : 18.82
+    },
+    "ph2ZCir" : {
+      "m" : 21.6,
+      "f" : 21.7,
+      "p" : 21.6,
+      "a" : 22.58
+    },
+    "ph2WCir" : {
+      "m" : 21.6,
+      "f" : 21.7,
+      "p" : 21.6,
+      "a" : 22.58
+    },
+    "phE" : 0.0,
+    "phECir" : 0.0,
+    "amp" : {
+      "m" : 2.0,
+      "f" : 2.03,
+      "p" : 2.33,
+      "a" : 2.1
+    },
+    "ampE" : 7.689004479194406E-5
+  }, {
+    "jobId" : 171,
+    "dataId" : 9,
+    "rawId" : 9,
+    "bioId" : 3,
+    "envId" : 3,
+    "orgId" : "J",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : true,
+    "failed" : false,
+    "ERR" : 0.02,
+    "GOF" : 0.06,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 20.0,
+    "perE" : 0.04,
+    "ph2Z" : {
+      "m" : 18.02,
+      "f" : 18.06,
+      "p" : 18.1,
+      "a" : 18.06
+    },
+    "ph2W" : {
+      "m" : 18.02,
+      "f" : 18.06,
+      "p" : 18.1,
+      "a" : 18.06
+    },
+    "ph2ZCir" : {
+      "m" : 21.62,
+      "f" : 21.67,
+      "p" : 21.72,
+      "a" : 21.67
+    },
+    "ph2WCir" : {
+      "m" : 21.62,
+      "f" : 21.67,
+      "p" : 21.72,
+      "a" : 21.67
+    },
+    "phE" : 0.13,
+    "phECir" : 0.16,
+    "amp" : {
+      "m" : 1.99,
+      "f" : 2.01,
+      "p" : 2.16,
+      "a" : 2.04
+    },
+    "ampE" : 0.044232
+  }, {
+    "jobId" : 171,
+    "dataId" : 10,
+    "rawId" : 10,
+    "bioId" : 4,
+    "envId" : 4,
+    "orgId" : "K",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.73,
+    "GOF" : 0.81,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 28.48,
+    "perE" : 2.02,
+    "ph2Z" : {
+      "m" : 25.85,
+      "f" : 25.69,
+      "p" : 23.4,
+      "a" : 26.65
+    },
+    "ph2W" : {
+      "m" : 25.85,
+      "f" : 25.69,
+      "p" : 23.4,
+      "a" : 26.65
+    },
+    "ph2ZCir" : {
+      "m" : 21.78,
+      "f" : 21.65,
+      "p" : 19.72,
+      "a" : 22.46
+    },
+    "ph2WCir" : {
+      "m" : 21.78,
+      "f" : 21.65,
+      "p" : 19.72,
+      "a" : 22.46
+    },
+    "phE" : 4.17,
+    "phECir" : 3.51,
+    "amp" : {
+      "m" : 0.01,
+      "f" : 0.01,
+      "p" : 0.02,
+      "a" : 0.01
+    },
+    "ampE" : 0.005019
+  }, {
+    "jobId" : 171,
+    "dataId" : 11,
+    "rawId" : 11,
+    "bioId" : 4,
+    "envId" : 4,
+    "orgId" : "L",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : false,
+    "failed" : false,
+    "ERR" : 0.63,
+    "GOF" : 0.63,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 33.9,
+    "perE" : 3.25,
+    "ph2Z" : {
+      "m" : 5.79,
+      "f" : 7.62,
+      "p" : 7.3,
+      "a" : 3.33
+    },
+    "ph2W" : {
+      "m" : 5.79,
+      "f" : 7.62,
+      "p" : 7.3,
+      "a" : 3.33
+    },
+    "ph2ZCir" : {
+      "m" : 4.1,
+      "f" : 5.39,
+      "p" : 5.17,
+      "a" : 2.36
+    },
+    "ph2WCir" : {
+      "m" : 4.1,
+      "f" : 5.39,
+      "p" : 5.17,
+      "a" : 2.36
+    },
+    "phE" : 7.77,
+    "phECir" : 5.5,
+    "amp" : {
+      "m" : 0.01,
+      "f" : 0.02,
+      "p" : 0.03,
+      "a" : 0.03
+    },
+    "ampE" : 0.007501
+  }, {
+    "jobId" : 171,
+    "dataId" : 12,
+    "rawId" : 12,
+    "bioId" : 4,
+    "envId" : 4,
+    "orgId" : "M",
+    "dataRef" : null,
+    "label" : null,
+    "message" : null,
+    "ignored" : false,
+    "circadian" : true,
+    "attention" : true,
+    "failed" : false,
+    "ERR" : 0.58,
+    "GOF" : 0.65,
+    "dType" : "LIN_DTR",
+    "summary" : null,
+    "per" : 31.49,
+    "perE" : 2.64,
+    "ph2Z" : {
+      "m" : 30.19,
+      "f" : 30.89,
+      "p" : 24.1,
+      "a" : 31.44
+    },
+    "ph2W" : {
+      "m" : 30.19,
+      "f" : 30.89,
+      "p" : 24.1,
+      "a" : 31.44
+    },
+    "ph2ZCir" : {
+      "m" : 23.01,
+      "f" : 23.54,
+      "p" : 18.37,
+      "a" : 23.96
+    },
+    "ph2WCir" : {
+      "m" : 23.01,
+      "f" : 23.54,
+      "p" : 18.37,
+      "a" : 23.96
+    },
+    "phE" : 4.77,
+    "phECir" : 3.64,
+    "amp" : {
+      "m" : 0.03,
+      "f" : 0.03,
+      "p" : 0.02,
+      "a" : 0.05
+    },
+    "ampE" : 0.015699
+  } ]
+}

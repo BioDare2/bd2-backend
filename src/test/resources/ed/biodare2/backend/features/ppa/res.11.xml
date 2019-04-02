@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:jobResult xmlns:ns2="http://job.dom.jobcenter.robust.ed" xmlns:ns3="http://tsprocessing.dom.robust.ed" xmlns:ns4="http://data.dom.robust.ed" jobId="11" innerState="WAITING" state="FINISHED">
+    <jobMessage></jobMessage>
+    <t id="2" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 1</message>
+            <COS>
+                <method per="24.28" ph="4.14" amp="55807.0" off="0.0" perE="0.595824" phE="2.25" ampE="19639.0" offE="0.0" jERR="0.351909" mERR="0.351909" GOF="0.639899"/>
+                <pbam per="24.28" ph="3.46" amp="62893.0" off="0.0" phE="0.2" ampE="1077.0" jERR="0.351909" mERR="0.351909" GOF="0.639899"/>
+                <pbf per="24.28" ph="4.13" amp="55902.0" off="112.1" jERR="0.351909" mERR="0.351909" GOF="0.639899"/>
+                <pbfp per="24.28" ph="3.6" amp="62196.0" off="0.0" jERR="0.351909" mERR="0.351909" GOF="0.639899"/>
+            </COS>
+            <COS>
+                <method per="12.09" ph="3.2" amp="20004.0" off="0.0" perE="0.469866" phE="2.81" ampE="19718.0" offE="0.0" jERR="0.985703" mERR="0.985703" GOF="0.639899"/>
+                <pbam per="12.09" ph="1.95" amp="42553.0" off="0.0" phE="3.995" ampE="15443.0" jERR="0.985703" mERR="0.985703" GOF="0.639899"/>
+                <pbf per="12.09" ph="3.19" amp="20279.0" off="-52.29" jERR="0.985703" mERR="0.985703" GOF="0.639899"/>
+                <pbfp per="12.09" ph="3.6" amp="51272.0" off="0.0" jERR="0.985703" mERR="0.985703" GOF="0.639899"/>
+            </COS>
+            <shift>-53.65</shift>
+            <slope>-3.066415277526577E-11</slope>
+            <inter>1498065.0</inter>
+        </result>
+    </t>
+    <t id="3" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 1</message>
+            <COS>
+                <method per="23.63" ph="8.19" amp="58324.0" off="0.0" perE="0.386741" phE="1.174" ampE="13167.0" offE="0.0" jERR="0.225756" mERR="0.225756" GOF="0.445399"/>
+                <pbam per="23.63" ph="6.54" amp="75228.0" off="0.0" phE="0.821259" ampE="1951.0" jERR="0.225756" mERR="0.225756" GOF="0.445399"/>
+                <pbf per="23.63" ph="8.18" amp="58092.0" off="-33.7" jERR="0.225756" mERR="0.225756" GOF="0.445399"/>
+                <pbfp per="23.63" ph="6.0" amp="76048.0" off="0.0" jERR="0.225756" mERR="0.225756" GOF="0.445399"/>
+            </COS>
+            <COS>
+                <method per="11.99" ph="4.89" amp="30629.0" off="0.0" perE="0.181962" phE="1.294" ampE="13112.0" offE="0.0" jERR="0.428091" mERR="0.428091" GOF="0.445399"/>
+                <pbam per="11.99" ph="3.1" amp="49930.0" off="0.0" phE="5.934" ampE="32634.0" jERR="0.428091" mERR="0.428091" GOF="0.445399"/>
+                <pbf per="11.99" ph="4.94" amp="30192.0" off="-440.0" jERR="0.428091" mERR="0.428091" GOF="0.445399"/>
+                <pbfp per="11.99" ph="6.0" amp="35620.0" off="0.0" jERR="0.428091" mERR="0.428091" GOF="0.445399"/>
+            </COS>
+            <shift>465.8</shift>
+            <slope>1.5332076387632884E-11</slope>
+            <inter>1556335.0</inter>
+        </result>
+    </t>
+    <t id="4" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 1</message>
+            <COS>
+                <method per="23.97" ph="4.22" amp="69436.0" off="0.0" perE="0.436021" phE="1.651" ampE="19529.0" offE="0.0" jERR="0.281252" mERR="0.281252" GOF="0.556449"/>
+                <pbam per="23.97" ph="3.28" amp="82392.0" off="0.0" phE="0.170294" ampE="812.0" jERR="0.281252" mERR="0.281252" GOF="0.556449"/>
+                <pbf per="23.97" ph="4.23" amp="69516.0" off="-21.87" jERR="0.281252" mERR="0.281252" GOF="0.556449"/>
+                <pbfp per="23.97" ph="3.4" amp="81864.0" off="0.0" jERR="0.281252" mERR="0.281252" GOF="0.556449"/>
+            </COS>
+            <COS>
+                <method per="11.95" ph="2.84" amp="28445.0" off="0.0" perE="0.259472" phE="1.704" ampE="19536.0" offE="0.0" jERR="0.686799" mERR="0.686799" GOF="0.556449"/>
+                <pbam per="11.95" ph="1.79" amp="54040.0" off="0.0" phE="3.776" ampE="13279.0" jERR="0.686799" mERR="0.686799" GOF="0.556449"/>
+                <pbf per="11.95" ph="2.84" amp="28669.0" off="22.55" jERR="0.686799" mERR="0.686799" GOF="0.556449"/>
+                <pbfp per="11.95" ph="3.4" amp="61662.0" off="0.0" jERR="0.686799" mERR="0.686799" GOF="0.556449"/>
+            </COS>
+            <shift>-3.474</shift>
+            <slope>7.666038193816442E-12</slope>
+            <inter>1486041.0</inter>
+        </result>
+    </t>
+    <t id="5" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 1</message>
+            <COS>
+                <method per="23.91" ph="7.17" amp="28639.0" off="0.0" perE="0.291329" phE="0.869839" ampE="5555.0" offE="0.0" jERR="0.193966" mERR="0.193966" GOF="0.396404"/>
+                <pbam per="23.91" ph="5.86" amp="36517.0" off="0.0" phE="0.197484" ampE="315.5" jERR="0.193966" mERR="0.193966" GOF="0.396404"/>
+                <pbf per="23.91" ph="7.19" amp="28753.0" off="-105.7" jERR="0.193966" mERR="0.193966" GOF="0.396404"/>
+                <pbfp per="23.91" ph="6.0" amp="36308.0" off="0.0" jERR="0.193966" mERR="0.193966" GOF="0.396404"/>
+            </COS>
+            <COS>
+                <method per="11.91" ph="5.37" amp="14036.0" off="0.0" perE="0.146517" phE="1.053" ampE="5517.0" offE="0.0" jERR="0.393061" mERR="0.393061" GOF="0.396404"/>
+                <pbam per="11.91" ph="8.72" amp="24195.0" off="0.0" phE="6.132" ampE="17720.0" jERR="0.393061" mERR="0.393061" GOF="0.396404"/>
+                <pbf per="11.91" ph="5.36" amp="14266.0" off="-46.08" jERR="0.393061" mERR="0.393061" GOF="0.396404"/>
+                <pbfp per="11.91" ph="6.0" amp="31383.0" off="0.0" jERR="0.393061" mERR="0.393061" GOF="0.396404"/>
+            </COS>
+            <shift>152.2</shift>
+            <slope>0.0</slope>
+            <inter>1462609.0</inter>
+        </result>
+    </t>
+    <t id="6" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 2</message>
+            <COS>
+                <method per="23.82" ph="7.14" amp="66844.0" off="0.0" perE="0.244276" phE="0.750715" ampE="11899.0" offE="0.0" jERR="0.178011" mERR="0.178011" GOF="0.313969"/>
+                <pbam per="23.82" ph="5.68" amp="87283.0" off="0.0" phE="0.414729" ampE="2407.0" jERR="0.178011" mERR="0.178011" GOF="0.313969"/>
+                <pbf per="23.82" ph="7.15" amp="66976.0" off="-128.6" jERR="0.178011" mERR="0.178011" GOF="0.313969"/>
+                <pbfp per="23.82" ph="5.4" amp="88731.0" off="0.0" jERR="0.178011" mERR="0.178011" GOF="0.313969"/>
+            </COS>
+            <COS>
+                <method per="11.95" ph="5.3" amp="34739.0" off="0.0" perE="0.128506" phE="0.927855" ampE="11837.0" offE="0.0" jERR="0.340741" mERR="0.340741" GOF="0.313969"/>
+                <pbam per="11.95" ph="3.02" amp="59385.0" off="0.0" phE="5.771" ampE="56141.0" jERR="0.340741" mERR="0.340741" GOF="0.313969"/>
+                <pbf per="11.95" ph="5.31" amp="34798.0" off="-163.4" jERR="0.340741" mERR="0.340741" GOF="0.313969"/>
+                <pbfp per="11.95" ph="5.4" amp="85059.0" off="0.0" jERR="0.340741" mERR="0.340741" GOF="0.313969"/>
+            </COS>
+            <COS>
+                <method per="8.021" ph="4.589" amp="13129.0" off="0.0" perE="0.168705" phE="1.758" ampE="11876.0" offE="0.0" jERR="0.904562" mERR="0.904562" GOF="0.313969"/>
+                <pbam per="8.021" ph="6.993" amp="47136.0" off="0.0" phE="2.855" ampE="53454.0" jERR="0.904562" mERR="0.904562" GOF="0.313969"/>
+                <pbf per="8.021" ph="4.675" amp="13390.0" off="-322.1" jERR="0.904562" mERR="0.904562" GOF="0.313969"/>
+                <pbfp per="8.021" ph="5.4" amp="85059.0" off="0.0" jERR="0.904562" mERR="0.904562" GOF="0.313969"/>
+            </COS>
+            <shift>310.7</shift>
+            <slope>-3.066415277526577E-11</slope>
+            <inter>1519245.0</inter>
+        </result>
+    </t>
+    <t id="7" state="FINISHED">
+        <message></message>
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:FFT_PPA" attention="false" circadian="true" ignored="false" method="NLLS_1.2">
+            <processingTime>0</processingTime>
+            <message>Circ: 1, NonCirc: 1</message>
+            <COS>
+                <method per="23.87" ph="4.72" amp="42538.0" off="0.0" perE="0.396738" phE="1.521" ampE="11139.0" offE="0.0" jERR="0.26186" mERR="0.26186" GOF="0.521841"/>
+                <pbam per="23.87" ph="4.02" amp="50758.0" off="0.0" phE="0.054772" ampE="96.57" jERR="0.26186" mERR="0.26186" GOF="0.521841"/>
+                <pbf per="23.87" ph="4.74" amp="42501.0" off="-49.49" jERR="0.26186" mERR="0.26186" GOF="0.521841"/>
+                <pbfp per="23.87" ph="4.0" amp="50820.0" off="0.0" jERR="0.26186" mERR="0.26186" GOF="0.521841"/>
+            </COS>
+            <COS>
+                <method per="11.94" ph="3.61" amp="19471.0" off="0.0" perE="0.216149" phE="1.382" ampE="11121.0" offE="0.0" jERR="0.571157" mERR="0.571157" GOF="0.521841"/>
+                <pbam per="11.94" ph="2.12" amp="32456.0" off="0.0" phE="4.324" ampE="18537.0" jERR="0.571157" mERR="0.571157" GOF="0.521841"/>
+                <pbf per="11.94" ph="3.62" amp="19404.0" off="53.79" jERR="0.571157" mERR="0.571157" GOF="0.521841"/>
+                <pbfp per="11.94" ph="4.0" amp="40532.0" off="0.0" jERR="0.571157" mERR="0.571157" GOF="0.521841"/>
+            </COS>
+            <shift>-3.005</shift>
+            <slope>-3.833019096908221E-11</slope>
+            <inter>1509743.0</inter>
+        </result>
+    </t>
+</ns2:jobResult>

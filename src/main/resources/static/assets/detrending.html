@@ -1,0 +1,24 @@
+<div>
+
+  <h2>Detrending and period analysis</h2>
+
+  <p>We found out that presence of significant baseline trends in data has detrimental effect on period analysis <a href="http://dx.doi.org/10.1371/journal.pone.0096462">(Zielinski et al)</a>.
+    It is important that baseline trends are removed prior to period estimation. To say it bluntly, if you cannot clearly see oscillations due to the presence of a baseline trend, the analysis method will not be able to find the correct period.
+  </p><p>We recommend the selection of one of the detrending options and subsequent visual inspection of the resulting time series prior to the period analysis. The less invasive detrending the better.
+</p><p>Unlike the baseline trend, the gradual amplitude dampening is not a problem even for up to 1/3 of the initial signal lost. Hover, abrupt change in amplitude (for example the first day much higher than the rest of the measurement) can cause problems and should be removed by proper data window selection.
+</p><p>MESA method seems to be the most resilient to the presence of the baseline trend. FFT NLLS is sensitive to large in amplitude and long in range trends (a long curve in data), for such data, it typically stops after finding only the long period trend components.
+</p><p>The available detrending options are:
+</p>
+  <ul><li>linear
+  </li><li>cubic
+  </li><li>baseline
+  </li><li>amp&amp;baseline
+  </li><li>frequency</li>
+  </ul>
+  <p><strong>Linear detrending</strong> is the least intrusive detrending method; it makes linear regression to the data and substract the fitted line from the data.
+  </p><p><strong>Cubic detrending</strong> fits polynomial of degree 3 to the data and subsequently removes the resulting curve from the data. It may introduce artefacts for the short data or even remove the oscillations for very short data.
+</p><p><strong>Baseline detrending</strong> is based on kernel smoothing. Kernel smoothing can be explained as a more sophisticated form of moving average. Once the smoothed version of the data(the trend) is found it is subtracted from the original. This detrending works well with the exception of the data ends, usually the first and last half day of the data have to be discarded.
+</p><p><strong>Amp&amp;baseline detrending</strong> removes not only trend in the baseline but also in the amplitude. It first find the baseline trend using the procedure above, then uses it as the reference to establish the amplitude change in the data. The change in amplitude is then, smoothed, giving the amplitude trend, which is used to scale the original data. The beginning and end of the data suffers from strong artefacts, but it is the only method that can remove data dampening.
+</p><p><strong>Frequency detrending</strong> applies frequency filter that removes both high frequency components from the data (the noise) and the low components (trends), as the results data are not only detrended but also smoothed. However, it will also obscure sudden changes in the data, so it alters the data shapes. Any periodic component over 45 hours will be removed from the data. </p>
+
+</div>

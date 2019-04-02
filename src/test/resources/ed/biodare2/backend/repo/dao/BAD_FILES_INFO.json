@@ -1,0 +1,56 @@
+{
+  "assets" : {
+    "10093" : {
+      "id" : 10093,
+      "originalName" : "BD2-LongDataexp_1194_16-11-29_1194_data.xlsx",
+      "assetType" : "TS_DATA",
+      "versions" : [ {
+        "versionId" : 1,
+        "localFile" : "1_BD2-LongDataexp_1194_16-11-29_1194_data.xlsx",
+        "originalName" : "BD2-LongDataexp_1194_16-11-29_1194_data.xlsx",
+        "contentType" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "description" : null,
+        "created" : [ 2016, 12, 16 ]
+      } ]
+    },
+    "10103" : {
+      "id" : 10103,
+      "originalName" : "10050.LIN_DTR.data (1).csv",
+      "assetType" : "FILE",
+      "versions" : [ {
+        "versionId" : 1,
+        "localFile" : "1_10050.LIN_DTR.data (1).csv",
+        "originalName" : "10050.LIN_DTR.data (1).csv",
+        "contentType" : "application/vnd.ms-excel",
+        "description" : null,
+        "created" : [ 2017, 1, 9 ]
+      } ]
+    },
+    "10104" : {
+      "id" : 10104,
+      "originalName" : "10051.LIN_DTR.data (1).csv",
+      "assetType" : "FILE",
+      "versions" : [ {
+        "versionId" : 1,
+        "localFile" : "1_10051.LIN_DTR.data (1).csv",
+        "originalName" : "10051.LIN_DTR.data (1).csv",
+        "contentType" : "application/vnd.ms-excel",
+        "description" : null,
+        "created" : [ 2017, 1, 9 ]
+      } ]
+    },    
+    "10113" : {
+      "id" : 10113,
+      "originalName" : "BD2-LD2DD-exp_12730498782920_16-11-29_12730498782920_data.xlsx",
+      "assetType" : "TS_DATA",
+      "versions" : [ {
+        "versionId" : 1,
+        "localFile" : "1_BD2-LD2DD-exp_12730498782920_16-11-29_12730498782920_data.xlsx",
+        "originalName" : "BD2-LD2DD-exp_12730498782920_16-11-29_12730498782920_data.xlsx",
+        "contentType" : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "description" : null,
+        "created" : [ 2017, 1, 24 ]
+      } ]
+    }
+  }
+}

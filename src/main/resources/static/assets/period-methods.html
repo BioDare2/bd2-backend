@@ -1,0 +1,98 @@
+<div>
+<h2>Methods for period analysis</h2>
+
+<p>There are six methods for period analysis available in BioDare:</p>
+<ul><li>FFT NLLS</li>
+  <li>MFourFit</li>
+  <li>MESA</li>
+  <li>ER Periodogram</li>
+  <li>LS Periodogram</li>
+  <li>Spectrum Resampling</li>
+</ul>
+<p>Principles behind each of them are described at end of this document and the extensive method comparison is published in
+  <a href="http://dx.doi.org/10.1371/journal.pone.0096462">(Zielinski et al)</a>.</p>
+
+<p>The quick guideline:</p>
+<ul><li><strong>MFourFit [1].</strong> Generally it gives the most accurate period estimates from all the 6 methods (though the next two are a close match). It also enforces the same waveform for each cycle, which may be more biological sound than other approaches. </li>
+  <li><strong>FFT NLLS [2].</strong> Often as good as MFourFit in period estimates and it has advantage of providing well defined error measures for period, phase and amplitude. The error measure can be used to weigh average values over biological replicates and produce the RAE plots.</li>
+  <li><strong>MESA [3].</strong> It has similar accuracy to the above methods but it is based on completely different principles. For that reason we would recommend using it with one of the above as an independent validator. This method is also the less sensitive to the trends in the data.</li>
+  <li><strong>LS Periodogram [4].</strong> It is simple method based on cosine function contribution to the observed data, which seems to be able to correctly reject some of the arrhythmic data (see Zielinski et al). We would recommend to discard the results from other methods if this one rejected them as not statistically significant.</li>
+  <li><strong>ER Periodogram [5].</strong> It is a fast and conceptually simple method but it seems to be inferior to the other methods. It could be used for its ability to rejected not statistically significant results, but it seemed to performed worse in than LS Periodogram in this regard.</li>
+  <li><strong>Sperctrum Resampling [6].</strong> It offers a new approach to period analysis but it seems to overestimate the period value</li>
+</ul>
+
+<p>Since the new BioDare analysis system is really fast, we recommend using at least to off the methods to verify validity of found period values.</p>
+<p>Check the guideline regarding the input data <a href="documents/detrending">(link)</a>.</p>
+
+<p>The BioDare implementations of the above methods often introduce some modifications to the original
+  algorithms, please read below to find out more.</p>
+
+  <hr>
+<h2>The detailed methods description</h2>
+
+<h3>Enright Periodogram.</h3>
+<p>Periodic data of known period could be split into sections with the length of the sections matching the underlying period. Each section should contain similar portions of data, as the rhythmic data must contain a repeating pattern. Overlaying the sections will produce a clear waveform (with peak and trough), in which the trough time-points coincide and give a low sum across sections, peak time-points coincide and give a large sum, and the resulting waveform will have large amplitude. However, if the data were split in sections where the length does not correspond to the underlying period, then the peaks and troughs will not coincide and summing the sections together will result in a small-amplitude signal. This observation lies at the heart of the method. To analyse data with unknown period, the algorithm steps through a series of test period values, for each of them performs the procedure described above, and selects the period that gave the averaged waveform of the highest amplitude. </p>
+<p>EPR has the advantage of being intuitively straightforward and computationally simple. Its main limitation is that the step size between periods that can effectively be tested is constrained by the duration and sampling frequency of the input data.</p>
+<p>Another general approach to period estimation is based on the idea of curve fitting. If the measured time series can be represented by a function (curve) of known period, the period of the data can be assumed to be equal to the period of that function. The challenge lies in finding such a function. Typically a model-based approach is used, i.e. a function is chosen that depends on parameters that determine not only its period but also its shape.  In a ‘naive’ approach, all possible combinations of the function’s parameters can be tested; for each combination, the function’s time-series values can be calculated. The set of parameters which gives a time-series closest to the original data is chosen. In general, there is an untenably large number of parameter combinations, so such a naive approach is not feasible. Fortunately, there are known mathematical techniques to find optimal parameters, for example linear- and non-linear least-squares fitting. Many methods of period analysis adopt this scheme, though they differ in the model functions and the selection procedures.</p>
+
+<h3>mFourfit</h3>
+<p>mFourfit is one of the curve-fitting methods. It was developed for use with data obtained under entrained conditions, where the phase of entrainment was of particular interest. Stable entrainment implies that the underlying signal will have a single period, namely the period of the entraining cycle T. The waveform may be complicated but it is assumed to be the same in each entrained cycle (like the sections into which EPR splits data).</p>
+<p>mFourfit’s model function consists of a main cosine component of phase ϕ1, amplitude A1 and period τ. Up to 4 additional cosine components may be included, each with its own phase and amplitude but with a period that is a simple fraction of the main period τ, from τ /2 to τ /5.</p>
+<p>Using the sum of 5 cosines allows for the construction of quite complicated shapes, while the constraint that all components have period τ or a fraction guarantees that the resulting shape has exactly the length of τ. Rather than trying to estimate the period directly, upper and lower boundaries for the period are set by the user and the algorithm then steps through the range of periods in pre-defined increments. For given period τ, mFourfit finds all the parameters for each cosine using ordinary least-squares covariance. This step establishes ‘the best shape’ of length τ that can represent the given data.  Then, for each period, mFourfit calculates a sum of squared differences between the input data and the theoretical time series generated using the calculated parameters. After iterating through all periods within the boundaries, the period that fits the data with the lowest sum of differences can be determined. This method combines the ‘naive’ approach, checking all potential period values one by one, with selecting model parameters using the least square scheme. </p>
+<p>The main advantage of mFourfit is that it provides the same best-fit waveform for each cycle, which better reflects the underlying biology of an entrained system. The major disadvantage is that the mFourfit algorithm is designed always to return a period (without any significance measure), even if the input time series is arrhythmic. We use the abbreviation MFF to refer to mFourfit method.</p>
+
+<h3>FFT NLLS</h3>
+<p>Another method that is based on curve fitting is FFT-NLLS [2]. This was originally developed at the NSF Centre for Biological Timing in Virginia, to analyse circadian data obtained in free-running conditions (i.e. without entrainment), particularly in genetic screens to identify mutant organisms with altered period. Here, the data are also modelled by a sum of cosine functions.</p>
+<p>The main differences between FFT-NLLS and MFF are that the periods τi of each cosine are independent of each other in FFT-NLLS and the number of cosines N can be up to 25. The unconstrained periods and the large number of components mean that almost any curve can be represented by this model.  For example, a long period cosine could model a data trend, a mid range cosine would match the ‘main’ oscillation in the data, and very short period cosines could represent sudden changes in the data or even noise. In reality, 5 components are sufficient to model correctly most biological data. </p>
+<p>FFT NLLS starts with a model with a single cosine and determines the parameters (τ1, ϕ1, α1, c) using a non-linear least squares fitting algorithm. This procedure is repeated using models with additional cosine components (increased N), until adding an additional cosine term does not improve significantly the resulting fit. Once the best model and its parameters have been found, the period is taken to be the period of the cosine component lying within a user-defined range of likely circadian periods (typically 15-35h). If more than one cosine component belongs to the circadian range, the user has to decide which to select. Conventionally the component associated with the smallest relative amplitude error (defined as the value of the amplitude error estimate divided by the amplitude value) is chosen.</p>
+<p>FFT NLLS performs an additional operation, namely finding confidence levels for period, phase and amplitude for all of the cosine components of the best model. This is done by determining the maximum size of perturbation which can be introduced into individual parameters before the resulting fit significantly deviates from the original.</p>
+<p>The non-linear least squares procedure that calculates the parameters only works well if sensible initial values are provided. In order to obtain the initial values of the period and phase, a Fast Fourier Transform (FFT) is performed on the input time series. Its relevance here is only to learn initial period values from the data, rather than using default or user-defined values. The initial values are then improved by the NLLS iterative numerical search. Hence the full name of this technique: the Fast Fourier Transform Non-Linear Least Squares algorithm, abbreviated NLLS in the Results.</p>
+<p>The main advantages of FFT-NLLS are reported to be that the algorithm works well on relatively short and/or noisy data series; it gives confidence levels for period, phase and amplitude. </p>
+
+<h3>MESA</h3>
+<p>Maximum Entropy Spectral Analysis (MESA) [3] uses a completely different approach based on stochastic modelling. MESA first fits an autoregressive model to the data. This model assumes that the value at a given time point is the combination of a number of previous values plus some stochastic process (noise):</p>
+<p>X[t] = a1X[t-1]+ a2X[t-2]+ a3X[t-3]+ ...+anX[t-N]+ η</p>
+<p>(where:  ai are model coefficients, X[t-i] is the data value at previous time point t-i, η is noise, N is the length of the model)</p>
+<p>Model coefficients can also be considered as the coefficients of a prediction filter (PF) of length N, where the next value can be predicted using the previous values. Such equations can be written for each data point and filter coefficients that minimise the difference between the predicted and original values can be found using a least-squares approach. </p>
+<p>It is possible to obtain a frequency spectrum for the data by using the prediction coefficients.  In general, a frequency spectrum characterizes the presence (contribution) of each frequency within the signal, with the most common example being the Fourier Transform power spectrum. Since frequency is the inverse of the period, finding the maximum in a frequency spectrum also identifies the strongest period of the data. Determination of a spectrum and finding its associated peak lie at the foundation of all frequency spectrum-based methods, such as the FFT.</p>
+<p>The PF length (N) is crucial to the output of the analysis; if the filter length is too low, resolution and important detail can be lost. However, if N is too high, artificial peaks may appear in the spectrum. Although there are procedures to determine the optimal value of the model length, usually manual selection of the minimum value of N is necessary.  Once the model length, N, is established, corresponding PF coefficients can be found, the spectrum S is then calculated using the formula above and the period corresponding to the highest value of S is selected.</p>
+<p>The main advantages of MESA are that it does not model data assuming any a priori shape of waveform, and it has much better precision than Fourier transform based methods. The drawbacks are its dependence on the correct choice of model length and the lack of a significance/confidence measure. </p>
+
+<h3>LS Periodogram</h3>
+<p>Another spectral analysis technique is the Lomb-Scargle periodogram [4]. This method also creates a spectrum representing the significance of each frequency in the analysed data. As before, the period corresponding to the peak is chosen as the output of the method. </p>
+<p>The main advantage of this method is that, unlike most of the spectral methods (for example MESA), it can handle non-evenly spaced data. We refer to this method as LSPR.</p>
+
+<h3>Spectrum resampling</h3>
+<p>Spectrum resampling [6], abbreviated as SR, was developed to improve period estimation when the data are non-sinusoidal. The approach uses a power spectrum created by carrying out a Fourier Transform on the time series.</p>
+<p>The Fourier Transform and its discrete implementation, the Fast Fourier Transform (FFT), are standards in timeseries processing. Similar to the LSPR, the FFT finds frequency contributions by convolving cosine and sine functions with the analysed signal. However, the spectrum obtained using the FFT cannot be directly used for period estimation of circadian data, due to its poor frequency precision. The precision varies across the spectrum, and is directly correlated with the input data length: to obtain a precision of less than an hour around 24h periods, there must be over 1000, hourly-sampled time points, i.e. more than one month of measurement. In most cases, biological data must be padded to artificially extend the length of the time series prior to FFT analysis. </p>
+<p>The main idea behind spectrum resampling is to find a period "between the cracks" of the original FFT spectrum. The algorithm starts by calculating an ordinary FFT power spectrum. The initial spectrum is smoothed using kernel smoothing. Kernel smoothing can be explained as a more sophisticated form of moving average. Each data point is averaged with scaled values of its neighbours. The kernel method ensures that more distant neighbours contribute less to the average. </p>
+<p>The smoothed spectrum forms the basis for the algorithm. Noise is added to the base spectrum, this creates a new sample spectrum, which is successively smoothed, and the frequency value corresponding to the maximum peak in the smoothed spectrum is recorded. This procedure of adding noise to the base spectrum, smoothing, and recording the peak is repeated 1000 times (a process known as boot-strapping). </p>
+<p>The recorded peak frequencies are averaged and the mean value is converted to the corresponding period and reported as the data period. For example, if the data has a true period of 24.5 hours, but the precision in the FFT spectrum is limited to about 1 hour around this period due to the data length, each bootstrap iteration could produce period values of 23, 24, 25 or 26h. The average bootstrap period can be 24.5 (for example 500 peaks at 24 and 500 at 25). The distribution of period values recorded during the bootstrap iterations provides a confidence interval for the period estimates.  </p>
+<p>The main advantage reported for this algorithm is that it was designed to be more robust to noise and non-sinusoidal time series. The disadvantage is that, because it uses boot-strapping, it is very computationally intensive.</p>
+
+  <hr>
+  <h3>Specifics of methods implementation</h3>
+
+  <p>FFT NLLS – no changes to previous implementation.
+  </p><p>MFourFit – the baseline and amplitude detrending is decoupled from the actual MFourFit procedure and the input data to MFourFit are linearly detrended instead.
+  </p><p>MESA method is based on Barrodale algorithm [7] and uses the version with bi-directional prediction filter. However, that implementation underestimated the length of the internal prediction model. The minimal model lengths that gave good period estimates for our test data were therefore determined empirically and found to be 30 for hourly sampled data, and it is scaled proportionally to the sampling frequency.
+  </p><p>Our implementation of Enright Periodogram always uses spline interpolation to transform input data to time series with 0.1 hour data interval. This data step matches the 0.1h period scanning step size. This approach has advantages over the original method when determining the spectrum power for a fractional period (for example 24.1).
+  </p><p>The Lomb-Scargle periodograms was implemented using the algorithm described by Glynn et al. [8].
+  </p><p>We introduced few modifications to the Spectrum Resampling algorithm. Firstly, we use the FFT implementation to calculate the spectrum instead of the authors ‘naive’ approach. Secondly, the spectrum is trimmed to remove the very high frequencies and reduce computation costs. During kernel smoothing only the close neighbourhood of the current point is taken into account instead of the whole time series. The size of the neighbourhood is determined by the bandwidth under consideration, and it is equal to the distance at which the ‘kernel’ value is smaller than 10-14. This reduces the asymptotic computational cost from O(N2) to O(N).  The last modification concerns the selection of the optimal bandwidth, as we sample a smaller range of candidates than in the original paper. We compared the results obtained with the modified code against the estimates obtained using the original and found that neither modification influenced the period estimates, but all substantially reduced the computation time.
+
+
+<h3>Bibliography</h3>
+<hr>
+<ul>
+  <li>[1]. Edwards KD, Akman OE, Knox K, Lumsden PJ, Thomson AW, et al. (2010) Quantitative analysis of regulatory flexibility under changing environmental conditions. Molecular Systems Biology, 6: 424
+  </li><li>[2]. Plautz JD, Straume M, Stanewsky R, Jamison CF, Brandes C, Dowse HB, Hall JC, Kay SA. (1997) Quantitative analysis of Drosophila period gene transcription in living animals. J Biol Rhythms. 12: 204-217. Erratum in: J Biol Rhythms 1999 14:77
+  </li><li>[3]. Burg JP (1972) The relationship between maximum entropy spectra and maximum likelihood spectra. Geophysics 37: 375-376
+  </li><li>[4]. Lomb NR (1976) Least-squares frequency analysis of unequally spaced data. Astrophys. Space Sci. 39: 447–462.
+  </li><li>[5]. Enright JT (1965) The search for rhythmicity in Biological Time-series. J. Theoret Biol. 8: 426-268
+  </li><li>[6]. Costa MJ, Finkenstädt B, Roche V, Lévi F, Gould PD, et al. (2013) Inference on periodicity of circadian time series. Biostatistics: 1-15
+  </li><li>[7] Barrodale I, Erickson RE (1980) Algorithms for least-squares linear prediction and maximum entropy spectral analysis. Geophysics 45: 420-432;
+  </li><li>[8] Glynn EF, Chen J, Mushegian AR (2006) Detecting periodic patterns in unevenly spaced gene expression time series using Lomb-Scargle periodogram. Bioinformatics 22: 310-316;
+  </li>
+</ul>
+
+</div>

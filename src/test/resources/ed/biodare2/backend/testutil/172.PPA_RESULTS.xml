@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ppaJobIndResults xmlns:ns2="http://tsprocessing.dom.robust.ed" xmlns:ns3="http://data.dom.robust.ed">
+    <ppa jobId="172" dataId="1" dataType="LIN_DTR" orgId="B" rawId="1" biolId="1" envId="1" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="25.0" ph="0.97" amp="0.990737" off="0.029256" jERR="1.2467003028201752E-11" mERR="1.2467003028201752E-11" GOF="1.2467003028201752E-11"/>
+            <pbam per="25.0" ph="0.9" amp="1.012" off="0.0" phE="8.204640795236539E-15" ampE="1.9360899823290236E-10" jERR="1.2467003028201752E-11" mERR="1.2467003028201752E-11" GOF="1.2467003028201752E-11"/>
+            <pbf per="25.0" ph="0.97" amp="0.990737" off="0.029256" jERR="1.2467003028201752E-11" mERR="1.2467003028201752E-11" GOF="1.2467003028201752E-11"/>
+            <pbfp per="25.0" ph="1.0" amp="1.013" off="0.0" jERR="1.2467003028201752E-11" mERR="1.2467003028201752E-11" GOF="1.2467003028201752E-11"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="2" dataType="LIN_DTR" orgId="C" rawId="2" biolId="1" envId="1" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="25.5" ph="1.49" amp="1.488" off="0.02431" jERR="2.5559338387943092E-12" mERR="2.5559338387943092E-12" GOF="2.5559338387943092E-12"/>
+            <pbam per="25.5" ph="0.9" amp="1.509" off="0.0" phE="8.204640795236539E-15" ampE="4.241924158288499E-6" jERR="2.5559338387943092E-12" mERR="2.5559338387943092E-12" GOF="2.5559338387943092E-12"/>
+            <pbf per="25.5" ph="1.49" amp="1.488" off="0.02431" jERR="2.5559338387943092E-12" mERR="2.5559338387943092E-12" GOF="2.5559338387943092E-12"/>
+            <pbfp per="25.5" ph="1.5" amp="1.518" off="0.0" jERR="2.5559338387943092E-12" mERR="2.5559338387943092E-12" GOF="2.5559338387943092E-12"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="3" dataType="LIN_DTR" orgId="D" rawId="3" biolId="1" envId="1" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="26.0" ph="2.0" amp="1.995" off="-0.016318" jERR="4.163024593361675E-13" mERR="4.163024593361675E-13" GOF="4.163024593361675E-13"/>
+            <pbam per="26.0" ph="2.02" amp="1.986" off="0.0" phE="0.1" ampE="1.8782505780453226E-4" jERR="4.163024593361675E-13" mERR="4.163024593361675E-13" GOF="4.163024593361675E-13"/>
+            <pbf per="26.0" ph="2.0" amp="1.995" off="-0.016318" jERR="4.163024593361675E-13" mERR="4.163024593361675E-13" GOF="4.163024593361675E-13"/>
+            <pbfp per="26.0" ph="2.1" amp="1.986" off="0.0" jERR="4.163024593361675E-13" mERR="4.163024593361675E-13" GOF="4.163024593361675E-13"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="4" dataType="LIN_DTR" orgId="E" rawId="4" biolId="2" envId="2" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="28.0" ph="12.09" amp="0.94242" off="0.012156" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbam per="28.0" ph="0.92" amp="4.744618607185005E40" off="0.0" phE="0.718795" ampE="1.8963626707377147E41" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbf per="28.0" ph="12.09" amp="0.94242" off="0.012156" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbfp per="28.0" ph="3.3" amp="5.471638539584587E40" off="0.0" jERR="1.0" mERR="1.0" GOF="1.0"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="5" dataType="LIN_DTR" orgId="F" rawId="5" biolId="2" envId="2" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="28.2" ph="12.56" amp="0.948376" off="0.018872" jERR="8.357655326550554E-4" mERR="8.357655326550554E-4" GOF="8.357655326550554E-4"/>
+            <pbam per="28.2" ph="12.5" amp="0.961907" off="0.0" phE="0.0" ampE="7.560937298365352E-4" jERR="8.357655326550554E-4" mERR="8.357655326550554E-4" GOF="8.357655326550554E-4"/>
+            <pbf per="28.2" ph="12.56" amp="0.948376" off="0.018872" jERR="8.357655326550554E-4" mERR="8.357655326550554E-4" GOF="8.357655326550554E-4"/>
+            <pbfp per="28.2" ph="12.5" amp="0.96224" off="0.0" jERR="8.357655326550554E-4" mERR="8.357655326550554E-4" GOF="8.357655326550554E-4"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="6" dataType="LIN_DTR" orgId="G" rawId="6" biolId="2" envId="2" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="27.8" ph="11.51" amp="0.888653" off="0.001867" jERR="0.002285" mERR="0.002285" GOF="0.002285"/>
+            <pbam per="27.8" ph="11.5" amp="0.912147" off="0.0" phE="0.0" ampE="0.002504" jERR="0.002285" mERR="0.002285" GOF="0.002285"/>
+            <pbf per="27.8" ph="11.51" amp="0.888653" off="0.001867" jERR="0.002285" mERR="0.002285" GOF="0.002285"/>
+            <pbfp per="27.8" ph="11.5" amp="0.913339" off="0.0" jERR="0.002285" mERR="0.002285" GOF="0.002285"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="7" dataType="LIN_DTR" orgId="H" rawId="7" biolId="3" envId="3" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="20.0" ph="18.12" amp="2.076" off="0.014492" jERR="5.180617650676923E-10" mERR="5.180617650676923E-10" GOF="5.180617650676923E-10"/>
+            <pbam per="20.0" ph="18.78" amp="2.229" off="0.0" phE="2.736" ampE="1.007" jERR="5.180617650676923E-10" mERR="5.180617650676923E-10" GOF="5.180617650676923E-10"/>
+            <pbf per="20.0" ph="18.12" amp="2.076" off="0.014492" jERR="5.180617650676923E-10" mERR="5.180617650676923E-10" GOF="5.180617650676923E-10"/>
+            <pbfp per="20.0" ph="18.0" amp="2.655" off="0.0" jERR="5.180617650676923E-10" mERR="5.180617650676923E-10" GOF="5.180617650676923E-10"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="8" dataType="LIN_DTR" orgId="I" rawId="8" biolId="3" envId="3" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="20.0" ph="18.08" amp="2.027" off="0.014042" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbam per="20.0" ph="19.48" amp="45747.0" off="0.0" phE="3.383" ampE="204533.0" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbf per="20.0" ph="18.08" amp="2.027" off="0.014042" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbfp per="20.0" ph="3.1" amp="138493.0" off="0.0" jERR="1.0" mERR="1.0" GOF="1.0"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="9" dataType="LIN_DTR" orgId="J" rawId="9" biolId="3" envId="3" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="20.0" ph="18.06" amp="2.005" off="0.013815" jERR="1.489321556378222E-12" mERR="1.489321556378222E-12" GOF="1.489321556378222E-12"/>
+            <pbam per="20.0" ph="18.0" amp="2.03" off="0.0" phE="0.4" ampE="0.279071" jERR="1.489321556378222E-12" mERR="1.489321556378222E-12" GOF="1.489321556378222E-12"/>
+            <pbf per="20.0" ph="18.06" amp="2.005" off="0.013815" jERR="1.489321556378222E-12" mERR="1.489321556378222E-12" GOF="1.489321556378222E-12"/>
+            <pbfp per="20.0" ph="18.0" amp="2.16" off="0.0" jERR="1.489321556378222E-12" mERR="1.489321556378222E-12" GOF="1.489321556378222E-12"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="10" dataType="LIN_DTR" orgId="K" rawId="10" biolId="4" envId="4" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="true" circadian="false" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="35.22" ph="9.11" amp="0.006082" off="-5.009849844204032E-4" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbam per="35.22" ph="35.19" amp="0.005367" off="0.0" phE="10.85" ampE="0.002833" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbf per="35.22" ph="9.11" amp="0.006082" off="-5.009849844204032E-4" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbfp per="35.22" ph="34.6" amp="0.004254" off="0.0" jERR="1.0" mERR="1.0" GOF="1.0"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="11" dataType="LIN_DTR" orgId="L" rawId="11" biolId="4" envId="4" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="21.66" ph="9.77" amp="0.008495" off="-2.069295466491914E-4" jERR="0.881769" mERR="0.881769" GOF="0.881769"/>
+            <pbam per="21.66" ph="21.1" amp="0.010308" off="0.0" phE="10.31" ampE="0.008505" jERR="0.881769" mERR="0.881769" GOF="0.881769"/>
+            <pbf per="21.66" ph="9.77" amp="0.008495" off="-2.069295466491914E-4" jERR="0.881769" mERR="0.881769" GOF="0.881769"/>
+            <pbfp per="21.66" ph="13.0" amp="0.004555" off="0.0" jERR="0.881769" mERR="0.881769" GOF="0.881769"/>
+        </result>
+    </ppa>
+    <ppa jobId="172" dataId="12" dataType="LIN_DTR" orgId="M" rawId="12" biolId="4" envId="4" ignored="false">
+        <result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:genericPPAResult" attention="false" circadian="true" ignored="false" method="MESA_QR_1.2">
+            <processingTime>0</processingTime>
+            <method per="24.84" ph="21.93" amp="0.015378" off="6.132939021490235E-4" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbam per="24.84" ph="23.02" amp="0.012367" off="0.0" phE="14.29" ampE="0.009038" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbf per="24.84" ph="21.93" amp="0.015378" off="6.132939021490235E-4" jERR="1.0" mERR="1.0" GOF="1.0"/>
+            <pbfp per="24.84" ph="22.1" amp="0.006129" off="0.0" jERR="1.0" mERR="1.0" GOF="1.0"/>
+        </result>
+    </ppa>
+</ppaJobIndResults>

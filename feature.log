@@ -1,0 +1,130 @@
+2.2.0.194
+            SpringBoot 2 Update
+
+1.12.2.194
+            Spring update
+1.12.1.193
+
+1.12.1.192
+            Spring update, privacy statement, 
+1.12.0.191
+            Spring update
+1.11.0.183
+            Listing public data
+            Publishing data
+            BD1 Migration endpoints
+1.10.0.181
+            Usage stats
+
+1.9.0.180   Topcount data
+            Spring update
+1.8.1.179
+
+20117-08-24 Updating user object in the session
+
+1.8.0.178
+2017-08-22  Password reset
+
+2017-08-21  Stronger password
+            Removing non activated accounts
+
+2017-08-14  Simplified tokens
+2017-08-09  Fixed bug in grouped results for graphs still including ignored entries
+2017-08-08  Fixed errors integration tests
+2017-08-07  Spring update
+
+1.7.3.176
+
+1.7.3.175
+
+2017-06-30  Caching PPAJobSummaries
+2017-06-27  logging errors from rest endpoints
+            cache for JSXBContext in XMLUtil serialization;
+            caching of ppaJobDirs, ppaArtifacts based on expId and jobId not on ppa Path;
+
+
+1.7.2.174   Clock club demo
+2017-06-25  getting specific data set when renderign labels in ppa method not the default DTR_NONE
+
+2017-06-24  UI Trace with min/max/mean for secondary processing on graphs
+
+1.7.1
+2017-06-19  Ind Job Export
+
+2017-06-14  API for ind job results
+            Delete Job
+
+1.7.0       PPA code cleanup
+
+1.6.1.171   Disabled migration calls on production
+
+1.6.0.170
+            version for migration of data and ppa model on production. New PPA api and json represntation
+
+1.6.0       model changes to data and ppa
+            DataTrace and related artifacts moved to the repo/isa_dom. Migration code writtend for Data storage as they were serialized so had to be manually changed
+
+1.5.0.161
+            migration of ppa artifacts to job folders
+            rounding ppa groups before storing to reduce objects size
+            ppa artifacts storage by job
+            displaying empty results set (missing circadian results for whole biorep) in UI and export files
+
+            New endpoints for PPA graphs
+            New artifacts and their caculation for PPA graphs in UI
+            
+
+1.3.1.150   Dispabled Circadian Phase fixer
+
+1.3.0.150   Circ phase, ng4
+
+1.2.11.140  Disabled captcha as it is blocked on the server
+
+1.2.10.140  Excel view update to prevent crashing
+1.2.9.140   Spring update
+1.2.8.132
+
+2017-02-08  Publicity sender in test package
+2017-02-08  Tweaks for remote academic validation.
+
+1.2.7.129
+
+2017-02-01  Logs configuration
+2017-02-01  Data category update
+2017-01-31  RDM social experiments, metadata and ws endpoints.
+2017-01-27  User registration/activation/creation/modifications dates.
+2017-01-24  Backup of assets info.
+2017-01-24  Sanitation of uploaded file names
+2017-01-24  Fixing assets representation to have name not only original name in order to avoid duplicates in ts data
+2017-01-24  Removing tmp upload files
+
+1.2.5.128
+2017-01-20  Last login, schemas migration
+2017-01-19  Accounts activation by email
+2017-01-19  Mailer
+2017-01-18  Accounts locking
+2017-01-18  cleaned rest calls logs
+2017-01-18  Security operations logging
+2017-01-17  Operations logging
+2017-01-17  Features availability for experiments
+2017-01-16  Subscription info for user accounts
+2017-01-13  Registration requires terms acceptance
+2017-01-12  User Account update
+2017-01-12  Verifying academic emails during registration
+2017-01-11  Export PPA, the sample nr [kol] is printed, label in seperate column, restults ordered by orginal nr id
+2017-01-10  SimpleExcelTable presents texts up to 30 character and long words are splitted by text, to improve table view for labels
+
+1.2.4.127
+2016-12-16  File format verificatin before import
+2016-12-13  Files attachments, adding and retrieving
+2016-12-07  Simple data export
+
+1.2.3.126
+2016-11-28  Fits display
+
+1.2.2.123
+2016-11-07 Disabling captcha for china
+2016-11-05  Providing data for plots
+
+1.2.1.122
+2016-11-02  Experiments lists sorted by modification date

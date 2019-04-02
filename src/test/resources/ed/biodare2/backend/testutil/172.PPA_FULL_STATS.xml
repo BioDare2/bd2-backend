@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:statsEntry xmlns:ns2="http://tsprocessing.dom.robust.ed" jobId="172">
+    <stats biolId="1" envId="1" memberDataId="1" rawId="1">
+        <periodStats>
+            <orgStat n="3" mean="25.5" stdErr="0.288675" stdDev="0.5" median="25.0" min="25.0" max="26.0" sum="76.5" kur="NaN" skew="0.0"/>
+            <gofWeighted n="3" mean="25.99" stdErr="0.060593" stdDev="0.10495"/>
+            <jerrWeighted n="3" mean="25.99" stdErr="0.060593" stdDev="0.10495"/>
+            <specWeighted n="3" mean="25.5" stdErr="0.288675" stdDev="0.5"/>
+        </periodStats>
+        <phByMethod>
+            <orgStat n="3" mean="1.49" stdErr="0.29734" stdDev="0.515008" median="0.97" min="0.97" max="2.0" sum="4.46" kur="NaN" skew="-0.029125"/>
+            <gofWeighted n="3" mean="1.99" stdErr="0.061894" stdDev="0.107203"/>
+            <jerrWeighted n="3" mean="1.99" stdErr="0.061894" stdDev="0.107203"/>
+            <specWeighted n="3" mean="1.49" stdErr="0.29734" stdDev="0.515008"/>
+        </phByMethod>
+        <phByFit>
+            <orgStat n="3" mean="1.49" stdErr="0.29734" stdDev="0.515008" median="0.97" min="0.97" max="2.0" sum="4.46" kur="NaN" skew="-0.029125"/>
+            <gofWeighted n="3" mean="1.99" stdErr="0.061894" stdDev="0.107203"/>
+            <jerrWeighted n="3" mean="1.99" stdErr="0.061894" stdDev="0.107203"/>
+            <specWeighted n="3" mean="1.49" stdErr="0.29734" stdDev="0.515008"/>
+        </phByFit>
+        <phByFP>
+            <orgStat n="3" mean="1.53" stdErr="0.31798" stdDev="0.550757" median="1.0" min="1.0" max="2.1" sum="4.6" kur="NaN" skew="0.271355"/>
+            <gofWeighted n="3" mean="2.08" stdErr="0.071861" stdDev="0.124467"/>
+            <jerrWeighted n="3" mean="2.08" stdErr="0.071861" stdDev="0.124467"/>
+            <specWeighted n="3" mean="1.53" stdErr="0.31798" stdDev="0.550757"/>
+        </phByFP>
+        <phByAM>
+            <orgStat n="3" mean="1.27" stdErr="0.373333" stdDev="0.646632" median="0.9" min="0.9" max="2.02" sum="3.82" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="1.99" stdErr="0.128133" stdDev="0.221932"/>
+            <jerrWeighted n="3" mean="1.99" stdErr="0.128133" stdDev="0.221932"/>
+            <specWeighted n="3" mean="0.9" stdErr="4.5945988453324623E-14" stdDev="7.958078640513122E-14"/>
+        </phByAM>
+        <ampByMethod>
+            <orgStat n="3" mean="1.491" stdErr="0.28991" stdDev="0.502139" median="0.990737" min="0.990737" max="1.995" sum="4.474" kur="NaN" skew="0.029085"/>
+            <gofWeighted n="3" mean="1.981" stdErr="0.061356" stdDev="0.106272"/>
+            <jerrWeighted n="3" mean="1.981" stdErr="0.061356" stdDev="0.106272"/>
+            <specWeighted n="3" mean="1.491" stdErr="0.28991" stdDev="0.502139"/>
+        </ampByMethod>
+        <ampByFit>
+            <orgStat n="3" mean="1.491" stdErr="0.28991" stdDev="0.502139" median="0.990737" min="0.990737" max="1.995" sum="4.474" kur="NaN" skew="0.029085"/>
+            <gofWeighted n="3" mean="1.981" stdErr="0.061356" stdDev="0.106272"/>
+            <jerrWeighted n="3" mean="1.981" stdErr="0.061356" stdDev="0.106272"/>
+            <specWeighted n="3" mean="1.491" stdErr="0.28991" stdDev="0.502139"/>
+        </ampByFit>
+        <ampByFP>
+            <orgStat n="3" mean="1.506" stdErr="0.280949" stdDev="0.486617" median="1.013" min="1.013" max="1.986" sum="4.517" kur="NaN" skew="-0.113979"/>
+            <gofWeighted n="3" mean="1.973" stdErr="0.057047" stdDev="0.098809"/>
+            <jerrWeighted n="3" mean="1.973" stdErr="0.057047" stdDev="0.098809"/>
+            <specWeighted n="3" mean="1.506" stdErr="0.280949" stdDev="0.486617"/>
+        </ampByFP>
+        <ampByAM>
+            <orgStat n="3" mean="1.502" stdErr="0.281189" stdDev="0.487034" median="1.012" min="1.012" max="1.986" sum="4.507" kur="NaN" skew="-0.061586"/>
+            <gofWeighted n="3" mean="1.973" stdErr="0.057984" stdDev="0.100431"/>
+            <jerrWeighted n="3" mean="1.973" stdErr="0.057984" stdDev="0.100431"/>
+            <specWeighted n="3" mean="1.012" stdErr="1.6055690705474977E-5" stdDev="2.780927205249405E-5"/>
+        </ampByAM>
+        <GOF n="3" mean="5.146413108777409E-12" stdErr="3.71204270747134E-12" stdDev="6.429446569205896E-12"/>
+        <jERR n="3" mean="5.146413108777409E-12" stdErr="3.71204270747134E-12" stdDev="6.429446569205896E-12"/>
+        <phByMethodCirc>
+            <orgStat n="3" mean="1.39" stdErr="0.264164" stdDev="0.457545" median="0.9312" min="0.9312" max="1.846" sum="4.18" kur="NaN" skew="-0.089634"/>
+            <gofWeighted n="3" mean="1.83" stdErr="0.054027" stdDev="0.093578"/>
+            <jerrWeighted n="3" mean="1.83" stdErr="0.054027" stdDev="0.093578"/>
+            <specWeighted n="3" mean="1.39" stdErr="0.264164" stdDev="0.457545"/>
+        </phByMethodCirc>
+        <phByFitCirc>
+            <orgStat n="3" mean="1.39" stdErr="0.264164" stdDev="0.457545" median="0.9312" min="0.9312" max="1.846" sum="4.18" kur="NaN" skew="-0.089634"/>
+            <gofWeighted n="3" mean="1.83" stdErr="0.054027" stdDev="0.093578"/>
+            <jerrWeighted n="3" mean="1.83" stdErr="0.054027" stdDev="0.093578"/>
+            <specWeighted n="3" mean="1.39" stdErr="0.264164" stdDev="0.457545"/>
+        </phByFitCirc>
+        <phByFPCirc>
+            <orgStat n="3" mean="1.44" stdErr="0.282733" stdDev="0.489709" median="0.96" min="0.96" max="1.938" sum="4.31" kur="NaN" skew="0.228923"/>
+            <gofWeighted n="3" mean="1.92" stdErr="0.063188" stdDev="0.109444"/>
+            <jerrWeighted n="3" mean="1.92" stdErr="0.063188" stdDev="0.109444"/>
+            <specWeighted n="3" mean="1.44" stdErr="0.282733" stdDev="0.489709"/>
+        </phByFPCirc>
+        <phByAMCirc>
+            <orgStat n="3" mean="1.19" stdErr="0.336398" stdDev="0.582658" median="0.847059" min="0.847059" max="1.865" sum="3.576" kur="NaN" skew="1.73"/>
+            <gofWeighted n="3" mean="1.84" stdErr="0.116335" stdDev="0.201499"/>
+            <jerrWeighted n="3" mean="1.84" stdErr="0.116335" stdDev="0.201499"/>
+            <specWeighted n="3" mean="0.86" stdErr="0.00599" stdDev="0.010374"/>
+        </phByAMCirc>
+    </stats>
+    <stats biolId="2" envId="2" memberDataId="4" rawId="4">
+        <periodStats>
+            <orgStat n="3" mean="28.0" stdErr="0.11547" stdDev="0.2" median="27.8" min="27.8" max="28.2" sum="84.0" kur="NaN" skew="0.0"/>
+            <gofWeighted n="3" mean="28.15" stdErr="0.091246" stdDev="0.158043"/>
+            <jerrWeighted n="3" mean="28.15" stdErr="0.091246" stdDev="0.158043"/>
+            <specWeighted n="3" mean="28.0" stdErr="0.11547" stdDev="0.2"/>
+        </periodStats>
+        <phByMethod>
+            <orgStat n="3" mean="12.05" stdErr="0.303663" stdDev="0.525959" median="11.51" min="11.51" max="12.56" sum="36.16" kur="NaN" skew="-0.312188"/>
+            <gofWeighted n="3" mean="12.44" stdErr="0.239521" stdDev="0.414862"/>
+            <jerrWeighted n="3" mean="12.44" stdErr="0.239521" stdDev="0.414862"/>
+            <specWeighted n="3" mean="12.05" stdErr="0.303663" stdDev="0.525959"/>
+        </phByMethod>
+        <phByFit>
+            <orgStat n="3" mean="12.05" stdErr="0.303663" stdDev="0.525959" median="11.51" min="11.51" max="12.56" sum="36.16" kur="NaN" skew="-0.312188"/>
+            <gofWeighted n="3" mean="12.44" stdErr="0.239521" stdDev="0.414862"/>
+            <jerrWeighted n="3" mean="12.44" stdErr="0.239521" stdDev="0.414862"/>
+            <specWeighted n="3" mean="12.05" stdErr="0.303663" stdDev="0.525959"/>
+        </phByFit>
+        <phByFP>
+            <orgStat n="3" mean="9.1" stdErr="2.914" stdDev="5.048" median="3.3" min="3.3" max="12.5" sum="27.3" kur="NaN" skew="-1.656"/>
+            <gofWeighted n="3" mean="12.38" stdErr="0.228171" stdDev="0.395203"/>
+            <jerrWeighted n="3" mean="12.38" stdErr="0.228171" stdDev="0.395203"/>
+            <specWeighted n="3" mean="9.1" stdErr="2.914" stdDev="5.048"/>
+        </phByFP>
+        <phByAM>
+            <orgStat n="3" mean="8.31" stdErr="3.705" stdDev="6.417" median="0.92" min="0.92" max="12.5" sum="24.92" kur="NaN" skew="-1.685"/>
+            <gofWeighted n="3" mean="12.38" stdErr="0.228204" stdDev="0.39526"/>
+            <jerrWeighted n="3" mean="12.38" stdErr="0.228204" stdDev="0.39526"/>
+            <specWeighted n="3" mean="12.0" stdErr="0.353553" stdDev="0.612372"/>
+        </phByAM>
+        <ampByMethod>
+            <orgStat n="3" mean="0.926483" stdErr="0.018993" stdDev="0.032897" median="0.888653" min="0.888653" max="0.948376" sum="2.779" kur="NaN" skew="-1.668"/>
+            <gofWeighted n="3" mean="0.941329" stdErr="0.013624" stdDev="0.023597"/>
+            <jerrWeighted n="3" mean="0.941329" stdErr="0.013624" stdDev="0.023597"/>
+            <specWeighted n="3" mean="0.926483" stdErr="0.018993" stdDev="0.032897"/>
+        </ampByMethod>
+        <ampByFit>
+            <orgStat n="3" mean="0.926483" stdErr="0.018993" stdDev="0.032897" median="0.888653" min="0.888653" max="0.948376" sum="2.779" kur="NaN" skew="-1.668"/>
+            <gofWeighted n="3" mean="0.941329" stdErr="0.013624" stdDev="0.023597"/>
+            <jerrWeighted n="3" mean="0.941329" stdErr="0.013624" stdDev="0.023597"/>
+            <specWeighted n="3" mean="0.926483" stdErr="0.018993" stdDev="0.032897"/>
+        </ampByFit>
+        <ampByFP>
+            <orgStat n="3" mean="1.8238795131948626E40" stdErr="1.8238795131948624E40" stdDev="3.159051983737492E40" median="0.913339" min="0.913339" max="5.471638539584587E40" sum="5.471638539584587E40" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="3.370983501894863E34" stdErr="3.0368397950617987E37" stdDev="5.259960819494092E37"/>
+            <jerrWeighted n="3" mean="3.370983501894863E34" stdErr="3.0368397950617987E37" stdDev="5.259960819494092E37"/>
+            <specWeighted n="3" mean="1.8238795131948626E40" stdErr="1.8238795131948626E40" stdDev="3.159051983737492E40"/>
+        </ampByFP>
+        <ampByAM>
+            <orgStat n="3" mean="1.581539535728335E40" stdErr="1.581539535728335E40" stdDev="2.73930683006037E40" median="0.912147" min="0.912147" max="4.744618607185005E40" sum="4.744618607185005E40" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="2.9230788788212465E34" stdErr="2.6333330490401924E37" stdDev="4.561066634187879E37"/>
+            <jerrWeighted n="3" mean="2.9230788788212465E34" stdErr="2.6333330490401924E37" stdDev="4.561066634187879E37"/>
+            <specWeighted n="3" mean="0.957749" stdErr="0.009738" stdDev="0.016866"/>
+        </ampByAM>
+        <GOF n="3" mean="0.334374" stdErr="0.332813" stdDev="0.57645"/>
+        <jERR n="3" mean="0.334374" stdErr="0.332813" stdDev="0.57645"/>
+        <phByMethodCirc>
+            <orgStat n="3" mean="10.33" stdErr="0.217911" stdDev="0.377434" median="9.937" min="9.937" max="10.69" sum="30.99" kur="NaN" skew="-0.393009"/>
+            <gofWeighted n="3" mean="10.6" stdErr="0.171696" stdDev="0.297385"/>
+            <jerrWeighted n="3" mean="10.6" stdErr="0.171696" stdDev="0.297385"/>
+            <specWeighted n="3" mean="10.33" stdErr="0.217911" stdDev="0.377434"/>
+        </phByMethodCirc>
+        <phByFitCirc>
+            <orgStat n="3" mean="10.33" stdErr="0.217911" stdDev="0.377434" median="9.937" min="9.937" max="10.69" sum="30.99" kur="NaN" skew="-0.393009"/>
+            <gofWeighted n="3" mean="10.6" stdErr="0.171696" stdDev="0.297385"/>
+            <jerrWeighted n="3" mean="10.6" stdErr="0.171696" stdDev="0.297385"/>
+            <specWeighted n="3" mean="10.33" stdErr="0.217911" stdDev="0.377434"/>
+        </phByFitCirc>
+        <phByFPCirc>
+            <orgStat n="3" mean="7.8" stdErr="2.493" stdDev="4.319" median="2.829" min="2.829" max="10.64" sum="23.39" kur="NaN" skew="-1.679"/>
+            <gofWeighted n="3" mean="10.55" stdErr="0.162073" stdDev="0.280719"/>
+            <jerrWeighted n="3" mean="10.55" stdErr="0.162073" stdDev="0.280719"/>
+            <specWeighted n="3" mean="7.8" stdErr="2.493" stdDev="4.319"/>
+        </phByFPCirc>
+        <phByAMCirc>
+            <orgStat n="3" mean="7.12" stdErr="3.172" stdDev="5.493" median="0.788571" min="0.788571" max="10.64" sum="21.35" kur="NaN" skew="-1.7"/>
+            <gofWeighted n="3" mean="10.55" stdErr="0.162107" stdDev="0.280778"/>
+            <jerrWeighted n="3" mean="10.55" stdErr="0.162107" stdDev="0.280778"/>
+            <specWeighted n="3" mean="10.28" stdErr="0.251108" stdDev="0.434932"/>
+        </phByAMCirc>
+    </stats>
+    <stats biolId="3" envId="3" memberDataId="7" rawId="7">
+        <periodStats>
+            <orgStat n="3" mean="20.0" stdErr="0.0" stdDev="0.0" median="20.0" min="20.0" max="20.0" sum="60.0" kur="NaN" skew="NaN"/>
+            <gofWeighted n="3" mean="20.0" stdErr="0.0" stdDev="0.0"/>
+            <jerrWeighted n="3" mean="20.0" stdErr="0.0" stdDev="0.0"/>
+            <specWeighted n="3" mean="20.0" stdErr="0.0" stdDev="0.0"/>
+        </periodStats>
+        <phByMethod>
+            <orgStat n="3" mean="18.09" stdErr="0.017638" stdDev="0.030551" median="18.06" min="18.06" max="18.12" sum="54.26" kur="NaN" skew="0.93522"/>
+            <gofWeighted n="3" mean="18.06" stdErr="1.2196622946478695E-4" stdDev="2.1125170624061522E-4"/>
+            <jerrWeighted n="3" mean="18.06" stdErr="1.2196622946478695E-4" stdDev="2.1125170624061522E-4"/>
+            <specWeighted n="3" mean="18.09" stdErr="0.017638" stdDev="0.030551"/>
+        </phByMethod>
+        <phByFit>
+            <orgStat n="3" mean="18.09" stdErr="0.017638" stdDev="0.030551" median="18.06" min="18.06" max="18.12" sum="54.26" kur="NaN" skew="0.93522"/>
+            <gofWeighted n="3" mean="18.06" stdErr="1.2196622946478695E-4" stdDev="2.1125170624061522E-4"/>
+            <jerrWeighted n="3" mean="18.06" stdErr="1.2196622946478695E-4" stdDev="2.1125170624061522E-4"/>
+            <specWeighted n="3" mean="18.09" stdErr="0.017638" stdDev="0.030551"/>
+        </phByFit>
+        <phByFP>
+            <orgStat n="3" mean="19.7" stdErr="1.7" stdDev="2.944" median="18.0" min="18.0" max="23.1" sum="59.1" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="18.0" stdErr="5.370835603149118E-12" stdDev="9.302560143754107E-12"/>
+            <jerrWeighted n="3" mean="18.0" stdErr="5.370835603149118E-12" stdDev="9.302560143754107E-12"/>
+            <specWeighted n="3" mean="19.7" stdErr="1.7" stdDev="2.944"/>
+        </phByFP>
+        <phByAM>
+            <orgStat n="3" mean="18.75" stdErr="0.427447" stdDev="0.74036" median="18.0" min="18.0" max="19.48" sum="56.26" kur="NaN" skew="-0.161873"/>
+            <gofWeighted n="3" mean="18.0" stdErr="0.001586" stdDev="0.002746"/>
+            <jerrWeighted n="3" mean="18.0" stdErr="0.001586" stdDev="0.002746"/>
+            <specWeighted n="3" mean="18.04" stdErr="0.142889" stdDev="0.247491"/>
+        </phByAM>
+        <ampByMethod>
+            <orgStat n="3" mean="2.036" stdErr="0.020984" stdDev="0.036346" median="2.005" min="2.005" max="2.076" sum="6.108" kur="NaN" skew="1.046"/>
+            <gofWeighted n="3" mean="2.005" stdErr="1.4432670486665944E-4" stdDev="2.4998118571805246E-4"/>
+            <jerrWeighted n="3" mean="2.005" stdErr="1.4432670486665944E-4" stdDev="2.4998118571805246E-4"/>
+            <specWeighted n="3" mean="2.036" stdErr="0.020984" stdDev="0.036346"/>
+        </ampByMethod>
+        <ampByFit>
+            <orgStat n="3" mean="2.036" stdErr="0.020984" stdDev="0.036346" median="2.005" min="2.005" max="2.076" sum="6.108" kur="NaN" skew="1.046"/>
+            <gofWeighted n="3" mean="2.005" stdErr="1.4432670486665944E-4" stdDev="2.4998118571805246E-4"/>
+            <jerrWeighted n="3" mean="2.005" stdErr="1.4432670486665944E-4" stdDev="2.4998118571805246E-4"/>
+            <specWeighted n="3" mean="2.036" stdErr="0.020984" stdDev="0.036346"/>
+        </ampByFit>
+        <ampByFP>
+            <orgStat n="3" mean="46166.0" stdErr="46164.0" stdDev="79958.0" median="2.16" min="2.16" max="138493.0" sum="138498.0" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="2.16" stdErr="0.001006" stdDev="0.001743"/>
+            <jerrWeighted n="3" mean="2.16" stdErr="0.001006" stdDev="0.001743"/>
+            <specWeighted n="3" mean="46166.0" stdErr="46164.0" stdDev="79958.0"/>
+        </ampByFP>
+        <ampByAM>
+            <orgStat n="3" mean="15250.0" stdErr="15248.0" stdDev="26411.0" median="2.03" min="2.03" max="45747.0" sum="45751.0" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="2.03" stdErr="4.0452133059338695E-4" stdDev="7.006514973331127E-4"/>
+            <jerrWeighted n="3" mean="2.03" stdErr="4.0452133059338695E-4" stdDev="7.006514973331127E-4"/>
+            <specWeighted n="3" mean="2.044" stdErr="0.055861" stdDev="0.096754"/>
+        </ampByAM>
+        <GOF n="3" mean="0.333333" stdErr="0.333333" stdDev="0.57735"/>
+        <jERR n="3" mean="0.333333" stdErr="0.333333" stdDev="0.57735"/>
+        <phByMethodCirc>
+            <orgStat n="3" mean="21.7" stdErr="0.021166" stdDev="0.036661" median="21.67" min="21.67" max="21.74" sum="65.11" kur="NaN" skew="0.93522"/>
+            <gofWeighted n="3" mean="21.67" stdErr="1.4635947535774434E-4" stdDev="2.5350204748873827E-4"/>
+            <jerrWeighted n="3" mean="21.67" stdErr="1.4635947535774434E-4" stdDev="2.5350204748873827E-4"/>
+            <specWeighted n="3" mean="21.7" stdErr="0.021166" stdDev="0.036661"/>
+        </phByMethodCirc>
+        <phByFitCirc>
+            <orgStat n="3" mean="21.7" stdErr="0.021166" stdDev="0.036661" median="21.67" min="21.67" max="21.74" sum="65.11" kur="NaN" skew="0.93522"/>
+            <gofWeighted n="3" mean="21.67" stdErr="1.4635947535774434E-4" stdDev="2.5350204748873827E-4"/>
+            <jerrWeighted n="3" mean="21.67" stdErr="1.4635947535774434E-4" stdDev="2.5350204748873827E-4"/>
+            <specWeighted n="3" mean="21.7" stdErr="0.021166" stdDev="0.036661"/>
+        </phByFitCirc>
+        <phByFPCirc>
+            <orgStat n="3" mean="23.64" stdErr="2.04" stdDev="3.533" median="21.6" min="21.6" max="27.72" sum="70.92" kur="NaN" skew="1.732"/>
+            <gofWeighted n="3" mean="21.6" stdErr="6.445002723778936E-12" stdDev="1.116307217250492E-11"/>
+            <jerrWeighted n="3" mean="21.6" stdErr="6.445002723778936E-12" stdDev="1.116307217250492E-11"/>
+            <specWeighted n="3" mean="23.64" stdErr="2.04" stdDev="3.533"/>
+        </phByFPCirc>
+        <phByAMCirc>
+            <orgStat n="3" mean="22.5" stdErr="0.512937" stdDev="0.888432" median="21.6" min="21.6" max="23.38" sum="67.51" kur="NaN" skew="-0.161873"/>
+            <gofWeighted n="3" mean="21.6" stdErr="0.001903" stdDev="0.003296"/>
+            <jerrWeighted n="3" mean="21.6" stdErr="0.001903" stdDev="0.003296"/>
+            <specWeighted n="3" mean="21.64" stdErr="0.171467" stdDev="0.296989"/>
+        </phByAMCirc>
+    </stats>
+    <stats biolId="4" envId="4" memberDataId="10" rawId="10">
+        <periodStats>
+            <orgStat n="2" mean="23.25" stdErr="1.59" stdDev="2.249" median="21.66" min="21.66" max="24.84" sum="46.5" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="23.05" stdErr="1.577" stdDev="2.231"/>
+            <jerrWeighted n="2" mean="23.05" stdErr="1.577" stdDev="2.231"/>
+            <specWeighted n="2" mean="23.25" stdErr="1.59" stdDev="2.249"/>
+        </periodStats>
+        <phByMethod>
+            <orgStat n="2" mean="4.23" stdErr="5.545" stdDev="7.842" median="21.93" min="21.93" max="33.02" sum="54.95" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="5.12" stdErr="5.501" stdDev="7.78"/>
+            <jerrWeighted n="2" mean="5.12" stdErr="5.501" stdDev="7.78"/>
+            <specWeighted n="2" mean="4.23" stdErr="5.545" stdDev="7.842"/>
+        </phByMethod>
+        <phByFit>
+            <orgStat n="2" mean="4.23" stdErr="5.545" stdDev="7.842" median="21.93" min="21.93" max="33.02" sum="54.95" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="5.12" stdErr="5.501" stdDev="7.78"/>
+            <jerrWeighted n="2" mean="5.12" stdErr="5.501" stdDev="7.78"/>
+            <specWeighted n="2" mean="4.23" stdErr="5.545" stdDev="7.842"/>
+        </phByFit>
+        <phByFP>
+            <orgStat n="2" mean="17.55" stdErr="4.55" stdDev="6.435" median="13.0" min="13.0" max="22.1" sum="35.1" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="16.98" stdErr="4.514" stdDev="6.384"/>
+            <jerrWeighted n="2" mean="16.98" stdErr="4.514" stdDev="6.384"/>
+            <specWeighted n="2" mean="17.55" stdErr="4.55" stdDev="6.435"/>
+        </phByFP>
+        <phByAM>
+            <orgStat n="2" mean="22.06" stdErr="0.96" stdDev="1.358" median="21.1" min="21.1" max="23.02" sum="44.12" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="21.94" stdErr="0.95245" stdDev="1.347"/>
+            <jerrWeighted n="2" mean="21.94" stdErr="0.95245" stdDev="1.347"/>
+            <specWeighted n="2" mean="21.76" stdErr="0.911025" stdDev="1.288"/>
+        </phByAM>
+        <ampByMethod>
+            <orgStat n="2" mean="0.011936" stdErr="0.003441" stdDev="0.004867" median="0.008495" min="0.008495" max="0.015378" sum="0.023873" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="0.011506" stdErr="0.003414" stdDev="0.004829"/>
+            <jerrWeighted n="2" mean="0.011506" stdErr="0.003414" stdDev="0.004829"/>
+            <specWeighted n="2" mean="0.011936" stdErr="0.003441" stdDev="0.004867"/>
+        </ampByMethod>
+        <ampByFit>
+            <orgStat n="2" mean="0.011936" stdErr="0.003441" stdDev="0.004867" median="0.008495" min="0.008495" max="0.015378" sum="0.023873" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="0.011506" stdErr="0.003414" stdDev="0.004829"/>
+            <jerrWeighted n="2" mean="0.011506" stdErr="0.003414" stdDev="0.004829"/>
+            <specWeighted n="2" mean="0.011936" stdErr="0.003441" stdDev="0.004867"/>
+        </ampByFit>
+        <ampByFP>
+            <orgStat n="2" mean="0.005342" stdErr="7.869999999999999E-4" stdDev="0.001113" median="0.004555" min="0.004555" max="0.006129" sum="0.010684" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="0.005243" stdErr="7.80810952720929E-4" stdDev="0.001104"/>
+            <jerrWeighted n="2" mean="0.005243" stdErr="7.80810952720929E-4" stdDev="0.001104"/>
+            <specWeighted n="2" mean="0.005342" stdErr="7.869999999999999E-4" stdDev="0.001113"/>
+        </ampByFP>
+        <ampByAM>
+            <orgStat n="2" mean="0.011338" stdErr="0.00103" stdDev="0.001456" median="0.010308" min="0.010308" max="0.012367" sum="0.022675" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="0.011209" stdErr="0.001021" stdDev="0.001444"/>
+            <jerrWeighted n="2" mean="0.011209" stdErr="0.001021" stdDev="0.001444"/>
+            <specWeighted n="2" mean="0.011275" stdErr="0.001028" stdDev="0.001453"/>
+        </ampByAM>
+        <GOF n="2" mean="0.940884" stdErr="0.059115" stdDev="0.083602"/>
+        <jERR n="2" mean="0.940884" stdErr="0.059115" stdDev="0.083602"/>
+        <phByMethodCirc>
+            <orgStat n="2" mean="16.01" stdErr="5.181" stdDev="7.328" median="10.83" min="10.83" max="21.19" sum="32.01" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="15.36" stdErr="5.141" stdDev="7.27"/>
+            <jerrWeighted n="2" mean="15.36" stdErr="5.141" stdDev="7.27"/>
+            <specWeighted n="2" mean="16.01" stdErr="5.181" stdDev="7.328"/>
+        </phByMethodCirc>
+        <phByFitCirc>
+            <orgStat n="2" mean="16.01" stdErr="5.181" stdDev="7.328" median="10.83" min="10.83" max="21.19" sum="32.01" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="15.36" stdErr="5.141" stdDev="7.27"/>
+            <jerrWeighted n="2" mean="15.36" stdErr="5.141" stdDev="7.27"/>
+            <specWeighted n="2" mean="16.01" stdErr="5.181" stdDev="7.328"/>
+        </phByFitCirc>
+        <phByFPCirc>
+            <orgStat n="2" mean="17.88" stdErr="3.474" stdDev="4.913" median="14.4" min="14.4" max="21.35" sum="35.76" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="17.44" stdErr="3.447" stdDev="4.874"/>
+            <jerrWeighted n="2" mean="17.44" stdErr="3.447" stdDev="4.874"/>
+            <specWeighted n="2" mean="17.88" stdErr="3.474" stdDev="4.913"/>
+        </phByFPCirc>
+        <phByAMCirc>
+            <orgStat n="2" mean="22.81" stdErr="0.568978" stdDev="0.804656" median="22.24" min="22.24" max="23.38" sum="45.62" kur="NaN" skew="NaN"/>
+            <gofWeighted n="2" mean="22.88" stdErr="0.564503" stdDev="0.798328"/>
+            <jerrWeighted n="2" mean="22.88" stdErr="0.564503" stdDev="0.798328"/>
+            <specWeighted n="2" mean="22.99" stdErr="0.539951" stdDev="0.763606"/>
+        </phByAMCirc>
+    </stats>
+</ns2:statsEntry>

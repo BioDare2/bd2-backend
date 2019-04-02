@@ -1,0 +1,111 @@
+<div>
+
+  <h2>TimeSeries data and formats</h2>
+
+  <h3>Watch our YouTube video about <a href="https://youtu.be/GW4g5FjbwUs">data
+    import</a>.</h3>
+
+  <h3>General remarks about raw data processing</h3>
+  <ul>
+    <li>In BioDare time 0 should coincides with the beginning of experimental conditions / ZT / subjective dusk/dawn.
+      <br/>
+      For that reason when raw data are uploaded time offset parameter can be used to adjust the time values
+      accordingly.
+      So for example, if the data were recorded from 12:00 o'clock and the subjective dawn was at 9:00,
+      the first data point should have time of 3h,
+      assuming that in raw data file first point is at 0, the time offset of 3h must be used during the raw data upload.
+    </li>
+    <li>The timeseries described as <code><strong>Background noise</strong></code>, are treated as the background noise
+      recording and
+      they will be averaged and then subtracted from all the other time series during the raw data upload.
+    </li>
+    <li>If some of the data should be ignored by BioDare they should be described as
+      <code><strong>Ignored</strong></code> when importing.
+    </li>
+  </ul>
+
+  <h3>Supported data formats</h3>
+
+  <h4>Excel table</h4>
+  <p>Raw data are stored in Excel file, with one of the column holding the measurement time and the other columns
+    recording measured values.
+    The time column can represent either the actual time from start or as picture number which will be then converted to
+    the time using
+    the parameter: interval between images.
+  </p>
+  <p>Details and constraints</p>
+  <ul>
+    <li>Only the first data sheet is read from Excel file.
+    </li>
+    <li>The time column should be located before the first data column (however, it does not have to be the first column
+      in the sheet.
+      <!--</li><li>All columns to the right of the first data column are read from the file
+      </li><li>First column with data matches biological sample 1, second the sample 2, and so on, the excel column name is not taken into the account.-->
+    </li>
+    <li>There may be missing values in timeseries, they are represented as blank cells in the sheet.
+    </li>
+    <li>For time in hours, the time is represented as fraction of hour, so 1.25 means 1h 15minutes.
+    </li>
+    <li>For time as image nr, the image numbers must be integers and starts from 1 (first picture taken), the images
+      must be taken in equal intervals which are indicated by the time between images property.
+    </li>
+  </ul>
+
+  <h4>TopCount</h4>
+  <p>Raw data as produced by the TopCount reader for 96wells plates. TopCount can output data in many formats.
+    We currently support:
+  </p>
+  <ul>
+    <li><b>plate map</b> - interleaved blocks of measured
+      values with blocks of measurement times. The blocks starts with columns numbers (1-12), the rows are indexed by
+      letters (A-H).
+    </li>
+    <li><b>column layout</b> - 3 column file, first with well number, then measured value, then time stamp</li>
+  </ul>
+  <p>Detail and constraints</p>
+  <ul>
+    <li>The time can be represented either in AM/PM format (04:41:47 PM) or in 24h (17:13:58) and the consecutive dates are guessed by the
+      transition from PM to AM
+    </li>
+    <li>Single file can be constructed by concatenating (stacking) individual TopCount files.</li>
+  </ul>
+
+  <h4>TopCount Zip</h4>
+  <p>Raw data consists of multiple TopCount files packed together in a zip file. Each sub file, represent data from on
+    96plate in same format as above.
+  </p>
+
+  <!--
+  <p><b>Excel Table with Err.</b></p>
+    <p>Raw data are stored in Excel file similarly like in Excel Table format, but are accompanied by their error values. The error values can be given as standard error, standard deviation or both.
+    </p><p>Detail and constraints same as above plus</p>
+    <ul>
+      <li>Error block must be after the data block.
+      </li><li>Error block must contain as many columns as the data block.
+    </li><li>In case of presence of both standard error and standard deviation measures, the standard error block is the first one, then immediately after it the standard deviation block starts.
+    </li></ul>
+  >
+
+  <p><b>TopCount</b></p>
+    <p>Raw data as produced by the TopCount reader for 96wells plates. They are formed by interleaved blocks of measured values with blocks of measurement times. The blocks starts with columns numbers (1-12), the rows are indexed by letters (A-H).
+    </p><p>Detail and constraints</p>
+    <ul>
+      <li>The time is represented in AM/PM only format (04:41:47 PM) so the consecutive dates are guessed by the transition from PM to AM
+      </li><li>If TopCount was set that not all the wells were recorded, there are empty values/times for those wells and they do not have to be described in Pedro.
+    </li><li>In Pedro, the biological samples are identified by their plate positions in A1, A2 format. In Pedro wizard, the samples can be described individually one by one for example: A1; C1;E1, as a range: A1:H2 (all wells in columns 1 and 2); C1:C12 (all wells in the row C) or combination of above: A1;B1:B4 (first well, and for wells in row B from B1 to B4.
+    </li>
+    </ul>
+
+
+  <p><b>TopCount Zip</b></p>
+    <p>Raw data consists of multiple TopCount files packed together in a zip file. Each sub file, represent data from on 96plate in same format as above. The biological samples are identified by their plate name and well position (A1, A2…).
+    </p><p>Detail and constraints same as above plus</p>
+    <ul>
+      <li>The plate name in Pedro description must match the file name of sub-file in the zip archive. </li>
+      <li>The background samples are averaged and subtracted individually for each plate, ie, each plate must contain its own background noise reference samples.
+      </li>
+    </ul>
+
+>-->
+
+</div>

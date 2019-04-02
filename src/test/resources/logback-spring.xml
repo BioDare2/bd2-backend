@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <property name="OPER_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    
+    <!--
+    <appender name="OPERATIONS_DATE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>OPERATIONS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>OPERATIONS.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+    </appender>  
+    
+    <appender name="ANALYSIS_DATE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>ANALYSIS.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>ANALYSIS.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+    </appender>  
+   
+    <appender name="SECURITY_DATE"
+            class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>${OPER_LOG_PATTERN}</pattern>
+            </encoder>
+            <file>SECURITY.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>SECURITY.%d{yyyy-MM-dd}.log</fileNamePattern>
+            </rollingPolicy>
+    </appender>  
+        
+    <logger name="operations" additivity="true" level="DEBUG">
+        <appender-ref ref="OPERATIONS_DATE"/>
+    </logger>    
+    
+    <logger name="analysis" additivity="true" level="DEBUG">
+        <appender-ref ref="ANALYSIS_DATE"/>
+    </logger>     
+    
+    <logger name="security" additivity="true" level="DEBUG">
+        <appender-ref ref="SECURITY_DATE"/>
+    </logger>     
+    -->
+    
+    <logger name="operations" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>    
+    
+    <logger name="analysis" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>   
+    
+    <logger name="security" additivity="false" level="DEBUG">
+        <appender-ref ref="CONSOLE"/>
+    </logger>   
+    
+    <!--<root level="INFO">
+            <appender-ref ref="CONSOLE" />
+    </root>-->        
+        
+</configuration>
+    
