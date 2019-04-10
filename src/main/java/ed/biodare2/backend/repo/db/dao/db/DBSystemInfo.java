@@ -51,7 +51,7 @@ public class DBSystemInfo implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE,generator="SystemInfoGen")
-    @TableGenerator(name="SystemInfoGen", allocationSize = 10, initialValue = 1000)  
+    @TableGenerator(name="SystemInfoGen", allocationSize = 10, initialValue = 1000,table = "hibernate_sequences")  
     private Long id;
     @Version
     private long version;      

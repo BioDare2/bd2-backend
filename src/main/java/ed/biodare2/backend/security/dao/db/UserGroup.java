@@ -43,7 +43,7 @@ public class UserGroup implements BioDare2Group, Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE,generator="GroupGen")
-    @TableGenerator(name="GroupGen",allocationSize = 10, initialValue = 1000)
+    @TableGenerator(name="GroupGen",allocationSize = 10, initialValue = 1000,table = "hibernate_sequences")
     private Long id;
     @Version
     private long version;      

@@ -59,7 +59,7 @@ public class EntityACL implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE,generator="ACLGen")
-    @TableGenerator(name="ACLGen",allocationSize = 10, initialValue = 1000)
+    @TableGenerator(name="ACLGen",allocationSize = 10, initialValue = 1000,table = "hibernate_sequences")
     private Long id;
     @Version
     private long version;    

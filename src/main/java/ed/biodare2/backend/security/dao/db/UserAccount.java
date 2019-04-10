@@ -72,7 +72,7 @@ public class UserAccount implements Serializable, BioDare2User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE,generator="UserGen")
-    @TableGenerator(name="UserGen",allocationSize = 10, initialValue = 1000)
+    @TableGenerator(name="UserGen",allocationSize = 10, initialValue = 1000,table = "hibernate_sequences")
     private Long id;
     @Version
     private long version;      
