@@ -100,6 +100,51 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
     
 
     @Test
+    public void speciesStatsReturnsMapsOfStats() throws Exception {
+        
+        AssayPack pack1 = insertExperiment();
+        ExperimentalAssay exp1 = pack1.getAssay();        
+        
+        int series = insertData(pack1);
+
+        AssayPack pack2 = insertExperiment();
+        ExperimentalAssay exp2 = pack2.getAssay();        
+        
+        series += insertData(pack2);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/species")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(fixtures.demoUser));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("species JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        
+        Map<String, Map<String, Integer>> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Map<String, Integer>>>() { });
+        assertNotNull(wrapper);
+        assertEquals(2, wrapper.size());
+        assertTrue(wrapper.containsKey("speciesSets"));
+        
+        Map<String, Integer> sets = wrapper.get("speciesSets");
+        assertNotNull(sets);
+        assertTrue(2 <= (int)sets.get("Arabidopsis thaliana"));
+        
+        wrapper.forEach( (k, stats) -> {
+            stats.forEach( (y, stat) -> System.out.println(k+","+y+","+stat));
+        });
+
+        
+        
+    }
+    
+    @Test
     public void getDataEntryExtractsDetails() throws Exception {
         
         AssayPack pack = insertExperiment();

@@ -89,6 +89,27 @@ public class UsageStatsController extends BioDare2Rest {
         return stats;
     }   
 
+    @RequestMapping(value="species",method = RequestMethod.GET)
+    public Map<String, Map<String, Integer>> speciesStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
+        log.debug("speciesStats: {}", currentUser);
+        
+        if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
+            throw new InsufficientRightsException("Only demo and test users can call it");
+        
+        Stream<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds());
+        
+        Map<String, List<List<String>>> speciesGroups = entries.collect(
+                Collectors.groupingByConcurrent( lst -> lst.get(0) ));
+        
+        Map<String, Integer> setsStats = countSets(speciesGroups); 
+        Map<String, Integer> seriesStats = countSeries(speciesGroups); 
+        
+        Map<String, Map<String, Integer>> stats = new HashMap<>();
+        stats.put("speciesSets",setsStats);
+        stats.put("speciesSeries",seriesStats);
+        return stats;
+    }   
+    
     Stream<List<String>> getDataEntries(Stream<Long> ids) {
         
         return ids.parallel().map(id -> getDataEntry(id))
@@ -100,7 +121,7 @@ public class UsageStatsController extends BioDare2Rest {
         Optional<AssayPack> opt = expPacks.findOne(id);
         if (!opt.isPresent()) return Collections.emptyList();
         
-        AssayPack expPack = expPacks.findOne(id).get();
+        AssayPack expPack = opt.get();
         String year = ""+expPack.getSystemInfo().provenance.creation.dateTime.getYear();
         String owner = expPack.getSystemInfo().security.owner;
         int tsCount = 0;
@@ -112,13 +133,35 @@ public class UsageStatsController extends BioDare2Rest {
         return Arrays.asList(owner,year,""+tsCount);
     }
     
+    Stream<List<String>> getSpeciesEntries(Stream<Long> ids) {
+        
+        return ids.parallel().map(id -> getSpeciesEntry(id))
+                .filter( lst -> !lst.isEmpty());
+    }  
+    
+    List<String> getSpeciesEntry(Long id) {
+        
+        Optional<AssayPack> opt = expPacks.findOne(id);
+        if (!opt.isPresent()) return Collections.emptyList();
+        
+        AssayPack expPack = opt.get();
+        String species = expPack.getAssay().species;
+        int tsCount = 0;
+        if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
+            
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR).orElse(Collections.emptyList()).size();
+        }
+        
+        return Arrays.asList(species,"1",""+tsCount);
+    }    
+    
     Map<Pair<String,String>, List<List<String>>> group(Stream<List<String>> entries) {
         
         Map<Pair<String,String>, List<List<String>>> ownerGroups = entries.collect(Collectors.groupingByConcurrent( lst -> new Pair<>(lst.get(0),lst.get(1) )));
         return ownerGroups;
     }
 
-    Map<Pair<String, String>, Integer> countSets(Map<Pair<String, String>, List<List<String>>> ownerGroups) {
+    <K> Map<K, Integer> countSets(Map<K, List<List<String>>> ownerGroups) {
 
         return ownerGroups.entrySet().parallelStream()
                 .map(e -> new Pair<>(e.getKey(), e.getValue().size()))
@@ -126,7 +169,7 @@ public class UsageStatsController extends BioDare2Rest {
                 .collect(Collectors.toConcurrentMap(p -> p.getLeft(), p-> p.getRight()));
     }
 
-    Map<Pair<String, String>, Integer> countSeries(Map<Pair<String, String>, List<List<String>>> ownerGroups) {
+    <K> Map<K, Integer> countSeries(Map<K, List<List<String>>> ownerGroups) {
         return ownerGroups.entrySet().parallelStream()
                 .map(e -> {
                     int series = e.getValue().stream()

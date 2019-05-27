@@ -72,6 +72,11 @@ public class DomRepoTestBuilder {
         assay.bioDescription = makeBiologicalDesription();
         assay.bioSummary = new BiologySummary(assay.bioDescription);
         assay.provenance = makeSimpleProvenance();
+        assay.species = assay.bioDescription.bios.stream()
+                                .map(d -> d.species).findAny().orElse("Arabidopsis thaliana");
+        assay.dataCategory = assay.bioDescription.bios.stream()
+                                .map(d -> d.dataCategory).findAny().orElse(DataCategory.GEN_IMAGING);
+        
         return assay;
     }     
     
@@ -278,6 +283,7 @@ public class DomRepoTestBuilder {
         bio.id = ids.incrementAndGet();
         bio.dataCategory = DataCategory.GEN_IMAGING;
         bio.genotype = genotype;
+        bio.species = "Arabidopsis thaliana";
         return bio.build();
     }
     
