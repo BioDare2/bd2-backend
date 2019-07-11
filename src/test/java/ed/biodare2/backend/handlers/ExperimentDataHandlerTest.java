@@ -6,6 +6,7 @@
 package ed.biodare2.backend.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ed.biodare.jobcentre2.dom.jsonmodule.TimeSeriesModule;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
@@ -25,7 +26,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import ed.biodare2.backend.util.json.TimeSeriesModule;
+//import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;

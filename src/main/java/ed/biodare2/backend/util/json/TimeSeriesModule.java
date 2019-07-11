@@ -12,7 +12,7 @@ import ed.robust.dom.data.TimeSeries;
  *
  * @author Zielu
  */
-public class TimeSeriesModule extends SimpleModule {
+class TimeSeriesModule extends SimpleModule {
     
     private static final long serialVersionUID = 1L;
 
