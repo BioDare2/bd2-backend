@@ -25,7 +25,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@Import(SimpleRepoTestConfig.class)
+//@Import(SimpleRepoTestConfig.class)
 public class JobCentre2ClientTest {
     
     //JobCentreEndpointClient instance;
