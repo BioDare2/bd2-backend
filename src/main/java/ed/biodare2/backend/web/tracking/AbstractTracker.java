@@ -47,6 +47,10 @@ public class AbstractTracker {
         operations.info("{}\t{}\t{}\t{}\t{}\t{}\t{}",target,action,id,user.getLogin(),user.getSupervisor().getLogin(),subId,cat);
     }      
     
+    void track(TargetType target, ActionType action, long id, BioDare2User user,String cat,String subId) {
+        operations.info("{}\t{}\t{}\t{}\t{}\t{}\t{}",target,action,id,user.getLogin(),user.getSupervisor().getLogin(),subId,cat);
+    }    
+    
     void track(TargetType target, ActionType action, long id, BioDare2User user,String cat,long subId,long subId2) {
         operations.info("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}",target,action,id,user.getLogin(),user.getSupervisor().getLogin(),subId,cat,subId2);
     }      

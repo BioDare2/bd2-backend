@@ -24,6 +24,7 @@ public class ExperimentCharacteristic implements Serializable {
     public long biodare1Id;
     public boolean isOpenAccess;
     public OpenAccessLicence licence;
+    public boolean hasRhythmicityJobs;
 
     @Override
     public int hashCode() {
@@ -67,6 +68,10 @@ public class ExperimentCharacteristic implements Serializable {
         if (this.licence != other.licence) {
             return false;
         }
+        if (this.hasRhythmicityJobs != other.hasRhythmicityJobs) {
+            return false;
+        }
+        
         return true;
     }
     

@@ -34,6 +34,7 @@ import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
 import ed.biodare2.backend.repo.isa_dom.param.Parameter;
 import ed.biodare2.backend.repo.isa_dom.param.FullParameters;
 import ed.biodare2.backend.repo.isa_dom.param.FullParametersTest;
+import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.robust.dom.data.DetrendingType;
@@ -250,6 +251,18 @@ public class DomRepoTestBuilder {
         req.method = PPAMethod.MESA;
         return req;
     }
+    
+    public static RhythmicityRequest makeRhythmicityRequest() {
+        RhythmicityRequest req = new RhythmicityRequest();
+        req.windowStart = 1;
+        req.windowEnd = 100;
+        req.periodMin = 24;
+        req.periodMax = 24;
+        req.detrending = DetrendingType.POLY_DTR;
+        req.method = "BD2EJTK";
+        req.preset = "BD2_CLASSIC";
+        return req;
+    }    
 
     public static SimpleProvenance makeSimpleProvenance() {
         

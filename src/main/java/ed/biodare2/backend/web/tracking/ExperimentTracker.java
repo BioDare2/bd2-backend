@@ -145,6 +145,11 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_PPA,DOWNLOAD,exp.getId(),user);
     }
 
+    public void rhythmicityNew(AssayPack exp, String analysisId, String method, BioDare2User user) {
+        track(EXP_RHYTHMICITY,NEW,exp.getId(),user,method,analysisId);
+        analysis.info("{}\t{}\t{}\t{}\t{}\t{}\t",EXP_RHYTHMICITY,NEW,exp.getId(),method,analysisId,user.getLogin(),user.getSupervisor().getLogin());
+    }
+
 
 
 

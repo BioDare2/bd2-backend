@@ -199,6 +199,16 @@ public class ExperimentHandler extends BaseExperimentHandler {
         boundle = experiments.save(boundle);
     }
     
+    @Transactional
+    public void updateHasRhythmicityJobs(AssayPack boundle, boolean hasRhythmicityJobs) {
+        if (boundle.getSystemInfo().experimentCharacteristic.hasRhythmicityJobs == hasRhythmicityJobs) return;
+        
+        boundle = experiments.enableWriting(boundle);
+        boundle.getSystemInfo().experimentCharacteristic.hasRhythmicityJobs = hasRhythmicityJobs;
+        copySystemFeatures(boundle.getSystemInfo(), boundle.getAssay());
+        boundle = experiments.save(boundle);
+    }    
+    
     /*@Transactional
     public ExperimentalAssay save(ExperimentalAssay exp,BioDare2User user)  {
         
@@ -489,6 +499,8 @@ public class ExperimentHandler extends BaseExperimentHandler {
         info.licence = licence;
         return info;
     }
+
+
 
 
 

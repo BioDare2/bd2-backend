@@ -8,7 +8,9 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.client.JobCentreClientException;
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare.jobcentre2.client.JobCentreEndpointDirections;
+import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import java.util.Map;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +55,9 @@ public class RhythmicityService {
             log.error("Cannot connect to JC2 {}", e.getMessage(),e);
             throw new IllegalStateException("Cannot connecto to JC2 "+e.getMessage(),e);
         }
+    }
+
+    public UUID submitJob(TSDataSetJobRequest jobRequest) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

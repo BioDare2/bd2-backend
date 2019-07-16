@@ -17,5 +17,6 @@ enum TargetType {
     EXP_PPA,
     FILE,
     ACCOUNT,
-    USER
+    USER,
+    EXP_RHYTHMICITY
 }
