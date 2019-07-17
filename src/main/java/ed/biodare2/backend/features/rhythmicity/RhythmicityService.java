@@ -8,6 +8,8 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.client.JobCentreClientException;
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare.jobcentre2.client.JobCentreEndpointDirections;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
+import static ed.biodare.jobcentre2.dom.RhythmicityConstants.*;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import java.util.Map;
 import java.util.UUID;
@@ -39,11 +41,11 @@ public class RhythmicityService {
         this.client = client;
         
         if (parameters.testClient) {
-            testClient(this.client);
+            verifyClientCanConnect(this.client);
         }
     }
 
-    void testClient(JobCentreEndpointClient client) {
+    void verifyClientCanConnect(JobCentreEndpointClient client) {
 
         try {
             Map<String, String> resp = client.getServiceStatus();
@@ -57,7 +59,26 @@ public class RhythmicityService {
         }
     }
 
-    public UUID submitJob(TSDataSetJobRequest jobRequest) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public UUID submitJob(TSDataSetJobRequest jobRequest) throws RhythmicityHandlingException {
+        
+        
+        try {
+            addCallBack(jobRequest);
+            return client.submitJob(jobRequest);
+        } catch (JobCentreClientException e) {
+            log.error("Could not submit the job, {}",e.getMessage(),e);
+            throw new RhythmicityHandlingException("Job was not accepted by the server: "+e.getMessage(),e);
+        }
+    }
+
+    void addCallBack(TSDataSetJobRequest jobRequest) {
+        
+        String callBack = parameters.backendURL+"/api/services/rhythmicity/results";
+        
+        jobRequest.callBackParameters.put(SENDER_TYPE_KEY, REST_SENDER);
+        jobRequest.callBackParameters.put(ENDPOINT_KEY, callBack);
+        jobRequest.callBackParameters.put(USER_KEY, parameters.ppaUsername);
+        jobRequest.callBackParameters.put(PASSWORD_KEY, parameters.ppaPassword);
+        
     }
 }
