@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.handlers;
+package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
@@ -18,7 +18,9 @@ import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityUtils;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
-import ed.biodare2.backend.repo.dao.RhythmicityArtifactsRep;
+import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
+import ed.biodare2.backend.handlers.ArgumentException;
+import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import org.springframework.transaction.annotation.Transactional;
 

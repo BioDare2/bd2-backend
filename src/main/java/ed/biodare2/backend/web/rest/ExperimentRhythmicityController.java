@@ -16,7 +16,7 @@ import ed.biodare2.backend.repo.ui_dom.ppa.PPAFitPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPAResultsGroup;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
 import ed.biodare2.backend.features.ppa.PPAHandlingException;
-import ed.biodare2.backend.handlers.RhythmicityHandler;
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;

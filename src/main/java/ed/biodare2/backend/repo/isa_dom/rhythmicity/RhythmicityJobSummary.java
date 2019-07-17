@@ -10,6 +10,7 @@ import ed.biodare.jobcentre2.dom.JobStatus;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -36,6 +37,37 @@ public class RhythmicityJobSummary implements Serializable {
     public JobStatus jobStatus;
     
     public Map<String,String> parameters = new HashMap<>();
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + Objects.hashCode(this.jobId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RhythmicityJobSummary other = (RhythmicityJobSummary) obj;
+        if (!Objects.equals(this.jobId, other.jobId)) {
+            return false;
+        }
+        if (!Objects.equals(this.jobStatus, other.jobStatus)) {
+            return false;
+        }
+        if (!Objects.equals(this.parameters, other.parameters)) {
+            return false;
+        }
+        return true;
+    }
     
     
 }

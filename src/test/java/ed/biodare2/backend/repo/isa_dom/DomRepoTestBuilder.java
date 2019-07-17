@@ -5,6 +5,8 @@
  */
 package ed.biodare2.backend.repo.isa_dom;
 
+import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.State;
 import ed.biodare2.backend.repo.isa_dom.GeneralDesc;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
 import ed.biodare2.backend.repo.isa_dom.measure.MeasurementDesc;
@@ -34,15 +36,20 @@ import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
 import ed.biodare2.backend.repo.isa_dom.param.Parameter;
 import ed.biodare2.backend.repo.isa_dom.param.FullParameters;
 import ed.biodare2.backend.repo.isa_dom.param.FullParametersTest;
+import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
+import static ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary.*;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.robust.dom.data.DetrendingType;
+
 import ed.robust.ppa.PPAMethod;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -262,6 +269,26 @@ public class DomRepoTestBuilder {
         req.method = "BD2EJTK";
         req.preset = "BD2_CLASSIC";
         return req;
+    }  
+    
+    public static RhythmicityJobSummary makeRhythmicityJobSummary(UUID jobId, long expId) {
+        
+        RhythmicityJobSummary job = new RhythmicityJobSummary();
+        job.jobId = jobId;
+        job.jobStatus = new JobStatus(jobId, State.SUBMITTED);
+        job.parameters = new HashMap<>();
+        
+	job.parameters.put(DW_START, "0");
+	job.parameters.put(DW_END,"0");
+	job.parameters.put(DATA_SET_TYPE, DetrendingType.POLY_DTR.name());
+	job.parameters.put(DATA_SET_TYPE_NAME,DetrendingType.POLY_DTR.longName);
+	job.parameters.put(DATA_SET_ID,expId+"_"+DetrendingType.POLY_DTR.name());
+
+
+	String summary = DetrendingType.POLY_DTR.longName+" min-max";
+	job.parameters.put(PARAMS_SUMMARY,summary);
+        
+        return job;
     }    
 
     public static SimpleProvenance makeSimpleProvenance() {
