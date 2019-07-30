@@ -21,6 +21,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
@@ -54,22 +55,26 @@ public class RhythmicityArtifactsRep {
     }
     
     
+    // cache put did not work if method was void
     @CachePut(key="{#exp.getId(),#job.jobId}")
+    //@CacheEvict(key="{#exp.getId(),#job.jobId}")
     @Transactional    
-    public void saveJobDetails(RhythmicityJobSummary job, AssayPack exp) {
+    public RhythmicityJobSummary saveJobDetails(RhythmicityJobSummary job, AssayPack exp) {
         
-        saveJobDetails(job, exp.getId());
+        //System.out.println("\n\n---- Saving "+job.jobId);
+        return saveJobDetails(job, exp.getId());
     } 
     
     @Cacheable(key="{#expId,#jobId}",unless="#result == null")
     public Optional<RhythmicityJobSummary> findOne(UUID jobId, long expId) {
         
+        //System.out.println("\n\n---- Reading "+jobId);
         return readJobDetails(jobId,expId);
     }    
     
-    void saveJobDetails(RhythmicityJobSummary job, long expId)  {
+    RhythmicityJobSummary saveJobDetails(RhythmicityJobSummary job, long expId)  {
         
-        guard.guard(expId,()-> {
+        return guard.guard(expId,(id)-> {
             try {
 
                 Path jobFile = jobDetailsFile(expId, job.jobId);
@@ -77,6 +82,7 @@ public class RhythmicityArtifactsRep {
 
                 jobDetailsWriter.writeValue(jobFile.toFile(),job);
 
+                return job;
             } catch (IOException e) {
                 throw new ServerSideException("Cannot save job: "+e.getMessage(),e);
             }

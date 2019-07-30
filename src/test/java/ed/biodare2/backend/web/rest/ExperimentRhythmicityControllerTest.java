@@ -9,6 +9,7 @@ import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
+import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -53,6 +55,9 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
     RhythmicityService rhythmicityService;
     
 
+    @Autowired
+    RhythmicityArtifactsRep rhythmicityRep;
+    
     /**
      * Test of newRhythmicity method, of class ExperimentRhythmicityController.
      */
@@ -97,6 +102,8 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         pack = expBoundles.findOne(pack.getId()).get();
         exp = pack.getAssay();
         assertTrue(exp.characteristic.hasRhythmicityJobs);
+        
+        assertTrue(rhythmicityRep.findOne(jobId, exp.getId()).isPresent());
         
     }
     
