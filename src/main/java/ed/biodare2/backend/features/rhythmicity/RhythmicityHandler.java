@@ -22,6 +22,7 @@ import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -31,15 +32,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RhythmicityHandler {
 
-    ExperimentHandler experimentHandler;
-    RhythmicityArtifactsRep rhythmicityRep;
+    final ExperimentHandler experimentHandler;
+    final RhythmicityArtifactsRep rhythmicityRep;
     
-    TSDataHandler dataHandler;
-    RhythmicityUtils utils;
-    RhythmicityService rhythmicityService;
+    final TSDataHandler dataHandler;
+    final RhythmicityUtils utils;
+    final RhythmicityService rhythmicityService;
+
+    @Autowired
+    public RhythmicityHandler(ExperimentHandler experimentHandler, 
+            TSDataHandler dataHandler, 
+            RhythmicityArtifactsRep rhythmicityRep, 
+            RhythmicityService rhythmicityService) {
+        
+        this.experimentHandler = experimentHandler;
+        this.rhythmicityRep = rhythmicityRep;
+        this.dataHandler = dataHandler;
+        this.utils = new RhythmicityUtils();
+        this.rhythmicityService = rhythmicityService;
+    }
+    
+    
     
     @Transactional
-    public UUID newRhythmicity(AssayPack exp, RhythmicityRequest request) throws ArgumentException {
+    public UUID newRhythmicity(AssayPack exp, RhythmicityRequest request) throws ArgumentException, RhythmicityHandlingException {
         validateRequest(request);
         
         Optional<List<DataTrace>> dataSet = dataHandler.getDataSet(exp,request.detrending);
@@ -72,7 +88,7 @@ public class RhythmicityHandler {
         
     }
 
-    UUID submitJob(TSDataSetJobRequest jobRequest) {
+    UUID submitJob(TSDataSetJobRequest jobRequest) throws RhythmicityHandlingException {
         
         return rhythmicityService.submitJob(jobRequest);
     }

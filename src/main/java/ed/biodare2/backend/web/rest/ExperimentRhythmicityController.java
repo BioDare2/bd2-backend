@@ -53,10 +53,10 @@ public class ExperimentRhythmicityController extends ExperimentController {
     final RhythmicityHandler rhythmicityHandler;
             
     @Autowired
-    public ExperimentRhythmicityController(ExperimentHandler handler,
+    public ExperimentRhythmicityController(ExperimentHandler experiments,
             RhythmicityHandler rhythmicityHandler,
             PermissionsResolver permissionsResolver, ExperimentTracker tracker) {        
-        super(handler,permissionsResolver,tracker);
+        super(experiments,permissionsResolver,tracker);
         //this.ppaHandler = ppaHandler;
         this.rhythmicityHandler = rhythmicityHandler;
     }
@@ -64,7 +64,7 @@ public class ExperimentRhythmicityController extends ExperimentController {
     
     
     @RequestMapping(method = RequestMethod.PUT)
-    public Map<String,Object> newPPA(@PathVariable long expId,
+    public Map<String,String> newRhythmicity(@PathVariable long expId,
             @Valid @RequestBody RhythmicityRequest rhythmicityRequest,
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("new RHYTHM:{} {} exp:{}; {}",rhythmicityRequest.method, rhythmicityRequest.preset,expId,user);
@@ -80,8 +80,8 @@ public class ExperimentRhythmicityController extends ExperimentController {
             analysisId = rhythmicityHandler.newRhythmicity(exp,rhythmicityRequest);            
             tracker.rhythmicityNew(exp,analysisId.toString(),rhythmicityRequest.method,user);
             
-            Map<String,Object> resp = new HashMap<>();
-            resp.put("analysis", analysisId);
+            Map<String,String> resp = new HashMap<>();
+            resp.put("analysis", analysisId.toString());
             return resp;
             
         } catch (ArgumentException e) {

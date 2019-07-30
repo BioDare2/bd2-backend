@@ -40,6 +40,7 @@ class BaseExperimentHandler {
         exp.characteristic.hasDataFiles = systemInfo.experimentCharacteristic.hasDataFiles;
         exp.characteristic.hasAttachments = systemInfo.experimentCharacteristic.hasAttachments;
         exp.characteristic.attachmentsSize = systemInfo.experimentCharacteristic.attachmentsSize;
+        exp.characteristic.hasRhythmicityJobs = systemInfo.experimentCharacteristic.hasRhythmicityJobs;
         
         exp.provenance = convertProvenance(systemInfo.provenance);
         exp.versionId = systemInfo.getVersionId();
