@@ -73,7 +73,7 @@ public class RhythmicityService {
 
     void addCallBack(TSDataSetJobRequest jobRequest) {
         
-        String callBack = parameters.backendURL+"/api/services/rhythmicity/results";
+        String callBack = parameters.backendURL+"/api/services/rhythmicity/results/{externalId}";
         
         jobRequest.callBackParameters.put(SENDER_TYPE_KEY, REST_SENDER);
         jobRequest.callBackParameters.put(ENDPOINT_KEY, callBack);

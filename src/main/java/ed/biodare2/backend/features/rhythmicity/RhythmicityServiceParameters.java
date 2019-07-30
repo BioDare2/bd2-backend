@@ -16,9 +16,9 @@ public class RhythmicityServiceParameters {
  
     JobCentreEndpointDirections directions;
     
-    URL backendURL;
-    String ppaUsername;
-    String ppaPassword; 
-    boolean testClient = true;
+    public URL backendURL;
+    public String ppaUsername;
+    public String ppaPassword; 
+    public boolean testClient = true;
     
 }

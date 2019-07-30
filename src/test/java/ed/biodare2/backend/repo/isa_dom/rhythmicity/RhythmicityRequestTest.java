@@ -56,7 +56,7 @@ public class RhythmicityRequestTest {
     @Test
     public void readsUIJSON() throws JsonProcessingException, IOException {
         
-        String json = "{\"windowStart\":5,\"windowEnd\":100,\"periodMin\":18,\"periodMax\":35,\"method\":\"MFourFit\",\"detrending\":\"POLY_DTR\",\"methodN\":\"MFourFit\",\"detrendingN\":\"POLY_DTR\"}";
+        String json = "{\"windowStart\":5,\"windowEnd\":100,\"periodMin\":18,\"periodMax\":35,\"method\":\"BD2EJTK\",\"detrending\":\"POLY_DTR\",\"preset\":\"BD2_CLASSIC\",\"detrendingN\":\"POLY_DTR\"}";
         
         RhythmicityRequest cpy = mapper.readValue(json, RhythmicityRequest.class);
         
@@ -65,8 +65,8 @@ public class RhythmicityRequestTest {
         assertEquals(18,cpy.periodMin,1E-6);
         assertEquals(35,cpy.periodMax,1E-6);
         assertEquals(DetrendingType.POLY_DTR,cpy.detrending);
-        assertEquals("",cpy.method);        
-        assertEquals("",cpy.preset);        
+        assertEquals("BD2EJTK",cpy.method);        
+        assertEquals("BD2_CLASSIC",cpy.preset);        
     }
 
     @Test

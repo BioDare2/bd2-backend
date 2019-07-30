@@ -66,7 +66,7 @@ public class RhythmicityServiceTest {
         assertFalse(callBack.isEmpty());
         
         Map<String,String> exp = Map.of("SENDER_TYPE","REST_SENDER",
-                "ENDPOINT","http://localhost:9000/api/services/rhythmicity/results",
+                "ENDPOINT","http://localhost:9000/api/services/rhythmicity/results/{externalId}",
                 "USER","user1", 
                 "PASSWORD","password1");
         

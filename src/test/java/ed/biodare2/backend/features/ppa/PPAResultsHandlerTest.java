@@ -11,6 +11,7 @@ import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -233,14 +234,8 @@ public class PPAResultsHandlerTest {
         ppaRep.saveJobFullDescription(jobDesc, exp);
         ppaRep.saveJobSummary(PPAUtils.simplifyJob(jobDesc), exp);
         
-        List<DataTrace> dataSet = new ArrayList<>();
-        for (int i = 2;i<=7;i++) {
-            DataTrace trace = new DataTrace();
-            trace.dataId = i;
-            trace.traceRef = "A"+i;
-            trace.details = new DataColumnProperties("toc"+(i % 2));
-            dataSet.add(trace);
-        }
+        List<DataTrace> dataSet = makeDataTraces(2, 7); 
+        
         when(dataHandler.getDataSet(exp, DetrendingType.NO_DTR)).thenReturn(Optional.of(dataSet));
         
         assertTrue(ppaRep.getJobResultsGroups(exp, jobId).groups.isEmpty());

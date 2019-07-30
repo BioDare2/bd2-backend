@@ -103,7 +103,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         exp = pack.getAssay();
         assertTrue(exp.characteristic.hasRhythmicityJobs);
         
-        assertTrue(rhythmicityRep.findOne(jobId, exp.getId()).isPresent());
+        assertTrue(rhythmicityRep.findJob(jobId, exp.getId()).isPresent());
         
     }
     

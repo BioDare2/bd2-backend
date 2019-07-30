@@ -5,9 +5,13 @@
  */
 package ed.biodare2.backend.features.rhythmicity.dao;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -38,6 +42,7 @@ public class RhythmicityArtifactsRep {
     final static String RHYTHMICITY_DIR = "RHYTHMICITY";
     final static String JOBS_DIR = "JOBS";
     final static String JOB_DETAILS_FILE = "RHYTHMICITY_JOB_DETAILS.json";
+    final static String JOB_RESULTS_FILE = "RHYTHMICITY_JOB_RESULTS.json";
     
     final ResourceGuard<Long> guard = new ResourceGuard<>(60);
     final ExperimentsStorage expStorage;
@@ -45,18 +50,24 @@ public class RhythmicityArtifactsRep {
     final ObjectReader jobDetailsReader;
     final ObjectWriter jobDetailsWriter;     
 
+    final ObjectReader jobResultsReader;
+    final ObjectWriter jobResultsWriter; 
+    
     @Autowired
     public RhythmicityArtifactsRep(ExperimentsStorage expStorage,
             @Qualifier("DomMapper") ObjectMapper mapper) {
         this.expStorage = expStorage;
         
         this.jobDetailsReader = mapper.readerFor(RhythmicityJobSummary.class);
-        this.jobDetailsWriter = mapper.writerFor(RhythmicityJobSummary.class);         
+        this.jobDetailsWriter = mapper.writerFor(RhythmicityJobSummary.class); 
+
+        this.jobResultsWriter = mapper.writerFor(new TypeReference<JobResults<TSResult<BD2eJTKRes>>>(){});
+        this.jobResultsReader = mapper.readerFor(new TypeReference<JobResults<TSResult<BD2eJTKRes>>>(){});
     }
     
     
     // cache put did not work if method was void
-    @CachePut(key="{#exp.getId(),#job.jobId}")
+    @CachePut(key="{#exp.getId(),#job.jobId, 'job'}")
     //@CacheEvict(key="{#exp.getId(),#job.jobId}")
     @Transactional    
     public RhythmicityJobSummary saveJobDetails(RhythmicityJobSummary job, AssayPack exp) {
@@ -65,8 +76,8 @@ public class RhythmicityArtifactsRep {
         return saveJobDetails(job, exp.getId());
     } 
     
-    @Cacheable(key="{#expId,#jobId}",unless="#result == null")
-    public Optional<RhythmicityJobSummary> findOne(UUID jobId, long expId) {
+    @Cacheable(key="{#expId,#jobId, 'job'}",unless="#result == null")
+    public Optional<RhythmicityJobSummary> findJob(UUID jobId, long expId) {
         
         //System.out.println("\n\n---- Reading "+jobId);
         return readJobDetails(jobId,expId);
@@ -87,6 +98,20 @@ public class RhythmicityArtifactsRep {
                 throw new ServerSideException("Cannot save job: "+e.getMessage(),e);
             }
         });        
+    }   
+    
+    @CachePut(key="{#exp.getId(),#job.jobId, 'results'}")
+    @Transactional    
+    public JobResults<TSResult<BD2eJTKRes>> saveJobResults(JobResults<TSResult<BD2eJTKRes>> results, 
+            RhythmicityJobSummary job, AssayPack exp) {
+        
+        return saveJobResults(results, job.jobId, exp.getId());
+    }   
+    
+    @Cacheable(key="{#expId,#jobId, 'results'}",unless="#result == null")
+    public Optional<JobResults<TSResult<BD2eJTKRes>>> findJobResults(UUID jobId, long expId) {
+        
+        return readJobResults(jobId,expId);
     }    
     
     protected Path jobDetailsFile(long expId, UUID jobId) {
@@ -130,5 +155,46 @@ public class RhythmicityArtifactsRep {
             }
        });
     }
+
+    JobResults<TSResult<BD2eJTKRes>> saveJobResults(JobResults<TSResult<BD2eJTKRes>> results, UUID jobId, long expId) {
+        
+        return guard.guard(expId,(id)-> {
+            try {
+
+                Path resultsFile = jobResultsFile(expId, jobId);
+
+
+                jobResultsWriter.writeValue(resultsFile.toFile(),results);
+
+                return results;
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot save results: "+e.getMessage(),e);
+            }
+        });         
+    }
+
+    Path jobResultsFile(long expId, UUID jobId) {
+        Path jobDir = getJobDir(expId,jobId);
+        return jobDir.resolve(JOB_RESULTS_FILE);
+    }
+
+    Optional<JobResults<TSResult<BD2eJTKRes>>> readJobResults(UUID jobId, long expId) {
+        
+       return guard.guard(expId, (id) -> {
+            try {
+
+                Path file = jobResultsFile(expId, jobId);
+                if (!Files.exists(file))
+                    return Optional.empty();
+                
+                JobResults<TSResult<BD2eJTKRes>> res = jobResultsReader.readValue(file.toFile());
+                return Optional.of(res);
+                
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot access results: "+e.getMessage(),e);
+            }
+       });
+    }    
+
     
 }

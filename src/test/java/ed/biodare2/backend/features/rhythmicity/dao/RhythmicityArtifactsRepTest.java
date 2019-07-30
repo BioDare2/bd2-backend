@@ -6,8 +6,14 @@
 package ed.biodare2.backend.features.rhythmicity.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.State;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare.rhythm.ejtk.patterns.AsymCosine;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -91,6 +97,26 @@ public class RhythmicityArtifactsRepTest {
         assertTrue(res.isPresent());
         assertEquals(job, res.get());
     }
+    
+    @Test
+    public void saveResultsSavesThatReadCanRead() {
+        
+        long expId = 123;
+        UUID jobId = UUID.randomUUID();        
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
+        
+        
+        Optional<JobResults<TSResult<BD2eJTKRes>>> res = instance.readJobResults(jobId, expId);
+        assertTrue(res.isEmpty());
+        
+        instance.saveJobResults(results, jobId, expId);
+        
+        res = instance.readJobResults(jobId, expId);
+        assertTrue(res.isPresent());
+        assertEquals(results, res.get());
+    }    
+
+
 
 
     

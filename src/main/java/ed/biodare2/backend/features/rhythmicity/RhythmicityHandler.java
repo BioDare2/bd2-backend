@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.rhythmicity;
 
+import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -14,7 +15,10 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import static ed.biodare.jobcentre2.dom.RhythmicityConstants.*;
+import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityUtils;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
@@ -22,6 +26,14 @@ import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
+import ed.biodare2.backend.web.rest.HandlingException;
+import ed.robust.dom.data.DetrendingType;
+import ed.robust.dom.jobcenter.JobSummary;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,12 +44,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class RhythmicityHandler {
 
+    final Logger log = LoggerFactory.getLogger(this.getClass());
+    
     final ExperimentHandler experimentHandler;
     final RhythmicityArtifactsRep rhythmicityRep;
     
     final TSDataHandler dataHandler;
     final RhythmicityUtils utils;
     final RhythmicityService rhythmicityService;
+    
+    int JOB_WAITING_LIMIT;
+    int JOB_WAITING_TIME;    
 
     @Autowired
     public RhythmicityHandler(ExperimentHandler experimentHandler, 
@@ -50,6 +67,8 @@ public class RhythmicityHandler {
         this.dataHandler = dataHandler;
         this.utils = new RhythmicityUtils();
         this.rhythmicityService = rhythmicityService;
+        JOB_WAITING_LIMIT = 6;
+        JOB_WAITING_TIME = 250;
     }
     
     
@@ -87,10 +106,92 @@ public class RhythmicityHandler {
         }
         
     }
+    
 
     UUID submitJob(TSDataSetJobRequest jobRequest) throws RhythmicityHandlingException {
         
         return rhythmicityService.submitJob(jobRequest);
     }
+
+    @Transactional
+    public void handleResults(AssayPack exp, JobResults<TSResult<BD2eJTKRes>> results) {
+        
+        UUID jobId = results.jobId;
+        //sometimes results come faster then job is registered in BioDare
+	RhythmicityJobSummary job = waitForJob(jobId, exp.getId());
+	
+        if (!canBeUpdated(job)) {
+            log.warn("Ignoring results for {}, as job {} should not be updated",exp.getId(),jobId);
+            return;
+        }
+        
+        try {
+            Map<Long,DataTrace> orgData = getOrgData(exp,job);
+
+            matchResultsToData(results.results, orgData);
+
+            rhythmicityRep.saveJobResults(results, job, exp);
+
+            job.jobStatus.state = results.state;
+            job.jobStatus.completed = LocalDateTime.now();
+            job.jobStatus.message = results.message;
+            rhythmicityRep.saveJobDetails(job, exp);
+        } catch (Exception e) {
+            job.jobStatus.state = State.ERROR;
+            job.jobStatus.message = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
+            log.error("Could not handle rhythmicity results for job {} {}",jobId, e.getMessage(),e);
+            rhythmicityRep.saveJobDetails(job, exp);
+            throw new HandlingException("Could not handle rhythmicity results "+e.getMessage(),e);
+        }
+        
+    }    
+
+    RhythmicityJobSummary waitForJob(UUID jobId, long expId) {
+        
+        //active wait for the job in case it has been submitted but its description not saved in the BioDare
+        for (int i = 0;i<JOB_WAITING_LIMIT;i++) {
+            
+                Optional<RhythmicityJobSummary> ojob = rhythmicityRep.findJob(jobId,expId);
+                if (ojob.isPresent()) {
+                    return ojob.get();
+                }
+                log.debug("Wating: {}# for the job: {}",i,jobId);
+                try {
+                    Thread.sleep(JOB_WAITING_TIME);                
+                } catch (InterruptedException e) {break;}
+        }
+        
+        throw new HandlingException("Job: "+jobId+" cannot be found in biodare");    
+    }
+
+    boolean canBeUpdated(RhythmicityJobSummary job) {
+        return !job.jobStatus.state.equals(State.SUCCESS);
+    }
+
+    Map<Long, DataTrace> getOrgData(AssayPack exp, RhythmicityJobSummary job) throws ArgumentException {
+        
+        String dataSetType = job.parameters.get(job.DATA_SET_TYPE);
+        DetrendingType detrendig = DetrendingType.valueOf(dataSetType);
+
+
+        Optional<List<DataTrace>> dataSet = dataHandler.getDataSet(exp, detrendig);
+        if (!dataSet.isPresent()) throw new ArgumentException("Missing data set in the experiment "+exp.getId());            
+
+        return dataSet.get().stream().collect(Collectors.toMap( dt -> dt.dataId, dt -> dt));        
+    }
+
+    void matchResultsToData(List<TSResult<BD2eJTKRes>> results, Map<Long, DataTrace> orgData) throws ArgumentException {
+        
+        if (results.size() < orgData.size())
+            throw new ArgumentException("Got less results: "+results.size()+" than original data: "+orgData.size());
+        
+        for (TSResult<BD2eJTKRes> result : results) {
+            
+            if (!orgData.containsKey(result.id))
+                throw new ArgumentException("Missing data trace of id "+result.id);
+            
+        }
+    }
+
     
 }

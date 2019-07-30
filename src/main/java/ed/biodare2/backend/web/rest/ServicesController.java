@@ -5,6 +5,10 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.handlers.PPAHandler;
@@ -14,6 +18,7 @@ import ed.robust.jobcenter.dom.job.JobResult;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,11 +40,14 @@ public class ServicesController extends BioDare2Rest {
     
     final ExperimentHandler experiments;
     final PPAHandler ppaHandler;
+    final RhythmicityHandler rhythmicityHandler;
             
     @Autowired
-    public ServicesController(ExperimentHandler experiments,PPAHandler ppaHandler) {        
+    public ServicesController(ExperimentHandler experiments,PPAHandler ppaHandler,
+            RhythmicityHandler rhythmicityHandler) {        
         this.experiments = experiments;
         this.ppaHandler = ppaHandler;
+        this.rhythmicityHandler = rhythmicityHandler;
     }
     
     @RequestMapping(value = "status", method = RequestMethod.GET)
@@ -77,7 +85,31 @@ public class ServicesController extends BioDare2Rest {
         
     }      
     
-   
+
+    @RequestMapping(value = "rhythmicity/results/{expId}", method = RequestMethod.POST)
+    public void handleRhythmicityResults(@PathVariable long expId,
+            @RequestBody JobResults<TSResult<BD2eJTKRes>> results) {
+        
+        if (results == null) throw new HandlingException("Null results recieved");
+        log.debug("handle rhythmiciy results; job:{}, exp: {}, results size: {}",results.jobId,expId,results.results.size());
+        
+        
+        AssayPack exp = experiments.getExperiment(expId)
+                        .orElseThrow(()-> new NotFoundException("Experiment "+expId+" not found"));        
+        
+        try {
+            rhythmicityHandler.handleResults(exp,results);
+            
+        } catch (HandlingException | ServerSideException e) {
+            log.error("Cannot process results {}",e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot process results, system error {}",e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }      
+    
     @RequestMapping(value = "ppa/results", method = RequestMethod.GET)
     public String pppStatus() {
         //log.debug("status asked");

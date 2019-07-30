@@ -5,8 +5,12 @@
  */
 package ed.biodare2.backend.repo.isa_dom;
 
+import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.State;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare.rhythm.ejtk.patterns.AsymCosine;
 import ed.biodare2.backend.repo.isa_dom.GeneralDesc;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
 import ed.biodare2.backend.repo.isa_dom.measure.MeasurementDesc;
@@ -26,6 +30,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
+import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ExcelTSImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
@@ -48,7 +53,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoPeriod;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -269,7 +276,19 @@ public class DomRepoTestBuilder {
         req.method = "BD2EJTK";
         req.preset = "BD2_CLASSIC";
         return req;
-    }  
+    } 
+    
+    public static List<DataTrace> makeDataTraces(int idS, int idE) {
+        List<DataTrace> dataSet = new ArrayList<>();
+        for (int i = idS; i<= idE;i++) {
+            DataTrace trace = new DataTrace();
+            trace.dataId = i;
+            trace.traceRef = "A"+i;
+            trace.details = new DataColumnProperties("toc"+(i % 2));
+            dataSet.add(trace);
+        }
+        return dataSet;
+    }
     
     public static RhythmicityJobSummary makeRhythmicityJobSummary(UUID jobId, long expId) {
         
@@ -289,6 +308,21 @@ public class DomRepoTestBuilder {
 	job.parameters.put(PARAMS_SUMMARY,summary);
         
         return job;
+    } 
+    
+    public static JobResults<TSResult<BD2eJTKRes>> makeBD2EJTKResults(UUID jobId, long expId) {
+        
+        JobResults<TSResult<BD2eJTKRes>> results = new JobResults<>();
+        results.externalId = ""+expId;
+        results.jobId = jobId;
+        results.state = State.SUCCESS;
+        
+        BD2eJTKRes entry = new BD2eJTKRes(0.8, 0.001, new AsymCosine(24, 1, 13));
+        TSResult<BD2eJTKRes> res = new TSResult<>(1, entry);
+        results.results.add(res);
+        
+        return results;
+               
     }    
 
     public static SimpleProvenance makeSimpleProvenance() {
