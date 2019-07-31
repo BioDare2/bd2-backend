@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
  */
 public class RhythmicityUtils {
 
+    static final int DEFAULT_NULL_SIZE = 1000;
+    
     public TSDataSetJobRequest prepareJobRequest(long expId, RhythmicityRequest request, List<DataTrace>  dataSet) {
         
         TSDataSetJobRequest job = new TSDataSetJobRequest();
@@ -53,6 +55,7 @@ public class RhythmicityUtils {
         Map<String, String> params = new HashMap<>();
         params.put("METHOD", request.method);
         params.put(PRESET_KEY, request.preset);
+        params.put(NULL_SIZE_KEY, ""+DEFAULT_NULL_SIZE);
         params.put(PERIOD_MIN_KEY, ""+request.periodMin);
         params.put(PERIOD_MAX_KEY, ""+request.periodMax);
         return params;

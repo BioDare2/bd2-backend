@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 /**
  *
@@ -30,6 +31,11 @@ public class ServiceConfiguration {
     JobCentreEndpointClient rhythmicityClient(RestTemplateBuilder builder, RhythmicityServiceParameters parameters) {
         
         log.info("RhythmicityService configuration uses jobcentre at {}", parameters.directions);
+        //MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        //converter.setPrefixJson(false);
+        //builder = builder.messageConverters(converter);
+        // to disable the json hijiking prefix which was not parsed by jobcentre
+        builder = builder.defaultMessageConverters();
         return new JobCentreEndpointClient(builder, parameters.directions);
     }
     
@@ -48,7 +54,7 @@ public class ServiceConfiguration {
         RhythmicityServiceParameters params = new RhythmicityServiceParameters();
         params.backendURL = env.backendURL;
         params.ppaUsername = ppaUsername;
-        params.ppaPassword = password;
+        params.ppaPassword = ppaPassword;
         params.testClient = testClient;
         params.directions = new JobCentreEndpointDirections();
         String url = serverUrl.endsWith("/") ? serverUrl : serverUrl+"/";
