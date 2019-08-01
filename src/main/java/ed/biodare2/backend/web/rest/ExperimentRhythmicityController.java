@@ -21,6 +21,7 @@ import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
 import ed.robust.dom.tsprocessing.PhaseType;
@@ -97,25 +98,25 @@ public class ExperimentRhythmicityController extends ExperimentController {
         
     }      
     
-    /*
+    
     @RequestMapping(value = "jobs", method = RequestMethod.GET)
-    public ListWrapper<PPAJobSummary> getPPAJobs(@PathVariable long expId,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("get PPAJobs; exp:{}; {}",expId,user);
+    public ListWrapper<RhythmicityJobSummary> getRhythmicityJobs(@PathVariable long expId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get RhythmicityJobs; exp:{}; {}",expId,user);
         
         
         AssayPack exp = getExperimentForRead(expId,user);
         
         
         try {
-            ListWrapper<PPAJobSummary> resp = new ListWrapper<>(ppaHandler.getPPAJobs(exp));
+            ListWrapper<RhythmicityJobSummary> resp = new ListWrapper<>(rhythmicityHandler.getRhythmicityJobs(exp));
             tracker.ppaList(exp,user);
             return resp;
             
         } catch(WebMappedException e) {
-            log.error("Cannot retrieve PPA jobs {} {}",expId,e.getMessage(),e);
+            log.error("Cannot retrieve RhythmicityJobs jobs {} {}",expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
-            log.error("Cannot retrieve PPA jobs {} {}",expId,e.getMessage(),e);
+            log.error("Cannot retrieve RhythmicityJobs jobs {} {}",expId,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
         
@@ -123,28 +124,29 @@ public class ExperimentRhythmicityController extends ExperimentController {
     
     
     @RequestMapping(value = "job/{jobId}", method = RequestMethod.GET)
-    public PPAJobSummary getPPAJob(@PathVariable long expId,@PathVariable long jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("get PPAJob:{} exp:{}; {}",jobId,expId,user);
+    public RhythmicityJobSummary getRhythmicityJob(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get getRhythmicityJob:{} exp:{}; {}",jobId,expId,user);
         
         
         AssayPack exp = getExperimentForRead(expId,user);
         
         
         try {
-            PPAJobSummary res = ppaHandler.getPPAJob(exp,jobId);
-            tracker.ppaJob(exp,res,user);
+            RhythmicityJobSummary res = rhythmicityHandler.getRhythmicityJob(exp,jobId);
+            tracker.rhythmicityJob(exp,res,user);
             return res;
             
         } catch (WebMappedException e) {
-            log.error("Cannot retrieve PPA job {} {} {}",jobId,expId,e.getMessage(),e);
+            log.error("Cannot retrieve Rhythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
-            log.error("Cannot retrieve PPA job {} {} {}",jobId,expId,e.getMessage(),e);
+            log.error("Cannot retrieve Rhythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
         
     }  
     
+    /*
     @RequestMapping(value = "job/{jobId}/export/{phaseType}", method = RequestMethod.GET)
     public void exportPPAJob(@PathVariable long expId,@PathVariable long jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
         log.debug("export PPAJob:{} exp:{}; {}",jobId,expId,user);

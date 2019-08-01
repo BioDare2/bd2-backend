@@ -9,6 +9,7 @@ import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetVersion;
 import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import static ed.biodare2.backend.web.tracking.TargetType.*;
 import static ed.biodare2.backend.web.tracking.ActionType.*;
@@ -148,6 +149,10 @@ public class ExperimentTracker extends AbstractTracker {
     public void rhythmicityNew(AssayPack exp, String analysisId, String method, BioDare2User user) {
         track(EXP_RHYTHMICITY,NEW,exp.getId(),user,method,analysisId);
         analysis.info("{}\t{}\t{}\t{}\t{}\t{}\t",EXP_RHYTHMICITY,NEW,exp.getId(),method,analysisId,user.getLogin(),user.getSupervisor().getLogin());
+    }
+
+    public void rhythmicityJob(AssayPack exp, RhythmicityJobSummary res, BioDare2User user) {
+        track(EXP_RHYTHMICITY,VIEW,exp.getId(),user,"JOB",res.jobId.toString());
     }
 
 

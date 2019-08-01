@@ -19,6 +19,8 @@ import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.Before;
@@ -117,6 +119,32 @@ public class RhythmicityArtifactsRepTest {
     }    
 
 
+    @Test
+    public void getJobsReadsJobsInCorrectOrder() {
+        
+        long expId = 123;
+        
+        List<RhythmicityJobSummary> res = instance.getJobs(expId);
+        assertEquals(List.of(), res);
+        
+        
+        RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), expId);
+        job1.jobStatus.submitted = LocalDateTime.now().minusHours(1);        
+        instance.saveJobDetails(job1, expId);
+        
+        RhythmicityJobSummary job2 = makeRhythmicityJobSummary(UUID.randomUUID(), expId);
+        job2.jobStatus.submitted = LocalDateTime.now();        
+        instance.saveJobDetails(job2, expId);
+        
+        RhythmicityJobSummary job3 = makeRhythmicityJobSummary(UUID.randomUUID(), expId);
+        job3.jobStatus.submitted = LocalDateTime.now().minusHours(2);        
+        instance.saveJobDetails(job3, expId);
+        
+        List<RhythmicityJobSummary> exp = List.of(job2, job1, job3);
+        res = instance.getJobs(expId);
+        
+        assertEquals(exp, res);
+    }
 
 
     

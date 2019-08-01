@@ -39,6 +39,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
@@ -116,6 +117,7 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
         assertNotNull(resp);

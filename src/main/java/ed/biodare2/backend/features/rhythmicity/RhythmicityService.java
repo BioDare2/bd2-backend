@@ -8,6 +8,7 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.client.JobCentreClientException;
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare.jobcentre2.client.JobCentreEndpointDirections;
+import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import static ed.biodare.jobcentre2.dom.RhythmicityConstants.*;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
@@ -68,6 +69,16 @@ public class RhythmicityService {
         } catch (JobCentreClientException e) {
             log.error("Could not submit the job, {}",e.getMessage(),e);
             throw new RhythmicityHandlingException("Job was not accepted by the server: "+e.getMessage(),e);
+        }
+    }
+    
+    public JobStatus getJobStatus(UUID jobId) throws RhythmicityHandlingException {
+        
+        try {
+            return client.getJobStatus(jobId);
+        } catch (JobCentreClientException e) {
+            log.error("Could not read job status job, {}",e.getMessage(),e);
+            throw new RhythmicityHandlingException("JobStatus could not be read from the server: "+e.getMessage(),e);
         }
     }
 

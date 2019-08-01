@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
+import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
@@ -93,5 +94,19 @@ public class RhythmicityServiceTest {
         
         assertTrue(jobRequest.callBackParameters.containsKey("ENDPOINT"));
     }
+    
+    @Test
+    public void testGetJobsStatusReadsStatus() throws Exception {
+        
+        UUID jobId = UUID.randomUUID();        
+        JobStatus status = new JobStatus(jobId);
+        
+        when(client.getJobStatus(jobId)).thenReturn(status);
+        
+        JobStatus res = instance.getJobStatus(jobId);
+        assertEquals(status, res);
+        verify(client).getJobStatus(jobId);
+        
+    }    
     
 }

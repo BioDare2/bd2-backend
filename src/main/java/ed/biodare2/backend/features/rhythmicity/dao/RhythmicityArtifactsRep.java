@@ -20,8 +20,13 @@ import ed.biodare2.backend.web.rest.ServerSideException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheConfig;
@@ -120,13 +125,20 @@ public class RhythmicityArtifactsRep {
         return jobDir.resolve(JOB_DETAILS_FILE);
     }    
 
+    protected Path getJobsDir(long expId) {
+        
+        Path dir = expStorage.getExperimentDir(expId)
+                .resolve(RHYTHMICITY_DIR)
+                .resolve(JOBS_DIR);
+        
+        return dir;
+    }
+    
     protected Path getJobDir(long expId, UUID jobId) {
         
         try {
             
-            Path dir = expStorage.getExperimentDir(expId)
-                    .resolve(RHYTHMICITY_DIR)
-                    .resolve(JOBS_DIR)
+            Path dir = getJobsDir(expId)
                     .resolve(jobId.toString());
             
             if (!Files.exists(dir))
@@ -195,6 +207,33 @@ public class RhythmicityArtifactsRep {
             }
        });
     }    
+
+    public List<RhythmicityJobSummary> getJobs(AssayPack exp) {
+        return getJobs(exp.getId());
+    }
+    
+    public List<RhythmicityJobSummary> getJobs(long expId) {
+        
+        Path jobsDir = getJobsDir(expId);
+        
+        if (!Files.isDirectory(jobsDir)) return Collections.emptyList();
+        
+        try(Stream<Path> jobsDirs = Files.list(jobsDir)) {
+            
+            return jobsDirs
+                    .filter( f -> Files.isDirectory(f))
+                    .map( f -> f.getFileName().toString())
+                    .map( jobId -> UUID.fromString(jobId))
+                    .map( jobId -> findJob(jobId, expId))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .sorted(Comparator.comparing( (RhythmicityJobSummary s) -> s.jobStatus.submitted).reversed())
+                    .collect(Collectors.toList());
+                    
+        } catch (IOException e) {
+            throw new ServerSideException("Could not list jobs directories in: "+expId+": "+e.getMessage());
+        }        
+    }
 
     
 }

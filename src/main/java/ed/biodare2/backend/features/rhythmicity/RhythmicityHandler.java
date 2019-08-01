@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -27,9 +28,12 @@ import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.web.rest.HandlingException;
+import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.jobcenter.JobSummary;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -45,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class RhythmicityHandler {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
+    static int OLD_MINUTES = 60;    
     
     final ExperimentHandler experimentHandler;
     final RhythmicityArtifactsRep rhythmicityRep;
@@ -193,5 +198,64 @@ public class RhythmicityHandler {
         }
     }
 
+    public List<RhythmicityJobSummary> getRhythmicityJobs(AssayPack exp) {
+        
+        return rhythmicityRep.getJobs(exp);
+    }
+
+    public RhythmicityJobSummary getRhythmicityJob(AssayPack exp, UUID jobId) {
+        RhythmicityJobSummary summary = tryToFindJobSummary(exp, jobId);
+        
+        if (isRunning(summary.jobStatus.state)) summary = refreshJob(summary, exp);
+        return summary;    
+    }
+
+    RhythmicityJobSummary tryToFindJobSummary(AssayPack exp, UUID jobId) {
+        return rhythmicityRep.findJob(jobId, exp.getId())
+                            .orElseThrow(() -> new NotFoundException("Job "+jobId+" not found"));    
+    }
+
+    boolean isRunning(State state) {
+        return State.SUBMITTED.equals(state) || State.PROCESSING.equals(state);
+    }
+
+    RhythmicityJobSummary refreshJob(RhythmicityJobSummary summary, AssayPack exp) {
+        
+        try {
+            RhythmicityJobSummary job = tryToFindJobSummary(exp, summary.jobId);
+            JobStatus status = rhythmicityService.getJobStatus(job.jobId);
+            if (hasFailed(status)) {
+                //ignore other status as they may get updated in the background
+                return updateJobStatus(job,status,exp);
+            }
+            summary.jobStatus = status;
+            return summary;
+        } catch (RhythmicityHandlingException e) {
+            throw new HandlingException(e);
+        }    
+    }
+
+    boolean isOldJob(RhythmicityJobSummary job) {
+        LocalDateTime old = LocalDateTime.now().minus(OLD_MINUTES, ChronoUnit.MINUTES);
+        
+        if (job.jobStatus.modified != null) {
+            return job.jobStatus.modified.isBefore(old);
+        }        
+        return job.jobStatus.submitted.isBefore(old);    
+    }
+
+    boolean hasFailed(JobStatus status) {
+        return State.ERROR.equals(status.getState()) || State.FAILED.equals(status.getState());    
+    }
+
+    RhythmicityJobSummary updateJobStatus(RhythmicityJobSummary job, JobStatus status, AssayPack exp) {
+        job.jobStatus.state = status.state;
+        job.jobStatus.message = status.message;
+        job.jobStatus.modified = status.modified != null ? status.modified : LocalDateTime.now();
+        
+        job.jobStatus.completed = status.completed != null ? status.completed : LocalDateTime.now();
+
+        return rhythmicityRep.saveJobDetails(job, exp);
+    }
     
 }
