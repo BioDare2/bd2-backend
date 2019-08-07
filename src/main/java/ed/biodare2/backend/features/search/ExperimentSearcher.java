@@ -14,6 +14,8 @@ import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -29,6 +31,7 @@ public class ExperimentSearcher {
         this.dbSystemInfos = dbSystemInfos;
     }
     
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public LongStream findByOwner(BioDare2User owner) {
         
         //anonymous user

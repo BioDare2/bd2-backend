@@ -92,8 +92,7 @@ public class RDMSocialHandler {
         if (includesMeasurment(boundle.getAssay())) return false;
         if (!isOwner(user,boundle)) return false;
         
-        RDMAssetsAspect aspect = assetsAspects.findByParent(boundle.getId(), EntityType.EXP_ASSAY)
-                .orElseThrow(()-> new IllegalStateException("Missing aspect entry for assay: "+boundle.getId()));
+        RDMAssetsAspect aspect = getAssayRDMAspect(boundle);
         
         if (aspect.cohort.equals(RDMCohort.CONTROL)) return false;
         if (aspect.measurementWarnings < MEASUREMENT_WARNINGS_LIMIT) return true;
@@ -104,13 +103,18 @@ public class RDMSocialHandler {
         if (includesMeasurment(boundle.getAssay())) return true;
         if (!isOwner(user,boundle)) return true;
         
-        RDMAssetsAspect aspect = assetsAspects.findByParent(boundle.getId(), EntityType.EXP_ASSAY)
-                .orElseThrow(()-> new IllegalStateException("Missing aspect entry for assay: "+boundle.getId()));
+        RDMAssetsAspect aspect = getAssayRDMAspect(boundle);
         
         if (aspect.cohort.equals(RDMCohort.CONTROL) || aspect.cohort.equals(RDMCohort.ADIVSE)) return true;
         if (aspect.measurementWarnings < MEASUREMENT_WARNINGS_LIMIT) return true;
         
         return false;
+    }
+    
+    public RDMAssetsAspect getAssayRDMAspect(AssayPack boundle) {
+        RDMAssetsAspect aspect = assetsAspects.findByParent(boundle.getId(), EntityType.EXP_ASSAY)
+                .orElseThrow(()-> new IllegalStateException("Missing aspect entry for assay: "+boundle.getId()));
+        return aspect;
     }
     
     public RDMAssayGUIAspects getAssayGuiAspects(AssayPack boundle, BioDare2User user) {
