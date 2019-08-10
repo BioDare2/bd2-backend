@@ -5,6 +5,9 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.handlers.PPAHandler;
@@ -146,6 +149,29 @@ public class ExperimentRhythmicityController extends ExperimentController {
         
     }  
     
+    @RequestMapping(value = "job/{jobId}/results", method = RequestMethod.GET)
+    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get getRhythmicityResults; job:{} exp: {}; {}",jobId,expId,user);
+        
+        
+        AssayPack exp = getExperimentForRead(expId, user);
+        
+        
+        try {
+            JobResults<TSResult<BD2eJTKRes>> resp = rhythmicityHandler.getRhythmicityResults(exp,jobId);
+            tracker.rhythmicityResults(exp,jobId,user);
+            return resp;
+            
+        } catch (WebMappedException e) {
+            log.error("Cannot retrieve rhythmicity results {} {} {}",jobId,expId,e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot retrieve rhythmicity results {} {} {}",jobId,expId,e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }    
+    
     /*
     @RequestMapping(value = "job/{jobId}/export/{phaseType}", method = RequestMethod.GET)
     public void exportPPAJob(@PathVariable long expId,@PathVariable long jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
@@ -227,28 +253,7 @@ public class ExperimentRhythmicityController extends ExperimentController {
     }     
     
     
-    @RequestMapping(value = "job/{jobId}/results/simple", method = RequestMethod.GET)
-    public PPAJobSimpleResults getPPAJobSimpleResults(@PathVariable long expId,@PathVariable long jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("get PPAJobSimpleResults; job:{} exp: {}; {}",jobId,expId,user);
-        
-        
-        AssayPack exp = getExperimentForRead(expId, user);
-        
-        
-        try {
-            PPAJobSimpleResults resp = ppaHandler.getPPAJobSimpleResults(exp,jobId);
-            tracker.ppaJobSimpleResults(exp,jobId,user);
-            return resp;
-            
-        } catch (WebMappedException e) {
-            log.error("Cannot retrieve PPA simple results {} {} {}",jobId,expId,e.getMessage(),e);
-            throw e;
-        } catch (Exception e) {
-            log.error("Cannot retrieve PPA simple results {} {} {}",jobId,expId,e.getMessage(),e);
-            throw new ServerSideException(e.getMessage());
-        } 
-        
-    }     
+     
 
 
     @RequestMapping(value = "job/{jobId}/results/select", method = RequestMethod.GET)

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ public class RDMSocialStatsControllerTest extends ExperimentBaseIntTest {
      * Test of dataStats method, of class RDMSocialStatsController.
      */
     @Test
+    @Ignore("RDMSocial is disabled in the production code")
     public void testWarningStats() throws Exception {
         
         AssayPack pack = insertExperiment();

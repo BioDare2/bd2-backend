@@ -57,8 +57,10 @@ public class RDMSocialStatsController extends BioDare2Rest {
     public Map<String, Integer> warningStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
         log.debug("rdm Stats: {}", currentUser);
         
-        //if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
-        //    throw new InsufficientRightsException("Only demo and test users can call it");
+        if (true) throw new IllegalStateException("Disabled in the code base");
+        
+        if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
+            throw new InsufficientRightsException("Only demo and test users can call it");
         
         Stream<List<String>> entries = getRDMEntries(expRep.getExerimentsIds());
         

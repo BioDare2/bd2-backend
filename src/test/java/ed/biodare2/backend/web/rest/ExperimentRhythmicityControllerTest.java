@@ -6,13 +6,17 @@
 package ed.biodare2.backend.web.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ExperimentHandler;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -220,7 +224,49 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         
         assertEquals(job2.jobStatus.state, rhythmicityRep.findJob(job1.jobId, exp.getId()).get().jobStatus.state);
         
-    }    
+    }  
+    
+    @Test
+    public void testGetJobResultsGetsTheSavedOne() throws Exception {
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();
+        long expId = exp.getId();
+        insertData(pack);
+        
+        RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
+        job1.jobStatus.state = State.SUCCESS;
+        
+        rhythmicityRep.saveJobDetails(job1, pack);
+        
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId); 
+        
+        rhythmicityRep.saveJobResults(results, job1, pack);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/results")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        JobResults<TSResult<BD2eJTKRes>> res = mapper.readValue(resp.getResponse().getContentAsString(), 
+                new TypeReference<JobResults<TSResult<BD2eJTKRes>>>() { });
+        assertNotNull(res);
+        
+        assertEquals(results, res);
+        
+        verify(rhythmicityService, never()).getJobStatus(job1.jobId);
+        
+        
+    }
+    
     
     
 }

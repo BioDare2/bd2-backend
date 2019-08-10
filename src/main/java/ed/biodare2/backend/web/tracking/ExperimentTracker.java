@@ -16,6 +16,7 @@ import static ed.biodare2.backend.web.tracking.ActionType.*;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.ppa.PPAMethod;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -153,6 +154,10 @@ public class ExperimentTracker extends AbstractTracker {
 
     public void rhythmicityJob(AssayPack exp, RhythmicityJobSummary res, BioDare2User user) {
         track(EXP_RHYTHMICITY,VIEW,exp.getId(),user,"JOB",res.jobId.toString());
+    }
+
+    public void rhythmicityResults(AssayPack exp, UUID jobId, BioDare2User user) {
+        track(EXP_RHYTHMICITY,VIEW,exp.getId(),user,"JOB_RESULTS",jobId.toString());
     }
 
 

@@ -209,6 +209,15 @@ public class RhythmicityHandler {
         if (isRunning(summary.jobStatus.state)) summary = refreshJob(summary, exp);
         return summary;    
     }
+    
+    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(AssayPack exp, UUID jobId) {
+        RhythmicityJobSummary job = tryToFindJobSummary(exp, jobId);
+        
+        JobResults<TSResult<BD2eJTKRes>> res = rhythmicityRep.findJobResults(jobId, exp.getId())
+                .orElseThrow(() -> new NotFoundException("Results for job "+jobId+" not found"));    
+        
+        return res;
+    }    
 
     RhythmicityJobSummary tryToFindJobSummary(AssayPack exp, UUID jobId) {
         return rhythmicityRep.findJob(jobId, exp.getId())
@@ -257,5 +266,7 @@ public class RhythmicityHandler {
 
         return rhythmicityRep.saveJobDetails(job, exp);
     }
+
+
     
 }

@@ -318,6 +318,7 @@ public class DomRepoTestBuilder {
         results.state = State.SUCCESS;
         
         BD2eJTKRes entry = new BD2eJTKRes(0.8, 0.001, new AsymCosine(24, 1, 13));
+        entry.empP = 0.01;
         TSResult<BD2eJTKRes> res = new TSResult<>(1, entry);
         results.results.add(res);
         

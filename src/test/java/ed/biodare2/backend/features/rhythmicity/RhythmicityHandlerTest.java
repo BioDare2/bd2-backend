@@ -126,4 +126,25 @@ public class RhythmicityHandlerTest {
         
     }
     
+    @Test
+    public void testGetResults() {
+        
+        long expId = 123;
+        AssayPack exp = new MockExperimentPack(expId);
+        UUID jobId = UUID.randomUUID();        
+        RhythmicityJobSummary job = makeRhythmicityJobSummary(jobId, expId);
+
+        when(rhythmicityRep.findJob(jobId, expId)).thenReturn(Optional.of(job));
+        
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
+        when(rhythmicityRep.findJobResults(jobId, expId)).thenReturn(Optional.of(results));
+        
+        JobResults<TSResult<BD2eJTKRes>> resp = instance.getRhythmicityResults(exp, jobId);
+        
+        assertSame(results, resp);
+        verify(rhythmicityRep).findJob(jobId, expId);
+        verify(rhythmicityRep).findJobResults(jobId, expId);
+        
+    }
+    
 }
