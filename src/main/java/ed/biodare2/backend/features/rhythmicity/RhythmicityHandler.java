@@ -210,12 +210,15 @@ public class RhythmicityHandler {
         return summary;    
     }
     
-    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(AssayPack exp, UUID jobId) {
+    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(AssayPack exp, UUID jobId) throws ArgumentException {
         RhythmicityJobSummary job = tryToFindJobSummary(exp, jobId);
+        
+        Map<Long, DataTrace> orgData = getOrgData(exp, job);
         
         JobResults<TSResult<BD2eJTKRes>> res = rhythmicityRep.findJobResults(jobId, exp.getId())
                 .orElseThrow(() -> new NotFoundException("Results for job "+jobId+" not found"));    
         
+        addLabels(res.results, orgData);
         return res;
     }    
 
@@ -265,6 +268,28 @@ public class RhythmicityHandler {
         job.jobStatus.completed = status.completed != null ? status.completed : LocalDateTime.now();
 
         return rhythmicityRep.saveJobDetails(job, exp);
+    }
+
+    void addLabels(List<TSResult<BD2eJTKRes>> results, Map<Long, DataTrace> orgData) throws ArgumentException {
+        
+        if (results.size() < orgData.size())
+            throw new ArgumentException("Got less results: "+results.size()+" than original data: "+orgData.size());
+        
+        for (TSResult<BD2eJTKRes> result : results) {
+            
+            if (!orgData.containsKey(result.id))
+                throw new ArgumentException("Missing data trace of id "+result.id);
+    
+            DataTrace trace = orgData.get(result.id);
+            String label = labelTrace(trace);
+            result.label = label;
+        }    
+    
+    }
+
+    String labelTrace(DataTrace data) {
+        String label = data.details.dataLabel;
+        return label;
     }
 
 

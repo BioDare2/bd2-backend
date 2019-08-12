@@ -128,15 +128,15 @@ public class ExperimentRhythmicityController extends ExperimentController {
     
     @RequestMapping(value = "job/{jobId}", method = RequestMethod.GET)
     public RhythmicityJobSummary getRhythmicityJob(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("get getRhythmicityJob:{} exp:{}; {}",jobId,expId,user);
-        
+        // log.debug("get getRhythmicityJob:{} exp:{}; {}",jobId,expId,user);
+        // we dont log it as it is beeing called a lot from UI before the analysis finishes
         
         AssayPack exp = getExperimentForRead(expId,user);
         
         
         try {
             RhythmicityJobSummary res = rhythmicityHandler.getRhythmicityJob(exp,jobId);
-            tracker.rhythmicityJob(exp,res,user);
+            // tracker.rhythmicityJob(exp,res,user);
             return res;
             
         } catch (WebMappedException e) {

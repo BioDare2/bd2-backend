@@ -127,7 +127,7 @@ public class RhythmicityHandlerTest {
     }
     
     @Test
-    public void testGetResults() {
+    public void testGetResults() throws Exception {
         
         long expId = 123;
         AssayPack exp = new MockExperimentPack(expId);
@@ -139,9 +139,16 @@ public class RhythmicityHandlerTest {
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
         when(rhythmicityRep.findJobResults(jobId, expId)).thenReturn(Optional.of(results));
         
+        DetrendingType detrending = DetrendingType.valueOf(job.parameters.get(job.DATA_SET_TYPE));
+        List<DataTrace> dataSet = makeDataTraces(1, results.results.size());    
+        when(dataHandler.getDataSet(exp, detrending)).thenReturn(Optional.of(dataSet));         
+        
+        assertNull(results.results.get(0).label);
         JobResults<TSResult<BD2eJTKRes>> resp = instance.getRhythmicityResults(exp, jobId);
         
         assertSame(results, resp);
+        assertNotNull(results.results.get(0).label);
+        
         verify(rhythmicityRep).findJob(jobId, expId);
         verify(rhythmicityRep).findJobResults(jobId, expId);
         

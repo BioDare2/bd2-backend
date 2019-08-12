@@ -311,16 +311,23 @@ public class DomRepoTestBuilder {
     } 
     
     public static JobResults<TSResult<BD2eJTKRes>> makeBD2EJTKResults(UUID jobId, long expId) {
+        return makeBD2EJTKResults(jobId, expId, 1, 1);
+    }
+    
+    public static JobResults<TSResult<BD2eJTKRes>> makeBD2EJTKResults(UUID jobId, long expId,
+            long idS, long idE) {
         
         JobResults<TSResult<BD2eJTKRes>> results = new JobResults<>();
         results.externalId = ""+expId;
         results.jobId = jobId;
         results.state = State.SUCCESS;
         
-        BD2eJTKRes entry = new BD2eJTKRes(0.8, 0.001, new AsymCosine(24, 1, 13));
-        entry.empP = 0.01;
-        TSResult<BD2eJTKRes> res = new TSResult<>(1, entry);
-        results.results.add(res);
+        for (long id = idS;id <= idE; id++) {
+            BD2eJTKRes entry = new BD2eJTKRes(0.8, 0.001, new AsymCosine(24, 1, 13));
+            entry.empP = 0.01;
+            TSResult<BD2eJTKRes> res = new TSResult<>(id, entry);
+            results.results.add(res);
+        }
         
         return results;
                

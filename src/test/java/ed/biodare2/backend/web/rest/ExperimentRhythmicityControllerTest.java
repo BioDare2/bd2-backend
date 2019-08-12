@@ -232,14 +232,15 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         AssayPack pack = insertExperiment();
         ExperimentalAssay exp = pack.getAssay();
         long expId = exp.getId();
-        insertData(pack);
+        int size = insertData(pack);
         
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUCCESS;
         
         rhythmicityRep.saveJobDetails(job1, pack);
         
-        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId); 
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
+        
         
         rhythmicityRep.saveJobResults(results, job1, pack);
         
