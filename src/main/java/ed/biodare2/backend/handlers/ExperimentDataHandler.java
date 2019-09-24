@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.handlers;
 
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.security.BioDare2User;
@@ -49,6 +50,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
     final TSDataHandler dataHandler;
     final TSDataExporter dataExporter;
     final PPAHandler ppaHandler;
+    final RhythmicityHandler rhythmicityHandler;
     
     public static final String TSAssetName = "ts_data_file_1";
 
@@ -57,6 +59,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
             TSDataHandler dataHandler,
             TSDataExporter dataExporter,
             PPAHandler ppaHandler,
+            RhythmicityHandler rhythmicityHandler,
             FileAssetRep fileAssets, 
             AssetsParamRep assetsParams
             ) {
@@ -67,6 +70,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         this.assetsParams = assetsParams;
         this.dataHandler = dataHandler;
         this.ppaHandler = ppaHandler;
+        this.rhythmicityHandler = rhythmicityHandler;
     }
     
     public Optional<List<Trace>> getTSData(AssayPack exp,DetrendingType detrending) throws ServerSideException {
@@ -95,6 +99,8 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         assetsParams.storeParams(asset, importRequest.importParameters, exp);
         
         ppaHandler.clearPPA(exp);
+        rhythmicityHandler.clear(exp);
+        
         registerDataImport(exp, true, user);
         
         copySystemFeatures(exp.getSystemInfo(),exp.getAssay());        

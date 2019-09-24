@@ -146,6 +146,25 @@ public class RhythmicityArtifactsRepTest {
         assertEquals(exp, res);
     }
 
-
+    @Test
+    public void testClearAllRemovesRhythmicityFolder() throws Exception {
+        
+        long expId = 123;
+        UUID jobId = UUID.randomUUID();
+        
+        
+        Path rhythms = expDir.resolve("RHYTHMICITY");
+        Path job = expDir.resolve("RHYTHMICITY/JOBS").resolve(jobId.toString());
+        
+        Files.createDirectories(job);
+        
+        Path file = job.resolve("t.xts");
+        Files.write(file, List.of("Tomek"));
+        
+        assertTrue(Files.isRegularFile(file));
+        
+        instance.clearAll(expId);
+        assertFalse(Files.exists(rhythms));
+    }
     
 }

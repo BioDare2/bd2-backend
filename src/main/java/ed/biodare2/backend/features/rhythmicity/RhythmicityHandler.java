@@ -20,8 +20,6 @@ import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
-import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
-import ed.biodare2.backend.features.rhythmicity.RhythmicityUtils;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ArgumentException;
@@ -30,8 +28,6 @@ import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.robust.dom.data.DetrendingType;
-import ed.robust.dom.jobcenter.JobSummary;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -97,6 +93,13 @@ public class RhythmicityHandler {
         experimentHandler.updateHasRhythmicityJobs(exp,true);
         return jobHandle;    
     }
+    
+    
+    @Transactional
+    public void clear(AssayPack exp) {
+        
+        rhythmicityRep.clearAll(exp);
+    }    
     
     void validateRequest(RhythmicityRequest request) throws ArgumentException {
         if (!request.isValid()) throw new ArgumentException("Not valid ppaRequest"); 

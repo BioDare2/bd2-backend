@@ -16,6 +16,7 @@ import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
+import ed.biodare2.backend.util.io.FileUtil;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,6 +50,7 @@ public class RhythmicityArtifactsRep {
     final static String JOB_DETAILS_FILE = "RHYTHMICITY_JOB_DETAILS.json";
     final static String JOB_RESULTS_FILE = "RHYTHMICITY_JOB_RESULTS.json";
     
+    final FileUtil fileUtil = new FileUtil();
     final ResourceGuard<Long> guard = new ResourceGuard<>(60);
     final ExperimentsStorage expStorage;
     
@@ -125,10 +127,17 @@ public class RhythmicityArtifactsRep {
         return jobDir.resolve(JOB_DETAILS_FILE);
     }    
 
-    protected Path getJobsDir(long expId) {
+    protected Path getRhythmicityDir(long expId) {
         
         Path dir = expStorage.getExperimentDir(expId)
-                .resolve(RHYTHMICITY_DIR)
+                .resolve(RHYTHMICITY_DIR);
+        
+        return dir;
+    }
+    
+    protected Path getJobsDir(long expId) {
+        
+        Path dir = getRhythmicityDir(expId)
                 .resolve(JOBS_DIR);
         
         return dir;
@@ -235,5 +244,25 @@ public class RhythmicityArtifactsRep {
         }        
     }
 
+    @CacheEvict(allEntries = true)
+    public void clearAll(AssayPack exp) {
+        clearAll(exp.getId());
+    }
+
+    protected void clearAll(long expId) {
+        
+       guard.guard(expId, (id) -> {
+            try {
+
+                Path file = getRhythmicityDir(expId);
+                if (Files.exists(file)) {
+                    fileUtil.removeRecursively(file);
+                }
+                
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot clear rhythmicity restults: "+e.getMessage(),e);
+            }
+       });
+    }    
     
 }

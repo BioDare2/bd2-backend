@@ -8,6 +8,7 @@ package ed.biodare2.backend.handlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare.jobcentre2.dom.jsonmodule.TimeSeriesModule;
 import ed.biodare2.Fixtures;
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
@@ -58,6 +59,7 @@ public class ExperimentDataHandlerTest {
     FileAssetRep fileAssets;
     AssetsParamRep assetsParams;
     PPAHandler ppaHandler;
+    RhythmicityHandler rhythmicityHandler;
     UserAccount user;
     
     ExperimentalAssay testExp;
@@ -97,6 +99,8 @@ public class ExperimentDataHandlerTest {
         assetsParams = mock(AssetsParamRep.class);
         ppaHandler = mock(PPAHandler.class);
         
+        rhythmicityHandler = mock(RhythmicityHandler.class);
+        
         experiments = MockReps.mockHub();
         
         //handler = new ExperimentHandler(boundles,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
@@ -104,7 +108,9 @@ public class ExperimentDataHandlerTest {
                 experiments,
                 importHandler,dataHandler,dataExporter,
                 ppaHandler,
-                fileAssets,assetsParams
+                rhythmicityHandler,
+                fileAssets,
+                assetsParams
         );
     }    
 
@@ -138,6 +144,7 @@ public class ExperimentDataHandlerTest {
         verify(importHandler).importTimeSeries(eq(req), eq(user));
         verify(dataHandler).handleNewData(eq(boundle), eq(dataBoundle));
         verify(ppaHandler).clearPPA(eq(boundle));
+        verify(rhythmicityHandler).clear(eq(boundle));
         verify(experiments).save(eq(boundle));
         
         assertEquals(1,res);
