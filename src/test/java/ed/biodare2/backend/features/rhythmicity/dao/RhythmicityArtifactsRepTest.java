@@ -167,4 +167,27 @@ public class RhythmicityArtifactsRepTest {
         assertFalse(Files.exists(rhythms));
     }
     
+    @Test
+    public void deleteJobArtefactsDeletesJobFolder() {
+        
+        long expId = 123;
+        UUID jobId = UUID.randomUUID();        
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
+        
+        
+        instance.saveJobResults(results, jobId, expId);
+        
+        Path jobDir = instance.getJobDir(expId, jobId);
+        assertTrue(Files.isDirectory(jobDir));
+        
+        Optional<JobResults<TSResult<BD2eJTKRes>>> res = instance.readJobResults(jobId, expId);
+        assertTrue(res.isPresent());
+
+        instance.deleteJobArtefacts(jobId, expId);
+        
+        assertFalse(Files.isDirectory(jobDir));
+        res = instance.readJobResults(jobId, expId);
+        assertFalse(res.isPresent());        
+    }     
+    
 }

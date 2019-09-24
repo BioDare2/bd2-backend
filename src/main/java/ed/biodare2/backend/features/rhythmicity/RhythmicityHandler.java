@@ -295,6 +295,13 @@ public class RhythmicityHandler {
         return label;
     }
 
+    public RhythmicityJobSummary deleteRhythmicityJob(AssayPack exp, UUID jobId) {
+        RhythmicityJobSummary job = tryToFindJobSummary(exp, jobId);
+        
+        rhythmicityRep.deleteJobArtefacts(jobId, exp);
+        return job;        
+    }
+
 
     
 }

@@ -172,6 +172,32 @@ public class ExperimentRhythmicityController extends ExperimentController {
         
     }    
     
+ 
+    
+    
+    @RequestMapping(value = "job/{jobId}", method = RequestMethod.DELETE)
+    public RhythmicityJobSummary deleteRhythmicityJob(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("delete RhythmicityJob:{} exp:{}; {}",jobId,expId,user);
+        
+        
+        AssayPack exp = getExperimentForWrite(expId,user);
+        
+        
+        try {
+            RhythmicityJobSummary job = rhythmicityHandler.deleteRhythmicityJob(exp, jobId);
+            tracker.rhythmicityDeleteJob(exp,job,user);
+            return job;
+        } catch (WebMappedException e) {
+            log.error("Cannot delete rhythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot delete rhtythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }  
+    
+    
     /*
     @RequestMapping(value = "job/{jobId}/export/{phaseType}", method = RequestMethod.GET)
     public void exportPPAJob(@PathVariable long expId,@PathVariable long jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
@@ -204,31 +230,11 @@ public class ExperimentRhythmicityController extends ExperimentController {
             }
         }
                 
-    }      
-    
-    
-    @RequestMapping(value = "job/{jobId}", method = RequestMethod.DELETE)
-    public PPAJobSummary deletePPAJob(@PathVariable long expId,@PathVariable long jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("delete PPAJob:{} exp:{}; {}",jobId,expId,user);
-        
-        
-        AssayPack exp = getExperimentForWrite(expId,user);
-        
-        
-        try {
-            PPAJobSummary job = ppaHandler.deletePPAJob(exp, jobId);
-            tracker.ppaDeleteJob(exp,job,user);
-            return job;
-        } catch (WebMappedException e) {
-            log.error("Cannot delete PPA job {} {} {}",jobId,expId,e.getMessage(),e);
-            throw e;
-        } catch (Exception e) {
-            log.error("Cannot delete PPA job {} {} {}",jobId,expId,e.getMessage(),e);
-            throw new ServerSideException(e.getMessage());
-        } 
-        
     }  
+    */       
     
+    
+    /*
     @RequestMapping(value = "job/{jobId}/results/grouped", method = RequestMethod.GET)
     public PPAJobResultsGroups getPPAJobResultsGrouped(@PathVariable long expId,@PathVariable long jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAJobResultsGrouped; job:{} exp: {}; {}",jobId,expId,user);

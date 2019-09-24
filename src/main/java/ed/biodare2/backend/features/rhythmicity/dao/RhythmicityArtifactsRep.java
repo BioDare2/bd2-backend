@@ -264,5 +264,26 @@ public class RhythmicityArtifactsRep {
             }
        });
     }    
+
+    @Transactional
+    @CacheEvict(allEntries = true)
+    public void deleteJobArtefacts(UUID jobId, AssayPack exp) {
+        deleteJobArtefacts(jobId, exp.getId());
+    }
+    
+    protected void deleteJobArtefacts(UUID jobId, long expId) {
+        guard.guard(expId, (id) -> {
+            try {
+
+                Path jobDir = getJobDir(expId,jobId);
+                if (Files.exists(jobDir)) {
+                    fileUtil.removeRecursively(jobDir);
+                }
+                
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot access system info: "+e.getMessage(),e);
+            }
+       });
+    }
     
 }

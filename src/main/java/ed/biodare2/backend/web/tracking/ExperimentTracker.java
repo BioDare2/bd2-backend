@@ -160,8 +160,9 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_RHYTHMICITY,VIEW,exp.getId(),user,"JOB_RESULTS",jobId.toString());
     }
 
-
-
+    public void rhythmicityDeleteJob(AssayPack exp, RhythmicityJobSummary job, BioDare2User user) {
+        track(EXP_RHYTHMICITY,DELETE,exp.getId(),user,"JOB",job.jobId.toString());
+    }  
 
 
 

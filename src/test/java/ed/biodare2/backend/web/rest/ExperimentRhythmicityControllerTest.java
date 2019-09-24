@@ -26,6 +26,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.PermissionsResolver;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -268,6 +269,41 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         
     }
     
+    @Test
+    public void testDeleteJob() throws Exception {
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();                
+        insertData(pack);
+        
+        RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
+        rhythmicityRep.saveJobDetails(job1, pack);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId)
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        RhythmicityJobSummary job = mapper.readValue(resp.getResponse().getContentAsString(), RhythmicityJobSummary.class);
+        assertNotNull(job);
+
+        assertEquals(job1, job);
+        
+        assertTrue(rhythmicityRep.findJob(job1.jobId, exp.getId()).isEmpty());
+        rhythmicityRep.getJobs(pack).forEach( j -> {
+            assertNotEquals(job1.jobId, j.jobId);
+        });
+        
+        
+    }
     
     
 }
