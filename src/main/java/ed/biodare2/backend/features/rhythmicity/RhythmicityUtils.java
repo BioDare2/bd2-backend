@@ -61,11 +61,11 @@ public class RhythmicityUtils {
         return params;
     }
 
-    public RhythmicityJobSummary prepareNewJobSummary(UUID jobId, TSDataSetJobRequest jobRequest, RhythmicityRequest request, long expId) {
+    public RhythmicityJobSummary prepareNewJobSummary(TSDataSetJobRequest jobRequest, RhythmicityRequest request, long expId) {
         
         RhythmicityJobSummary job = new RhythmicityJobSummary();
-        job.jobId = jobId;
-        job.jobStatus = new JobStatus(jobId, State.SUBMITTED);
+        job.jobStatus = new JobStatus(null,State.SUBMITTED);
+        
         job.parameters = new HashMap<>(jobRequest.parameters);
         
 	job.parameters.put(DW_START, ""+request.windowStart);

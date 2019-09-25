@@ -46,6 +46,7 @@ public class RhythmicityHandler {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
     static int OLD_MINUTES = 60;    
+    final static int HOURS_BEFORE_CAN_REPEAT = 8;
     
     final ExperimentHandler experimentHandler;
     final RhythmicityArtifactsRep rhythmicityRep;
@@ -82,10 +83,20 @@ public class RhythmicityHandler {
         if (!dataSet.isPresent()) throw new ArgumentException("Missing data set in the experiment");
         
         TSDataSetJobRequest jobRequest = utils.prepareJobRequest(exp.getId(), request, dataSet.get());
+        RhythmicityJobSummary job = utils.prepareNewJobSummary(jobRequest, request, exp.getId());        
 
-        UUID jobHandle = submitJob(jobRequest);
+        Optional<RhythmicityJobSummary> similarJob = findSimilarRunningJob(job, exp);
         
-        RhythmicityJobSummary job = utils.prepareNewJobSummary(jobHandle, jobRequest, request, exp.getId());        
+        if (similarJob.isPresent()) {
+            String msg = "Similar job is currently running ("
+                    + similarJob.get().jobId + ")";
+            throw new RhythmicityHandlingException(msg);
+        }
+        
+        UUID jobHandle = submitJob(jobRequest); 
+        // we do it here so that job can be used for searching existing
+        job.jobId = jobHandle;
+        job.jobStatus = new JobStatus(jobHandle, State.SUBMITTED);        
 
         
         rhythmicityRep.saveJobDetails(job,exp);
@@ -300,6 +311,20 @@ public class RhythmicityHandler {
         
         rhythmicityRep.deleteJobArtefacts(jobId, exp);
         return job;        
+    }
+
+    Optional<RhythmicityJobSummary> findSimilarRunningJob(RhythmicityJobSummary job, AssayPack exp) {
+        
+        return rhythmicityRep.getJobs(exp).stream()
+                .filter( j -> j.jobStatus.state == State.SUBMITTED || j.jobStatus.state == State.PROCESSING)
+                .filter( j -> j.jobStatus.submitted.isAfter(LocalDateTime.now().minusHours(HOURS_BEFORE_CAN_REPEAT)))
+                .filter( j -> isSimilarJob(j, job))
+                .findAny();
+    }
+
+    boolean isSimilarJob(RhythmicityJobSummary job1, RhythmicityJobSummary job2) {
+        
+        return job1.parameters.equals(job2.parameters);
     }
 
 

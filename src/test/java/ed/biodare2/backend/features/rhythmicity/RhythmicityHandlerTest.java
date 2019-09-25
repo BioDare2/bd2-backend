@@ -6,15 +6,19 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.State;
+import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import static ed.biodare2.backend.features.rhythmicity.RhythmicityHandler.HOURS_BEFORE_CAN_REPEAT;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
@@ -23,6 +27,7 @@ import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.robust.dom.data.DetrendingType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -152,6 +157,129 @@ public class RhythmicityHandlerTest {
         verify(rhythmicityRep).findJob(jobId, expId);
         verify(rhythmicityRep).findJobResults(jobId, expId);
         
+    }
+    
+    @Test
+    public void newRhythmicitySubmitsJob() throws Exception {
+        
+        long expId = 123;
+        AssayPack exp = new MockExperimentPack(expId);    
+        
+        RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();        
+        
+        List<DataTrace> dataSet = makeDataTraces(1, 1);    
+        when(dataHandler.getDataSet(exp, rhythmicityRequest.detrending)).thenReturn(Optional.of(dataSet));     
+        
+        UUID uid = UUID.randomUUID();
+        when(rhythmicityService.submitJob(any())).thenReturn(uid);
+        
+        UUID res = instance.newRhythmicity(exp, rhythmicityRequest);
+        
+        assertEquals(uid, res);
+        verify(rhythmicityRep).saveJobDetails(any(), eq(exp));
+        verify(experimentHandler).updateHasRhythmicityJobs(exp,true);
+        
+    }
+    
+    @Test
+    public void newRhythmicityDoesNotSubmitJobIfSimilarIsRunning() throws Exception {
+        
+        long expId = 123;
+        AssayPack exp = new MockExperimentPack(expId);    
+        
+        RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();        
+        
+        
+        List<DataTrace> dataSet = makeDataTraces(1, 1);    
+        when(dataHandler.getDataSet(exp, rhythmicityRequest.detrending)).thenReturn(Optional.of(dataSet));     
+
+        RhythmicityUtils utils = new RhythmicityUtils();
+        TSDataSetJobRequest jobRequest = utils.prepareJobRequest(exp.getId(), rhythmicityRequest, dataSet);
+        RhythmicityJobSummary job1 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, exp.getId());                
+        UUID uid1 = UUID.randomUUID();
+        
+        job1.jobId = uid1;
+        job1.jobStatus = new JobStatus(uid1, State.SUBMITTED); 
+
+        when(rhythmicityRep.getJobs(exp)).thenReturn(List.of(job1));
+        
+        UUID uid2 = UUID.randomUUID();
+        when(rhythmicityService.submitJob(any())).thenReturn(uid2);        
+        
+        try {
+           UUID res = instance.newRhythmicity(exp, rhythmicityRequest);
+           fail("Expected exception got jID: "+res);
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Similar job is currently running ("
+                    + uid1 + ")";            
+            assertEquals(msg, e.getMessage());
+        }
+    
+    }  
+    
+    @Test
+    public void jobsSummariesGeneratedFromSameInputAreSimilar() {
+        
+        long expId = 123;
+        RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();        
+        rhythmicityRequest.preset = "AAA";
+        
+        List<DataTrace> dataSet = makeDataTraces(1, 1);    
+
+        RhythmicityUtils utils = new RhythmicityUtils();
+        TSDataSetJobRequest jobRequest = utils.prepareJobRequest(expId, rhythmicityRequest, dataSet);
+        RhythmicityJobSummary job1 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);                
+        
+        RhythmicityJobSummary job2 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);                
+        
+        assertTrue(instance.isSimilarJob(job1, job2));
+        
+        rhythmicityRequest.preset = "XXX";
+        jobRequest = utils.prepareJobRequest(expId, rhythmicityRequest, dataSet);
+        job2 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);   
+        System.out.println(job1.parameters);
+        System.out.println(job2.parameters);
+        assertFalse(instance.isSimilarJob(job1, job2));
+        
+        rhythmicityRequest.preset = "AAA";
+        jobRequest = utils.prepareJobRequest(expId, rhythmicityRequest, dataSet);
+        job2 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);                
+        assertTrue(instance.isSimilarJob(job1, job2));
+        
+        rhythmicityRequest.windowStart = 10;
+        jobRequest = utils.prepareJobRequest(expId, rhythmicityRequest, dataSet);
+        job2 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);                        
+        assertFalse(instance.isSimilarJob(job1, job2));
+    }
+    
+    @Test
+    public void findSimilarRunningJobTakesIntoAccountStateAndSubmissionDate() {
+        
+        long expId = 123;
+        AssayPack exp = new MockExperimentPack(expId); 
+        RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();        
+        
+        List<DataTrace> dataSet = makeDataTraces(1, 1);    
+
+        RhythmicityUtils utils = new RhythmicityUtils();
+        TSDataSetJobRequest jobRequest = utils.prepareJobRequest(expId, rhythmicityRequest, dataSet);
+        RhythmicityJobSummary job1 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);
+        
+        
+        RhythmicityJobSummary job2 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, expId);                
+        
+        when(rhythmicityRep.getJobs(exp)).thenReturn(List.of(job1));
+        
+        assertTrue(instance.findSimilarRunningJob(job2, exp).isPresent());
+        
+        job1.jobStatus.state = State.FAILED;
+        assertFalse(instance.findSimilarRunningJob(job2, exp).isPresent());
+        
+        job1.jobStatus.state = State.SUBMITTED;
+        assertTrue(instance.findSimilarRunningJob(job2, exp).isPresent());
+
+        job1.jobStatus.submitted = LocalDateTime.now().minusHours(HOURS_BEFORE_CAN_REPEAT+1);
+        assertFalse(instance.findSimilarRunningJob(job2, exp).isPresent());
     }
     
 }
