@@ -110,6 +110,7 @@ public class RhythmicityHandler {
     public void clear(AssayPack exp) {
         
         rhythmicityRep.clearAll(exp);
+        experimentHandler.updateHasRhythmicityJobs(exp,false);
     }    
     
     void validateRequest(RhythmicityRequest request) throws ArgumentException {

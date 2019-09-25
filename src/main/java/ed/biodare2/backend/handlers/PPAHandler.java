@@ -95,6 +95,7 @@ public class PPAHandler {
     @Transactional
     public void clearPPA(AssayPack exp) throws IOException {
         ppaRep.clearAllPPAArtefacts(exp);
+        experimentHandler.updateHasPPAJobs(exp,false);
     }    
     
     @Transactional
