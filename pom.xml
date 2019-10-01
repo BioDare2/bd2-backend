@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
-	<version>2.3.3.200</version>
+	<version>2.3.4.200</version>
 	<name>BioDare2-REST-Trunk</name>
 	<description>BioDare2 backend service</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.6.RELEASE</version>
+		<version>2.1.8.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -165,13 +165,13 @@
                 <dependency>
                     <groupId>ed.biodare.jobcentre2</groupId>
                     <artifactId>client</artifactId>
-                    <version>2.0.1-SNAPSHOT</version>
+                    <version>2.1.1-SNAPSHOT</version>
                 </dependency> 
                 
                 <dependency>
                     <groupId>ed.biodare.jobcentre2</groupId>
                     <artifactId>shared-dom</artifactId>
-                    <version>2.0.1-SNAPSHOT</version>
+                    <version>2.1.1-SNAPSHOT</version>
                 </dependency>                     
                 
                 <!-- pool for lock -->        
