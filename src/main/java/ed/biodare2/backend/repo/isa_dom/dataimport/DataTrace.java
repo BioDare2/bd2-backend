@@ -12,7 +12,7 @@ import java.io.Serializable;
  *
  * @author tzielins
  */
-public class DataTrace implements Cloneable,Serializable {
+public class DataTrace implements Cloneable, Serializable {
    
     static final long serialVersionUID = 11L;
     

@@ -47,8 +47,10 @@ import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.robust.dom.data.DetrendingType;
+import ed.robust.dom.data.TimeSeries;
 
 import ed.robust.ppa.PPAMethod;
+import ed.robust.util.timeseries.TSGenerator;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoPeriod;
@@ -279,16 +281,30 @@ public class DomRepoTestBuilder {
     } 
     
     public static List<DataTrace> makeDataTraces(int idS, int idE) {
+        return makeDataTraces(idS, idE, 24);
+    }
+    
+    public static List<DataTrace> makeDataTraces(int idS, int idE, int duration) {
         List<DataTrace> dataSet = new ArrayList<>();
         for (int i = idS; i<= idE;i++) {
             DataTrace trace = new DataTrace();
             trace.dataId = i;
             trace.traceRef = "A"+i;
             trace.details = new DataColumnProperties("toc"+(i % 2));
+            
+            TimeSeries serie = makeTimeSeries(duration);
+            trace.trace = serie;
             dataSet.add(trace);
         }
         return dataSet;
     }
+    
+    public static TimeSeries makeTimeSeries(int duration) {
+        
+        TimeSeries ts = TSGenerator.makeCos(duration, 1, 24, 1);
+        ts = TSGenerator.addNoise(ts, 0.1);
+        return ts;
+    } 
     
     public static RhythmicityJobSummary makeRhythmicityJobSummary(UUID jobId, long expId) {
         
@@ -368,5 +384,7 @@ public class DomRepoTestBuilder {
         bio.species = "Arabidopsis thaliana";
         return bio.build();
     }
+
+
     
 }

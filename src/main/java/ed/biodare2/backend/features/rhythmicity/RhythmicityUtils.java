@@ -15,6 +15,7 @@ import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary.*;
+import ed.robust.dom.data.TimeSeries;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -26,28 +27,31 @@ import java.util.stream.Collectors;
  */
 public class RhythmicityUtils {
 
-    static final int DEFAULT_NULL_SIZE = 1000;
+    static final int DEFAULT_NULL_SIZE = 100_000;
     
     public TSDataSetJobRequest prepareJobRequest(long expId, RhythmicityRequest request, List<DataTrace>  dataSet) {
         
         TSDataSetJobRequest job = new TSDataSetJobRequest();
         job.externalId = ""+expId;
         job.method = request.method;
-        job.data = prepareData(dataSet);
+        job.data = prepareData(dataSet, request.windowStart, request.windowEnd);
         job.parameters = prepareParameters(request);
         return job;
         
     }
 
-    List<TSData> prepareData(List<DataTrace> dataSet) {
+    List<TSData> prepareData(List<DataTrace> dataSet, double windowStart, double windowEnd) {
         
         return dataSet.stream()
-                .map( dt -> trace2TSData(dt))
+                .map( dt -> trace2TSData(dt, windowStart, windowEnd))
                 .collect(Collectors.toList());
     }
 
-    TSData trace2TSData(DataTrace trace) {
-        TSData data = new TSData(trace.dataId, trace.trace);
+    TSData trace2TSData(DataTrace trace,double windowStart, double windowEnd) {
+        
+        TimeSeries serie = windowStart == 0 && windowEnd == 0 ? trace.trace : trace.trace.subSeries(windowStart, windowEnd);
+        
+        TSData data = new TSData(trace.dataId, serie);
         return data;
     }
 
