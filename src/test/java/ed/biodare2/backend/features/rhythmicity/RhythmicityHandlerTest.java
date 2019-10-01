@@ -8,10 +8,12 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.State;
+import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import static ed.biodare2.backend.features.rhythmicity.RhythmicityHandler.HOURS_BEFORE_CAN_REPEAT;
+import static ed.biodare2.backend.features.rhythmicity.RhythmicityHandler.MAX_DATA_SET_SIZE;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
@@ -19,6 +21,7 @@ import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKRes
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeTimeSeries;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
@@ -28,6 +31,7 @@ import ed.biodare2.backend.web.rest.HandlingException;
 import ed.robust.dom.data.DetrendingType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -280,6 +284,91 @@ public class RhythmicityHandlerTest {
 
         job1.jobStatus.submitted = LocalDateTime.now().minusHours(HOURS_BEFORE_CAN_REPEAT+1);
         assertFalse(instance.findSimilarRunningJob(job2, exp).isPresent());
+    }
+    
+    @Test
+    public void checkRequestSanityChecksMethodsAndPresets() throws Exception {
+        
+        TSDataSetJobRequest jobRequest  = new TSDataSetJobRequest();
+        TSData data = new TSData(2,  makeTimeSeries(24));
+        jobRequest.data = List.of(data);
+        jobRequest.externalId = "123";
+        jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
+        
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Unsupported method: "+null;
+            assertEquals(msg, e.getMessage());
+        }
+        
+        jobRequest.method = "XXX";
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Unsupported method: XXX";
+            assertEquals(msg, e.getMessage());
+        }
+        
+        jobRequest.method = "BD2EJTK";
+        instance.checkRequestSanity(jobRequest);
+        
+        jobRequest.parameters.put("PRESET", "XXX");
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Unsupported preset: XXX";
+            assertEquals(msg, e.getMessage());
+        }
+    }
+ 
+    
+    @Test
+    public void checkRequestSanityChecksData() throws Exception {
+        
+        TSDataSetJobRequest jobRequest  = new TSDataSetJobRequest();
+        TSData data = new TSData(2,  makeTimeSeries(24));
+        jobRequest.data = List.of(data);
+        jobRequest.externalId = "123";
+        jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
+        jobRequest.method = "BD2EJTK";
+        
+        instance.checkRequestSanity(jobRequest);
+        
+        jobRequest.data = List.of();
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Empty data set";
+            assertEquals(msg, e.getMessage());
+        }
+        
+        jobRequest.data = new ArrayList<>(MAX_DATA_SET_SIZE);
+        for (int i = 1; i<= MAX_DATA_SET_SIZE+1; i++) jobRequest.data.add(data);
+        
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "BioDare can only test up to 50000 timeseries, got: 50001";
+            assertEquals(msg, e.getMessage());
+        }
+        
+        jobRequest.data = List.of(data);
+        instance.checkRequestSanity(jobRequest);
+        
+        data.trace = makeTimeSeries(6*24);
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "BioDare can only test data with up to 120 time points, got: 144";
+            assertEquals(msg, e.getMessage());
+        }
     }
     
 }

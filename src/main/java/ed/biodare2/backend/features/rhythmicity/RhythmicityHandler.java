@@ -7,6 +7,7 @@ package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -45,6 +46,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class RhythmicityHandler {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
+    
+    static int MAX_DATA_SET_SIZE = 50_000;
+    static int MAX_TIMEPOINTS = 5*24;
+    
     static int OLD_MINUTES = 60;    
     final static int HOURS_BEFORE_CAN_REPEAT = 8;
     
@@ -83,6 +88,9 @@ public class RhythmicityHandler {
         if (!dataSet.isPresent()) throw new ArgumentException("Missing data set in the experiment");
         
         TSDataSetJobRequest jobRequest = utils.prepareJobRequest(exp.getId(), request, dataSet.get());
+        
+        checkRequestSanity(jobRequest);
+        
         RhythmicityJobSummary job = utils.prepareNewJobSummary(jobRequest, request, exp.getId());        
 
         Optional<RhythmicityJobSummary> similarJob = findSimilarRunningJob(job, exp);
@@ -326,6 +334,48 @@ public class RhythmicityHandler {
     boolean isSimilarJob(RhythmicityJobSummary job1, RhythmicityJobSummary job2) {
         
         return job1.parameters.equals(job2.parameters);
+    }
+
+    void checkRequestSanity(TSDataSetJobRequest request) throws RhythmicityHandlingException {
+        
+        if (!RHYTHMICITY_METHODS.BD2EJTK.name().equals(request.method)) {
+            throw new RhythmicityHandlingException("Unsupported method: "+request.method);
+        }
+        
+        String preset = request.parameters.getOrDefault(RhythmicityConstants.PRESET_KEY, "MISSING");
+        try {
+            
+            RhythmicityConstants.BD2EJTK_PRESETS.valueOf(preset);
+        } catch (IllegalArgumentException e) {
+            throw new RhythmicityHandlingException("Unsupported preset: "+preset);
+        }
+        
+        if (request.data.isEmpty()) {
+            throw new RhythmicityHandlingException("Empty data set");
+        }
+        
+        if (request.data.size() > MAX_DATA_SET_SIZE) {
+            throw new RhythmicityHandlingException("BioDare can only test up to "+
+                    MAX_DATA_SET_SIZE+" timeseries, got: "+request.data.size());
+        }
+        
+        long empties = request.data.stream()
+                .filter( d -> d.trace.isEmpty())
+                .count();
+        
+        if (empties == request.data.size()) {
+            throw new RhythmicityHandlingException("All timeseries are empty after trimming");
+        }
+        
+        long maxPoints = request.data.stream()
+                .mapToInt( d -> d.trace.size())
+                .max().orElse(0);
+        
+        if (maxPoints > MAX_TIMEPOINTS) {
+            throw new RhythmicityHandlingException("BioDare can only test data with up to "+
+                    MAX_TIMEPOINTS+" time points, got: "+maxPoints);            
+        }
+        
     }
 
 
