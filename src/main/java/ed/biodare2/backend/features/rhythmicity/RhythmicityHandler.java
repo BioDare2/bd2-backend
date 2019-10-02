@@ -371,9 +371,14 @@ public class RhythmicityHandler {
                 .mapToInt( d -> d.trace.size())
                 .max().orElse(0);
         
-        if (maxPoints > MAX_TIMEPOINTS) {
+        // for BD2 preset it takes too long for 5 days of data, reduce the limit to 4 days
+        // which takes 12 minutes for 100_000 NULL hipotesis.
+        int limit = RhythmicityConstants.BD2EJTK_PRESETS.BD2_CLASSIC.name().equals(preset) ?
+                MAX_TIMEPOINTS - 24 : MAX_TIMEPOINTS;
+        
+        if (maxPoints > limit) {
             throw new RhythmicityHandlingException("BioDare can only test data with up to "+
-                    MAX_TIMEPOINTS+" time points, got: "+maxPoints);            
+                    limit+" time points, got: "+maxPoints);            
         }
         
     }
