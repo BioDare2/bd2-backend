@@ -17,9 +17,13 @@ import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,28 +187,28 @@ public class ExperimentRhythmicityController extends ExperimentController {
     }  
     
     
-    /*
-    @RequestMapping(value = "job/{jobId}/export/{phaseType}", method = RequestMethod.GET)
-    public void exportPPAJob(@PathVariable long expId,@PathVariable long jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
-        log.debug("export PPAJob:{} exp:{}; {}",jobId,expId,user);
+    
+    @RequestMapping(value = "job/{jobId}/export", method = RequestMethod.GET)
+    public void exportRhythmicityJob(@PathVariable long expId,@PathVariable UUID jobId,
+            @NotNull @AuthenticationPrincipal BioDare2User user, HttpServletResponse response) {
+        log.debug("export RhythmicityJob:{} exp:{}; {}",jobId,expId,user);
         
         
         AssayPack exp = getExperimentForRead(expId,user);
-        if (phaseType == null) phaseType = PhaseType.ByFit;
         
         Path results = null;
         try {
-            results = ppaHandler.exportPPAJob(exp,jobId,phaseType);
+            results = rhythmicityHandler.exportJob(exp,jobId);
 
             String contentType = "text/csv";
-            String fileName = expId+"_job"+jobId+".ppa_data.csv";
+            String fileName = expId+"_job"+jobId+".ejtk_data.csv";
             sendFile(results,fileName,contentType,false,response);
-            tracker.ppaJobDownload(exp,jobId,user);
+            tracker.rhythmicityJobDownload(exp,jobId,user);
         } catch (WebMappedException e) {
-            log.error("Cannot export PPA job results {} {} {}",jobId,expId,e.getMessage(),e);
+            log.error("Cannot export Rhythmicity job results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
-            log.error("Cannot export PPA job results {} {} {}",jobId,expId,e.getMessage(),e);
+            log.error("Cannot export Rhtythmicity job results {} {} {}",jobId,expId,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } finally {
             try {
@@ -216,7 +220,7 @@ public class ExperimentRhythmicityController extends ExperimentController {
         }
                 
     }  
-    */       
+          
     
     
     /*

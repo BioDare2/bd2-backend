@@ -28,7 +28,11 @@ import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.NotFoundException;
+import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.robust.dom.data.DetrendingType;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
@@ -243,7 +247,33 @@ public class RhythmicityHandler {
         
         addLabels(res.results, orgData);
         return res;
-    }    
+    }   
+    
+    public Path exportJob(AssayPack exp, UUID jobId) throws ArgumentException {
+        
+        RhythmicityJobSummary job = tryToFindJobSummary(exp, jobId);
+        
+        if (!State.FINISHED.equals(job.jobStatus.state) && !State.SUCCESS.equals(job.jobStatus.state))
+                throw new NotFoundException("Wrong status for export of job "+jobId+" in exp: "+exp.getId());
+        
+        Map<Long, DataTrace> orgData = getOrgData(exp, job);
+        
+        JobResults<TSResult<BD2eJTKRes>> results = rhythmicityRep.findJobResults(jobId, exp.getId())
+                .orElseThrow(() -> new NotFoundException("Results for job "+jobId+" not found")); 
+        
+        
+        try {
+            RhythmicityResultsExporter exporter = new RhythmicityResultsExporter();
+            Path file = Files.createTempFile(null,null);
+        
+            exporter.exportJob(exp.getAssay(),job,results,orgData,file);
+        
+            return file;
+        } catch (IOException e) {
+            throw new ServerSideException("Cannot create export file: "+e.getMessage(),e);
+        }
+    }
+    
 
     RhythmicityJobSummary tryToFindJobSummary(AssayPack exp, UUID jobId) {
         return rhythmicityRep.findJob(jobId, exp.getId())
@@ -382,6 +412,7 @@ public class RhythmicityHandler {
         }
         
     }
+
 
 
     

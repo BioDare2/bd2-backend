@@ -5,6 +5,7 @@
 package ed.robust.util;
 
 import java.text.DateFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -74,6 +75,11 @@ public class TableBuilder {
    public TableBuilder printVal(Date value) {
        return printVal(dateFormat.format(value));
    }
+   
+   public TableBuilder printVal(LocalDateTime value) {
+       return printVal(value != null ? value.toString() : "null");
+   }
+   
 
    public TableBuilder  printLabel(String label) {
         if (label == null) label = "";
@@ -108,6 +114,10 @@ public class TableBuilder {
    public TableBuilder  printlnParam(String label,Date value) {
 	return printParam(label,value).endln();
     }
+   
+   public TableBuilder  printlnParam(String label,LocalDateTime value) {
+	return printParam(label,value).endln();
+    }   
 
    public TableBuilder  printParam(String label,String value) {
         return printLabel(label).printVal(value);
@@ -124,6 +134,10 @@ public class TableBuilder {
     public TableBuilder printParam(String label,Date value) {
        return printLabel(label).printVal(value);
     }
+    
+    public TableBuilder printParam(String label,LocalDateTime value) {
+       return printLabel(label).printVal(value);
+    }    
 
     public TableBuilder endln() {
         sb.append("\n");

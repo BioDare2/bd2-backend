@@ -78,7 +78,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         
         AssayPack pack = insertExperiment();
         ExperimentalAssay exp = pack.getAssay();                
-        insertData(pack);
+        insertData(pack, 96);
         
         RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();
         
@@ -303,6 +303,41 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         });
         
         
+    }
+    
+    
+    @Test
+    public void exportRhythmicityJobProducesCSVFile() throws Exception {
+    
+        AssayPack pack = insertExperiment();
+
+        ExperimentalAssay exp = pack.getAssay();
+        long expId = exp.getId();
+        int size = insertData(pack);
+        
+        RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
+        job1.jobStatus.state = State.SUCCESS;
+        
+        rhythmicityRep.saveJobDetails(job1, pack);
+        
+        JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
+        rhythmicityRep.saveJobResults(results, job1, pack);
+
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/export/")
+                //.accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith("text/csv"))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        assertTrue(resp.getResponse().getContentLength() > 100);
+        //System.out.println("R: "+resp.getResponse().getContentAsString());
+        assertTrue(resp.getResponse().getContentAsString().contains(""+job1.jobId));
     }
     
     

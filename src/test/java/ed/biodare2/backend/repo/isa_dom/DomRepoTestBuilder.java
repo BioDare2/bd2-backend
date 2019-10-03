@@ -7,6 +7,8 @@ package ed.biodare2.backend.repo.isa_dom;
 
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
+import static ed.biodare.jobcentre2.dom.RhythmicityConstants.PRESET_KEY;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
@@ -313,6 +315,8 @@ public class DomRepoTestBuilder {
         job.jobStatus = new JobStatus(jobId, State.SUBMITTED);
         job.parameters = new HashMap<>();
         
+        job.parameters.put("METHOD", RhythmicityConstants.RHYTHMICITY_METHODS.BD2EJTK.name());
+        job.parameters.put(PRESET_KEY, RhythmicityConstants.BD2EJTK_PRESETS.BD2_CLASSIC.name());        
 	job.parameters.put(DW_START, "0");
 	job.parameters.put(DW_END,"0");
 	job.parameters.put(DATA_SET_TYPE, DetrendingType.POLY_DTR.name());
