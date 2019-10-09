@@ -91,6 +91,7 @@ public class RhythmicityHandler {
         Optional<List<DataTrace>> dataSet = dataHandler.getDataSet(exp,request.detrending);
         if (!dataSet.isPresent()) throw new ArgumentException("Missing data set in the experiment");
         
+        utils.completeRequest(request);
         TSDataSetJobRequest jobRequest = utils.prepareJobRequest(exp.getId(), request, dataSet.get());
         
         checkRequestSanity(jobRequest);

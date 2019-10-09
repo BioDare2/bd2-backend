@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
@@ -30,7 +31,7 @@ public class RhythmicityUtils {
     static final int DEFAULT_NULL_SIZE = 100_000;
     
     public TSDataSetJobRequest prepareJobRequest(long expId, RhythmicityRequest request, List<DataTrace>  dataSet) {
-        
+                
         TSDataSetJobRequest job = new TSDataSetJobRequest();
         job.externalId = ""+expId;
         job.method = request.method;
@@ -49,7 +50,12 @@ public class RhythmicityUtils {
 
     TSData trace2TSData(DataTrace trace,double windowStart, double windowEnd) {
         
-        TimeSeries serie = windowStart == 0 && windowEnd == 0 ? trace.trace : trace.trace.subSeries(windowStart, windowEnd);
+        TimeSeries serie = trace.trace;
+        if (windowStart != 0 || windowEnd != 0) {
+            if (windowStart == 0) windowStart = serie.getFirst().getTime();
+            if (windowEnd == 0) windowEnd = serie.getLast().getTime();
+            serie = trace.trace.subSeries(windowStart, windowEnd);
+        }
         
         TSData data = new TSData(trace.dataId, serie);
         return data;
@@ -83,10 +89,28 @@ public class RhythmicityUtils {
 	if (request.windowStart == 0) summary+="min"; else summary+=request.windowStart;
 	summary+="-";
 	if (request.windowEnd == 0) summary+="max"; else summary+=request.windowEnd;
-	summary+=" p("+request.periodMin+"-"+request.periodMax+")";
+        
+        if (request.periodMin == request.periodMax) {
+            summary+=" p("+request.periodMin+")";
+        } else {
+            summary+=" p("+request.periodMin+"-"+request.periodMax+")";            
+        }
 	job.parameters.put(PARAMS_SUMMARY,summary);
         
         return job;
+    }
+
+    public void completeRequest(RhythmicityRequest request) {
+        
+        if (RhythmicityConstants.BD2EJTK_PRESETS.EJTK_CLASSIC.name().equals(request.preset)) {
+            request.periodMin = 24;
+            request.periodMax =24;
+        }
+        
+        if (RhythmicityConstants.BD2EJTK_PRESETS.BD2_CLASSIC.name().equals(request.preset)) {
+            request.periodMin = 18;
+            request.periodMax = 35;
+        }
     }
     
     

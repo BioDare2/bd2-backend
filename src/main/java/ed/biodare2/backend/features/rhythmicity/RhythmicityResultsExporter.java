@@ -106,7 +106,7 @@ public class RhythmicityResultsExporter {
         tb.printParam("Submitted", job.jobStatus.submitted);
         tb.printlnParam("Finished", job.jobStatus.completed);
         job.parameters.forEach( (key, val) -> {
-            tb.printParam(key, val);
+            tb.printlnParam(key, val);
         });
         tb.endln();
 

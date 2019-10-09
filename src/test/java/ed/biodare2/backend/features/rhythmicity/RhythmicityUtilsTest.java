@@ -77,6 +77,50 @@ public class RhythmicityUtilsTest {
     }
     
     @Test
+    public void prepareDataTrimsStartOfData() {
+
+        List<DataTrace> dataSet = makeDataTraces(1,2,48);
+        double windowStart = 2;
+        double windowEnd = 0;
+        
+        assertEquals(0, dataSet.get(0).trace.getFirst().getTime(),EPS);
+        assertEquals(47, dataSet.get(0).trace.getLast().getTime(),EPS);
+        
+        List<TSData> data = instance.prepareData(dataSet, windowStart, windowEnd);
+        
+        assertEquals(2, data.get(0).trace.getFirst().getTime(),EPS);
+        assertEquals(47, data.get(0).trace.getLast().getTime(),EPS);
+        
+    } 
+    
+    @Test
+    public void completeRequestChangesPeriodMinMax() {
+        RhythmicityRequest request = makeRhythmicityRequest();
+        request.periodMin = 1;
+        request.periodMax = 20;
+        request.preset = "EJTK_CLASSIC";
+        
+        instance.completeRequest(request);
+        assertEquals(24, request.periodMin, EPS);
+        assertEquals(24, request.periodMax, EPS);
+        
+        
+        request.preset = "BD2_CLASSIC";
+        
+        instance.completeRequest(request);
+        assertEquals(18, request.periodMin, EPS);
+        assertEquals(35, request.periodMax, EPS);
+        
+        request.periodMin = 1;
+        request.periodMax = 20;
+        request.preset = "BD2_SPREAD";
+        
+        instance.completeRequest(request);
+        assertEquals(1, request.periodMin, EPS);
+        assertEquals(20, request.periodMax, EPS);
+    }
+    
+    @Test
     public void prepareDataLeavesDataIfWindows0() {
         
         
