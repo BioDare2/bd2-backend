@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.tsdata.dataimport;
 
 import ed.bd.parser.topcount.TopCountReader;
+import ed.biodare2.backend.features.tsdata.TextDataTableView;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
@@ -23,7 +24,6 @@ public class FileFormatVerifier {
     
     final TopCountReader topcount = new TopCountReader(false);
 
-
     public static class FormatException extends Exception {
         
         public FormatException(String msg) {
@@ -36,6 +36,8 @@ public class FileFormatVerifier {
         switch(format) {
             case EXCEL_TABLE: return verifyExcel(file);
             case TOPCOUNT: return verifyTopcount(file);
+            case TAB_SEP: return verifyTextTable(file,"\t");
+            case COMA_SEP: return verifyTextTable(file,",");
             default: throw new IllegalArgumentException("Unsuported format: "+format);
         }
     }
@@ -62,6 +64,14 @@ public class FileFormatVerifier {
         return true;    
         */
     }
+    
+    boolean verifyTextTable(Path file, String sep) throws IOException {
+        
+        return TextDataTableView.isSuitableFormat(file, sep);
+    }
+
+
+    
     
 
 }

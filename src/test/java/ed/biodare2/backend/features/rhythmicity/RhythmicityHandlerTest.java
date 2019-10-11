@@ -198,7 +198,9 @@ public class RhythmicityHandlerTest {
         when(dataHandler.getDataSet(exp, rhythmicityRequest.detrending)).thenReturn(Optional.of(dataSet));     
 
         RhythmicityUtils utils = new RhythmicityUtils();
+        utils.completeRequest(rhythmicityRequest);
         TSDataSetJobRequest jobRequest = utils.prepareJobRequest(exp.getId(), rhythmicityRequest, dataSet);
+        
         RhythmicityJobSummary job1 = utils.prepareNewJobSummary(jobRequest, rhythmicityRequest, exp.getId());                
         UUID uid1 = UUID.randomUUID();
         

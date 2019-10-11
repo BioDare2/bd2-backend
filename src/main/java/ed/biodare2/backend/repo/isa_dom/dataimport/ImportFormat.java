@@ -16,6 +16,8 @@ public enum ImportFormat {
     
     NONE, //so the real values starts at 1
     EXCEL_TABLE,
-    TOPCOUNT
+    TOPCOUNT,
+    TAB_SEP,
+    COMA_SEP
     
 }
