@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.features.tsdata;
+package ed.biodare2.backend.features.tsdata.tableview;
 
+import ed.robust.dom.util.Pair;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +17,24 @@ import java.util.List;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableView {
+public class TextDataTableView extends TableRecordsReader {
+    
+    Path file;
+    final String sep;
+    
+    TextDataTableView(String sep) {
+        this.sep = sep;
+    };
+    
+    public TextDataTableView(Path file, String sep) {
+        if (!Files.isRegularFile(file)) 
+            throw new IllegalArgumentException("Missing input file: "+file);
+        
+        this.file = file;
+        this.sep = sep;
+    }
+    
+    
     
     public static boolean isSuitableFormat(Path file, String sep) throws IOException {
         
@@ -64,5 +82,38 @@ public class TextDataTableView {
             lines.add(line);
         }
         return lines;
+    }
+
+    @Override
+    public Pair<Integer, Integer> tableSize() throws IOException {
+        
+        int cols = countCols();
+        
+        int rows = countRows();
+        
+        return new Pair(rows,cols);
+    }
+
+    int countCols() throws IOException {
+        
+        List<String> lines = readLines(file, 0, 10);
+        
+        return lines.stream()
+                .mapToInt(line -> line.split(sep).length)
+                .max().orElse(0);
+    }
+
+    int countRows() throws IOException {
+        
+        try (BufferedReader reader = Files.newBufferedReader(file)) {
+            
+            int lines = 0;
+            
+            while( reader.readLine() != null) {
+                lines++;
+            }
+            
+            return lines;
+        }        
     }
 }
