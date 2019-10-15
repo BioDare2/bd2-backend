@@ -91,7 +91,7 @@ public class FileViewController extends BioDare2Rest {
         
     }
     
-    @RequestMapping(value = "{fileId}/{format}/view/tableslice",method = RequestMethod.POST)
+    @RequestMapping(value = "{fileId}/view/tableslice/{format}",method = RequestMethod.POST)
     public DataTableSlice getTableSlice(@PathVariable @NotNull String fileId,
             @PathVariable @NotNull ImportFormat format,
             @RequestBody Slice slice,

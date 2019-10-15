@@ -236,7 +236,7 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         String orgJSON = mapper.writeValueAsString(slice);
         
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/"+format.name()+"/view/tableslice")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(orgJSON)
                 .accept(APPLICATION_JSON_UTF8)
@@ -277,7 +277,7 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         String orgJSON = mapper.writeValueAsString(slice);
         
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/"+format.name()+"/view/tableslice")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
                 .contentType(APPLICATION_JSON_UTF8)
                 .content(orgJSON)
                 .accept(APPLICATION_JSON_UTF8)
