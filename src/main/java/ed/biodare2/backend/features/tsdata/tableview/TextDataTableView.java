@@ -11,7 +11,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -19,12 +22,8 @@ import java.util.List;
  */
 public class TextDataTableView extends TableRecordsReader {
     
-    Path file;
+    final Path file;
     final String sep;
-    
-    TextDataTableView(String sep) {
-        this.sep = sep;
-    };
     
     public TextDataTableView(Path file, String sep) {
         if (!Files.isRegularFile(file)) 
@@ -61,7 +60,7 @@ public class TextDataTableView extends TableRecordsReader {
         
         try (BufferedReader reader = Files.newBufferedReader(file)) {
             
-            readLines(reader, from);
+            skipLines(reader, from);
             return readLines(reader, count);
         }
     }
@@ -83,6 +82,24 @@ public class TextDataTableView extends TableRecordsReader {
         }
         return lines;
     }
+    
+    /**
+     * skips the next count lines
+     * @param reader
+     * @param count
+     * @return number of lines skipped
+     */
+    static int skipLines(BufferedReader reader, int count) throws IOException {
+        
+
+        int skipped = 0;
+        for (int i = 0; i< count; i++) {
+            String line = reader.readLine();
+            if (line == null) break;
+            skipped++;
+        }
+        return skipped;
+    }    
 
     @Override
     public Pair<Integer, Integer> tableSize() throws IOException {
@@ -96,7 +113,7 @@ public class TextDataTableView extends TableRecordsReader {
 
     int countCols() throws IOException {
         
-        List<String> lines = readLines(file, 0, 10);
+        List<String> lines = readLines(file, 0, 20);
         
         return lines.stream()
                 .mapToInt(line -> line.split(sep).length)
@@ -115,5 +132,26 @@ public class TextDataTableView extends TableRecordsReader {
             
             return lines;
         }        
+    }
+
+    @Override
+    public List<List<Object>> readRecords(int firstRow, int size) throws IOException {
+        
+        List<String> lines = readLines(file, firstRow, size);
+        
+        Stream<String> line$ = size > 200 ? lines.parallelStream() : lines.stream();
+        
+        return line$.map( line -> lineToRecord(line))
+                .collect(Collectors.toList());
+        
+    }
+
+    List<Object> lineToRecord(String line) {
+        
+        List<Object> items = new ArrayList<>();
+        
+        items.addAll(Arrays.asList(line.split(sep)));
+        
+        return items;
     }
 }

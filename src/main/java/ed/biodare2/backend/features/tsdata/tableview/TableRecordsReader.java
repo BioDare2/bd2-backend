@@ -21,9 +21,7 @@ public abstract class TableRecordsReader {
      */
     public abstract Pair<Integer, Integer> tableSize() throws IOException;
 
-    List<List<Object>> readRecords(int firstRow, int pageSize) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public abstract List<List<Object>> readRecords(int firstRow, int size) throws IOException;
     
     
 }

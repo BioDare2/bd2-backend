@@ -5,9 +5,13 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
+import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.robust.dom.util.Pair;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -49,26 +53,51 @@ public class DataTableSlicer {
     }
 
     List<List<Object>> sliceColumns(List<List<Object>> records, int firstCol, int size) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        return records.stream()
+                .map( list -> {
+                    if (firstCol >= list.size()) return List.of();
+                    int last = firstCol+size;
+                    last = Math.min(last, list.size());
+                    return list.subList(firstCol, last);
+                })
+                .collect(Collectors.toList());
     }
 
     List<Integer> numberRows(int firstRow, int size) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return IntStream.range(firstRow, firstRow+size)
+                .boxed()
+                .collect(Collectors.toList());
     }
 
     List<String> nameRows(List<Integer> rowsNumbers) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return rowsNumbers.stream()
+                .map( nr -> ""+(nr+1))
+                .collect(Collectors.toList());
     }
 
     List<List<Object>> padColumns(List<List<Object>> records) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        final int columns = records.stream().mapToInt(list -> list.size()).max().orElse(0);
+        
+        return records.stream()
+                .map( list -> {
+                    if (list.size() == columns) return list;
+                    list = new ArrayList<>(list);
+                    while(list.size() < columns) list.add("");
+                    return list;
+                })
+                .collect(Collectors.toList());
     }
 
     List<Integer> numberColumns(int firstCol, int size) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return numberRows(firstCol, size);
     }
 
     List<String> nameColumns(List<Integer> columnsNumbers) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        return columnsNumbers.stream()
+                .map( nr -> CellCoordinates.colNrToExcelLetter(nr+1))
+                .collect(Collectors.toList());
     }
 }
