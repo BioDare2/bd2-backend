@@ -7,6 +7,8 @@ package ed.biodare2.backend.web.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
+import ed.biodare2.backend.features.tsdata.tableview.Slice;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
@@ -26,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 /**
@@ -217,6 +220,87 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         
         //assertEquals("true",resp.getResponse().getContentAsString());
         
+        
+    }     
+    
+    @Test
+    public void getTableSliceWorksOnCSV() throws Exception {
+
+        uploaded = upload("wt_prr_simpl.csv");
+        ImportFormat format = ImportFormat.COMA_SEP;
+        
+        Slice slice = new Slice();
+        slice.rowPage.pageSize = 10;
+        slice.colPage.pageSize = 5;
+        
+        String orgJSON = mapper.writeValueAsString(slice);
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/"+format.name()+"/view/tableslice")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("DataView JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        DataTableSlice dataSlice = mapper.readValue(resp.getResponse().getContentAsString(), DataTableSlice.class);
+        assertNotNull(dataSlice);
+        
+        assertEquals(10, dataSlice.data.size());
+        assertEquals(5, dataSlice.data.get(0).size());
+        
+        assertEquals("id", dataSlice.data.get(0).get(0));
+        assertEquals("1.113459299", dataSlice.data.get(1).get(2));
+        
+    }    
+    
+    @Test
+    public void getTableSliceWorksWithTSV() throws Exception {
+
+        uploaded = upload("wt_prr_simpl.tsv");
+        ImportFormat format = ImportFormat.TAB_SEP;
+        
+        Slice slice = new Slice();
+        slice.rowPage.pageIndex = 1;
+        slice.rowPage.pageSize = 10;
+        slice.colPage.pageIndex = 1;
+        slice.colPage.pageSize = 5;
+        
+        String orgJSON = mapper.writeValueAsString(slice);
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/"+format.name()+"/view/tableslice")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("DataView JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        DataTableSlice dataSlice = mapper.readValue(resp.getResponse().getContentAsString(), DataTableSlice.class);
+        assertNotNull(dataSlice);
+        
+        assertEquals(10, dataSlice.data.size());
+        assertEquals(5, dataSlice.data.get(0).size());
+        
+        assertEquals(10, (int)dataSlice.rowsNumbers.get(0));
+        assertEquals("0.677429628", dataSlice.data.get(0).get(0));
+        assertEquals("0.735742597", dataSlice.data.get(1).get(0));
         
     }     
 }
