@@ -5,13 +5,14 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
-import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableView.countPresence;
-import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableView.isSuitableFormat;
+import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.countPresence;
+import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.isSuitableFormat;
 import ed.robust.dom.util.Pair;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -22,22 +23,22 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableViewTest {
+public class TextDataTableReaderTest {
     
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
     
-    public TextDataTableViewTest() {
+    public TextDataTableReaderTest() {
     }
     
     Path dataFile;
-    TextDataTableView instance;
+    TextDataTableReader instance;
     
     @Before
     public void setUp() throws IOException {
         
         dataFile = testFolder.newFile().toPath();
-        instance = new TextDataTableView(dataFile, ",");
+        instance = new TextDataTableReader(dataFile, ",");
     }
 
     @Test
@@ -135,7 +136,7 @@ public class TextDataTableViewTest {
         exp = List.of("","1234.5","ala");        
         assertEquals(exp, record);
         
-        instance = new TextDataTableView(dataFile, "\t");
+        instance = new TextDataTableReader(dataFile, "\t");
         record = instance.lineToRecord(line);
         exp = List.of(line);        
         assertEquals(exp, record);
@@ -194,7 +195,7 @@ public class TextDataTableViewTest {
         );        
         assertEquals(exp, records);
         
-        instance = new TextDataTableView(dataFile, "\t");
+        instance = new TextDataTableReader(dataFile, "\t");
         records = instance.readRecords(2, 4);        
         exp = List.of(
                 List.of("2345dfdf fd fdsfdfadsf","Tomek"),
@@ -203,6 +204,47 @@ public class TextDataTableViewTest {
         );  
         
         assertEquals(exp, records);
+        
+    }
+  
+    
+    @Test 
+    public void opennedReaderCanSkipLinesAndReadContent() throws Exception {
+        
+        
+        List<String> rows = List.of(
+                "123,2,3,",
+                "",
+                "2345dfdf fd fdsfdfadsf\tTomek\t",
+                "1,2,3,4,5,6,7",
+                "A,B,C\t,4,5"        
+        );
+        Files.write(dataFile, rows);
+        
+        
+        try (TextDataTableReader.OpennedReader reader = new TextDataTableReader.OpennedReader(dataFile, ",")) {
+            
+            int skipped = reader.skipLines(2);
+            assertEquals(2, skipped);
+            
+            List<List<Object>> expRecords = List.of(
+                    List.of("2345dfdf fd fdsfdfadsf\tTomek\t"),
+                    List.of("1","2","3","4","5","6","7"),
+                    List.of("A","B","C\t","4","5")                
+            );            
+            
+            for (List<Object> exp : expRecords) {
+                Optional<List<Object>> opt = reader.readRecord();
+                assertTrue(opt.isPresent());
+                assertEquals(exp, opt.get());
+            }
+            
+            assertTrue(reader.readRecord().isEmpty());
+            assertTrue(reader.readRecord().isEmpty());
+            assertTrue(reader.readRecord().isEmpty());
+            
+        }
+        
         
     }
     

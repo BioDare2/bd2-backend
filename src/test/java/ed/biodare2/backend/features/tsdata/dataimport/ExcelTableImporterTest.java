@@ -47,93 +47,7 @@ public class ExcelTableImporterTest {
         instance = new ExcelTableImporter();
     }
     
-    @Test
-    public void convertTimesReturnsOrginalIfTimeInHours() throws ImportException {
-        
-        List<Double> times = Arrays.asList(0.123,null,1.1,0.234);
-        
-        TimeColumnProperties prop = new TimeColumnProperties();
-        prop.timeType = TimeType.TIME_IN_HOURS;
-        
-        List<Double> res = instance.convertTimes(times, prop);
-        assertEquals(times,res);
-    }
-
-    @Test
-    public void convertTimesConvertsMinutesToHoursIfTimeInMinutes() throws ImportException {
-        
-        List<Double> times = Arrays.asList(60.0,null,150.0,180.0);
-        List<Double> exp = Arrays.asList(1.0,null,2.5,3.0);
-        
-        
-        TimeColumnProperties prop = new TimeColumnProperties();
-        prop.timeType = TimeType.TIME_IN_MINUTES;
-        
-        List<Double> res = instance.convertTimes(times, prop);
-        assertEquals(exp,res);
-    }    
-    
-    @Test
-    public void convertTimesConvertsImageNrToHoursIfTimeInImages() throws ImportException {
-        
-        List<Double> times = Arrays.asList(1.0,null,2.0,3.0);
-        List<Double> exp = Arrays.asList(0.0,null,2.0,4.0);
-        
-        
-        TimeColumnProperties prop = new TimeColumnProperties();
-        prop.timeType = TimeType.IMG_NUMBER;
-        prop.imgInterval = 2.0;
-        
-        List<Double> res = instance.convertTimes(times, prop);
-        assertEquals(exp,res);
-    }      
-    
-    @Test
-    public void convertTimesThrowsExceptionForUnknowType() {
-        
-        List<Double> times = Arrays.asList(1.0,null,2.0,3.0);
-        
-        
-        TimeColumnProperties prop = new TimeColumnProperties();
-        prop.timeType = TimeType.NONE;
-
-        try {
-            List<Double> res = instance.convertTimes(times, prop);
-            fail("Excpetion expected");
-        } catch (ImportException e) {};
-    }  
-    
-    @Test
-    public void trimGivesEmptyForEmptyOrNullOnlyValues() {
-        
-        List<Double> values = Collections.emptyList();
-        List<Double> exp = Collections.emptyList();
-        List<Double> res = instance.trim(values);
-        assertEquals(exp, res);
-        
-        values = Arrays.asList(null,null);
-        res = instance.trim(values);
-        assertEquals(exp, res);                
-    }
-    
-    @Test
-    public void trimRetainsInnerNulls() {
-        
-        List<Double> values = Arrays.asList(null,1.0,null,2.0);
-        List<Double> res = instance.trim(values);
-        assertEquals(values, res);
-        
-    }
-    
-    @Test
-    public void trimRemovesTrailingNulls() {
-        
-        List<Double> values = Arrays.asList(null,1.0,null,2.0,null,null,null);
-        List<Double> exp = Arrays.asList(null,1.0,null,2.0);
-        List<Double> res = instance.trim(values);
-        assertEquals(exp, res);
-        
-    }    
+   
     
     @Test
     public void processTimesValidatesTimes() {
@@ -248,21 +162,7 @@ public class ExcelTableImporterTest {
 
     }    
     
-    @Test
-    public void makeSerieCreatesTSIgnoringTheGaps() {
-        
-        List<Double> times = Arrays.asList(1.0,2.0,3.0,4.0,5.0);
-        List<Double> values = Arrays.asList(null,1.5,2.5);
-        
-        TimeSeries exp = new TimeSeries();
-        exp.add(2,1.5);
-        exp.add(3,2.5);
-        
-        TimeSeries res = instance.makeSerie(times, values);
-        assertEquals(exp, res);
-        
-        
-    }
+
     
     @Test
     public void readBlockReadsCorrectly() throws Exception {

@@ -7,12 +7,14 @@ package ed.biodare2.backend.features.tsdata.tableview;
 
 import ed.robust.dom.util.Pair;
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,12 +22,12 @@ import java.util.stream.Stream;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableView extends TableRecordsReader {
+public class TextDataTableReader extends TableRecordsReader {
     
     final Path file;
     final String sep;
     
-    public TextDataTableView(Path file, String sep) {
+    public TextDataTableReader(Path file, String sep) {
         if (!Files.isRegularFile(file)) 
             throw new IllegalArgumentException("Missing input file: "+file);
         
@@ -148,10 +150,49 @@ public class TextDataTableView extends TableRecordsReader {
 
     List<Object> lineToRecord(String line) {
         
+        return lineToRecord(line, sep);
+    }
+    
+    static List<Object> lineToRecord(String line, String sep) {
+        
         List<Object> items = new ArrayList<>();
         
         items.addAll(Arrays.asList(line.split(sep)));
         
         return items;
+    } 
+    
+    public OpennedReader openReader() throws IOException {
+        return new OpennedReader(file, sep);
+    }
+    
+    public static class OpennedReader implements Closeable {
+
+        final BufferedReader reader;
+        final String SEP;
+        
+        OpennedReader(Path file, String sep) throws IOException {
+            reader = Files.newBufferedReader(file);
+            this.SEP = sep;
+        }
+        
+        public int skipLines(int count) throws IOException {
+            return TextDataTableReader.skipLines(reader, count);
+        }
+        
+        public Optional<List<Object>> readRecord() throws IOException {
+
+            String line = reader.readLine();
+            if (line == null) return Optional.empty();
+
+            List<Object> record = lineToRecord(line, SEP);
+            return Optional.of(record);
+        }        
+        
+        @Override
+        public void close() throws IOException {
+            reader.close();
+        }
+
     }
 }

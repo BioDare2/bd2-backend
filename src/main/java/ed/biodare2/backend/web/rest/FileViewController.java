@@ -16,7 +16,7 @@ import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlicer;
 import ed.biodare2.backend.features.tsdata.tableview.Slice;
 import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader;
-import ed.biodare2.backend.features.tsdata.tableview.TextDataTableView;
+import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.web.tracking.FileTracker;
 import ed.synthsys.util.excel.ExcelFormatException;
@@ -170,8 +170,8 @@ public class FileViewController extends BioDare2Rest {
     
     protected TableRecordsReader getTableRecordsReader(Path file, ImportFormat format) {
         switch(format) {
-            case COMA_SEP: return new TextDataTableView(file, ",");
-            case TAB_SEP: return new TextDataTableView(file, "\t");
+            case COMA_SEP: return new TextDataTableReader(file, ",");
+            case TAB_SEP: return new TextDataTableReader(file, "\t");
             default: throw new HandlingException("Unsuported format: "+format);
         }
     } 

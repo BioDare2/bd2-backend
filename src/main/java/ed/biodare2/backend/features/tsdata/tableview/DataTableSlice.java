@@ -21,8 +21,8 @@ public class DataTableSlice {
   
   public List<List<Object>> data = new ArrayList<>();
 
-  int totalRows = 0;
-  int totalColumns = 0;
+  public int totalRows = 0;
+  public int totalColumns = 0;
   
   public Page rowPage = new Page();
   public Page colPage = new Page();  

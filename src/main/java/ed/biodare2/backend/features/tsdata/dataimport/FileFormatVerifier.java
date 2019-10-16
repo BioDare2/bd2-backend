@@ -6,7 +6,7 @@
 package ed.biodare2.backend.features.tsdata.dataimport;
 
 import ed.bd.parser.topcount.TopCountReader;
-import ed.biodare2.backend.features.tsdata.tableview.TextDataTableView;
+import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
@@ -67,7 +67,7 @@ public class FileFormatVerifier {
     
     boolean verifyTextTable(Path file, String sep) throws IOException {
         
-        return TextDataTableView.isSuitableFormat(file, sep);
+        return TextDataTableReader.isSuitableFormat(file, sep);
     }
 
 

@@ -93,7 +93,7 @@ public class ExcelTableImporter extends TSDataImporter {
         if (times.stream().anyMatch( v -> v == null))
             throw new ImportException("Time values cannot contain gaps or non numerical values");
         
-        times = convertTimes(times,timeProperties);
+        times = convertTimes(times,timeProperties.timeType,timeProperties.imgInterval);
         
         if (timeProperties.timeOffset != 0)
             times = times.stream().map( v -> v + timeProperties.timeOffset).collect(Collectors.toList());
@@ -104,32 +104,9 @@ public class ExcelTableImporter extends TSDataImporter {
         return times;
     }    
 
-    protected List<Double> trim(List<Double> values) {
-        
-        if (values.isEmpty()) return values;
-        
-        int lastNotNull = values.size()-1;
-        for (;lastNotNull>=0;lastNotNull--) {
-            if (values.get(lastNotNull) != null) break;
-        }
-        
-        return values.subList(0, lastNotNull+1);
-    }
 
-    protected List<Double> convertTimes(List<Double> times, TimeColumnProperties timeProperties) throws ImportException {
-        
-        switch (timeProperties.timeType) {
-            case TIME_IN_HOURS: return times;
-            case TIME_IN_MINUTES: return times.stream().map(v -> v != null ? v/60.0 : null).collect(Collectors.toList());
-            case TIME_IN_SECONDS: return times.stream().map(v -> v != null ? v/(60.0*60) : null).collect(Collectors.toList());
-            case IMG_NUMBER: {
-                    if (times.get(0) < 1.0) throw new ImportException("Image nr must be 1-based");
-                    if (timeProperties.imgInterval <= 0) throw new ImportException("Image interval must be >0, got: "+timeProperties.imgInterval);
-                    return times.stream().map( nr -> nr != null ? (nr-1)*timeProperties.imgInterval :  null).collect(Collectors.toList());
-                    }
-            default: throw new ImportException("Unsuported time column type: "+timeProperties.timeType);
-        }
-    }
+
+
 
     protected List<DataBlock> readBlocks(ModernExcelView excel, List<CellRangeDescription> blocksDescriptions, List<Double> times,int firstRow) {
 
@@ -162,19 +139,7 @@ public class ExcelTableImporter extends TSDataImporter {
         return block;
     }
 
-    protected TimeSeries makeSerie(List<Double> times, List<Double> values) {
-        
 
-        final int size = Math.min(times.size(),values.size());
-        
-        TimeSeries serie = new TimeSeries();
-        for (int i =0;i<size;i++) {
-            Double v = values.get(i);
-            if (v != null)
-                serie.add(times.get(i),v);
-        }
-        return serie;
-    }
 
     protected DataTrace makeTrace(TimeSeries serie, DataColumnProperties details, CellRole role, int col, int row) {
 
