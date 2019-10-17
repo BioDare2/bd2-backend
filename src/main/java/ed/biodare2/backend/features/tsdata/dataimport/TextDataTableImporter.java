@@ -65,7 +65,11 @@ public class TextDataTableImporter extends TSDataImporter {
         block.range = range;
         block.traces = traces;
         
-        return makeBundle(List.of(block));
+        List<DataBlock> blocks = List.of(block);
+        insertNumbers(blocks);
+        insertIds(blocks);
+        
+        return makeBundle(blocks);
     }
     
 

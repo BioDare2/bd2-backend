@@ -281,6 +281,9 @@ public class TextDataTableImporterTest {
         assertEquals(1+159, trace.getLast().getTime(), EPS);
         assertEquals(0.553965719, trace.getLast().getValue(), EPS);
         
+        assertEquals(1, data.get(0).traceNr);
+        assertEquals(64, data.get(63).traceNr);
+        
     }
     
 }
