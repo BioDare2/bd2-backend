@@ -11,9 +11,12 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTableImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
+import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
 import ed.robust.dom.data.TimeSeries;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -229,6 +232,55 @@ public class TextDataTableImporterTest {
         
         verify(sequentialReader).close();
         
-    }    
+    } 
+    
+    public static Path getTestDataFile(String name) throws URISyntaxException {
+        Path file = Paths.get(TextDataTableImporterTest.class.getResource(name).toURI());
+        return file;
+    }
+    
+    public static DataTableImportParameters getCSVTableParameters(String fileName) {
+       
+        DataTableImportParameters parameters = new DataTableImportParameters();
+        parameters.fileName = fileName;
+        parameters.fileId = parameters.fileName;
+        parameters.importFormat = ImportFormat.COMA_SEP;
+        parameters.inRows = true;
+
+        parameters.firstTimeCell = new CellCoordinates(1, 0);
+        parameters.timeType = TimeType.TIME_IN_HOURS;
+        parameters.timeOffset = 1;
+        parameters.imgInterval = 0;
+    
+        parameters.dataStart = new CellCoordinates(-1,1);
+
+        parameters.importLabels = true;
+        parameters.labelsSelection = new CellCoordinates(0, -1);
+        return parameters;
+    }
+    
+    @Test
+    public void importCSVDataFromFile() throws Exception {
+        
+        Path file = getTestDataFile("data_in_rows.csv");
+        
+        DataTableImportParameters parameters = getCSVTableParameters("data_in_rows.csv");
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(64,data.size());
+        assertEquals("WT LHY",data.get(0).details.dataLabel);
+        assertEquals("WT TOC1",data.get(63).details.dataLabel);
+        
+        TimeSeries trace = data.get(63).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(0.201330533, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.553965719, trace.getLast().getValue(), EPS);
+        
+    }
     
 }

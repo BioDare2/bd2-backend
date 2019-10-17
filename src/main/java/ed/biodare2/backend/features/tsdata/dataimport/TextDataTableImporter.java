@@ -7,7 +7,9 @@ package ed.biodare2.backend.features.tsdata.dataimport;
 
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
+import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
+import ed.biodare2.backend.repo.isa_dom.dataimport.DataBlock;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTableImportParameters;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  *
@@ -54,7 +55,17 @@ public class TextDataTableImporter extends TSDataImporter {
         List<Double> times = importTimesRow(reader, parameters);
         
         List<DataTrace> traces = importTracesRows(reader,times,parameters);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        DataBlock block = new DataBlock();
+        block.role = CellRole.DATA;
+        
+        CellRange range = new CellRange();
+        range.first = traces.get(0).coordinates;
+        range.last = traces.get(traces.size()-1).coordinates;
+        block.range = range;
+        block.traces = traces;
+        
+        return makeBundle(List.of(block));
     }
     
 
@@ -158,21 +169,25 @@ public class TextDataTableImporter extends TSDataImporter {
         
         String label = labeller.apply(record, curRow);
         if (label == null || label.trim().isEmpty()) {
-            throw new PivotableImportException("Missing label", curRow, null);
+            if (!timeserie.isEmpty()) {
+                throw new PivotableImportException("Missing label", curRow, null);
+            } else {
+                label = "empty";
+            }
         }
         
-        DataTrace trace = makeTrace(timeserie, new DataColumnProperties(label), CellRole.DATA, firstCol, curRow);
+        DataTrace trace = makeTrace(timeserie, label, CellRole.DATA, firstCol, curRow);
         
         return trace;
     }
     
-    protected DataTrace makeTrace(TimeSeries serie, DataColumnProperties details, CellRole role, int col, int row) {
+    protected DataTrace makeTrace(TimeSeries serie, String label, CellRole role, int col, int row) {
 
         DataTrace trace = new DataTrace();
         trace.coordinates = new CellCoordinates(col+1,row+1);
         trace.traceRef = trace.coordinates.columnLetter()+trace.coordinates.row;
         trace.traceFullRef = trace.traceRef;
-        trace.details = details;
+        trace.details = new DataColumnProperties(label);
         trace.role = role;
         trace.trace = serie;
         return trace;

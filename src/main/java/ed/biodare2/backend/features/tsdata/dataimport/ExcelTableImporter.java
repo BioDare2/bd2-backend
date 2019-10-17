@@ -5,7 +5,6 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
@@ -85,23 +84,8 @@ public class ExcelTableImporter extends TSDataImporter {
     }
     
     protected List<Double> processTimes(List<Double> times, TimeColumnProperties timeProperties) throws ImportException {
-        times = trim(times);
         
-        if (times.isEmpty()) 
-            throw new ImportException("No time values found");
-        
-        if (times.stream().anyMatch( v -> v == null))
-            throw new ImportException("Time values cannot contain gaps or non numerical values");
-        
-        times = convertTimes(times,timeProperties.timeType,timeProperties.imgInterval);
-        
-        if (timeProperties.timeOffset != 0)
-            times = times.stream().map( v -> v + timeProperties.timeOffset).collect(Collectors.toList());
-        
-        if (times.stream().anyMatch( v -> v<0))
-            throw new ImportException("Times values cannot be < 0");
-        
-        return times;
+        return processTimes(times,timeProperties.timeType,timeProperties.timeOffset,timeProperties.imgInterval);
     }    
 
 

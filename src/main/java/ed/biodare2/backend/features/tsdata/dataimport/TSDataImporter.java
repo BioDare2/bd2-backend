@@ -50,11 +50,11 @@ public class TSDataImporter {
         bundle.blocks = blocks;
         
         bundle.backgrounds = blocks.stream().filter(b -> b.role.equals(CellRole.BACKGROUND))
-                                            .flatMap(b -> b.traces.stream())
+                                            .flatMap(b -> b.traces.stream().filter( dt -> !dt.trace.isEmpty()))
                                             .collect(Collectors.toList());
         
         bundle.data = blocks.stream().filter(b -> b.role.equals(CellRole.DATA))
-                                            .flatMap(b -> b.traces.stream())
+                                            .flatMap(b -> b.traces.stream().filter( dt -> !dt.trace.isEmpty()))
                                             .collect(Collectors.toList());
         return bundle;
     } 
