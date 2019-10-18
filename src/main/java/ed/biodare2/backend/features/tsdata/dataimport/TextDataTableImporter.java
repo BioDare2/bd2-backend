@@ -94,7 +94,7 @@ public class TextDataTableImporter extends TSDataImporter {
         
         List<List<Object>> records = reader.readRecords(firstTimeCell.row, 1);
         
-        if (records.isEmpty()) throw new PivotableImportException("Mising time ", firstTimeCell.row, null);
+        if (records.isEmpty()) throw new TranposableImportException("Mising time ", firstTimeCell.row, null);
         
         List<Object> times = records.get(0);
         times = times.subList(firstTimeCell.col, times.size());
@@ -102,7 +102,7 @@ public class TextDataTableImporter extends TSDataImporter {
         try {
             return valsToDoubles(times);
         } catch (NumberFormatException e) {
-            throw new PivotableImportException("Non numberical value in", firstTimeCell.row, null);
+            throw new TranposableImportException("Non numberical value in", firstTimeCell.row, null);
         }
         
     }
@@ -124,7 +124,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return Double.parseDouble(s);
     }
 
-    List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, PivotableImportException {
+    List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TranposableImportException {
         
         int firstRow = parameters.dataStart.row;
         int firstCol = parameters.firstTimeCell.col;
@@ -140,7 +140,7 @@ public class TextDataTableImporter extends TSDataImporter {
     }
 
     List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, 
-            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, PivotableImportException {
+            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TranposableImportException {
         
         try(TextDataTableReader.OpennedReader sequentialReader = reader.openReader()) {
             
@@ -149,7 +149,7 @@ public class TextDataTableImporter extends TSDataImporter {
     }
     
     List<DataTrace> importTracesRows(TextDataTableReader.OpennedReader sequentialReader, List<Double> times, 
-            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, PivotableImportException {
+            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TranposableImportException {
         
         List<DataTrace> traces = new ArrayList<>();
 
@@ -165,7 +165,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return traces;
     }    
 
-    DataTrace importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws PivotableImportException {
+    DataTrace importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws TranposableImportException {
         
         List<Double> values = valsToDoubles(record.subList(firstCol, record.size()));
         
@@ -174,7 +174,7 @@ public class TextDataTableImporter extends TSDataImporter {
         String label = labeller.apply(record, curRow);
         if (label == null || label.trim().isEmpty()) {
             if (!timeserie.isEmpty()) {
-                throw new PivotableImportException("Missing label", curRow, null);
+                throw new TranposableImportException("Missing label", curRow, null);
             } else {
                 label = "empty";
             }

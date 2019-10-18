@@ -9,28 +9,28 @@ package ed.biodare2.backend.features.tsdata.dataimport;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class PivotableImportException extends ImportException {
+public class TranposableImportException extends ImportException {
     
     final String msg;
     final Integer row;
     final Integer col;
            
-    public PivotableImportException(String msg, Integer row, Integer col) {
+    public TranposableImportException(String msg, Integer row, Integer col) {
         super(msg);
         this.msg = msg;
         this.row = row;
         this.col = col;
     }
     
-    public PivotableImportException(String msg, Integer row, Integer col, Throwable t) {
+    public TranposableImportException(String msg, Integer row, Integer col, Throwable t) {
         super(msg, t);
         this.msg = msg;
         this.row = row;
         this.col = col;
     }
     
-    public PivotableImportException pivot() {
-        return new PivotableImportException(this.msg, this.col, this.row, this.getCause());
+    public TranposableImportException transpose() {
+        return new TranposableImportException(this.msg, this.col, this.row, this.getCause());
     }
 
     @Override

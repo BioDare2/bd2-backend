@@ -8,11 +8,17 @@ package ed.biodare2.backend.features.tsdata.tableview;
 import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.countPresence;
 import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.isSuitableFormat;
 import ed.robust.dom.util.Pair;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -246,6 +252,41 @@ public class TextDataTableReaderTest {
         }
         
         
+    }
+    
+    // @Test
+    public void makeLongCSVColumnFile() throws Exception {
+        
+        int series = 1000;
+        int timepoints = 5*24*10;
+        int unit = 6; // minutes
+        
+        Path file = Paths.get("E:/Temp/long_"+series+"x"+timepoints+".csv");
+        try (BufferedWriter out = Files.newBufferedWriter(file)) {
+            Random r = new Random();
+            List<String> row = new ArrayList<>(series+1);
+            row.add("Time");
+            for (int i = 0; i< series; i++) {
+                row.add("label"+r.nextLong());
+            }
+            
+            String line = row.stream().collect(Collectors.joining(","));
+            out.write(line);
+            out.newLine();
+            
+            for (int i = 0; i< timepoints; i++) {
+                row = new ArrayList<>(series+1);
+                row.add(""+i*unit);
+                for (int j = 0; j< series; j++) {
+                    row.add(""+r.nextDouble());
+                }
+                
+                line = row.stream().collect(Collectors.joining(","));
+                out.write(line);
+                out.newLine();
+            }
+            
+        }
     }
     
 }
