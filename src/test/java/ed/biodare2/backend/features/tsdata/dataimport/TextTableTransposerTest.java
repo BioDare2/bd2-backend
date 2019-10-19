@@ -7,6 +7,8 @@ package ed.biodare2.backend.features.tsdata.dataimport;
 
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.OpennedReader;
+import ed.robust.dom.util.Pair;
+import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,9 +16,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
@@ -156,6 +161,95 @@ public class TextTableTransposerTest {
         
     }
     
+    
+    @Test
+    public void transposeInChunksTransposesFile() throws Exception {
+        
+        List<String> inRows = List.of(
+                "Id,L1,L2,L3,L4",
+                "1,v11,v12",
+                "2,v21,v22,v23,v24"
+        );
+        
+        Path inFile = testFolder.newFile().toPath();
+        Files.write(inFile, inRows);
+        
+        Path outFile = testFolder.newFile().toPath();
+        
+        TextDataTableReader reader = new TextDataTableReader(inFile, ",");
+        
+        instance.transposeInChunks(reader, reader.tableSize().getRight(), outFile, 2, ",");
+        
+        assertTrue(Files.exists(outFile));
+        
+        List<String> outRows = Files.readAllLines(outFile);
+        
+        List<String> exp = List.of(
+                "Id,1,2",
+                "L1,v11,v21",
+                "L2,v12,v22",
+                "L3,,v23",
+                "L4,,v24"
+        );
+        
+        assertEquals(exp, outRows);
+        
+    }
+    
+
+    
+    @Test
+    public void divideRangeGivesChunksOfRequestedSize() {
+        
+        int size = 0;
+        int chunk = 3;
+        
+        List<Pair<Integer,Integer>> chunks = instance.divideRange(size, chunk);
+        
+        assertEquals(List.of(),chunks);
+        
+        size = 1;
+        chunks = instance.divideRange(size, chunk);
+        assertEquals(List.of(new Pair<>(0,1)),chunks);
+
+        size = 2;
+        chunks = instance.divideRange(size, chunk);
+        assertEquals(List.of(new Pair<>(0,2)),chunks);
+        
+        size = 4;
+        chunks = instance.divideRange(size, chunk);
+        assertEquals(List.of(new Pair<>(0,3), new Pair<>(3,4)),chunks);
+        
+        size = 6;
+        chunks = instance.divideRange(size, chunk);
+        assertEquals(List.of(new Pair<>(0,3), new Pair<>(3,6)),chunks);
+
+        size = 7;
+        chunks = instance.divideRange(size, chunk);
+        assertEquals(List.of(new Pair<>(0,3), new Pair<>(3,6), new Pair<>(6,7)),chunks);
+        
+    }
+    
+    @Test
+    public void joinFilesAppendsFiles() throws Exception {
+        Path f1 = testFolder.newFile().toPath();
+        Path f2 = testFolder.newFile().toPath();
+        Path f3 = testFolder.newFile().toPath();
+        
+        Files.writeString(f1, "A");
+        Files.write(f2, List.of("B","C"));
+        Files.write(f3, List.of("D","E"));
+        
+        Path out = testFolder.newFile().toPath();
+        
+        instance.joinFiles(List.of(f1,f2,f3), out);
+        
+        List<String> lines = Files.readAllLines(out);
+        List<String> exp = List.of("AB","C","D","E");
+        
+        assertEquals(exp, lines);
+    }
+    
     // @Test
     public void transposeLongFile() throws Exception {
         
@@ -165,7 +259,71 @@ public class TextTableTransposerTest {
         instance.transpose(inFile, ",", outFile);
         
         assertTrue(Files.exists(outFile));
+ 
         
+    }
+    
+    @Test
+    @Ignore("takes too long to generate and transpose big file")
+    public void transposeLongFile2() throws Exception {
+        
+        Path file = testFolder.newFile().toPath();
+        int series = 3000;
+        int timepoints = 5*24*10;
+        
+        makeLongCSVColumnFile(file,series, timepoints);
+        
+        Path out = testFolder.newFile().toPath();
+        
+        long sT = System.currentTimeMillis();
+        instance.transpose(file, ",", out);
+        long dur = (System.currentTimeMillis()-sT)/1000;
+        
+        System.out.println("Transpose Took: "+dur+"s");
+        
+        assertTrue(Files.exists(out));
+        //assertEquals(Files.size(file), Files.size(out));
+        
+        TextDataTableReader reader = new TextDataTableReader(file, ",");
+        Pair<Integer,Integer> dim = reader.tableSize();
+        
+        reader = new TextDataTableReader(out, ",");
+        Pair<Integer,Integer> dim2 = reader.tableSize();
+        
+        assertEquals(dim.getLeft(), dim2.getRight());
+        assertEquals(dim.getRight(), dim2.getLeft());
+
+    }    
+
+    public void makeLongCSVColumnFile(Path file, int series, int timepoints) throws Exception {
+        
+        int unit = 6; // minutes
+        
+        try (BufferedWriter out = Files.newBufferedWriter(file)) {
+            Random r = new Random();
+            List<String> row = new ArrayList<>(series+1);
+            row.add("Time");
+            for (int i = 0; i< series; i++) {
+                row.add("label"+r.nextLong());
+            }
+            
+            String line = row.stream().collect(Collectors.joining(","));
+            out.write(line);
+            out.newLine();
+            
+            for (int i = 0; i< timepoints; i++) {
+                row = new ArrayList<>(series+1);
+                row.add(""+i*unit);
+                for (int j = 0; j< series; j++) {
+                    row.add(""+r.nextDouble());
+                }
+                
+                line = row.stream().collect(Collectors.joining(","));
+                out.write(line);
+                out.newLine();
+            }
+            
+        }
     }
     
 }

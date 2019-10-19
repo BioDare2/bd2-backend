@@ -8,14 +8,19 @@ package ed.biodare2.backend.features.tsdata.dataimport;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.OpennedReader;
 import ed.robust.dom.util.Pair;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import static java.nio.file.StandardOpenOption.APPEND;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -25,6 +30,7 @@ public class TextTableTransposer {
     
     static int MAX_COLS = 1300;
     static int MAX_ROWS = 1300;
+    static int CHUNK_SIZE = 1000;
     
     public void transpose(Path inFile, String SEP, Path outFile) throws IOException {
         
@@ -39,12 +45,11 @@ public class TextTableTransposer {
         
         Pair<Integer, Integer> rowColSize = reader.tableSize();
         
-        if (rowColSize.getLeft() > MAX_ROWS) 
-            throw new IllegalArgumentException("Transposition supported only for tables with less than "+MAX_ROWS+" rows");
-        if (rowColSize.getRight() > MAX_COLS) 
-            throw new IllegalArgumentException("Transposition supported only for tables with less than "+MAX_COLS+" columns");
-        
-        transposeChunk(reader, 0, rowColSize.getRight(), outFile, SEP);
+        if (rowColSize.getRight() < MAX_COLS) { 
+            transposeChunk(reader, 0, rowColSize.getRight(), outFile, SEP);
+        } else {
+            transposeInChunks(reader, rowColSize.getRight(), outFile, CHUNK_SIZE, SEP);
+        }
     }
 
     void transposeChunk(TextDataTableReader reader, int firstCol, int endCol, Path outFile, String SEP) throws IOException {
@@ -58,6 +63,29 @@ public class TextTableTransposer {
         
         saveToTextTable(newRows, outFile, SEP);
     }
+    
+    void transposeInChunks(TextDataTableReader reader, int colSize, Path outFile, int chunkSize, String SEP) throws IOException {
+
+        List<Pair<Integer,Integer>> chunks = divideRange(colSize, chunkSize);
+        
+        List<Path> tmpFiles = new ArrayList<>();
+        while (tmpFiles.size() < chunks.size()) tmpFiles.add(Files.createTempFile(null, null));
+        try {
+            for (int i=0; i< chunks.size(); i++) {
+                Pair<Integer,Integer> chunk = chunks.get(i);
+                Path tmpFile = tmpFiles.get(i);
+                transposeChunk(reader, chunk.getLeft(), chunk.getRight(), tmpFile, SEP);                      
+                    
+            }            
+            joinFiles(tmpFiles, outFile);
+        } finally {
+            for (Path tmpFile: tmpFiles) {
+                if (Files.exists(tmpFile))
+                        Files.delete(tmpFile);
+            }
+        }
+        
+    }   
     
     List<List<Object>> readTransposedChunk(OpennedReader sequentialReader, int firstCol, int endCol) throws IOException {
         
@@ -117,6 +145,32 @@ public class TextTableTransposer {
             }
         }
         
+    }
+
+    List<Pair<Integer, Integer>> divideRange(int size, int chunkSize) {
+        
+        int fulls = size / chunkSize;
+        
+        List<Pair<Integer, Integer>> chunks = new ArrayList<>();
+        for (int i=0;i<fulls;i++) {
+            chunks.add(new Pair<>(i*chunkSize,(i+1)*chunkSize));
+        }
+        if (fulls*chunkSize < size) {
+            chunks.add(new Pair<>(fulls*chunkSize,size));
+        }
+        return chunks;
+    }
+
+    void joinFiles(List<Path> files, Path outFile) throws IOException {
+        
+        if (!Files.exists(outFile))
+            Files.createFile(outFile);
+        
+        try (OutputStream out = Files.newOutputStream(outFile)) {
+            for (Path file: files) {
+                Files.copy(file, out);
+            }
+        }
     }
     
 }
