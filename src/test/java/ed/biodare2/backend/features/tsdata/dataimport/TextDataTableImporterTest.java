@@ -239,7 +239,7 @@ public class TextDataTableImporterTest {
         return file;
     }
     
-    public static DataTableImportParameters getCSVTableParameters(String fileName) {
+    public static DataTableImportParameters getCSVTableInRowsParameters(String fileName) {
        
         DataTableImportParameters parameters = new DataTableImportParameters();
         parameters.fileName = fileName;
@@ -260,11 +260,66 @@ public class TextDataTableImporterTest {
     }
     
     @Test
-    public void importCSVDataFromFile() throws Exception {
+    public void importCSVRowDataFromFile() throws Exception {
         
         Path file = getTestDataFile("data_in_rows.csv");
         
-        DataTableImportParameters parameters = getCSVTableParameters("data_in_rows.csv");
+        DataTableImportParameters parameters = getCSVTableInRowsParameters("data_in_rows.csv");
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(64,data.size());
+        assertEquals("WT LHY",data.get(0).details.dataLabel);
+        assertEquals("WT TOC1",data.get(63).details.dataLabel);
+        
+        TimeSeries trace = data.get(63).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(0.201330533, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.553965719, trace.getLast().getValue(), EPS);
+                
+        assertEquals(1, data.get(0).traceNr);
+        assertEquals(64, data.get(63).traceNr);
+        
+        DataTrace dtrace = data.get(0);
+        assertEquals("B2", dtrace.traceFullRef);
+        assertEquals("B2", dtrace.traceRef);
+        
+        dtrace = data.get(63);
+        assertEquals("B65", dtrace.traceFullRef);
+        assertEquals("B65", dtrace.traceRef);        
+        
+    }
+    
+    public static DataTableImportParameters getCSVTableInColsParameters(String fileName) {
+       
+        DataTableImportParameters parameters = new DataTableImportParameters();
+        parameters.fileName = fileName;
+        parameters.fileId = parameters.fileName;
+        parameters.importFormat = ImportFormat.COMA_SEP;
+        parameters.inRows = false;
+
+        parameters.firstTimeCell = new CellCoordinates(0, 1);
+        parameters.timeType = TimeType.TIME_IN_HOURS;
+        parameters.timeOffset = 1;
+        parameters.imgInterval = 0;
+    
+        parameters.dataStart = new CellCoordinates(1,-1);
+
+        parameters.importLabels = true;
+        parameters.labelsSelection = new CellCoordinates(-1, 0);
+        return parameters;
+    }    
+    
+    @Test
+    public void importCSVColDataFromFile() throws Exception {
+        
+        Path file = getTestDataFile("data_in_cols.csv");
+        
+        DataTableImportParameters parameters = getCSVTableInColsParameters("data_in_cols.csv");
         
         DataBundle boundle = instance.importTimeSeries(file, parameters);
         
@@ -281,9 +336,23 @@ public class TextDataTableImporterTest {
         assertEquals(1+159, trace.getLast().getTime(), EPS);
         assertEquals(0.553965719, trace.getLast().getValue(), EPS);
         
+        trace = data.get(0).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(1.643133821, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.859250886, trace.getLast().getValue(), EPS);        
+        
         assertEquals(1, data.get(0).traceNr);
         assertEquals(64, data.get(63).traceNr);
         
-    }
+        DataTrace dtrace = data.get(0);
+        assertEquals("B2", dtrace.traceFullRef);
+        assertEquals("B2", dtrace.traceRef);
+        
+        dtrace = data.get(63);
+        assertEquals("BM2", dtrace.traceFullRef);
+        assertEquals("BM2", dtrace.traceRef);         
+        
+    }    
     
 }

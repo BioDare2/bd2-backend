@@ -101,5 +101,7 @@ public class CellCoordinates implements Serializable {
     }   
     
     
-
+    public CellCoordinates transpose() {
+        return new CellCoordinates(row, col);
+    }
 }

@@ -284,7 +284,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         FileImportRequest importRequest = new FileImportRequest();
         importRequest.fileId = csvUpload.id;
         importRequest.importFormat = ImportFormat.COMA_SEP;                
-        importRequest.importParameters = TextDataTableImporterTest.getCSVTableParameters("data_in_rows.csv");
+        importRequest.importParameters = TextDataTableImporterTest.getCSVTableInRowsParameters("data_in_rows.csv");
         
         String orgJSON = mapper.writeValueAsString(importRequest);
         

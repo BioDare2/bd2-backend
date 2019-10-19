@@ -24,8 +24,8 @@ import java.util.stream.Stream;
  */
 public class TextDataTableReader extends TableRecordsReader {
     
-    final Path file;
-    final String sep;
+    final public Path file;
+    final public String sep;
     
     public TextDataTableReader(Path file, String sep) {
         if (!Files.isRegularFile(file)) 

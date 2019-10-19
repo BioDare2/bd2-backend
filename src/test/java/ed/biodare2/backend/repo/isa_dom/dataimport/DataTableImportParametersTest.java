@@ -51,4 +51,19 @@ public class DataTableImportParametersTest {
         
     }
     
+    @Test
+    public void transposeWorks() throws Exception {
+        
+        String colJSON = "{ \"inRows\": false, \"timeOffset\": 0, \"importLabels\": true, \"_class_name\": \".DataTableImportParameters\", \"timeType\": \"TIME_IN_HOURS\", \"fileId\": \"_upload3243260365139669172\", \"fileName\": \"wt_prr_simpl.csv\", \"importFormat\": \"COMA_SEP\", \"firstTimeCell\": { \"col\": 0, \"row\": 1 }, \"labelsSelection\": { \"col\": 0, \"row\": 0 }, \"dataStart\": { \"col\": 1, \"row\": 2 } }";
+        
+        DataTableImportParameters colPar = mapper.readValue(colJSON, DataTableImportParameters.class);
+        
+        String rowJSON = "{ \"inRows\": true, \"timeOffset\": 0, \"importLabels\": true, \"_class_name\": \".DataTableImportParameters\", \"timeType\": \"TIME_IN_HOURS\", \"fileId\": \"_upload3243260365139669172\", \"fileName\": \"wt_prr_simpl.csv\", \"importFormat\": \"COMA_SEP\", \"firstTimeCell\": { \"col\": 1, \"row\": 0 }, \"labelsSelection\": { \"col\": 0, \"row\": 0 }, \"dataStart\": { \"col\": 2, \"row\": 1 } }";
+        
+        DataTableImportParameters rowPar = mapper.readValue(rowJSON, DataTableImportParameters.class);
+        
+        DataTableImportParameters trans = colPar.transpose();
+        assertEquals(rowPar, trans);
+    }
+    
 }

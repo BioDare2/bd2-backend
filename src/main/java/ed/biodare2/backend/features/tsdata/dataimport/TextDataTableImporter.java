@@ -17,6 +17,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.robust.dom.data.TimeSeries;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +31,40 @@ import java.util.stream.Collectors;
  */
 public class TextDataTableImporter extends TSDataImporter {
    
+    final TextTableTransposer transposer = new TextTableTransposer();
+    
     public DataBundle importTimeSeries(Path file, DataTableImportParameters parameters) throws ImportException {
         
         try {
             if (parameters.inRows) {
                 return importTimeSeriesFromRows(file, parameters);
             } else {
-                throw new UnsupportedOperationException("Importing from columns not implemetned");
+                return importTimeSeriesFromCols(file, parameters);
             }
         } catch (IOException e) {
             throw new ServerSideException("Cannot read file: "+e.getMessage(),e);
         }    
     }
+    
+    DataBundle importTimeSeriesFromCols(Path file, DataTableImportParameters parameters) throws ImportException, IOException {
+        
+        Path transpFile = Files.createTempFile(null, null);
+        try {
+            
+            TextDataTableReader orgReader = makeReader(file, parameters);            
+            transposer.transpose(orgReader, transpFile, orgReader.sep);
+            
+            DataTableImportParameters transp = parameters.transpose();
+            DataBundle boundle = importTimeSeriesFromRows(transpFile, transp);
+            transposeBoundle(boundle);
+            return boundle;
+        } catch (TransposableImportException e) {
+            throw e.transpose();
+        } finally {
+            if (Files.exists(transpFile)) Files.delete(transpFile);
+        }
+        
+    }    
 
     DataBundle importTimeSeriesFromRows(Path file, DataTableImportParameters parameters) throws ImportException, IOException {
         
@@ -94,7 +117,7 @@ public class TextDataTableImporter extends TSDataImporter {
         
         List<List<Object>> records = reader.readRecords(firstTimeCell.row, 1);
         
-        if (records.isEmpty()) throw new TranposableImportException("Mising time ", firstTimeCell.row, null);
+        if (records.isEmpty()) throw new TransposableImportException("Mising time ", firstTimeCell.row, null);
         
         List<Object> times = records.get(0);
         times = times.subList(firstTimeCell.col, times.size());
@@ -102,7 +125,7 @@ public class TextDataTableImporter extends TSDataImporter {
         try {
             return valsToDoubles(times);
         } catch (NumberFormatException e) {
-            throw new TranposableImportException("Non numberical value in", firstTimeCell.row, null);
+            throw new TransposableImportException("Non numberical value in", firstTimeCell.row, null);
         }
         
     }
@@ -124,7 +147,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return Double.parseDouble(s);
     }
 
-    List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TranposableImportException {
+    List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TransposableImportException {
         
         int firstRow = parameters.dataStart.row;
         int firstCol = parameters.firstTimeCell.col;
@@ -140,7 +163,7 @@ public class TextDataTableImporter extends TSDataImporter {
     }
 
     List<DataTrace> importTracesRows(TextDataTableReader reader, List<Double> times, 
-            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TranposableImportException {
+            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TransposableImportException {
         
         try(TextDataTableReader.OpennedReader sequentialReader = reader.openReader()) {
             
@@ -149,7 +172,7 @@ public class TextDataTableImporter extends TSDataImporter {
     }
     
     List<DataTrace> importTracesRows(TextDataTableReader.OpennedReader sequentialReader, List<Double> times, 
-            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TranposableImportException {
+            int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TransposableImportException {
         
         List<DataTrace> traces = new ArrayList<>();
 
@@ -165,7 +188,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return traces;
     }    
 
-    DataTrace importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws TranposableImportException {
+    DataTrace importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws TransposableImportException {
         
         List<Double> values = valsToDoubles(record.subList(firstCol, record.size()));
         
@@ -174,7 +197,7 @@ public class TextDataTableImporter extends TSDataImporter {
         String label = labeller.apply(record, curRow);
         if (label == null || label.trim().isEmpty()) {
             if (!timeserie.isEmpty()) {
-                throw new TranposableImportException("Missing label", curRow, null);
+                throw new TransposableImportException("Missing label", curRow, null);
             } else {
                 label = "empty";
             }
@@ -189,12 +212,33 @@ public class TextDataTableImporter extends TSDataImporter {
 
         DataTrace trace = new DataTrace();
         trace.coordinates = new CellCoordinates(col+1,row+1);
-        trace.traceRef = trace.coordinates.columnLetter()+trace.coordinates.row;
+        trace.traceRef = traceRef(trace.coordinates);
         trace.traceFullRef = trace.traceRef;
         trace.details = new DataColumnProperties(label);
         trace.role = role;
         trace.trace = serie;
         return trace;
-    }    
+    }
+
+    protected String traceRef(CellCoordinates coordinates) {
+        return coordinates.columnLetter()+coordinates.row;
+    }
+
+    void transposeBoundle(DataBundle boundle) {
+        
+        boundle.backgrounds.forEach( dt -> transposeDataTrace(dt));
+        boundle.data.forEach( dt -> transposeDataTrace(dt));
+        boundle.blocks.forEach( block -> {
+            block.range = block.range.transpose();
+        });
+        
+    }
+
+    void transposeDataTrace(DataTrace trace) {
+        
+        trace.coordinates = trace.coordinates.transpose();
+        trace.traceRef = traceRef(trace.coordinates);
+        trace.traceFullRef = trace.traceRef;
+    }
 
 }

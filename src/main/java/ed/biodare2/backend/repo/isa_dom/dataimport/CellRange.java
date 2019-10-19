@@ -18,6 +18,13 @@ public class CellRange implements Serializable {
   
     public CellCoordinates first;
     public CellCoordinates last;
+    
+    public CellRange() {};
+    
+    public CellRange(CellCoordinates first, CellCoordinates last) {
+        this.first = first;
+        this.last = last;
+    }
 
     @Override
     public int hashCode() {
@@ -43,6 +50,10 @@ public class CellRange implements Serializable {
             return false;
         }
         return true;
+    }
+
+    public CellRange transpose() {
+        return new CellRange(first.transpose(),last.transpose());
     }
 
     
