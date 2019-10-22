@@ -6,6 +6,8 @@
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -30,6 +32,7 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
 
     public boolean importLabels = true;
     public CellCoordinates labelsSelection;   
+    public List<String> userLabels = new ArrayList<>();
     
     public DataTableImportParameters transpose() {
         
@@ -47,6 +50,7 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
         transposed.dataStart = dataStart.transpose();
         transposed.importLabels = importLabels;
         transposed.labelsSelection = labelsSelection.transpose();
+        transposed.userLabels = userLabels;
         
         return transposed;
     }
@@ -108,6 +112,9 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
         if (!Objects.equals(this.labelsSelection, other.labelsSelection)) {
             return false;
         }
+        if (!Objects.equals(this.userLabels, other.userLabels)) {
+            return false;
+        }        
         return true;
     }
     

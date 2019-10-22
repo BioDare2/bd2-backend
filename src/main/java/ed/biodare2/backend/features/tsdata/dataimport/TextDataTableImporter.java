@@ -156,7 +156,11 @@ public class TextDataTableImporter extends TSDataImporter {
         if (parameters.importLabels) {
             labeller = (List<Object> row, Integer rowIx) -> row.get(parameters.labelsSelection.col).toString();
         } else {
-            labeller = (List<Object> row, Integer rowIx) -> ""+(rowIx+1);
+            final List<String> labels = parameters.userLabels;
+            labeller = (List<Object> row, Integer rowIx) -> {
+                if (rowIx >= labels.size()) return null;
+                return labels.get(rowIx);
+            };
         }
         
         return importTracesRows(reader, times, firstRow, firstCol, labeller);
@@ -181,31 +185,32 @@ public class TextDataTableImporter extends TSDataImporter {
         Optional<List<Object>> record;
 
         while ( (record = sequentialReader.readRecord()).isPresent()) {
-            DataTrace trace = importTraceRow(record.get(), times, curRow, firstCol, labeller);
-            traces.add(trace);
+            Optional<DataTrace> trace = importTraceRow(record.get(), times, curRow, firstCol, labeller);
+            if (trace.isPresent())
+                traces.add(trace.get());
             curRow++;
         };
         return traces;
     }    
 
-    DataTrace importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws TransposableImportException {
+    Optional<DataTrace> importTraceRow(List<Object> record, List<Double> times, int curRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws TransposableImportException {
         
-        List<Double> values = valsToDoubles(record.subList(firstCol, record.size()));
-        
-        TimeSeries timeserie = makeSerie(times, values);
         
         String label = labeller.apply(record, curRow);
         if (label == null || label.trim().isEmpty()) {
-            if (!timeserie.isEmpty()) {
-                throw new TransposableImportException("Missing label", curRow, null);
-            } else {
-                label = "empty";
-            }
+            return Optional.empty();
+        }
+
+        List<Double> values = valsToDoubles(record.subList(firstCol, record.size()));        
+        TimeSeries timeserie = makeSerie(times, values);
+        
+        if (timeserie.isEmpty()) {
+            return Optional.empty();
         }
         
         DataTrace trace = makeTrace(timeserie, label, CellRole.DATA, firstCol, curRow);
         
-        return trace;
+        return Optional.of(trace);
     }
     
     protected DataTrace makeTrace(TimeSeries serie, String label, CellRole role, int col, int row) {

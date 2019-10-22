@@ -6,6 +6,8 @@
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,6 +52,32 @@ public class DataTableImportParametersTest {
         assertEquals(cell, res.firstTimeCell);
         
     }
+    
+    @Test
+    public void testCanDeserializeAngularJSON2() throws Exception {
+        
+        String json = "{ \"inRows\": true, \"timeOffset\": 0, \"importLabels\": false, \"userLabels\": [ null, null, \"label1\", \"label1\", \"label1\", null, null, \"TZ1\", \"TZ1\", \"TZ2\", \"TZ2\", null, null, \"before last\", \"\" ], \"_class_name\": \".DataTableImportParameters\", \"timeType\": \"TIME_IN_HOURS\", \"fileId\": \"_upload12073675894254425902\", \"fileName\": \"wt_prr_simpl_inRows.csv\", \"importFormat\": \"COMA_SEP\", \"firstTimeCell\": { \"col\": 1, \"row\": 0 } }";
+        
+        DataTableImportParameters res = mapper.readValue(json, DataTableImportParameters.class);
+        
+        assertEquals("_upload12073675894254425902",res.fileId);
+        assertEquals(ImportFormat.COMA_SEP, res.importFormat);
+        
+        CellCoordinates cell = new CellCoordinates(1, 0);
+        assertEquals(cell, res.firstTimeCell);
+        
+        assertFalse(res.importLabels);
+        assertTrue(res.inRows);
+        assertEquals(TimeType.TIME_IN_HOURS, res.timeType);
+        assertEquals(ImportFormat.COMA_SEP, res.importFormat);
+        
+        List<String> labels = Arrays.asList(
+        null, null, "label1", "label1", "label1", null, null, "TZ1", "TZ1", "TZ2", "TZ2", null, null, "before last", ""
+        );
+        
+        assertEquals(labels, res.userLabels);
+        
+    }    
     
     @Test
     public void transposeWorks() throws Exception {
