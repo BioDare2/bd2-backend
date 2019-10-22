@@ -22,7 +22,7 @@ public class DataTableSlicer {
     
     public DataTableSlice slice(TableRecordsReader tableReader, Slice slice) throws IOException {
         
-        Pair<Integer, Integer> rowColSizes = tableReader.tableSize();
+        Pair<Integer, Integer> rowColSizes = tableReader.rowsColsTableSize();
         
         DataTableSlice dataSlice = new DataTableSlice();
         dataSlice.totalRows = rowColSizes.getLeft();

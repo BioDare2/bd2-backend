@@ -19,7 +19,7 @@ public abstract class TableRecordsReader {
      * 
      * @return pair with number or rows and columns in the table
      */
-    public abstract Pair<Integer, Integer> tableSize() throws IOException;
+    public abstract Pair<Integer, Integer> rowsColsTableSize() throws IOException;
 
     public abstract List<List<Object>> readRecords(int firstRow, int size) throws IOException;
     

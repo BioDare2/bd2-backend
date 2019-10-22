@@ -178,7 +178,7 @@ public class TextTableTransposerTest {
         
         TextDataTableReader reader = new TextDataTableReader(inFile, ",");
         
-        instance.transposeInChunks(reader, reader.tableSize().getRight(), outFile, 2, ",");
+        instance.transposeInChunks(reader, reader.rowsColsTableSize().getRight(), outFile, 2, ",");
         
         assertTrue(Files.exists(outFile));
         
@@ -285,10 +285,10 @@ public class TextTableTransposerTest {
         //assertEquals(Files.size(file), Files.size(out));
         
         TextDataTableReader reader = new TextDataTableReader(file, ",");
-        Pair<Integer,Integer> dim = reader.tableSize();
+        Pair<Integer,Integer> dim = reader.rowsColsTableSize();
         
         reader = new TextDataTableReader(out, ",");
-        Pair<Integer,Integer> dim2 = reader.tableSize();
+        Pair<Integer,Integer> dim2 = reader.rowsColsTableSize();
         
         assertEquals(dim.getLeft(), dim2.getRight());
         assertEquals(dim.getRight(), dim2.getLeft());

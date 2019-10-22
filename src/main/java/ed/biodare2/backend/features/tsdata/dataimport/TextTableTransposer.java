@@ -43,7 +43,7 @@ public class TextTableTransposer {
 
     public void transpose(TextDataTableReader reader, Path outFile, String SEP) throws IOException {
         
-        Pair<Integer, Integer> rowColSize = reader.tableSize();
+        Pair<Integer, Integer> rowColSize = reader.rowsColsTableSize();
         
         if (rowColSize.getRight() < MAX_COLS) { 
             transposeChunk(reader, 0, rowColSize.getRight(), outFile, SEP);

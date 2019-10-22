@@ -35,7 +35,7 @@ public class DataTableSlicerTest {
     @Test
     public void testSliceGivesEmptySliceWithCorrectSizesIfPageExceeds() throws Exception {
         
-        when(tableReader.tableSize()).thenReturn(new Pair(2, 5));
+        when(tableReader.rowsColsTableSize()).thenReturn(new Pair(2, 5));
         
         Slice slice = new Slice();
         slice.rowPage.pageIndex = 1;
@@ -56,7 +56,7 @@ public class DataTableSlicerTest {
         assertEquals(slice.rowPage, result.rowPage);
         assertEquals(slice.colPage, result.colPage);
         
-        when(tableReader.tableSize()).thenReturn(new Pair(20, 5));
+        when(tableReader.rowsColsTableSize()).thenReturn(new Pair(20, 5));
         slice.colPage.pageIndex = 1;
         
         result = instance.slice(tableReader, slice);
@@ -76,7 +76,7 @@ public class DataTableSlicerTest {
     @Test
     public void testSliceGivesCorrectlyFullTableOnBigPages() throws Exception {
         
-        when(tableReader.tableSize()).thenReturn(new Pair(5, 7));
+        when(tableReader.rowsColsTableSize()).thenReturn(new Pair(5, 7));
         
         List<List<Object>> fullData = List.of(
                 List.of("123","2","3"),
@@ -121,7 +121,7 @@ public class DataTableSlicerTest {
     @Test
     public void testSliceGivesCorrectlyPartOfTable() throws Exception {
         
-        when(tableReader.tableSize()).thenReturn(new Pair(5, 7));
+        when(tableReader.rowsColsTableSize()).thenReturn(new Pair(5, 7));
         
         List<List<Object>> fullData = List.of(
                 List.of("n123","2","3"),

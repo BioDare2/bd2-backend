@@ -96,7 +96,7 @@ public class TextDataTableReaderTest {
     @Test
     public void tableSizeCountsCorrectly() throws Exception {
      
-        Pair<Integer, Integer> rowColSizes = instance.tableSize();
+        Pair<Integer, Integer> rowColSizes = instance.rowsColsTableSize();
         
         assertNotNull(rowColSizes);
         Pair<Integer, Integer> exp = new Pair<>(0,0);
@@ -106,14 +106,16 @@ public class TextDataTableReaderTest {
         List<String> rows = List.of("123");
         Files.write(dataFile, rows);
         
-        rowColSizes = instance.tableSize();
+        instance = new TextDataTableReader(dataFile, ",");
+        rowColSizes = instance.rowsColsTableSize();
         exp = new Pair<>(1,1);
         assertEquals(exp,rowColSizes);
         
         rows = List.of("123,2,3");
         Files.write(dataFile, rows);
         
-        rowColSizes = instance.tableSize();
+        instance = new TextDataTableReader(dataFile, ",");
+        rowColSizes = instance.rowsColsTableSize();
         exp = new Pair<>(1,3);
         assertEquals(exp,rowColSizes);
         
@@ -124,10 +126,34 @@ public class TextDataTableReaderTest {
                 "1,2,3,4,5,6,7");
         Files.write(dataFile, rows);
         
-        rowColSizes = instance.tableSize();
+        instance = new TextDataTableReader(dataFile, ",");
+        rowColSizes = instance.rowsColsTableSize();
         exp = new Pair<>(4,7);
         assertEquals(exp,rowColSizes);
     }
+    
+    @Test
+    public void tableSizeCachesValues() throws Exception {
+     
+
+        
+        List<String> rows = List.of(
+                "123,2,3",
+                "",
+                "2345dfdf fd fdsfdfadsf asf dsafdsafdsafdf dfda",
+                "1,2,3,4,5,6,7");
+        Files.write(dataFile, rows);
+        
+        Pair<Integer,Integer> rowColSizes = instance.rowsColsTableSize();
+        Pair<Integer,Integer> exp = new Pair<>(4,7);
+        assertEquals(exp,rowColSizes);
+        
+        exp = rowColSizes;
+        rowColSizes = instance.rowsColsTableSize();
+        assertSame(exp, rowColSizes);
+        
+    }
+    
     
     @Test
     public void lineToRecordSplitsBySep() {

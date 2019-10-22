@@ -26,6 +26,8 @@ public class TextDataTableReader extends TableRecordsReader {
     
     final public Path file;
     final public String sep;
+   
+    Pair<Integer, Integer> rowsColsSize;
     
     public TextDataTableReader(Path file, String sep) {
         if (!Files.isRegularFile(file)) 
@@ -104,13 +106,14 @@ public class TextDataTableReader extends TableRecordsReader {
     }    
 
     @Override
-    public Pair<Integer, Integer> tableSize() throws IOException {
+    public Pair<Integer, Integer> rowsColsTableSize() throws IOException {
         
-        int cols = countCols();
-        
-        int rows = countRows();
-        
-        return new Pair(rows,cols);
+        if (rowsColsSize == null) {
+            int cols = countCols();        
+            int rows = countRows();
+            rowsColsSize = new Pair<>(rows,cols);
+        };
+        return rowsColsSize;
     }
 
     int countCols() throws IOException {
