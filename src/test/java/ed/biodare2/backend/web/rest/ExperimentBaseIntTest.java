@@ -6,6 +6,7 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.testutil.PPATestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
@@ -14,8 +15,14 @@ import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
+import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import ed.biodare2.backend.util.io.FileUtil;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +59,31 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     PPAArtifactsRep ppaRep;
     
     static AtomicLong expIds = new AtomicLong(150);
+    
+    @Autowired
+    ExperimentsStorage experimentalStorage;    
+    
+    @Before
+    public void cleanTestSpace() throws IOException {
+        
+        Path experiments = experimentalStorage.getExperimentsDir();
+        if (experiments == null) throw new IllegalStateException("Mising runtime exp storage path");
+        
+        String pathString = experiments.toAbsolutePath().toString();
+        
+        boolean isTest = pathString.contains("Temp") || pathString.contains("tmp");
+        isTest = isTest && pathString.contains("test");
+        if (!isTest) {
+            throw new IllegalStateException("Cannot clean exp storage from no temporary test location"+pathString);
+        }
+        
+        FileUtil fileUtil = new FileUtil();
+        try {
+            fileUtil.removeRecursively(experiments);
+        } catch (IOException e) {
+            System.err.println("Could not clean exp dir"+e.getMessage());
+        }
+    }
     
     @Transactional
     AssayPack insertExperiment() {

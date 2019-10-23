@@ -8,6 +8,7 @@ package ed.biodare2.backend.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.Fixtures;
+import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.security.BioDare2User;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -60,6 +61,8 @@ public class AbstractIntTestBase {
     
     BioDare2User currentUser;
     RequestPostProcessor mockAuthentication;
+    
+
     
     
     @Before
