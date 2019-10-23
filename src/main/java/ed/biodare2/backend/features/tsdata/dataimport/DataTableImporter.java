@@ -5,8 +5,8 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
-import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader;
-import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader.SequentialReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReader.SequentialReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableImporter extends TSDataImporter {
+public class DataTableImporter extends TSDataImporter {
    
     final TextTableTransposer transposer = new TextTableTransposer();
     
@@ -54,7 +54,7 @@ public class TextDataTableImporter extends TSDataImporter {
         Path transpFile = Files.createTempFile(null, null);
         try {
             
-            TableRecordsReader orgReader = makeReader(file, parameters);            
+            DataTableReader orgReader = makeReader(file, parameters);            
             transposer.transpose(orgReader, transpFile, ",");
             
             DataTableImportParameters transp = parameters.transpose();
@@ -72,12 +72,12 @@ public class TextDataTableImporter extends TSDataImporter {
 
     DataBundle importTimeSeriesFromRows(Path file, DataTableImportParameters parameters) throws ImportException, IOException {
         
-        TableRecordsReader reader = makeReader(file, parameters);
+        DataTableReader reader = makeReader(file, parameters);
         
         return importTimeSeriesFromRows(reader, parameters);
     }
     
-    DataBundle importTimeSeriesFromRows(TableRecordsReader reader, DataTableImportParameters parameters) throws IOException, ImportException {
+    DataBundle importTimeSeriesFromRows(DataTableReader reader, DataTableImportParameters parameters) throws IOException, ImportException {
         
         List<Double> times = importTimesRow(reader, parameters);
         
@@ -100,7 +100,7 @@ public class TextDataTableImporter extends TSDataImporter {
     }
     
 
-    TableRecordsReader makeReader(Path file, DataTableImportParameters parameters) {
+    DataTableReader makeReader(Path file, DataTableImportParameters parameters) {
         
         switch (parameters.importFormat) {
             case COMA_SEP: return new TextDataTableReader(file, ",");
@@ -109,7 +109,7 @@ public class TextDataTableImporter extends TSDataImporter {
         }
     }
 
-    List<Double> importTimesRow(TableRecordsReader reader, DataTableImportParameters parameters) throws IOException, ImportException {
+    List<Double> importTimesRow(DataTableReader reader, DataTableImportParameters parameters) throws IOException, ImportException {
             
         List<Double> times = readTimesRow(reader, parameters.firstTimeCell);    
         
@@ -117,7 +117,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return times;
     }
 
-    List<Double> readTimesRow(TableRecordsReader reader, CellCoordinates firstTimeCell) throws IOException, ImportException {
+    List<Double> readTimesRow(DataTableReader reader, CellCoordinates firstTimeCell) throws IOException, ImportException {
         
         List<List<Object>> records = reader.readRecords(firstTimeCell.row, 1);
         
@@ -151,7 +151,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return Double.parseDouble(s);
     }
 
-    List<DataTrace> importTracesRows(TableRecordsReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TransposableImportException {
+    List<DataTrace> importTracesRows(DataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TransposableImportException {
         
         int firstRow = parameters.dataStart.row;
         int firstCol = parameters.firstTimeCell.col;
@@ -170,7 +170,7 @@ public class TextDataTableImporter extends TSDataImporter {
         return importTracesRows(reader, times, firstRow, firstCol, labeller);
     }
 
-    List<DataTrace> importTracesRows(TableRecordsReader reader, List<Double> times, 
+    List<DataTrace> importTracesRows(DataTableReader reader, List<Double> times, 
             int firstRow, int firstCol, BiFunction<List<Object>, Integer, String> labeller) throws IOException, TransposableImportException {
         
         try(SequentialReader sequentialReader = reader.openReader()) {

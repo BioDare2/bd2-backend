@@ -16,17 +16,17 @@ import java.util.Optional;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public abstract class TableRecordsReader {
+public interface DataTableReader {
     
     /**
      * 
      * @return pair with number or rows and columns in the table
      */
-    public abstract Pair<Integer, Integer> rowsColsTableSize() throws IOException;
+    public Pair<Integer, Integer> rowsColsTableSize() throws IOException;
 
-    public abstract List<List<Object>> readRecords(int firstRow, int size) throws IOException;
+    public List<List<Object>> readRecords(int firstRow, int size) throws IOException;
     
-    public abstract SequentialReader openReader() throws IOException;
+    public SequentialReader openReader() throws IOException;
     
     public static interface SequentialReader extends Closeable {
         

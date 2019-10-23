@@ -31,20 +31,20 @@ import static org.mockito.Mockito.*;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableImporterTest {
+public class DataTableImporterTest {
     
     double EPS = 1E-6;
     
-    public TextDataTableImporterTest() {
+    public DataTableImporterTest() {
     }
     
-    TextDataTableImporter instance;
+    DataTableImporter instance;
     TextDataTableReader reader;
     
     @Before
     public void setUp() {
         
-        instance = new TextDataTableImporter();
+        instance = new DataTableImporter();
         reader = mock(TextDataTableReader.class);
         
     }
@@ -237,7 +237,7 @@ public class TextDataTableImporterTest {
     } 
     
     public static Path getTestDataFile(String name) throws URISyntaxException {
-        Path file = Paths.get(TextDataTableImporterTest.class.getResource(name).toURI());
+        Path file = Paths.get(DataTableImporterTest.class.getResource(name).toURI());
         return file;
     }
     

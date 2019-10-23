@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableImporterTest;
-import ed.biodare2.backend.features.tsdata.dataimport.TextDataTableImporterTest;
+import ed.biodare2.backend.features.tsdata.dataimport.DataTableImporterTest;
 import ed.biodare2.backend.features.tsdata.dataimport.TopCountImporterTest;
 import ed.biodare2.backend.handlers.ExperimentDataHandlerTest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
@@ -276,7 +276,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
     @Test
     public void importsCSVDataInRowsAndReturnsDataTracesNumber() throws Exception {
     
-        UploadFileInfo csvUpload = uploads.save(TextDataTableImporterTest.getTestDataFile("data_in_rows.csv"), currentUser);
+        UploadFileInfo csvUpload = uploads.save(DataTableImporterTest.getTestDataFile("data_in_rows.csv"), currentUser);
         
         AssayPack pack = insertExperiment();
         ExperimentalAssay exp = pack.getAssay();        
@@ -284,7 +284,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         FileImportRequest importRequest = new FileImportRequest();
         importRequest.fileId = csvUpload.id;
         importRequest.importFormat = ImportFormat.COMA_SEP;                
-        importRequest.importParameters = TextDataTableImporterTest.getCSVTableInRowsParameters("data_in_rows.csv");
+        importRequest.importParameters = DataTableImporterTest.getCSVTableInRowsParameters("data_in_rows.csv");
         
         String orgJSON = mapper.writeValueAsString(importRequest);
         

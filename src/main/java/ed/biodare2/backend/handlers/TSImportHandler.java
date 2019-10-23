@@ -9,7 +9,7 @@ package ed.biodare2.backend.handlers;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableImporter;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
-import ed.biodare2.backend.features.tsdata.dataimport.TextDataTableImporter;
+import ed.biodare2.backend.features.tsdata.dataimport.DataTableImporter;
 import ed.biodare2.backend.features.tsdata.dataimport.TopCountImporter;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTableImportParameters;
@@ -29,7 +29,7 @@ public class TSImportHandler {
     final FileUploadHandler uploads;
     final ExcelTableImporter excelTableImporter = new ExcelTableImporter();
     final TopCountImporter topcountImporter = new TopCountImporter();
-    final TextDataTableImporter textTableImporter = new TextDataTableImporter();
+    final DataTableImporter textTableImporter = new DataTableImporter();
     
     @Autowired
     public TSImportHandler(FileUploadHandler uploads) {

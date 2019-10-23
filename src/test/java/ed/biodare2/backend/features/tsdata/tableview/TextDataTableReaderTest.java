@@ -9,7 +9,6 @@ import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.
 import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.isSuitableFormat;
 import ed.robust.dom.util.Pair;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

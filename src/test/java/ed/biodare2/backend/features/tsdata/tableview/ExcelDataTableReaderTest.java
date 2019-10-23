@@ -5,8 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
-import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableImporterTest;
-import static ed.biodare2.backend.features.tsdata.tableview.ExcelTableReader.getRowsNumber;
+import static ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader.getRowsNumber;
 import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.isSuitableFormat;
 import ed.robust.dom.util.Pair;
 import ed.synthsys.util.excel.ModernExcelView;
@@ -28,28 +27,28 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class ExcelTableReaderTest {
+public class ExcelDataTableReaderTest {
     
     
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
     
     Path dataFile;
-    ExcelTableReader instance;
+    ExcelDataTableReader instance;
     
-    public ExcelTableReaderTest() {
+    public ExcelDataTableReaderTest() {
     }
     
     @Before
     public void setUp() throws IOException {
         
         dataFile = testFolder.newFile().toPath();
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
     }
     
     Path excelFileLocation(String fileName) {
         try {
-            return Paths.get(ExcelTableReaderTest.class.getResource(fileName).toURI());
+            return Paths.get(ExcelDataTableReaderTest.class.getResource(fileName).toURI());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(),e);
         }    
@@ -62,14 +61,14 @@ public class ExcelTableReaderTest {
     public void testIsSuitableFormat() throws Exception {
         Path file = testFolder.newFile().toPath();
         
-        assertFalse(ExcelTableReader.isSuitableFormat(file));
+        assertFalse(ExcelDataTableReader.isSuitableFormat(file));
         
         List<String> lines = List.of("alkafaf","ma","kota","kot ma ale");        
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));
 
         file = excelFileLocation("data-sheet.xlsx");
-        assertTrue(ExcelTableReader.isSuitableFormat(file));
+        assertTrue(ExcelDataTableReader.isSuitableFormat(file));
         
     }
     
@@ -77,21 +76,21 @@ public class ExcelTableReaderTest {
     public void calculatesCorrectSize() throws Exception {
         
         Files.copy(excelFileLocation("empty.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
         
         Pair<Integer,Integer> res = instance.rowsColsTableSize();
         Pair<Integer,Integer> exp = new Pair<>(0,0);
         assertEquals(exp, res);
         
         Files.copy(excelFileLocation("one.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
         
         res = instance.rowsColsTableSize();
         exp = new Pair<>(1,1);
         assertEquals(exp, res);
         
         Files.copy(excelFileLocation("small.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
         
         res = instance.rowsColsTableSize();
         exp = new Pair<>(10,6);
@@ -123,7 +122,7 @@ public class ExcelTableReaderTest {
     public void calculatesCorrectSizeCachesSize() throws Exception {
         
         Files.copy(excelFileLocation("small.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
         
         Pair<Integer,Integer> res = instance.rowsColsTableSize();
         Pair<Integer,Integer> exp = new Pair<>(10,6);
@@ -139,7 +138,7 @@ public class ExcelTableReaderTest {
     public void readRecordsCorrectlyReadsPartOfFile() throws Exception {
         
         Files.copy(excelFileLocation("small.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        instance = new ExcelTableReader(dataFile);
+        instance = new ExcelDataTableReader(dataFile);
         
         List<List<Object>> records = instance.readRecords(0, 0);
         List<List<Object>> exp = List.of();
@@ -171,14 +170,14 @@ public class ExcelTableReaderTest {
     public void sequentialReaderGivesNumberOfSkippedLines() throws Exception {
         
         Files.copy(excelFileLocation("empty.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             assertEquals(0, reader.skipLines(0));
             assertEquals(0, reader.skipLines(1));
         }
         
         Files.copy(excelFileLocation("one.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             assertEquals(0, reader.skipLines(0));
             assertEquals(1, reader.skipLines(1));
@@ -186,7 +185,7 @@ public class ExcelTableReaderTest {
         }
         
         Files.copy(excelFileLocation("small.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             assertEquals(0, reader.skipLines(0));
             assertEquals(2, reader.skipLines(2));
@@ -200,7 +199,7 @@ public class ExcelTableReaderTest {
     public void sequentialReaderReadsRecordsInSequence() throws Exception {
         
         Files.copy(excelFileLocation("empty.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             Optional<List<Object>> row = reader.readRecord();
             assertTrue(row.isEmpty());
@@ -210,7 +209,7 @@ public class ExcelTableReaderTest {
         }
         
         Files.copy(excelFileLocation("one.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             Optional<List<Object>> row = reader.readRecord();
             assertFalse(row.isEmpty());
@@ -224,7 +223,7 @@ public class ExcelTableReaderTest {
         }
         
         Files.copy(excelFileLocation("small.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);
-        try (ExcelTableReader.OpennedReader reader = new ExcelTableReader.OpennedReader(dataFile)) {
+        try (ExcelDataTableReader.OpennedReader reader = new ExcelDataTableReader.OpennedReader(dataFile)) {
             
             assertEquals(7, reader.skipLines(7));
             Optional<List<Object>> row = reader.readRecord();

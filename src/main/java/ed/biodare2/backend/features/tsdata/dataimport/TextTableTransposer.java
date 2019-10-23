@@ -5,8 +5,8 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
-import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader;
-import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader.SequentialReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReader.SequentialReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.robust.dom.util.Pair;
 import java.io.BufferedWriter;
@@ -33,12 +33,12 @@ public class TextTableTransposer {
         
         // if (Files.exists(outFile)) throw new IOException("Overwriting existing files is not allowed");
         
-        TableRecordsReader reader = new TextDataTableReader(inFile, SEP);
+        DataTableReader reader = new TextDataTableReader(inFile, SEP);
         
         transpose(reader, outFile, SEP);
     }
 
-    public void transpose(TableRecordsReader reader, Path outFile, String SEP) throws IOException {
+    public void transpose(DataTableReader reader, Path outFile, String SEP) throws IOException {
         
         Pair<Integer, Integer> rowColSize = reader.rowsColsTableSize();
         
@@ -49,7 +49,7 @@ public class TextTableTransposer {
         }
     }
 
-    void transposeChunk(TableRecordsReader reader, int firstCol, int endCol, Path outFile, String SEP) throws IOException {
+    void transposeChunk(DataTableReader reader, int firstCol, int endCol, Path outFile, String SEP) throws IOException {
         
         List<List<Object>> newRows;
         
@@ -61,7 +61,7 @@ public class TextTableTransposer {
         saveToTextTable(newRows, outFile, SEP);
     }
     
-    void transposeInChunks(TableRecordsReader reader, int colSize, Path outFile, int chunkSize, String SEP) throws IOException {
+    void transposeInChunks(DataTableReader reader, int colSize, Path outFile, int chunkSize, String SEP) throws IOException {
 
         List<Pair<Integer,Integer>> chunks = divideRange(colSize, chunkSize);
         

@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class TextDataTableReader extends TableRecordsReader {
+public class TextDataTableReader implements DataTableReader {
     
     final public Path file;
     final public String sep;

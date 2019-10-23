@@ -23,12 +23,12 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-public class ExcelTableReader extends TableRecordsReader {
+public class ExcelDataTableReader implements DataTableReader {
     
     final Path file;
     Pair<Integer, Integer> rowsColsSize;    
     
-    public ExcelTableReader(Path file) {
+    public ExcelDataTableReader(Path file) {
         this.file = file;
     }
     

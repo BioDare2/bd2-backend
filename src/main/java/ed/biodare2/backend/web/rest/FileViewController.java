@@ -15,7 +15,7 @@ import ed.biodare2.backend.features.tsdata.dataimport.TopCountTableSimplifier;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlicer;
 import ed.biodare2.backend.features.tsdata.tableview.Slice;
-import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.web.tracking.FileTracker;
@@ -111,7 +111,7 @@ public class FileViewController extends BioDare2Rest {
                 slice.colPage.pageSize = DEF_COLS_NR;
             }
             
-            TableRecordsReader reader = getTableRecordsReader(file, format);
+            DataTableReader reader = getTableRecordsReader(file, format);
             
             DataTableSlice dataSlice = tableSlicer.slice(reader, slice);
             
@@ -168,7 +168,7 @@ public class FileViewController extends BioDare2Rest {
         }
     }
     
-    protected TableRecordsReader getTableRecordsReader(Path file, ImportFormat format) {
+    protected DataTableReader getTableRecordsReader(Path file, ImportFormat format) {
         switch(format) {
             case COMA_SEP: return new TextDataTableReader(file, ",");
             case TAB_SEP: return new TextDataTableReader(file, "\t");

@@ -23,12 +23,12 @@ public class DataTableSlicerTest {
     }
     
     DataTableSlicer instance;
-    TableRecordsReader tableReader;
+    DataTableReader tableReader;
     
     @Before
     public void setUp() {
         
-        tableReader = mock(TableRecordsReader.class);
+        tableReader = mock(DataTableReader.class);
         instance = new DataTableSlicer();
     }
 

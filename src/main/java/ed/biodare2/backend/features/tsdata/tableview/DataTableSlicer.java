@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 public class DataTableSlicer {
     
     
-    public DataTableSlice slice(TableRecordsReader tableReader, Slice slice) throws IOException {
+    public DataTableSlice slice(DataTableReader tableReader, Slice slice) throws IOException {
         
         Pair<Integer, Integer> rowColSizes = tableReader.rowsColsTableSize();
         
