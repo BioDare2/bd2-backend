@@ -5,9 +5,12 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
+import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.lineToRecord;
 import ed.robust.dom.util.Pair;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -23,5 +26,13 @@ public abstract class TableRecordsReader {
 
     public abstract List<List<Object>> readRecords(int firstRow, int size) throws IOException;
     
+    public abstract SequentialReader openReader() throws IOException;
     
+    public static interface SequentialReader extends Closeable {
+        
+        public int skipLines(int count) throws IOException;
+        
+        public Optional<List<Object>> readRecord() throws IOException;
+        
+    }
 }

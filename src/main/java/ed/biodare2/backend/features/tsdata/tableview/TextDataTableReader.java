@@ -7,7 +7,6 @@ package ed.biodare2.backend.features.tsdata.tableview;
 
 import ed.robust.dom.util.Pair;
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -165,11 +164,12 @@ public class TextDataTableReader extends TableRecordsReader {
         return items;
     } 
     
+    @Override
     public OpennedReader openReader() throws IOException {
         return new OpennedReader(file, sep);
     }
     
-    public static class OpennedReader implements Closeable {
+    public static class OpennedReader implements SequentialReader {
 
         final BufferedReader reader;
         final String SEP;
@@ -179,10 +179,12 @@ public class TextDataTableReader extends TableRecordsReader {
             this.SEP = sep;
         }
         
+        @Override
         public int skipLines(int count) throws IOException {
             return TextDataTableReader.skipLines(reader, count);
         }
         
+        @Override
         public Optional<List<Object>> readRecord() throws IOException {
 
             String line = reader.readLine();

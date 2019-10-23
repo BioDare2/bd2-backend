@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -46,17 +47,8 @@ public class ExcelTableReader extends TableRecordsReader {
                 
                 
                 int cols = 0;
-                int rows = excel.getLastRow();
+                int rows = getRowsNumber(excel);
                 
-                // cannot distinguish between empty and with one row which is also 0
-                if (rows == 0) {
-                    try {
-                        cols = excel.getLastColumn(0);
-                    } catch (IllegalArgumentException e) {
-                        return new Pair<>(0,0);
-                    }
-                }
-                rows++;
                 int upTo = Math.min(20, rows);
                 for (int row = 0;row< upTo; row++) {
                     cols = Math.max(cols, excel.getLastColumn(row)+1);
@@ -67,6 +59,18 @@ public class ExcelTableReader extends TableRecordsReader {
             }
         };
         return rowsColsSize;
+    }
+    
+    protected static int getRowsNumber(ModernExcelView excel) {
+        int rows = excel.getLastRow();
+        if (rows > 0) return (rows+1);
+        try {
+            int cols = excel.getLastColumn(0);
+            return cols >= 0 ? 1 : 0;
+        } catch (IllegalArgumentException e) {
+        }        
+        return 0;
+        
     }
 
 
@@ -89,6 +93,56 @@ public class ExcelTableReader extends TableRecordsReader {
         } catch (ExcelFormatException e) {
                 throw new IOException(e.getMessage(),e);
         }
+    }
+
+    @Override
+    public SequentialReader openReader() throws IOException {
+        try {
+            return new OpennedReader(file);
+        } catch (ExcelFormatException e) {
+            throw new IOException(e);
+        }
+    }
+    
+    public static class OpennedReader implements SequentialReader {
+        
+        final ModernExcelView excel;
+        final int rowsSize;
+        int nextRow = 0;
+        
+        OpennedReader(Path file) throws IOException, ExcelFormatException {
+            this(new ModernExcelView(file));
+        }
+        
+        OpennedReader(ModernExcelView excel) throws IOException {
+            this.excel = excel;
+            this.rowsSize = getRowsNumber(excel);
+        }        
+
+        @Override
+        public int skipLines(int count) throws IOException {
+            if (count < 0) throw new IllegalArgumentException("Can only skip positive number of lines not "+count);
+            int left = rowsSize-nextRow;
+            count = Math.min(left, count);
+            nextRow+=count;
+            return count;            
+        }
+
+        @Override
+        public Optional<List<Object>> readRecord() throws IOException {
+            if (nextRow >= rowsSize) return Optional.empty();
+            
+            List<Object> row = excel.readRow(nextRow, 0, naturalCaster);
+            nextRow++;
+            return Optional.of(row);
+        }
+
+        @Override
+        public void close() throws IOException {
+            excel.close();
+        }
+        
+        
     }
     
     static final NaturalCellCaster naturalCaster = new NaturalCellCaster();

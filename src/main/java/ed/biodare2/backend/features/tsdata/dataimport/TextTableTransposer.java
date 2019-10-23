@@ -5,22 +5,19 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader;
+import ed.biodare2.backend.features.tsdata.tableview.TableRecordsReader.SequentialReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
-import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.OpennedReader;
 import ed.robust.dom.util.Pair;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import static java.nio.file.StandardOpenOption.APPEND;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -36,12 +33,12 @@ public class TextTableTransposer {
         
         // if (Files.exists(outFile)) throw new IOException("Overwriting existing files is not allowed");
         
-        TextDataTableReader reader = new TextDataTableReader(inFile, SEP);
+        TableRecordsReader reader = new TextDataTableReader(inFile, SEP);
         
         transpose(reader, outFile, SEP);
     }
 
-    public void transpose(TextDataTableReader reader, Path outFile, String SEP) throws IOException {
+    public void transpose(TableRecordsReader reader, Path outFile, String SEP) throws IOException {
         
         Pair<Integer, Integer> rowColSize = reader.rowsColsTableSize();
         
@@ -52,11 +49,11 @@ public class TextTableTransposer {
         }
     }
 
-    void transposeChunk(TextDataTableReader reader, int firstCol, int endCol, Path outFile, String SEP) throws IOException {
+    void transposeChunk(TableRecordsReader reader, int firstCol, int endCol, Path outFile, String SEP) throws IOException {
         
         List<List<Object>> newRows;
         
-        try (TextDataTableReader.OpennedReader sequentialReader = reader.openReader()) {
+        try (SequentialReader sequentialReader = reader.openReader()) {
             
             newRows = readTransposedChunk(sequentialReader, firstCol, endCol);
         }
@@ -64,7 +61,7 @@ public class TextTableTransposer {
         saveToTextTable(newRows, outFile, SEP);
     }
     
-    void transposeInChunks(TextDataTableReader reader, int colSize, Path outFile, int chunkSize, String SEP) throws IOException {
+    void transposeInChunks(TableRecordsReader reader, int colSize, Path outFile, int chunkSize, String SEP) throws IOException {
 
         List<Pair<Integer,Integer>> chunks = divideRange(colSize, chunkSize);
         
@@ -87,7 +84,7 @@ public class TextTableTransposer {
         
     }   
     
-    List<List<Object>> readTransposedChunk(OpennedReader sequentialReader, int firstCol, int endCol) throws IOException {
+    List<List<Object>> readTransposedChunk(SequentialReader sequentialReader, int firstCol, int endCol) throws IOException {
         
         List<List<Object>> newRows = initListOfList(endCol-firstCol);
         int size = newRows.size();
