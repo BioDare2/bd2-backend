@@ -303,4 +303,43 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         assertEquals("0.735742597", dataSlice.data.get(1).get(0));
         
     }     
+    
+    @Test
+    public void getTableSliceWorksOnExcel() throws Exception {
+
+        uploaded = upload("wt_prr_simpl.xlsx");
+        ImportFormat format = ImportFormat.EXCEL_TABLE;
+        
+        Slice slice = new Slice();
+        slice.rowPage.pageSize = 10;
+        slice.colPage.pageSize = 5;
+        
+        String orgJSON = mapper.writeValueAsString(slice);
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("DataView JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        DataTableSlice dataSlice = mapper.readValue(resp.getResponse().getContentAsString(), DataTableSlice.class);
+        assertNotNull(dataSlice);
+        
+        assertEquals(10, dataSlice.data.size());
+        assertEquals(5, dataSlice.data.get(0).size());
+        
+        assertEquals("id", dataSlice.data.get(0).get(0));
+        assertEquals(1.113459299, dataSlice.data.get(1).get(2));
+        
+    }    
 }

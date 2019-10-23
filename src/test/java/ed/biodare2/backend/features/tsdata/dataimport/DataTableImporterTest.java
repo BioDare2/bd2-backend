@@ -297,11 +297,85 @@ public class DataTableImporterTest {
     }
     
     @Test
-    public void importLabelledCSVRowDataFromFile() throws Exception {
+    public void importExcelRowDataFromFile() throws Exception {
+        
+        Path file = getTestDataFile("data_in_rows.xlsx");
+        
+        DataTableImportParameters parameters = getCSVTableInRowsParameters("data_in_rows.csv");
+        parameters.importFormat = ImportFormat.EXCEL_TABLE;
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(64,data.size());
+        assertEquals("WT LHY",data.get(0).details.dataLabel);
+        assertEquals("WT TOC1",data.get(63).details.dataLabel);
+        
+        TimeSeries trace = data.get(63).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(0.201330533, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.553965719, trace.getLast().getValue(), EPS);
+                
+        assertEquals(1, data.get(0).traceNr);
+        assertEquals(64, data.get(63).traceNr);
+        
+        DataTrace dtrace = data.get(0);
+        assertEquals("B2", dtrace.traceFullRef);
+        assertEquals("B2", dtrace.traceRef);
+        
+        dtrace = data.get(63);
+        assertEquals("B65", dtrace.traceFullRef);
+        assertEquals("B65", dtrace.traceRef);        
+        
+    }
+    
+    @Test
+    public void importsLabelledCSVRowDataFromFile() throws Exception {
         
         Path file = getTestDataFile("data_in_rows.csv");
         
         DataTableImportParameters parameters = getCSVTableInRowsParameters("data_in_rows.csv");
+        
+        parameters.importLabels = false;
+        parameters.userLabels = Arrays.asList(null, null, "L1","L2", null, "L3", null, null);
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(3,data.size());
+        assertEquals("L1",data.get(0).details.dataLabel);
+        assertEquals("L2",data.get(1).details.dataLabel);
+        assertEquals("L3",data.get(2).details.dataLabel);
+        
+        TimeSeries trace = data.get(2).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(1.426291469, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(1.799394662, trace.getLast().getValue(), EPS);
+                
+        assertEquals(1, data.get(0).traceNr);
+        assertEquals(3, data.get(2).traceNr);
+        
+        DataTrace dtrace = data.get(0);
+        assertEquals("B3", dtrace.traceFullRef);
+        assertEquals("B3", dtrace.traceRef);
+        
+        dtrace = data.get(2);
+        assertEquals("B6", dtrace.traceFullRef);
+        assertEquals("B6", dtrace.traceRef);        
+        
+    }    
+
+    @Test
+    public void importsLabelledExcelRowDataFromFile() throws Exception {
+        
+        Path file = getTestDataFile("data_in_rows.xlsx");
+        
+        DataTableImportParameters parameters = getCSVTableInRowsParameters("data_in_rows.csv");
+        parameters.importFormat = ImportFormat.EXCEL_TABLE;
         
         parameters.importLabels = false;
         parameters.userLabels = Arrays.asList(null, null, "L1","L2", null, "L3", null, null);
@@ -360,6 +434,48 @@ public class DataTableImporterTest {
         Path file = getTestDataFile("data_in_cols.csv");
         
         DataTableImportParameters parameters = getCSVTableInColsParameters("data_in_cols.csv");
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(64,data.size());
+        assertEquals("WT LHY",data.get(0).details.dataLabel);
+        assertEquals("WT TOC1",data.get(63).details.dataLabel);
+        
+        TimeSeries trace = data.get(63).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(0.201330533, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.553965719, trace.getLast().getValue(), EPS);
+        
+        trace = data.get(0).trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(1.643133821, trace.getFirst().getValue(), EPS);
+        assertEquals(1+159, trace.getLast().getTime(), EPS);
+        assertEquals(0.859250886, trace.getLast().getValue(), EPS);        
+        
+        assertEquals(1, data.get(0).traceNr);
+        assertEquals(64, data.get(63).traceNr);
+        
+        DataTrace dtrace = data.get(0);
+        assertEquals("B2", dtrace.traceFullRef);
+        assertEquals("B2", dtrace.traceRef);
+        
+        dtrace = data.get(63);
+        assertEquals("BM2", dtrace.traceFullRef);
+        assertEquals("BM2", dtrace.traceRef);         
+        
+    }    
+
+    @Test
+    public void importExcelColDataFromFile() throws Exception {
+        
+        Path file = getTestDataFile("data_in_cols.xlsx");
+        
+        DataTableImportParameters parameters = getCSVTableInColsParameters("data_in_cols.csv");
+        parameters.importFormat = ImportFormat.EXCEL_TABLE;
         
         DataBundle boundle = instance.importTimeSeries(file, parameters);
         

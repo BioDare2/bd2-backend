@@ -7,6 +7,7 @@ package ed.biodare2.backend.features.tsdata.dataimport;
 
 import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableReader.SequentialReader;
+import ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
@@ -105,6 +106,7 @@ public class DataTableImporter extends TSDataImporter {
         switch (parameters.importFormat) {
             case COMA_SEP: return new TextDataTableReader(file, ",");
             case TAB_SEP: return new TextDataTableReader(file, "\t");
+            case EXCEL_TABLE: return new ExcelDataTableReader(file);
             default: throw new IllegalArgumentException("Unsuported format "+parameters.importFormat);
         }
     }
