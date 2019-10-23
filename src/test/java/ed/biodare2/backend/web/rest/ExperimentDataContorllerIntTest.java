@@ -310,6 +310,83 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
     }
     
+    @Test
+    public void importsCSVDataInRowsWithManualLabelsAndReturnsDataTracesNumber() throws Exception {
+    
+        UploadFileInfo csvUpload = uploads.save(DataTableImporterTest.getTestDataFile("data_in_rows.csv"), currentUser);
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        /*FileImportRequest importRequest = new FileImportRequest();
+        importRequest.fileId = csvUpload.id;
+        importRequest.importFormat = ImportFormat.COMA_SEP;                
+        importRequest.importParameters = DataTableImporterTest.getCSVTableInRowsParameters("data_in_rows.csv");
+        */
+        
+        String orgJSON = "{\"fileId\":\""+
+                csvUpload.id+"\",\"importFormat\":\"COMA_SEP\",\"importParameters\":{\"inRows\":true,\"timeOffset\":0,\"importLabels\":false,\"userLabels\":[null,\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\"],\"_class_name\":\".DataTableImportParameters\",\"timeType\":\"TIME_IN_HOURS\",\"fileId\":\"_upload15398423414192388778\",\"fileName\":\"wt_prr_simpl_inRows.csv\",\"importFormat\":\"COMA_SEP\",\"firstTimeCell\":{\"col\":1,\"row\":0}}}";
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+exp.getId()+"/data/ts-import")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("importTimeSeries JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
+        assertNotNull(info);
+        assertEquals(48,info.get("imported"));
+        
+        
+    }
+
+    @Test
+    public void importsExcelDataInRowsWithManualLabelsWithNewAPIAndReturnsDataTracesNumber() throws Exception {
+    
+        UploadFileInfo excelUpload = uploads.save(DataTableImporterTest.getTestDataFile("data_in_rows.xlsx"), currentUser);
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        /*FileImportRequest importRequest = new FileImportRequest();
+        importRequest.fileId = csvUpload.id;
+        importRequest.importFormat = ImportFormat.COMA_SEP;                
+        importRequest.importParameters = DataTableImporterTest.getCSVTableInRowsParameters("data_in_rows.csv");
+        */
+        
+        String orgJSON = "{\"fileId\":\""+
+                excelUpload.id+"\",\"importFormat\":\"EXCEL_TABLE\",\"importParameters\":{\"inRows\":true,\"timeOffset\":0,\"importLabels\":false,\"userLabels\":[null,\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"WT LHY\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr79\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr9\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"prr79 prr5\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"WT prr7\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\",\"prr79 TOC1\"],\"_class_name\":\".DataTableImportParameters\",\"timeType\":\"TIME_IN_HOURS\",\"fileId\":\"_upload15398423414192388778\",\"fileName\":\"wt_prr_simpl_inRows.csv\",\"importFormat\":\"EXCEL_TABLE\",\"firstTimeCell\":{\"col\":1,\"row\":0}}}";
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+exp.getId()+"/data/ts-import")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("importTimeSeries JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
+        assertNotNull(info);
+        assertEquals(48,info.get("imported"));
+        
+        
+    }
     
     String bd1requestJSON() throws IOException {
         Path req = (new ExperimentDataHandlerTest()).testFile("importdata.json").toPath();

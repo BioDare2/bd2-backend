@@ -29,7 +29,7 @@ public class TSImportHandler {
     final FileUploadHandler uploads;
     final ExcelTableImporter excelTableImporter = new ExcelTableImporter();
     final TopCountImporter topcountImporter = new TopCountImporter();
-    final DataTableImporter textTableImporter = new DataTableImporter();
+    final DataTableImporter dataTableImporter = new DataTableImporter();
     
     @Autowired
     public TSImportHandler(FileUploadHandler uploads) {
@@ -41,10 +41,16 @@ public class TSImportHandler {
         Path file = uploads.get(importRequest.fileId, user);
         
         switch(importRequest.importFormat) {
-            case EXCEL_TABLE: return excelTableImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);
+            case EXCEL_TABLE: {
+                if (importRequest.importParameters instanceof DataTableImportParameters) {
+                    return dataTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters); 
+                } else {
+                    return excelTableImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);
+                }
+            }
             case TOPCOUNT: return topcountImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);
-            case COMA_SEP: return textTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters);
-            case TAB_SEP: return textTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters);
+            case COMA_SEP: return dataTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters);
+            case TAB_SEP: return dataTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters);
             default: throw new IllegalArgumentException("Unknown format: "+importRequest.importFormat);
         }
     }

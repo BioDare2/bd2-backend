@@ -236,6 +236,39 @@ public class DataTableImporterTest {
         
     } 
     
+    @Test
+    public void importTracesRowsImportsFromExplicitLabels() throws Exception {
+        
+        TextDataTableReader.OpennedReader sequentialReader = mock(TextDataTableReader.OpennedReader.class);
+        
+        when(reader.openReader()).thenReturn(sequentialReader);
+        
+        List<Object> record1 = List.of("A","toc1","10","20","","40");
+        List<Object> record2 = List.of("B","toc2","10","20","","40");
+        List<Object> record3 = List.of("C","toc3","10","20","","40");
+        
+        when(sequentialReader.readRecord()).thenReturn(Optional.of(record1), Optional.of(record2), Optional.of(record3), Optional.empty());
+        when(sequentialReader.skipLines(3)).thenReturn(3);
+        
+        List<Double> times = List.of(1.0,2.0,3.0,4.0);
+        
+        DataTableImportParameters parameters = new DataTableImportParameters();
+        parameters.importLabels = false;
+        parameters.inRows = true;
+        parameters.userLabels = Arrays.asList(null,"L1",null,"L2");
+        
+        parameters.firstTimeCell = new CellCoordinates(2, 0);
+        assertNull(parameters.dataStart);
+        
+        List<DataTrace> resp = instance.importTracesRows(reader, times, parameters);
+        
+        assertEquals(2, resp.size());
+        assertEquals("L1", resp.get(0).details.dataLabel);
+        assertEquals("L2", resp.get(1).details.dataLabel);
+        
+        verify(sequentialReader).close();        
+    }
+    
     public static Path getTestDataFile(String name) throws URISyntaxException {
         Path file = Paths.get(DataTableImporterTest.class.getResource(name).toURI());
         return file;

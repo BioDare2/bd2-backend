@@ -153,10 +153,8 @@ public class DataTableImporter extends TSDataImporter {
         return Double.parseDouble(s);
     }
 
-    List<DataTrace> importTracesRows(DataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TransposableImportException {
-        
-        int firstRow = parameters.dataStart.row;
-        int firstCol = parameters.firstTimeCell.col;
+    BiFunction<List<Object>, Integer, String> labellerFromParams(DataTableImportParameters parameters) {
+
         BiFunction<List<Object>, Integer, String> labeller;
         
         if (parameters.importLabels) {
@@ -169,7 +167,21 @@ public class DataTableImporter extends TSDataImporter {
             };
         }
         
-        return importTracesRows(reader, times, firstRow, firstCol, labeller);
+        return labeller;        
+    }
+    
+    List<DataTrace> importTracesRows(DataTableReader reader, List<Double> times, DataTableImportParameters parameters) throws IOException, TransposableImportException {
+        
+        int firstRow = 0;
+        if (parameters.importLabels) {
+            if (parameters.dataStart == null) throw new IllegalArgumentException("Missing data start fro importing labells");
+            firstRow = parameters.dataStart.row;
+        } else {
+            firstRow = parameters.firstTimeCell.row+1;
+        }
+        int firstCol = parameters.firstTimeCell.col;
+        
+        return importTracesRows(reader, times, firstRow, firstCol, labellerFromParams(parameters));
     }
 
     List<DataTrace> importTracesRows(DataTableReader reader, List<Double> times, 
