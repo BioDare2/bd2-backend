@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
@@ -63,7 +64,7 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
-    //@Ignore
+    @Ignore("service not available during tests")
     public void newPPAInvokesPPAProcessing() throws Exception {
     
         //ExperimentalAssay desc = DomRepoTestBuilder.makeExperiment(15);

@@ -21,6 +21,7 @@
             <goals>
                 <goal>clean</goal>
                 <goal>install</goal>
+                <goal>deploy</goal>
             </goals>
             <activatedProfiles>
                 <activatedProfile>prod</activatedProfile>

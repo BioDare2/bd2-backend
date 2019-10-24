@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
@@ -54,6 +55,7 @@ public class PPAAnalysisServiceTest {
     }    
     
     @Test
+    @Ignore("Service not available for testing")
     public void getStatusConnectsToJobCenter() throws ConnectionException {
         
         String status = instance.serviceStatus();

@@ -8,6 +8,7 @@ package ed.biodare2.backend.services.mail;
 import ed.biodare2.SimpleRepoTestConfig;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +34,7 @@ public class MailerTest {
     }
 
     @Test
+    @Ignore("Not know the password")
     public void sendsAnEmail() {
         
         String to = "biodare@ed.ac.uk";
