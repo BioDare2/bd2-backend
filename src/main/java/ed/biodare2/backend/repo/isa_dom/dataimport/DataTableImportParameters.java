@@ -34,6 +34,9 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
     public CellCoordinates labelsSelection;   
     public List<String> userLabels = new ArrayList<>();
     
+    public boolean containsBackgrounds = false;
+    public List<String> backgroundsLabels = new ArrayList<>();
+    
     public DataTableImportParameters transpose() {
         
         DataTableImportParameters transposed = new DataTableImportParameters();
@@ -51,6 +54,9 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
         transposed.importLabels = importLabels;
         transposed.labelsSelection = labelsSelection.transpose();
         transposed.userLabels = userLabels;
+        
+        transposed.containsBackgrounds = containsBackgrounds;
+        transposed.backgroundsLabels = backgroundsLabels;
         
         return transposed;
     }
@@ -115,6 +121,12 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
         if (!Objects.equals(this.userLabels, other.userLabels)) {
             return false;
         }        
+        if (!Objects.equals(this.containsBackgrounds, other.containsBackgrounds)) {
+            return false;
+        }   
+        if (!Objects.equals(this.backgroundsLabels, other.backgroundsLabels)) {
+            return false;
+        }           
         return true;
     }
     

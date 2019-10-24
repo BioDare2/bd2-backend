@@ -26,7 +26,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -84,20 +86,38 @@ public class DataTableImporter extends TSDataImporter {
         
         List<DataTrace> traces = importTracesRows(reader,times,parameters);
         
-        DataBlock block = new DataBlock();
-        block.role = CellRole.DATA;
+        markBackgrounds(traces, parameters);
         
-        CellRange range = new CellRange();
-        range.first = traces.get(0).coordinates;
-        range.last = traces.get(traces.size()-1).coordinates;
-        block.range = range;
-        block.traces = traces;
+        DataBlock dataBlock = filterBlock(traces, CellRole.DATA);
+        DataBlock backgroundBlock = filterBlock(traces, CellRole.BACKGROUND);
         
-        List<DataBlock> blocks = List.of(block);
+        List<DataBlock> blocks = new ArrayList<>();
+        if (!dataBlock.traces.isEmpty()) blocks.add(dataBlock);
+        if (!backgroundBlock.traces.isEmpty()) blocks.add(backgroundBlock);
+        
         insertNumbers(blocks);
         insertIds(blocks);
         
-        return makeBundle(blocks);
+        DataBundle boundle = makeBundle(blocks);
+        return boundle;
+    }
+    
+    DataBlock filterBlock(List<DataTrace> traces, CellRole role) {
+
+        DataBlock block = new DataBlock();
+        block.role = role;
+        block.traces = traces.stream()
+                .filter( dt -> role.equals(dt.role))
+                .collect(Collectors.toList());
+        
+        if (!block.traces.isEmpty()) {
+            CellRange range = new CellRange();
+            range.first = block.traces.get(0).coordinates;
+            range.last = block.traces.get(block.traces.size()-1).coordinates;
+            block.range = range;
+        }
+        
+        return block;
     }
     
 
@@ -237,7 +257,7 @@ public class DataTableImporter extends TSDataImporter {
         trace.coordinates = new CellCoordinates(col+1,row+1);
         trace.traceRef = traceRef(trace.coordinates);
         trace.traceFullRef = trace.traceRef;
-        trace.details = new DataColumnProperties(label);
+        trace.details = new DataColumnProperties(label.trim());
         trace.role = role;
         trace.trace = serie;
         return trace;
@@ -252,6 +272,9 @@ public class DataTableImporter extends TSDataImporter {
         boundle.backgrounds.forEach( dt -> transposeDataTrace(dt));
         boundle.data.forEach( dt -> transposeDataTrace(dt));
         boundle.blocks.forEach( block -> {
+            if (block.range == null) {
+                throw new IllegalArgumentException("Cannot transponse block with null coordinates");
+            }
             block.range = block.range.transpose();
         });
         
@@ -262,6 +285,26 @@ public class DataTableImporter extends TSDataImporter {
         trace.coordinates = trace.coordinates.transpose();
         trace.traceRef = traceRef(trace.coordinates);
         trace.traceFullRef = trace.traceRef;
+    }
+
+    void markBackgrounds(List<DataTrace> traces, DataTableImportParameters parameters) {
+        if (!parameters.containsBackgrounds) {
+            return;
+        }
+        
+        Set<String> backgroundsLabels = parameters.backgroundsLabels.stream()
+                .filter( s -> s != null)
+                .map( s -> s.trim())
+                .collect(Collectors.toSet());
+        
+        markBackgrounds(traces, backgroundsLabels);
+    }
+
+    void markBackgrounds(List<DataTrace> traces, Set<String> backgroundsLabels) {
+        
+        traces.stream()
+                .filter( dt -> backgroundsLabels.contains(dt.details.dataLabel))
+                .forEach( dt -> dt.role = CellRole.BACKGROUND);
     }
 
 }

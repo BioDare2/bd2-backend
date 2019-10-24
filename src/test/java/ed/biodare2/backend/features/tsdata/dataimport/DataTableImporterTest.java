@@ -9,6 +9,7 @@ import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
+import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTableImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -330,6 +332,48 @@ public class DataTableImporterTest {
     }
     
     @Test
+    public void importCSVRowDataFromFileRemovingBackgrounds() throws Exception {
+        
+        Path file = getTestDataFile("data_in_rows.csv");
+        
+        DataTableImportParameters parameters = getCSVTableInRowsParameters("data_in_rows.csv");
+        parameters.containsBackgrounds = true;
+        parameters.backgroundsLabels = List.of("WT LHY", "WT TOC1");
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+
+        List<DataTrace> backgrounds = boundle.backgrounds;
+        assertEquals(16, backgrounds.size());
+        assertEquals("WT LHY",backgrounds.get(0).details.dataLabel);
+        assertEquals("WT TOC1",backgrounds.get(15).details.dataLabel);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(64-16,data.size());
+        assertEquals("prr79 LHY",data.get(0).details.dataLabel);
+        assertEquals("WT PRR5",data.get(47).details.dataLabel);
+        
+        DataTrace dtrace = data.get(47);
+        TimeSeries trace = dtrace.trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(0.901916043, trace.getFirst().getValue(), EPS);
+                
+        assertEquals(48, dtrace.traceNr);
+        assertEquals("B57", dtrace.traceRef);        
+        
+        dtrace = backgrounds.get(0);
+        trace = dtrace.trace;
+        assertEquals(1+1, trace.getFirst().getTime(), EPS);
+        assertEquals(1.643133821, trace.getFirst().getValue(), EPS);
+                
+        assertEquals(49, dtrace.traceNr);
+        assertEquals("B2", dtrace.traceRef);        
+        
+    }
+    
+    
+    @Test
     public void importExcelRowDataFromFile() throws Exception {
         
         Path file = getTestDataFile("data_in_rows.xlsx");
@@ -543,5 +587,48 @@ public class DataTableImporterTest {
         assertEquals("BM2", dtrace.traceRef);         
         
     }    
+    
+    
+    @Test
+    public void markBackgroundsSetTheCellRoleOnMatchingLabels() {
+        
+        DataTableImportParameters parameters = new DataTableImportParameters();
+        parameters.containsBackgrounds = false;
+        parameters.backgroundsLabels = List.of("noise"," Back ");
+        
+        
+        List<DataTrace> traces = new ArrayList<>();
+        
+        DataTrace trace = new DataTrace();
+        trace.details = new DataColumnProperties("toc1");
+        trace.role = CellRole.DATA;
+        traces.add(trace);
+        
+        trace = new DataTrace();
+        trace.details = new DataColumnProperties("noise");
+        trace.role = CellRole.DATA;
+        traces.add(trace);
+        
+        trace = new DataTrace();
+        trace.details = new DataColumnProperties("Noise");
+        trace.role = CellRole.DATA;
+        traces.add(trace);
+        
+        trace = new DataTrace();
+        trace.details = new DataColumnProperties("Back");
+        trace.role = CellRole.DATA;
+        traces.add(trace);
+        
+        instance.markBackgrounds(traces, parameters);
+
+        assertEquals(List.of(CellRole.DATA, CellRole.DATA, CellRole.DATA, CellRole.DATA),
+                traces.stream().map( t -> t.role).collect(Collectors.toList()));
+        
+        parameters.containsBackgrounds = true;
+        instance.markBackgrounds(traces, parameters);
+        
+        assertEquals(List.of(CellRole.DATA, CellRole.BACKGROUND, CellRole.DATA, CellRole.BACKGROUND),
+                traces.stream().map( t -> t.role).collect(Collectors.toList()));
+    }
     
 }
