@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.OpennedReader;
 import ed.robust.dom.util.Pair;
@@ -262,6 +263,31 @@ public class TextTableTransposerTest {
  
         
     }
+    
+    @Test
+    public void transposeExcelLongFile() throws Exception {
+        
+        Path inFile = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
+        Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
+
+        
+        instance.transpose(new ExcelDataTableReader(inFile), outFile, ",");
+        
+        assertTrue(Files.exists(outFile));
+    }     
+    
+    @Test
+    @Ignore("The long test file is not committed")
+    public void transposeCSVLongFile() throws Exception {
+        
+        Path inFile = Paths.get("E:\\Temp\\long_10000x1200.csv");
+        Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
+
+        
+        instance.transpose(new TextDataTableReader(inFile, ","), outFile, ",");
+        
+        assertTrue(Files.exists(outFile));
+    }    
     
     @Test
     @Ignore("takes too long to generate and transpose big file")

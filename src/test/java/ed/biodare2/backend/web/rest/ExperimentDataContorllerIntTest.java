@@ -8,7 +8,7 @@ package ed.biodare2.backend.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.handlers.UploadFileInfo;
-import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableImporterTest;
+import ed.biodare2.backend.features.tsdata.dataimport.RegionBasedExcelTableImporterTest;
 import ed.biodare2.backend.features.tsdata.dataimport.DataTableImporterTest;
 import ed.biodare2.backend.features.tsdata.dataimport.TopCountImporterTest;
 import ed.biodare2.backend.handlers.ExperimentDataHandlerTest;
@@ -68,7 +68,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
  
     protected FileImportRequest prepareImportRequest() {
       
-        UploadFileInfo excelUpload = uploads.save(ExcelTableImporterTest.getExcelTestFile(), currentUser);
+        UploadFileInfo excelUpload = uploads.save(RegionBasedExcelTableImporterTest.getExcelTestFile(), currentUser);
         
         FileImportRequest importRequest = new FileImportRequest();
         importRequest.fileId = excelUpload.id;

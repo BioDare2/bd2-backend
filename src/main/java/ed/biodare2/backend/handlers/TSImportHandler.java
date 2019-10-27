@@ -7,7 +7,7 @@ package ed.biodare2.backend.handlers;
 
 
 import ed.biodare2.backend.security.BioDare2User;
-import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableImporter;
+import ed.biodare2.backend.features.tsdata.dataimport.RegionBasedExcelTableImporter;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
 import ed.biodare2.backend.features.tsdata.dataimport.DataTableImporter;
 import ed.biodare2.backend.features.tsdata.dataimport.TopCountImporter;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class TSImportHandler {
 
     final FileUploadHandler uploads;
-    final ExcelTableImporter excelTableImporter = new ExcelTableImporter();
+    final RegionBasedExcelTableImporter regionBasedExcelTableImporter = new RegionBasedExcelTableImporter();
     final TopCountImporter topcountImporter = new TopCountImporter();
     final DataTableImporter dataTableImporter = new DataTableImporter();
     
@@ -45,7 +45,7 @@ public class TSImportHandler {
                 if (importRequest.importParameters instanceof DataTableImportParameters) {
                     return dataTableImporter.importTimeSeries(file, (DataTableImportParameters) importRequest.importParameters); 
                 } else {
-                    return excelTableImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);
+                    return regionBasedExcelTableImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);
                 }
             }
             case TOPCOUNT: return topcountImporter.importTimeSeries(file, (ExcelTSImportParameters)importRequest.importParameters);

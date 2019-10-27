@@ -32,19 +32,19 @@ import org.junit.Before;
  *
  * @author tzielins
  */
-public class ExcelTableImporterTest {
+public class RegionBasedExcelTableImporterTest {
     
     static final String fileName = "data-sheet.xlsx";
     static final double EPS = 1E-6;
     
-    public ExcelTableImporterTest() {
+    public RegionBasedExcelTableImporterTest() {
     }
 
-    ExcelTableImporter instance;
+    RegionBasedExcelTableImporter instance;
     
     @Before
     public void init() {
-        instance = new ExcelTableImporter();
+        instance = new RegionBasedExcelTableImporter();
     }
     
    
@@ -100,7 +100,7 @@ public class ExcelTableImporterTest {
     
     public static Path getExcelTestFile() {
         try {
-            return Paths.get(ExcelTableImporterTest.class.getResource(fileName).toURI());
+            return Paths.get(RegionBasedExcelTableImporterTest.class.getResource(fileName).toURI());
         } catch (URISyntaxException e) {
             throw new RuntimeException(e.getMessage(),e);
         }

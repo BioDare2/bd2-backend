@@ -24,10 +24,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- *
+ * The implementation of Excel import that worked with the "old" import UI.
+ * It is replaced by ExcelTableImporter, that can handle large files by converting them first to csv.
  * @author tzielins
  */
-public class ExcelTableImporter extends TSDataImporter {
+public class RegionBasedExcelTableImporter extends TSDataImporter {
     
     
     public DataBundle importTimeSeries(Path file,ExcelTSImportParameters parameters) throws ImportException {

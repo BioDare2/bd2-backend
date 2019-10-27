@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 
@@ -84,7 +85,7 @@ public class ExcelDataTableReader implements DataTableReader {
             
             List<List<Object>> rows = new ArrayList<>();
             for (int i = firstRow; i < last; i++) {
-                List<Object> row = excel.readRow(i,0, naturalCaster);
+                List<Object> row = excel.readRow(i,0, ModernExcelView.NATURAL_CASTER);
                 rows.add(row);
             }
             
@@ -132,7 +133,7 @@ public class ExcelDataTableReader implements DataTableReader {
         public Optional<List<Object>> readRecord() throws IOException {
             if (nextRow >= rowsSize) return Optional.empty();
             
-            List<Object> row = excel.readRow(nextRow, 0, naturalCaster);
+            List<Object> row = excel.readRow(nextRow, 0, ModernExcelView.NATURAL_CASTER);
             nextRow++;
             return Optional.of(row);
         }
@@ -145,32 +146,8 @@ public class ExcelDataTableReader implements DataTableReader {
         
     }
     
-    static final NaturalCellCaster naturalCaster = new NaturalCellCaster();
     
-    protected static class NaturalCellCaster implements CellCaster<Object> {
 
-        @Override
-        public Object cast(Cell cell, FormulaEvaluator formEval) {
-            if (cell == null) return null;            
-            switch(cell.getCellType()) {
-                case Cell.CELL_TYPE_STRING: return cell.getRichStringCellValue().getString().trim();
-                case Cell.CELL_TYPE_NUMERIC: return cell.getNumericCellValue();
-                case Cell.CELL_TYPE_BOOLEAN: return cell.getBooleanCellValue();
-                case Cell.CELL_TYPE_FORMULA: {
-                    try {
-                        CellValue val = formEval.evaluate(cell);
-                        if (val.getCellType() == Cell.CELL_TYPE_NUMERIC) return val.getNumberValue();
-                        if (val.getCellType() == Cell.CELL_TYPE_STRING) return val.getStringValue().trim();
-                        if (val.getCellType() == Cell.CELL_TYPE_BOOLEAN) return val.getBooleanValue();
-                    } catch (FormulaParseException e) {
-                        return null;
-                    }
-                    return null;
-                }
-                default: return null;
-            }            
-        }        
-    }
     
     
 }

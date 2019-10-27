@@ -279,10 +279,10 @@ public class TextDataTableReaderTest {
         
     }
     
-    // @Test
+    //@Test
     public void makeLongCSVColumnFile() throws Exception {
         
-        int series = 1000;
+        int series = 5000;
         int timepoints = 5*24*10;
         int unit = 6; // minutes
         
@@ -292,7 +292,7 @@ public class TextDataTableReaderTest {
             List<String> row = new ArrayList<>(series+1);
             row.add("Time");
             for (int i = 0; i< series; i++) {
-                row.add("label"+r.nextLong());
+                row.add("label"+r.nextInt(500));
             }
             
             String line = row.stream().collect(Collectors.joining(","));

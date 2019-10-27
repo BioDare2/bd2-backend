@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import static org.mockito.Mockito.*;
 
 /**
@@ -585,6 +586,65 @@ public class DataTableImporterTest {
         dtrace = data.get(63);
         assertEquals("BM2", dtrace.traceFullRef);
         assertEquals("BM2", dtrace.traceRef);         
+        
+    }    
+    
+    @Test
+    @Ignore("Runout of memmory and the test file is not committed")
+    public void importExcelColDataFromLargeFile() throws Exception {
+        
+        Path file = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
+        
+        DataTableImportParameters parameters = getCSVTableInColsParameters("long_10000x1200.xlsx");
+        parameters.importFormat = ImportFormat.EXCEL_TABLE;
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(10000,data.size());
+        
+        DataTrace dtrace = data.get(0);
+        TimeSeries trace = dtrace.trace;
+        assertEquals(1200, trace.size());
+    }      
+    
+    @Test
+    @Ignore("Runout of memmory and the test file is not committed")
+    public void importExcelColDataFromMediumLargeFile() throws Exception {
+        
+        Path file = Paths.get("E:\\Temp\\long_5000x1200.xlsx");
+        
+        DataTableImportParameters parameters = getCSVTableInColsParameters("long_5000x1200.xlsx");
+        parameters.importFormat = ImportFormat.EXCEL_TABLE;
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(5000,data.size());
+        
+        DataTrace dtrace = data.get(0);
+        TimeSeries trace = dtrace.trace;
+        assertEquals(1200, trace.size());
+    }   
+    
+    @Test
+    // @Ignore("Runout of memmory and the test file is not committed")
+    public void importCSVColDataFromMediumLargeFile() throws Exception {
+        
+
+        Path file = Paths.get("E:\\Temp\\long_5000x1200.csv");
+        DataTableImportParameters parameters = getCSVTableInColsParameters("long_5000x1200.csv");
+        
+        DataBundle boundle = instance.importTimeSeries(file, parameters);
+        
+        assertNotNull(boundle);
+        
+        List<DataTrace> data = boundle.data;
+        assertEquals(5000,data.size());
         
     }    
     
