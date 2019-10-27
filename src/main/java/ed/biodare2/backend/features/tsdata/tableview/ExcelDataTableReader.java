@@ -6,25 +6,22 @@
 package ed.biodare2.backend.features.tsdata.tableview;
 
 import ed.robust.dom.util.Pair;
+import ed.synthsys.util.excel.ExcelDimensionChecker;
 import ed.synthsys.util.excel.ExcelFormatException;
 import ed.synthsys.util.excel.ModernExcelView;
-import ed.synthsys.util.excel.ModernExcelView.CellCaster;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class ExcelDataTableReader implements DataTableReader {
+    
     
     final Path file;
     Pair<Integer, Integer> rowsColsSize;    
@@ -43,19 +40,11 @@ public class ExcelDataTableReader implements DataTableReader {
     public Pair<Integer, Integer> rowsColsTableSize() throws IOException {
         
         if (rowsColsSize == null) {
-            
-            try (ModernExcelView excel = new ModernExcelView(file)) {
-                
-                
-                int cols = 0;
-                int rows = getRowsNumber(excel);
-                
-                int upTo = Math.min(20, rows);
-                for (int row = 0;row< upTo; row++) {
-                    cols = Math.max(cols, excel.getLastColumn(row)+1);
-                }
-                rowsColsSize = new Pair<>(rows,cols);
-            } catch (ExcelFormatException e) {
+
+            try {
+                int[] rowsCols = ExcelDimensionChecker.rowsColsDimensions(file);
+                rowsColsSize = new Pair<>(rowsCols[0],rowsCols[1]);
+            } catch (InvalidFormatException e) {
                 throw new IOException(e.getMessage(),e);
             }
         };

@@ -41,23 +41,28 @@ public class DataTableImporter extends TSDataImporter {
     
     public DataBundle importTimeSeries(Path file, DataTableImportParameters parameters) throws ImportException {
         
+        DataTableReader reader = makeReader(file, parameters);
+        return importTimeSeries(reader, parameters);
+    }
+    
+    DataBundle importTimeSeries(DataTableReader reader, DataTableImportParameters parameters) throws ImportException {
+        
         try {
             if (parameters.inRows) {
-                return importTimeSeriesFromRows(file, parameters);
+                return importTimeSeriesFromRows(reader, parameters);
             } else {
-                return importTimeSeriesFromCols(file, parameters);
+                return importTimeSeriesFromCols(reader, parameters);
             }
         } catch (IOException e) {
             throw new ServerSideException("Cannot read file: "+e.getMessage(),e);
         }    
-    }
+    }    
     
-    DataBundle importTimeSeriesFromCols(Path file, DataTableImportParameters parameters) throws ImportException, IOException {
+    DataBundle importTimeSeriesFromCols(DataTableReader orgReader, DataTableImportParameters parameters) throws ImportException, IOException {
         
         Path transpFile = Files.createTempFile(null, null);
         try {
             
-            DataTableReader orgReader = makeReader(file, parameters);            
             transposer.transpose(orgReader, transpFile, ",");
             
             DataTableImportParameters transp = parameters.transpose();

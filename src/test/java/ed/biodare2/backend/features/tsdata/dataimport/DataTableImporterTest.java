@@ -589,50 +589,9 @@ public class DataTableImporterTest {
         
     }    
     
+
     @Test
-    @Ignore("Runout of memmory and the test file is not committed")
-    public void importExcelColDataFromLargeFile() throws Exception {
-        
-        Path file = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
-        
-        DataTableImportParameters parameters = getCSVTableInColsParameters("long_10000x1200.xlsx");
-        parameters.importFormat = ImportFormat.EXCEL_TABLE;
-        
-        DataBundle boundle = instance.importTimeSeries(file, parameters);
-        
-        assertNotNull(boundle);
-        
-        List<DataTrace> data = boundle.data;
-        assertEquals(10000,data.size());
-        
-        DataTrace dtrace = data.get(0);
-        TimeSeries trace = dtrace.trace;
-        assertEquals(1200, trace.size());
-    }      
-    
-    @Test
-    @Ignore("Runout of memmory and the test file is not committed")
-    public void importExcelColDataFromMediumLargeFile() throws Exception {
-        
-        Path file = Paths.get("E:\\Temp\\long_5000x1200.xlsx");
-        
-        DataTableImportParameters parameters = getCSVTableInColsParameters("long_5000x1200.xlsx");
-        parameters.importFormat = ImportFormat.EXCEL_TABLE;
-        
-        DataBundle boundle = instance.importTimeSeries(file, parameters);
-        
-        assertNotNull(boundle);
-        
-        List<DataTrace> data = boundle.data;
-        assertEquals(5000,data.size());
-        
-        DataTrace dtrace = data.get(0);
-        TimeSeries trace = dtrace.trace;
-        assertEquals(1200, trace.size());
-    }   
-    
-    @Test
-    // @Ignore("Runout of memmory and the test file is not committed")
+    @Ignore("The test file is not committed")
     public void importCSVColDataFromMediumLargeFile() throws Exception {
         
 

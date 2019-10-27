@@ -20,6 +20,7 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -97,6 +98,28 @@ public class ExcelDataTableReaderTest {
         assertEquals(exp, res);
         
     }
+    
+    @Test
+    @Ignore("Test files not commited")
+    public void getsSizesOfLargeFiles() throws Exception {
+        
+        // System.out.println("Get large");
+        dataFile = Paths.get("E:\\Temp\\long_10000x1200.xlsx"); 
+        instance = new ExcelDataTableReader(dataFile);
+        
+        Pair<Integer,Integer> res = instance.rowsColsTableSize();
+        Pair<Integer,Integer> exp = new Pair<>(1202,10001);
+        assertEquals(exp, res);
+        
+        dataFile = Paths.get("E:\\Temp\\long_255x10000.xls");
+        instance = new ExcelDataTableReader(dataFile);
+        
+        res = instance.rowsColsTableSize();
+        exp = new Pair<>(10001,256);
+        assertEquals(exp, res);
+        
+        
+    }    
     
     @Test
     public void getRowsCanHandleEmptyFiles() throws Exception {

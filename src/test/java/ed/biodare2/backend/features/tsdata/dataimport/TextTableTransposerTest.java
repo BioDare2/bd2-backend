@@ -265,6 +265,8 @@ public class TextTableTransposerTest {
     }
     
     @Test
+    @Ignore("Trnsposig of large excel files fails cause out of memmery, that is why they are covnerted first to csv before calling"
+            + "tranposer")
     public void transposeExcelLongFile() throws Exception {
         
         Path inFile = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
