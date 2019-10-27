@@ -16,6 +16,7 @@ import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlicer;
 import ed.biodare2.backend.features.tsdata.tableview.Slice;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
+import ed.biodare2.backend.features.tsdata.tableview.DataTableReaderProvider;
 import ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
@@ -112,12 +113,15 @@ public class FileViewController extends BioDare2Rest {
                 slice.colPage.pageSize = DEF_COLS_NR;
             }
             
-            DataTableReader reader = getTableRecordsReader(file, format);
             
-            DataTableSlice dataSlice = tableSlicer.slice(reader, slice);
+            try (DataTableReaderProvider provider = new DataTableReaderProvider(file, format)) {
+                
+                DataTableSlice dataSlice = tableSlicer.slice(provider.reader(), slice);
+
+                tracker.fileFormatedView(fileId,"TABLE_SLICE", user);
+                return dataSlice;
+            }
             
-            tracker.fileFormatedView(fileId,"TABLE_SLICE", user);
-            return dataSlice;
         } catch(WebMappedException e) {
             log.error("Cannot read data table {} {}",fileId,e.getMessage(),e);
             throw e;
@@ -169,14 +173,7 @@ public class FileViewController extends BioDare2Rest {
         }
     }
     
-    protected DataTableReader getTableRecordsReader(Path file, ImportFormat format) {
-        switch(format) {
-            case COMA_SEP: return new TextDataTableReader(file, ",");
-            case TAB_SEP: return new TextDataTableReader(file, "\t");
-            case EXCEL_TABLE: return new ExcelDataTableReader(file);
-            default: throw new HandlingException("Unsuported format: "+format);
-        }
-    } 
+ 
     
     protected ImportFormat getFormat(Path file) throws IOException {
         

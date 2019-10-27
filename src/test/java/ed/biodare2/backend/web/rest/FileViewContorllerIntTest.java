@@ -14,6 +14,9 @@ import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -70,8 +74,14 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
 
         return handler.save(upload, currentUser);        
     }
+       
     
-    
+    protected UploadFileInfo upload(Path file) throws IOException {
+        InputStream in = Files.newInputStream(file);
+        MockMultipartFile upload = new MockMultipartFile("file", "original", "text", in);
+
+        return handler.save(upload, currentUser);        
+    }    
     
     @Test
     public void getSimpleTableViewWorksOnExcel() throws Exception {
@@ -342,4 +352,44 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         assertEquals(1.113459299, dataSlice.data.get(1).get(2));
         
     }    
+    
+    @Test
+    @Ignore("Test file not commited")
+    public void getTableSliceWorksOnLargeExcel() throws Exception {
+
+        uploaded = upload(Paths.get("E:\\Temp\\long_255x5000.xls"));
+        ImportFormat format = ImportFormat.EXCEL_TABLE;
+        
+        Slice slice = new Slice();
+        slice.rowPage.pageSize = 10;
+        slice.colPage.pageSize = 5;
+        
+        String orgJSON = mapper.writeValueAsString(slice);
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("DataView JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        DataTableSlice dataSlice = mapper.readValue(resp.getResponse().getContentAsString(), DataTableSlice.class);
+        assertNotNull(dataSlice);
+        
+        assertEquals(10, dataSlice.data.size());
+        assertEquals(5, dataSlice.data.get(0).size());
+        
+        assertEquals("Time", dataSlice.data.get(0).get(0));
+        
+    }    
+    
 }
