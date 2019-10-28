@@ -479,6 +479,90 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
     }
     
+    @Test
+    public void getTSDataReturnsFirstPageFromDataSetWithoutParams() throws Exception {
+    
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        int series = insertData(pack, "LARGE");
+        int DEF_PAGE_SIZE = 100;
+        
+        assertEquals(600, series);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/"+detrending.name())
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        ListWrapper<Trace> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<Trace>>() { });
+        assertNotNull(wrapper);
+        List<Trace> data = wrapper.data;
+        assertNotNull(data);
+        assertEquals(DEF_PAGE_SIZE, data.size());
+        assertFalse(data.get(0).data.isEmpty());
+        assertTrue(data.get(0).label.startsWith("1.["));        
+        
+    }
+    
+    @Test
+    public void getTSDataReturnsPagedDataFromDataSet() throws Exception {
+    
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        int series = insertData(pack, "LARGE");
+        int pageIndex = 1;
+        int pageSize = 50;
+        
+        assertEquals(600, series);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/"+detrending.name())
+                .param("pageIndex", ""+pageIndex)
+                .param("pageSize", ""+pageSize)
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        ListWrapper<Trace> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<Trace>>() { });
+        assertNotNull(wrapper);
+        List<Trace> data = wrapper.data;
+        assertNotNull(data);
+        assertEquals(pageSize, data.size());
+        assertFalse(data.get(0).data.isEmpty());
+        System.out.println(data.get(0).label);
+        assertTrue(data.get(0).label.startsWith("51.["));
+        
+        
+    }    
+    
+    
     
     @Test
     public void exportTSDataGivesCSVFile() throws Exception {

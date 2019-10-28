@@ -18,7 +18,9 @@ import ed.biodare2.backend.repo.dao.FileAssetRep;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import ed.biodare2.backend.features.tsdata.tableview.Page;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
@@ -27,11 +29,15 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
+import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
+import ed.robust.dom.data.DetrendingType;
 //import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -217,4 +223,46 @@ public class ExperimentDataHandlerTest {
         assertEquals(prevEV,boundle.getSystemInfo().currentDescVersion);
         
     }
+    
+    @Test
+    public void getTSDataGivesPagedData() {
+     
+        List<DataTrace> data = makeDataTraces(1,100);
+        assertEquals(100, data.size());
+        
+        AssayPack expPack = testBoundle;        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
+        
+        Page page = new Page(3,30);
+        
+        Optional<List<Trace>> oDataset = handler.getTSData(expPack, detrending, page);
+        assertTrue(oDataset.isPresent());
+        
+        List<Trace> dataset = oDataset.get();
+        assertEquals(10,dataset.size());
+        // System.out.println(dataset.get(0).label);
+        assertTrue(dataset.get(0).label.startsWith("90.["));
+        
+    }
+    
+    @Test
+    public void getTSDataGivesEmptyIfBehindPage() {
+     
+        List<DataTrace> data = makeDataTraces(1,100);
+        assertEquals(100, data.size());
+        
+        AssayPack expPack = testBoundle;        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
+        
+        Page page = new Page(4,30);
+        
+        Optional<List<Trace>> oDataset = handler.getTSData(expPack, detrending, page);
+        assertTrue(oDataset.isPresent());
+        
+        List<Trace> dataset = oDataset.get();
+        assertEquals(0,dataset.size());
+        
+    }    
 }

@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare2.backend.features.tsdata.tableview.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
@@ -125,9 +126,10 @@ public class UsageStatsController extends BioDare2Rest {
         String year = ""+expPack.getSystemInfo().provenance.creation.dateTime.getYear();
         String owner = expPack.getSystemInfo().security.owner;
         int tsCount = 0;
+        Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR).orElse(Collections.emptyList()).size();
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page).orElse(Collections.emptyList()).size();
         }
         
         return Arrays.asList(owner,year,""+tsCount);
@@ -147,9 +149,10 @@ public class UsageStatsController extends BioDare2Rest {
         AssayPack expPack = opt.get();
         String species = expPack.getAssay().species;
         int tsCount = 0;
+        Page page = new Page(0,Integer.MAX_VALUE);        
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR).orElse(Collections.emptyList()).size();
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page).orElse(Collections.emptyList()).size();
         }
         
         return Arrays.asList(species,"1",""+tsCount);

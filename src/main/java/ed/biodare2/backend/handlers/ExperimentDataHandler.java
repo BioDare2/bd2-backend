@@ -16,6 +16,7 @@ import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
+import ed.biodare2.backend.features.tsdata.tableview.Page;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetType;
 import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
@@ -73,10 +74,15 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         this.rhythmicityHandler = rhythmicityHandler;
     }
     
-    public Optional<List<Trace>> getTSData(AssayPack exp,DetrendingType detrending) throws ServerSideException {
+    public Optional<List<Trace>> getTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
         
+        final int toSkip = page.pageIndex*page.pageSize;
         return dataHandler.getDataSet(exp, detrending)
-                .map( ds -> ds.stream().map(this::toUITrace).collect(Collectors.toList()));
+                .map( ds -> ds.stream()
+                        .skip(toSkip)
+                        .limit(page.pageSize)
+                        .map(this::toUITrace)
+                        .collect(Collectors.toList()));
     }
     
     protected Trace toUITrace(DataTrace data) {

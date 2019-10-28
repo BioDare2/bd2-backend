@@ -16,6 +16,17 @@ public class Page {
     public int pageIndex;
     public int pageSize;
     
+    public Page() {};
+
+    public Page(int pageIndex, int pageSize) {
+        if (pageIndex < 0) throw new IllegalArgumentException("Page index must be >= 0 "+pageIndex);
+        if (pageSize < 1) throw new IllegalArgumentException("Page size must be possitive "+pageSize);
+        this.pageIndex = pageIndex;
+        this.pageSize = pageSize;
+    }
+    
+    
+    
     @JsonIgnore
     public int first() {
         return pageIndex*pageSize;

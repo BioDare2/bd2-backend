@@ -7,6 +7,7 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
+import ed.biodare2.backend.features.tsdata.tableview.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
@@ -119,7 +120,10 @@ public class ExperimentDataController extends ExperimentController {
     }      
     
     @RequestMapping(value = "{detrending}", method = RequestMethod.GET)
-    public ListWrapper<Trace> getTSData(@PathVariable long expId,@PathVariable DetrendingType detrending, @NotNull @AuthenticationPrincipal BioDare2User user) {
+    public ListWrapper<Trace> getTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
+            @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
+            @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
+            @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get TimeSeries; exp:{} {}; {}",expId,detrending,user);
         
         AssayPack exp = getExperimentForRead(expId,user);
@@ -127,7 +131,8 @@ public class ExperimentDataController extends ExperimentController {
         if (detrending == null) detrending = DetrendingType.LIN_DTR;
         
         try {
-            ListWrapper<Trace> resp = new ListWrapper<>(dataHandler.getTSData(exp,detrending).orElseThrow(()-> new NotFoundException("DataSet not found")));
+            Page page = new Page(pageIndex, pageSize);
+            ListWrapper<Trace> resp = new ListWrapper<>(dataHandler.getTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found")));
             tracker.dataView(exp,detrending,user);
             return resp;
             

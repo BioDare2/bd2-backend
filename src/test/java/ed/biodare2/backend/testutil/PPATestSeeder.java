@@ -202,7 +202,22 @@ public class PPATestSeeder {
     }
     
     public List<DataTrace> getData() {
-        Path file = getResourceFile("LIN_DTR.ser");
+        return getData("SHORT");        
+    }
+    
+    public List<DataTrace> getData(String type) {
+        switch(type) {
+            case "SHORT": return getDataFromFile("LIN_DTR.ser");
+            case "LARGE": return getDataFromFile("Large600x72LIN_DTR.ser");
+            case "LONG": return getDataFromFile("Long10x2400LIN_DTR.ser");
+            case "VERY_LONG": return getDataFromFile("VeryLong10x14400LIN_DTR.ser");
+            default:
+                throw new IllegalArgumentException("Unknown type of seed data: "+type);
+        }
+    }
+    
+    protected List<DataTrace> getDataFromFile(String fileName) {
+        Path file = getResourceFile(fileName);
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
 
             List<DataTrace> l = (List<DataTrace>)in.readObject();
@@ -211,7 +226,7 @@ public class PPATestSeeder {
         } catch (IOException|ClassNotFoundException e) {
             throw new RuntimeException("Cannot read data: "+e.getMessage(),e);
         }        
-    }
+    }    
     
     protected <T extends Object> T fromJSON(Path file,Class<T> valueType) {
         try {

@@ -287,10 +287,12 @@ public class DomRepoTestBuilder {
     }
     
     public static List<DataTrace> makeDataTraces(int idS, int idE, int duration) {
+        int numbers = 0;
         List<DataTrace> dataSet = new ArrayList<>();
         for (int i = idS; i<= idE;i++) {
             DataTrace trace = new DataTrace();
             trace.dataId = i;
+            trace.traceNr = numbers++;
             trace.traceRef = "A"+i;
             trace.details = new DataColumnProperties("toc"+(i % 2));
             

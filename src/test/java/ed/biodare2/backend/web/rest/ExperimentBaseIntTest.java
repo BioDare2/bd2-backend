@@ -109,6 +109,14 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     }
     
     @Transactional
+    protected int insertData(AssayPack exp, String type) throws Exception {
+
+        List<DataTrace> data = testSeeder.getData(type);
+        testSeeder.seedData(data, exp);
+        return data.size();
+    }    
+    
+    @Transactional
     protected int insertData(AssayPack exp, int duration) throws Exception {
 
         List<DataTrace> data = testSeeder.getData();
@@ -117,7 +125,19 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
         });
         testSeeder.seedData(data, exp);
         return data.size();
+    }  
+
+    @Transactional
+    protected int insertData(AssayPack exp, String type, int duration) throws Exception {
+
+        List<DataTrace> data = testSeeder.getData(type);
+        data.forEach( dt -> {
+            dt.trace = dt.trace.subSeries(0, duration);
+        });
+        testSeeder.seedData(data, exp);
+        return data.size();
     }    
+     
     
 /*    
     @Transactional
