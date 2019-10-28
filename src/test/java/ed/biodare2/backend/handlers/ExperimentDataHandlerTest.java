@@ -30,6 +30,7 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
+import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.robust.dom.data.DetrendingType;
 //import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;
@@ -236,13 +237,15 @@ public class ExperimentDataHandlerTest {
         
         Page page = new Page(3,30);
         
-        Optional<List<Trace>> oDataset = handler.getTSData(expPack, detrending, page);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
         assertTrue(oDataset.isPresent());
         
-        List<Trace> dataset = oDataset.get();
-        assertEquals(10,dataset.size());
+        TraceSet dataset = oDataset.get();
+        assertEquals(10,dataset.traces.size());
         // System.out.println(dataset.get(0).label);
-        assertTrue(dataset.get(0).label.startsWith("90.["));
+        assertTrue(dataset.traces.get(0).label.startsWith("90.["));
+        assertEquals(100, dataset.totalTraces);
+        assertEquals(page, dataset.currentPage);
         
     }
     
@@ -258,11 +261,12 @@ public class ExperimentDataHandlerTest {
         
         Page page = new Page(4,30);
         
-        Optional<List<Trace>> oDataset = handler.getTSData(expPack, detrending, page);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
         assertTrue(oDataset.isPresent());
         
-        List<Trace> dataset = oDataset.get();
-        assertEquals(0,dataset.size());
+        TraceSet dataset = oDataset.get();
+        assertEquals(0,dataset.traces.size());
+        assertEquals(100,dataset.totalTraces);
         
     }    
 }

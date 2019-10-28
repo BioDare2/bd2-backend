@@ -16,6 +16,7 @@ import ed.biodare2.backend.security.PermissionsResolver;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
+import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
 import ed.robust.dom.data.DetrendingType;
 import java.io.IOException;
@@ -120,7 +121,7 @@ public class ExperimentDataController extends ExperimentController {
     }      
     
     @RequestMapping(value = "{detrending}", method = RequestMethod.GET)
-    public ListWrapper<Trace> getTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
+    public TraceSet getTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
             @NotNull @AuthenticationPrincipal BioDare2User user) {
@@ -132,7 +133,7 @@ public class ExperimentDataController extends ExperimentController {
         
         try {
             Page page = new Page(pageIndex, pageSize);
-            ListWrapper<Trace> resp = new ListWrapper<>(dataHandler.getTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found")));
+            TraceSet resp = dataHandler.getTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
             tracker.dataView(exp,detrending,user);
             return resp;
             

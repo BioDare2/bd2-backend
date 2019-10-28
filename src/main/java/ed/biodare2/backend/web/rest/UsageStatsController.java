@@ -129,7 +129,9 @@ public class UsageStatsController extends BioDare2Rest {
         Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page).orElse(Collections.emptyList()).size();
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page)
+                    .map( ds -> ds.traces)
+                    .orElse(Collections.emptyList()).size();
         }
         
         return Arrays.asList(owner,year,""+tsCount);
@@ -152,7 +154,9 @@ public class UsageStatsController extends BioDare2Rest {
         Page page = new Page(0,Integer.MAX_VALUE);        
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page).orElse(Collections.emptyList()).size();
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page)
+                    .map( ds -> ds.traces)
+                    .orElse(Collections.emptyList()).size();
         }
         
         return Arrays.asList(species,"1",""+tsCount);

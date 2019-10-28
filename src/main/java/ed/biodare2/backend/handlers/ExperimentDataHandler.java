@@ -26,6 +26,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.OperationType;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
+import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.robust.dom.data.DetrendingType;
 import java.io.IOException;
@@ -74,15 +75,24 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         this.rhythmicityHandler = rhythmicityHandler;
     }
     
-    public Optional<List<Trace>> getTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
+    public Optional<TraceSet> getTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
         
         final int toSkip = page.pageIndex*page.pageSize;
         return dataHandler.getDataSet(exp, detrending)
-                .map( ds -> ds.stream()
+                .map( ds -> {
+                    List<Trace> traces  = ds.stream()
                         .skip(toSkip)
                         .limit(page.pageSize)
                         .map(this::toUITrace)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList());
+                    
+                    TraceSet set = new TraceSet();
+                    set.totalTraces = ds.size();
+                    set.traces = traces;
+                    set.currentPage = page;
+                    
+                    return set;
+                });
     }
     
     protected Trace toUITrace(DataTrace data) {

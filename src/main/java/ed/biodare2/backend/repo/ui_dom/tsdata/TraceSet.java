@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.repo.ui_dom.tsdata;
 
+import ed.biodare2.backend.features.tsdata.tableview.Page;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,4 +18,8 @@ public class TraceSet {
     public String title;
     
     public List<Trace> traces = new ArrayList<>();
+    
+    public int totalTraces;
+    
+    public Page currentPage;
 }

@@ -27,6 +27,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
+import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.robust.dom.data.DetrendingType;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -469,9 +470,9 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        ListWrapper<Trace> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<Trace>>() { });
+        TraceSet wrapper = mapper.readValue(resp.getResponse().getContentAsString(), TraceSet.class);
         assertNotNull(wrapper);
-        List<Trace> data = wrapper.data;
+        List<Trace> data = wrapper.traces;
         assertNotNull(data);
         assertEquals(series, data.size());
         assertFalse(data.get(0).data.isEmpty());
@@ -508,9 +509,9 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        ListWrapper<Trace> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<Trace>>() { });
+        TraceSet wrapper = mapper.readValue(resp.getResponse().getContentAsString(), TraceSet.class);
         assertNotNull(wrapper);
-        List<Trace> data = wrapper.data;
+        List<Trace> data = wrapper.traces;
         assertNotNull(data);
         assertEquals(DEF_PAGE_SIZE, data.size());
         assertFalse(data.get(0).data.isEmpty());
@@ -550,9 +551,9 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        ListWrapper<Trace> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<Trace>>() { });
+        TraceSet wrapper = mapper.readValue(resp.getResponse().getContentAsString(), TraceSet.class);
         assertNotNull(wrapper);
-        List<Trace> data = wrapper.data;
+        List<Trace> data = wrapper.traces;
         assertNotNull(data);
         assertEquals(pageSize, data.size());
         assertFalse(data.get(0).data.isEmpty());
