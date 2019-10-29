@@ -27,9 +27,9 @@ public class MakeLongDataTest {
     // @Ignore
     public void makeCSVColumnFile() throws Exception {
         
-        int series = 10; //5000;
-        int timepoints = 5*24*10; //5000; //5*24*10;
-        int unit = 6; // minutes
+        int series = 2; //5000;
+        int timepoints = 5; //5000; //5*24*10;
+        int unit = 1; // minutes
         
         Path file = Paths.get("E:/Temp/columns_"+series+"x"+timepoints+".csv");
         try (BufferedWriter out = Files.newBufferedWriter(file)) {
