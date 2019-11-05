@@ -85,7 +85,7 @@ public class MakeLongDataTest {
     public void makeCSVRowFile() throws Exception {
         
         int series = 2000; //5000;
-        int timepoints = 20*24*6; //5000; //5*24*10;
+        int timepoints = 10*24*6; //5000; //5*24*10;
         int minutesUnit = 10; // minutes
         
         Map<String,double[]> patterns = new HashMap<>();
@@ -116,7 +116,7 @@ public class MakeLongDataTest {
                 double level = levels[r.nextInt(levels.length)];
                 String key = keys.get(r.nextInt(keys.size()));
                 String label = key+"_"+level+"_";
-                row.add(label+r.nextInt(1+series/10));
+                row.add(label+r.nextInt(1+series/60));
                 
                 double[] pattern = patterns.get(key);
                 for (int i = 0; i< timepoints; i++) {
