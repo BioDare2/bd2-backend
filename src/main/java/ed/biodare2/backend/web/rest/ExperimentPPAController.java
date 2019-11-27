@@ -98,6 +98,9 @@ public class ExperimentPPAController extends ExperimentController {
         
         try {
             ListWrapper<PPAJobSummary> resp = new ListWrapper<>(ppaHandler.getPPAJobs(exp));
+            resp.data.forEach( j -> {
+                if (j.parentId == 0) j.parentId = expId;
+            });
             tracker.ppaList(exp,user);
             return resp;
             
@@ -122,6 +125,7 @@ public class ExperimentPPAController extends ExperimentController {
         
         try {
             PPAJobSummary res = ppaHandler.getPPAJob(exp,jobId);
+            if (res.parentId == 0) res.parentId = expId;
             tracker.ppaJob(exp,res,user);
             return res;
             
