@@ -103,6 +103,7 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     
+    
     @Test
     public void getPPAJobsReturnsListOfJobsOrderedByIdDesc() throws Exception {
     
@@ -139,6 +140,7 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
                 .filter( j -> j.getJobId() == job.jobId)
                 .findFirst()
                 .map( j -> PPAUtils.simplifyJob(j))
+                .map( j -> { j.parentId = exp.getId(); return j; })
                 .get();
         
         assertReflectionEquals(expJ,job);
