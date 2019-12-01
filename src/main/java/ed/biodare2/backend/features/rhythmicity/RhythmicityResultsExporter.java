@@ -8,7 +8,9 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare.rhythm.ejtk.patterns.JTKPattern;
 import ed.biodare2.backend.features.ppa.FakeIdExtractor;
+import static ed.biodare2.backend.features.ppa.PPAUtils.roundToCenty;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
@@ -65,10 +67,17 @@ public class RhythmicityResultsExporter {
         tb.printLabel("tau");
         tb.printLabel("emp p");
         tb.printLabel("emp p BH Corrected");
-        tb.printLabel("Pattern");
+        tb.printLabel("Pattern Shape");
+        tb.printLabel("Pattern Period");
+        tb.printLabel("Pattern Peak");
+        tb.printLabel("P. Trough");
+        tb.printLabel("P. Circ. Peak");
+        tb.printLabel("P. Circ. Trough");
+        tb.printLabel("P. Width");
+        tb.printLabel("P. Asym");
         tb.printLabel("");
-        tb.printLabel("p from tau");
-        tb.printLabel("bf corrected p");
+        tb.printLabel("JTK p from tau");
+        tb.printLabel("bf corrected JTK p");
         tb.endln();
         
         results.results.forEach( entry -> {
@@ -81,7 +90,14 @@ public class RhythmicityResultsExporter {
             tb.printVal(result.tau);
             tb.printVal(result.empP);
             tb.printVal(result.empPBH);
-            tb.printVal(result.pattern.toString());
+            tb.printVal(patternToShape(result.pattern));
+            tb.printVal(roundToCenty(result.pattern.period));
+            tb.printVal(roundToCenty(result.pattern.peak));
+            tb.printVal(roundToCenty(result.pattern.trough));
+            tb.printVal(roundToCenty(result.pattern.peak*24.0/result.pattern.period));
+            tb.printVal(roundToCenty(result.pattern.trough*24.0/result.pattern.period));
+            tb.printVal(roundToCenty(result.pattern.width));
+            tb.printVal(roundToCenty(result.pattern.leftPortion));
             tb.printVal("");
             tb.printVal(result.p);
             tb.printVal(result.bfP);
@@ -112,5 +128,14 @@ public class RhythmicityResultsExporter {
 
         return tb;
     }    
+
+    protected String patternToShape(JTKPattern pattern) {
+        switch (pattern.waveform) {
+          case ASYM_COSINE: return "ACOS";
+          case ASYM_COS_SPIKE: return "SPIKE";
+          case ASYM_COS_SPIKE_NEG: return "NSPIKE";
+          default: return pattern.waveform.name();
+        }
+    }
     
 }
