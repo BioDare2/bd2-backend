@@ -123,13 +123,15 @@ public class RhythmicityHandlerTest {
         when(rhythmicityRep.findJob(jobId, expId)).thenReturn(Optional.empty(), Optional.of(job));
         
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
-        
+        // as will be testing if set by the handler
+        results.parentId = -1;
         instance.handleResults(exp, results);
         
         assertEquals(State.SUCCESS, job.jobStatus.state);
         assertEquals(LocalDate.now(), job.jobStatus.completed.toLocalDate());
+        assertEquals(results.parentId, expId);
         
-        verify(rhythmicityRep).saveJobResults(results, job, exp);
+        verify(rhythmicityRep).saveJobResults(results);
         verify(rhythmicityRep).saveJobDetails(job);
         verify(dataHandler).getDataSet(exp, detrending);
         

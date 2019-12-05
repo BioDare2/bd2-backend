@@ -159,11 +159,16 @@ public class RhythmicityHandler {
         }
         
         try {
+            String parentId = Long.toString(exp.getId());
+            if (!parentId.equals(results.externalId)) {
+                throw new IllegalStateException("Results externalId "+results.externalId+" does not match expId: "+parentId);
+            }
+            results.parentId = exp.getId();
             Map<Long,DataTrace> orgData = getOrgData(exp,job);
 
             matchResultsToData(results.results, orgData);
 
-            rhythmicityRep.saveJobResults(results, job, exp);
+            rhythmicityRep.saveJobResults(results);
 
             job.jobStatus.state = results.state;
             job.jobStatus.completed = LocalDateTime.now();

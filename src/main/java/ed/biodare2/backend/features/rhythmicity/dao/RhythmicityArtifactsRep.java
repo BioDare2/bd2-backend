@@ -107,12 +107,11 @@ public class RhythmicityArtifactsRep {
         });        
     }   
     
-    @CachePut(key="{#exp.getId(),#job.jobId, 'results'}")
+    @CachePut(key="{#results.parentId,#results.jobId, 'results'}")
     @Transactional    
-    public JobResults<TSResult<BD2eJTKRes>> saveJobResults(JobResults<TSResult<BD2eJTKRes>> results, 
-            RhythmicityJobSummary job, AssayPack exp) {
+    public JobResults<TSResult<BD2eJTKRes>> saveJobResults(JobResults<TSResult<BD2eJTKRes>> results) {
         
-        return saveJobResults(results, job.jobId, exp.getId());
+        return saveJobResults(results, results.jobId, results.parentId);
     }   
     
     @Cacheable(key="{#expId,#jobId, 'results'}",unless="#result == null")

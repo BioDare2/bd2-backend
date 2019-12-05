@@ -341,6 +341,7 @@ public class DomRepoTestBuilder {
             long idS, long idE) {
         
         JobResults<TSResult<BD2eJTKRes>> results = new JobResults<>();
+        results.parentId = expId;
         results.externalId = ""+expId;
         results.jobId = jobId;
         results.state = State.SUCCESS;

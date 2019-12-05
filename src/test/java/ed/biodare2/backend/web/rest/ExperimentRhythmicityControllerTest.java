@@ -234,7 +234,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
         
         
-        rhythmicityRep.saveJobResults(results, job1, pack);
+        rhythmicityRep.saveJobResults(results);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/results")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -312,7 +312,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         rhythmicityRep.saveJobDetails(job1);
         
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
-        rhythmicityRep.saveJobResults(results, job1, pack);
+        rhythmicityRep.saveJobResults(results);
 
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/export/")
