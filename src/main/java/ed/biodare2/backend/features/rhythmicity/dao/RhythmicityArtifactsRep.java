@@ -74,13 +74,13 @@ public class RhythmicityArtifactsRep {
     
     
     // cache put did not work if method was void
-    @CachePut(key="{#exp.getId(),#job.jobId, 'job'}")
+    @CachePut(key="{#job.parentId,#job.jobId, 'job'}")
     //@CacheEvict(key="{#exp.getId(),#job.jobId}")
     @Transactional    
-    public RhythmicityJobSummary saveJobDetails(RhythmicityJobSummary job, AssayPack exp) {
+    public RhythmicityJobSummary saveJobDetails(RhythmicityJobSummary job) {
         
         //System.out.println("\n\n---- Saving "+job.jobId);
-        return saveJobDetails(job, exp.getId());
+        return saveJobDetails(job, job.parentId);
     } 
     
     @Cacheable(key="{#expId,#jobId, 'job'}",unless="#result == null")

@@ -112,7 +112,7 @@ public class RhythmicityHandler {
         job.jobStatus = new JobStatus(jobHandle, State.SUBMITTED);        
 
         
-        rhythmicityRep.saveJobDetails(job,exp);
+        rhythmicityRep.saveJobDetails(job);
         
         experimentHandler.updateHasRhythmicityJobs(exp,true);
         return jobHandle;    
@@ -168,12 +168,12 @@ public class RhythmicityHandler {
             job.jobStatus.state = results.state;
             job.jobStatus.completed = LocalDateTime.now();
             job.jobStatus.message = results.message;
-            rhythmicityRep.saveJobDetails(job, exp);
+            rhythmicityRep.saveJobDetails(job);
         } catch (Exception e) {
             job.jobStatus.state = State.ERROR;
             job.jobStatus.message = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
             log.error("Could not handle rhythmicity results for job {} {}",jobId, e.getMessage(),e);
-            rhythmicityRep.saveJobDetails(job, exp);
+            rhythmicityRep.saveJobDetails(job);
             throw new HandlingException("Could not handle rhythmicity results "+e.getMessage(),e);
         }
         
@@ -292,7 +292,7 @@ public class RhythmicityHandler {
             JobStatus status = rhythmicityService.getJobStatus(job.jobId);
             if (hasFailed(status)) {
                 //ignore other status as they may get updated in the background
-                return updateJobStatus(job,status,exp);
+                return updateJobStatus(job,status);
             }
             summary.jobStatus = status;
             return summary;
@@ -314,14 +314,14 @@ public class RhythmicityHandler {
         return State.ERROR.equals(status.getState()) || State.FAILED.equals(status.getState());    
     }
 
-    RhythmicityJobSummary updateJobStatus(RhythmicityJobSummary job, JobStatus status, AssayPack exp) {
+    RhythmicityJobSummary updateJobStatus(RhythmicityJobSummary job, JobStatus status) {
         job.jobStatus.state = status.state;
         job.jobStatus.message = status.message;
         job.jobStatus.modified = status.modified != null ? status.modified : LocalDateTime.now();
         
         job.jobStatus.completed = status.completed != null ? status.completed : LocalDateTime.now();
 
-        return rhythmicityRep.saveJobDetails(job, exp);
+        return rhythmicityRep.saveJobDetails(job);
     }
 
     void addLabels(List<TSResult<BD2eJTKRes>> results, Map<Long, DataTrace> orgData) throws ArgumentException {

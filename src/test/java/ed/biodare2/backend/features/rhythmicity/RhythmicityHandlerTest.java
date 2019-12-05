@@ -130,7 +130,7 @@ public class RhythmicityHandlerTest {
         assertEquals(LocalDate.now(), job.jobStatus.completed.toLocalDate());
         
         verify(rhythmicityRep).saveJobResults(results, job, exp);
-        verify(rhythmicityRep).saveJobDetails(job, exp);
+        verify(rhythmicityRep).saveJobDetails(job);
         verify(dataHandler).getDataSet(exp, detrending);
         
     }
@@ -180,7 +180,7 @@ public class RhythmicityHandlerTest {
         UUID res = instance.newRhythmicity(exp, rhythmicityRequest);
         
         assertEquals(uid, res);
-        verify(rhythmicityRep).saveJobDetails(any(), eq(exp));
+        verify(rhythmicityRep).saveJobDetails(any());
         verify(experimentHandler).updateHasRhythmicityJobs(exp,true);
         
     }

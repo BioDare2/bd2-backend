@@ -8,14 +8,11 @@ package ed.biodare2.backend.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.State;
-import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityService;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
-import ed.biodare2.backend.handlers.ExperimentHandler;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
@@ -23,18 +20,12 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
-import ed.biodare2.backend.security.BioDare2User;
-import ed.biodare2.backend.security.PermissionsResolver;
-import ed.biodare2.backend.web.tracking.ExperimentTracker;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +116,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         insertData(pack);
         
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/jobs")
                 .contentType(APPLICATION_JSON_UTF8)
@@ -161,7 +152,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUCCESS;
         
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId)
                 .contentType(APPLICATION_JSON_UTF8)
@@ -196,7 +187,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUBMITTED;
         
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
 
         RhythmicityJobSummary job2 = makeRhythmicityJobSummary(job1.jobId, exp.getId());
         job2.jobStatus.state = State.ERROR;
@@ -238,7 +229,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUCCESS;
         
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
         
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
         
@@ -277,7 +268,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         insertData(pack);
         
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.delete(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId)
                 .contentType(APPLICATION_JSON_UTF8)
@@ -318,7 +309,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUCCESS;
         
-        rhythmicityRep.saveJobDetails(job1, pack);
+        rhythmicityRep.saveJobDetails(job1);
         
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
         rhythmicityRep.saveJobResults(results, job1, pack);

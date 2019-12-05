@@ -34,6 +34,7 @@ public class RhythmicityJobSummary implements Serializable {
     
     
     public UUID jobId;
+    public long parentId;
     public JobStatus jobStatus;
     
     public Map<String,String> parameters = new HashMap<>();
@@ -44,6 +45,31 @@ public class RhythmicityJobSummary implements Serializable {
         hash = 53 * hash + Objects.hashCode(this.jobId);
         return hash;
     }
+
+    /*
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RhythmicityJobSummary other = (RhythmicityJobSummary) obj;
+        if (!Objects.equals(this.jobId, other.jobId)) {
+            return false;
+        }
+        if (!Objects.equals(this.jobStatus, other.jobStatus)) {
+            return false;
+        }
+        if (!Objects.equals(this.parameters, other.parameters)) {
+            return false;
+        }
+        return true;
+    }*/
 
     @Override
     public boolean equals(Object obj) {
@@ -58,6 +84,9 @@ public class RhythmicityJobSummary implements Serializable {
         }
         final RhythmicityJobSummary other = (RhythmicityJobSummary) obj;
         if (!Objects.equals(this.jobId, other.jobId)) {
+            return false;
+        }
+        if (this.parentId != other.parentId) {
             return false;
         }
         if (!Objects.equals(this.jobStatus, other.jobStatus)) {

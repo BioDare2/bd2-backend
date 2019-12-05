@@ -314,6 +314,7 @@ public class DomRepoTestBuilder {
         
         RhythmicityJobSummary job = new RhythmicityJobSummary();
         job.jobId = jobId;
+        job.parentId = expId;
         job.jobStatus = new JobStatus(jobId, State.SUBMITTED);
         job.parameters = new HashMap<>();
         

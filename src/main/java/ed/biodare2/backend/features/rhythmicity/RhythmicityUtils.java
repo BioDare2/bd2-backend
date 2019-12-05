@@ -74,6 +74,7 @@ public class RhythmicityUtils {
     public RhythmicityJobSummary prepareNewJobSummary(TSDataSetJobRequest jobRequest, RhythmicityRequest request, long expId) {
         
         RhythmicityJobSummary job = new RhythmicityJobSummary();
+        job.parentId = expId;
         job.jobStatus = new JobStatus(null,State.SUBMITTED);
         
         job.parameters = new HashMap<>(jobRequest.parameters);

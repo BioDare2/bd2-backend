@@ -92,7 +92,7 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         job.jobStatus.state = State.SUBMITTED;
         job.jobStatus.completed = null;
 
-        rhythmicityRep.saveJobDetails(job, pack);
+        rhythmicityRep.saveJobDetails(job);
         
         DetrendingType detrending = DetrendingType.valueOf(job.parameters.get(job.DATA_SET_TYPE));        
         
