@@ -79,7 +79,21 @@ public class EmailChecker {
             "@med.uni-muenchen.de",
             "@lmu.de",
             "@oulu.fi",
-            "@student.umu.se"            
+            "@student.umu.se",
+            "@rug.nl",
+            "@uoguelph.ca",
+            "@pl.hanze.nl",
+            "@volcani.agri.gov.il",
+            "@inserm.fr",
+            "@pharma.uzh.ch",
+            "@med.uni-muenchen.de",
+            "@charite.de",
+            ".uni-halle.de",
+            ".concordia.ca",
+            "@uv.es",
+            ".uc3m.es",
+            "@nudz.cz"
+            
     ));
     
     final Path configFile;
