@@ -5,9 +5,11 @@
  */
 package ed.biodare2.backend.features.tsdata.datahandling;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
+import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
 import java.nio.file.Files;
@@ -17,6 +19,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,7 +47,7 @@ public class TSDataHandlerTest {
     @Before
     public void init() {
         expStorage = mock(ExperimentsStorage.class);
-        instance = new TSDataHandler(expStorage);
+        instance = new TSDataHandler(expStorage, new ObjectMapper());
         
     }
 
@@ -330,5 +333,59 @@ public class TSDataHandlerTest {
         assertEquals(data.size(),res.size());
         assertEquals(data.get(0).traceRef,res.get(0).traceRef);
         assertEquals(data.get(0).trace,res.get(0).trace);
-    }    
+    }  
+
+    @Test
+    public void calculatesMetrics() {
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+
+        TimeSeriesMetrics metrics = instance.calculateMetrics(data);
+        
+        assertEquals(2, metrics.series);
+        assertEquals(3, metrics.avgLastTime, 1E-6);
+        assertEquals(2, metrics.avgDuration, 1E-6);
+    }
+    
+    @Test
+    public void storesDataMetricsThatCanBeRead() throws Exception {
+        
+        Path dir = testFolder.newFolder().toPath();
+        
+        TimeSeries serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);        
+        
+        TimeSeriesMetrics metrics = TimeSeriesMetrics.fromTimeSeries(serie);
+        metrics.series = 2;
+        
+        instance.storeMetrics(metrics, dir);
+        assertTrue(Files.isRegularFile(dir.resolve("metrics.json")));
+        
+        Optional<TimeSeriesMetrics> read = instance.getMetrics(dir);
+        assertTrue(read.isPresent());
+        assertEquals(metrics, read.get());
+    }
+    
 }

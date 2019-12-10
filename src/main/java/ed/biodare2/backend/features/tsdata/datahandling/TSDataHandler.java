@@ -5,10 +5,12 @@
  */
 package ed.biodare2.backend.features.tsdata.datahandling;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
+import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
@@ -44,10 +46,12 @@ public class TSDataHandler {
     final TimeSeriesTransformer transformer = TimeSeriesTrfImp.getInstance();
     
     final ExperimentsStorage expStorage;
+    final ObjectMapper mapper;
     
     @Autowired
-    public TSDataHandler(ExperimentsStorage expStorage) {
+    public TSDataHandler(ExperimentsStorage expStorage, ObjectMapper mapper) {
         this.expStorage = expStorage;
+        this.mapper = mapper;
     }
     
     @CacheEvict(allEntries=true)
@@ -74,9 +78,11 @@ public class TSDataHandler {
         List<DataTrace> standardData = standarize(rawData);
         if (standardData.isEmpty()) throw new DataProcessingException("Empty dataset after standarization");
         
+        TimeSeriesMetrics metrics = calculateMetrics(standardData);
         Map<DetrendingType,List<DataTrace>> processed = processData(standardData);
         
         storeData(processed,dataDir);
+        storeMetrics(metrics, dataDir);
         
         return standardData.size();
     }
@@ -185,5 +191,43 @@ public class TSDataHandler {
             }
         }
     }
+
+    protected TimeSeriesMetrics calculateMetrics(List<DataTrace> data) {
+        
+        return data.parallelStream()
+                .map( d -> d.trace)
+                .map( TimeSeriesMetrics::fromTimeSeries)
+                .reduce( TimeSeriesMetrics::reduce)
+                .orElse( new TimeSeriesMetrics());
+    }
+
+    protected void storeMetrics(TimeSeriesMetrics metrics, Path dataDir) {
+        
+        try {
+            Path file = dataDir.resolve("metrics.json");
+            mapper.writeValue(file.toFile(), metrics);
+        } catch (IOException e) {
+            throw new ServerSideException("Cannot data metrics: "+e.getMessage(),e);
+        }
+    }
+    
+    public Optional<TimeSeriesMetrics> getMetrics(AssayPack exp) throws ServerSideException {
+        
+        Path dataDir = getDataStorage(exp.getId());
+        return getMetrics(dataDir);
+    }
+    
+    Optional<TimeSeriesMetrics> getMetrics(Path dataDir) throws ServerSideException {
+        
+        try {
+            Path file = dataDir.resolve("metrics.json");
+            if (!Files.exists(file)) return Optional.empty();
+
+            TimeSeriesMetrics metrics = mapper.readValue(file.toFile(), TimeSeriesMetrics.class);
+            return Optional.of(metrics);
+        } catch(IOException e) {
+            throw new ServerSideException("Cannot read data metrics: "+e.getMessage(),e);
+        }            
+    }    
     
 }

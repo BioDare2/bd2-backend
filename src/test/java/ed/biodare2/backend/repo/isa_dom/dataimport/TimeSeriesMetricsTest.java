@@ -161,4 +161,90 @@ public class TimeSeriesMetricsTest {
 
     }
     
+    @Test
+    public void reducesSimilar() {
+        
+        TimeSeries data1 = new TimeSeries();
+        data1.add(1,1);
+        data1.add(2,2);
+        data1.add(3,2);
+        data1.add(4,1);
+        
+        TimeSeriesMetrics one = fromTimeSeries(data1);
+        
+        TimeSeriesMetrics other = fromTimeSeries(data1);
+        
+        TimeSeriesMetrics res = reduce(one, other);
+        
+        
+        assertEquals(3, res.maxDuration, EPS);
+        assertEquals(3, res.minDuration, EPS);
+        assertEquals(3, res.avgDuration, EPS);
+        assertEquals(4, res.maxPoints, EPS);
+        assertEquals(4, res.minPoints, EPS);
+        assertEquals(4, res.avgPoints, EPS);
+        assertEquals(1, res.maxStep, EPS);
+        assertEquals(1, res.minStep, EPS);
+        assertEquals(1, res.avgStep, EPS);
+        assertEquals(1, res.maxPointsPerHour, EPS);
+        assertEquals(1, res.minPointsPerHour, EPS);
+        assertEquals(1, res.avgPointsPerHour, EPS);
+        assertEquals(1, res.maxFirstTime, EPS);
+        assertEquals(1, res.minFirstTime, EPS);
+        assertEquals(1, res.avgFirstTime, EPS);
+        assertEquals(4, res.maxLastTime, EPS);
+        assertEquals(4, res.minLastTime, EPS);
+        assertEquals(4, res.avgLastTime, EPS);                
+        assertEquals(2, res.maxValue, EPS);
+        assertEquals(1, res.minValue, EPS);
+        assertEquals(1.5, res.avgValue, EPS);
+                
+        assertEquals(2, res.series);
+        assertTrue(res.uniformMetrics);
+
+    }
+    
+    @Test
+    public void reducesWithWeights() {
+        
+        TimeSeries data1 = new TimeSeries();
+        data1.add(1,1);
+        data1.add(2,2);
+        data1.add(3,2);
+        data1.add(4,1);
+        
+        TimeSeriesMetrics one = fromTimeSeries(data1);
+        one.series = 3;
+        
+        TimeSeriesMetrics other = fromTimeSeries(new TimeSeries());
+        
+        TimeSeriesMetrics res = reduce(one, other);
+        
+        
+        assertEquals(3, res.maxDuration, EPS);
+        assertEquals(0, res.minDuration, EPS);
+        assertEquals(9.0/4, res.avgDuration, EPS);
+        assertEquals(4, res.maxPoints, EPS);
+        assertEquals(0, res.minPoints, EPS);
+        assertEquals(12/4, res.avgPoints, EPS);
+        assertEquals(1, res.maxStep, EPS);
+        assertEquals(0, res.minStep, EPS);
+        assertEquals(3.0/4, res.avgStep, EPS);
+        assertEquals(1, res.maxPointsPerHour, EPS);
+        assertEquals(0, res.minPointsPerHour, EPS);
+        assertEquals(3.0/4, res.avgPointsPerHour, EPS);
+        assertEquals(1, res.maxFirstTime, EPS);
+        assertEquals(0, res.minFirstTime, EPS);
+        assertEquals(3.0/4, res.avgFirstTime, EPS);
+        assertEquals(4, res.maxLastTime, EPS);
+        assertEquals(0, res.minLastTime, EPS);
+        assertEquals(12/4, res.avgLastTime, EPS);                
+        assertEquals(2, res.maxValue, EPS);
+        assertEquals(0, res.minValue, EPS);
+        assertEquals(1.5*3/4, res.avgValue, EPS);
+                
+        assertEquals(4, res.series);
+        assertFalse(res.uniformMetrics);
+
+    }    
 }

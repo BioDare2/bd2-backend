@@ -268,7 +268,7 @@ public class TimeSeriesMetrics implements Serializable {
         return Math.rint(x*1000)/1000.0;
     }
     
-    static TimeSeriesMetrics reduce(TimeSeriesMetrics one, TimeSeriesMetrics other) {
+    public static TimeSeriesMetrics reduce(TimeSeriesMetrics one, TimeSeriesMetrics other) {
        
         TimeSeriesMetrics metrics = new TimeSeriesMetrics();
         
