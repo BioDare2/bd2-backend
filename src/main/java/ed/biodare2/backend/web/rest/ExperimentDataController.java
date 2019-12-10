@@ -14,6 +14,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.PermissionsResolver;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
+import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
 import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
@@ -118,7 +119,30 @@ public class ExperimentDataController extends ExperimentController {
             throw new ServerSideException(e.getMessage());
         } 
         
+    }  
+
+    @RequestMapping(value = "metrics", method = RequestMethod.GET)
+    public TimeSeriesMetrics getTSDataMetrics(@PathVariable long expId,
+            @NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get TimeSeriesMetrics; exp:{}; {}",expId,user);
+        
+        AssayPack exp = getExperimentForRead(expId,user);
+        
+        try {
+            
+            TimeSeriesMetrics metrics = dataHandler.getTSDataMetrics(exp).orElseThrow(()-> new NotFoundException("Data metrics not found"));
+            return metrics;
+            
+        } catch(WebMappedException e) {
+            log.error("Cannot get data metrics {} {}",expId,e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot get data metrics {} {}",expId,e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
     }      
+    
     
     @RequestMapping(value = "{detrending}", method = RequestMethod.GET)
     public TraceSet getTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 

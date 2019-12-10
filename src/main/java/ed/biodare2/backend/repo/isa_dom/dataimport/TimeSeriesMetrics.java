@@ -6,11 +6,8 @@
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 import ed.robust.dom.data.TimeSeries;
-import ed.robust.dom.data.Timepoint;
 import java.io.Serializable;
 import static java.lang.Math.*;
-import java.util.List;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
  *

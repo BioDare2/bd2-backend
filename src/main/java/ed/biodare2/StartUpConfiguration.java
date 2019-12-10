@@ -72,6 +72,23 @@ public class StartUpConfiguration {
         return (evt) -> {};
     }       
     
+    @Transactional
+    @Bean
+    @Order(10)
+    public CommandLineRunner recalculateDataMetrics(Environment env, DBFixer fixer) {
+        
+        
+        log.warn("recalculating data metrics");
+        
+        /*
+        if (isOnProduction(env)) {
+            throw new IllegalStateException("DBResotore called in production environment");
+        }*/
+        
+        fixer.recalculateDataMetrics();
+            
+        return (evt) -> {};
+    }  
     
     /*
     @Transactional

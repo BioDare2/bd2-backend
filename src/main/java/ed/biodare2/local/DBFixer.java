@@ -30,6 +30,7 @@ import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
+import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -88,6 +89,9 @@ public class DBFixer {
     
     @Autowired
     PPAResultsHandler ppaResultsHandler;
+    
+    @Autowired
+    TSDataHandler dataHandler;
     
     //@Autowired
     //Environment env;
@@ -520,5 +524,28 @@ public class DBFixer {
         
     }  
     
+    @Transactional
+    //@Deprecated
+    public void recalculateDataMetrics() {
+     
+        log.info("Recalculating data metrics");
+        
+        experimentalAssays.getExerimentsIds()
+            .map( id -> expPacks.findOne(id))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter( pack -> pack.getSystemInfo().experimentCharacteristic.hasTSData)
+                .forEach( exp -> {
+                    try {
+                        log.info("Calculating data metrics for {}",exp.getId());
+                        dataHandler.recalculateMeterics(exp);
+                        log.info("Recalculated data metrics for {}",exp.getId());
+                    } catch (Exception e) {
+                        log.error("Could not cacluate data meterics for: {}, {}",exp.getId(),e.getMessage(),e);
+                    }
+                });
+                ;
+        
+    }  
     
 }

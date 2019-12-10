@@ -23,6 +23,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.ExcelTSImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
+import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -49,6 +50,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -605,5 +607,34 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         
     }
     
+    @Test
+    public void getTSDataMetricsGetsMetrics() throws Exception {
+    
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        int series = insertData(pack);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/metrics")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())                
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        TimeSeriesMetrics metrics = mapper.readValue(resp.getResponse().getContentAsString(), TimeSeriesMetrics.class);
+        assertNotNull(metrics);
+        assertEquals(series, metrics.series);
+        
+    }
     
 }

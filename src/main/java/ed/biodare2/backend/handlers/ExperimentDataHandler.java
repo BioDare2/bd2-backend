@@ -22,6 +22,7 @@ import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
+import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.OperationType;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
@@ -74,6 +75,11 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         this.ppaHandler = ppaHandler;
         this.rhythmicityHandler = rhythmicityHandler;
     }
+    
+    public Optional<TimeSeriesMetrics> getTSDataMetrics(AssayPack exp) {
+        
+        return dataHandler.getMetrics(exp);
+    }    
     
     public Optional<TraceSet> getTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
         
@@ -198,6 +204,8 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
     protected boolean noEmptyTrace(DataTrace trace) {
         return (trace.trace != null && !trace.trace.isEmpty());
     }
+
+
 
 
     

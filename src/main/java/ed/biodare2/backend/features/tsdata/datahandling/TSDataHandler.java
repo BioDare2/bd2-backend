@@ -228,6 +228,18 @@ public class TSDataHandler {
         } catch(IOException e) {
             throw new ServerSideException("Cannot read data metrics: "+e.getMessage(),e);
         }            
-    }    
+    }  
+    
+    public boolean recalculateMeterics(AssayPack exp) {
+        
+        Path dataDir = getDataStorage(exp.getId());
+        Optional<List<DataTrace>> dataSet = getDataSet(DetrendingType.NO_DTR, dataDir);
+        if (dataSet.isEmpty()) return false;
+        
+        TimeSeriesMetrics metrics = calculateMetrics(dataSet.get());
+        storeMetrics(metrics, dataDir);
+        return true;
+        
+    }
     
 }
