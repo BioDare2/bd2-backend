@@ -90,8 +90,8 @@ public class DBFixer {
     @Autowired
     PPAResultsHandler ppaResultsHandler;
     
-    @Autowired
-    TSDataHandler dataHandler;
+    //@Autowired
+    //TSDataHandler dataHandler;
     
     //@Autowired
     //Environment env;
@@ -524,8 +524,8 @@ public class DBFixer {
         
     }  
     
+    /*
     @Transactional
-    //@Deprecated
     public void recalculateDataMetrics() {
      
         log.info("Recalculating data metrics");
@@ -546,6 +546,6 @@ public class DBFixer {
                 });
                 ;
         
-    }  
+    } */ 
     
 }
