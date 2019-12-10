@@ -82,7 +82,7 @@ public class Fixtures {
     public static Fixtures build(UserAccountRep accounts,UserGroupRep groups,PasswordEncoder encoder) {
         
         final Logger log = LoggerFactory.getLogger(Fixtures.class);        
-        log.warn("Building fixtures, encoder: "+encoder.getClass().getName());
+        log.warn("\n\nBuilding fixtures, encoder: "+encoder.getClass().getName());
         Fixtures fixtures = new Fixtures();
         
         UserGroup group;
