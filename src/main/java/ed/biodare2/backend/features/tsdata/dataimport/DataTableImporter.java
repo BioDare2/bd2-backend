@@ -156,7 +156,7 @@ public class DataTableImporter extends TSDataImporter {
         try {
             return valsToDoubles(times);
         } catch (NumberFormatException e) {
-            throw new TransposableImportException("Non numberical value in", firstTimeCell.row, null);
+            throw new TransposableImportException("Non numerical time ("+e.getMessage()+")", firstTimeCell.row, null);
         }
         
     }
@@ -228,10 +228,10 @@ public class DataTableImporter extends TSDataImporter {
         Optional<List<Object>> record;
 
         while ( (record = sequentialReader.readRecord()).isPresent()) {
-            Optional<DataTrace> trace = importTraceRow(record.get(), times, curRow, firstCol, labeller);
-            if (trace.isPresent())
-                traces.add(trace.get());
-            curRow++;
+                Optional<DataTrace> trace = importTraceRow(record.get(), times, curRow, firstCol, labeller);
+                if (trace.isPresent())
+                    traces.add(trace.get());
+                curRow++;
         };
         return traces;
     }    
@@ -244,16 +244,23 @@ public class DataTableImporter extends TSDataImporter {
             return Optional.empty();
         }
 
-        List<Double> values = valsToDoubles(record.subList(firstCol, record.size()));        
-        TimeSeries timeserie = makeSerie(times, values);
+        List<Double> values;
+        try {
+            values = valsToDoubles(record.subList(firstCol, record.size()));        
+        } catch (NumberFormatException e) {
+            throw new TransposableImportException("Non numerical data ("+e.getMessage()+")", curRow, null);
+        }        
         
+        TimeSeries timeserie = makeSerie(times, values);
+
         if (timeserie.isEmpty()) {
             return Optional.empty();
         }
-        
+
         DataTrace trace = makeTrace(timeserie, label, CellRole.DATA, firstCol, curRow);
-        
+
         return Optional.of(trace);
+        
     }
     
     protected DataTrace makeTrace(TimeSeries serie, String label, CellRole role, int col, int row) {
