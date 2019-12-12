@@ -50,9 +50,9 @@ public class DataTableImportParameters extends TSImportParameters implements Ser
         transposed.timeOffset = timeOffset;
         transposed.imgInterval = imgInterval;
         
-        transposed.dataStart = dataStart.transpose();
+        transposed.dataStart = dataStart != null ? dataStart.transpose() :  null;
         transposed.importLabels = importLabels;
-        transposed.labelsSelection = labelsSelection.transpose();
+        transposed.labelsSelection = labelsSelection != null ?  labelsSelection.transpose(): null;
         transposed.userLabels = userLabels;
         
         transposed.containsBackgrounds = containsBackgrounds;

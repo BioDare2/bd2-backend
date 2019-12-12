@@ -92,6 +92,14 @@ public class DataTableImportParametersTest {
         
         DataTableImportParameters trans = colPar.transpose();
         assertEquals(rowPar, trans);
+        
+        String manualColJSON = "{\"inRows\":false,\"timeOffset\":0,\"importLabels\":false,\"userLabels\":[null,\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value1\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"value2\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label3\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\",\"label4\"],\"containsBackgrounds\":false,\"backgroundsLabels\":[],\"_class_name\":\".DataTableImportParameters\",\"timeType\":\"TIME_IN_HOURS\",\"fileId\":\"_upload16122336995636930678\",\"fileName\":\"JessicaImport20191206_96-fixed2.xlsx\",\"importFormat\":\"EXCEL_TABLE\",\"firstTimeCell\":{\"col\":0,\"row\":1}}";
+        colPar = mapper.readValue(manualColJSON, DataTableImportParameters.class);
+        
+        assertEquals(49, colPar.userLabels.size());
+        
+        trans = colPar.transpose();
+        assertEquals(49, trans.userLabels.size());
     }
     
 }
