@@ -27,7 +27,7 @@ public class ExperimentalAssayView implements Serializable {
     
     public long id;
     
-    public GeneralDesc generalDesc;
+    public ExperimentGeneralDescView generalDesc;
     public ContributionDesc contributionDesc;    
     public ExperimentalDetails experimentalDetails;
     public ExperimentCharacteristic features;
@@ -47,7 +47,7 @@ public class ExperimentalAssayView implements Serializable {
 
     public ExperimentalAssayView(ExperimentalAssay assay) {
         this.id = assay.getId();
-        this.generalDesc = assay.generalDesc;
+        this.generalDesc = new ExperimentGeneralDescView(assay.generalDesc, assay.experimentalDetails.executionDate);
         this.contributionDesc = assay.contributionDesc;
         this.experimentalDetails = assay.experimentalDetails;
         this.features = assay.characteristic;

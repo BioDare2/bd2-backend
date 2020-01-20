@@ -18,6 +18,8 @@ import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
@@ -336,7 +338,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     public void insertExperimentSavesAngularRequest() throws Exception {
     
         
-        String orgJSON = "{\"generalDesc\":{\"name\":\"New experiment payload\",\"purpose\":\"Checking how wiring works\",\"description\":\"Is it ok, you think so??\",\"comments\":null},\"contributionDesc\":{\"authors\":[{\"firstName\":\"Demo\",\"lastName\":\"User\",\"id\":4,\"login\":\"demo\",\"ORCID\":null}],\"curators\":[],\"institutions\":[{\"name\":\"University of Edinburgh\"}],\"fundings\":[]},\"experimentalDetails\":{\"measurementDesc\":{\"parameters\":[],\"technique\":null,\"equipment\":null,\"description\":null},\"growthEnvironments\":{\"environments\":[]},\"experimentalEnvironments\":{\"environments\":[]},\"executionDate\":[2016,10,5]},\"id\":0,\"features\":{\"hasTSData\":false,\"hasPPAJobs\":false,\"hasDataFiles\":false},\"species\":\"Arabidopsis thaliana\",\"dataCategory\":\"GEN_IMAGING\",\"provenance\":{\"created\":null,\"createdBy\":null,\"modified\":null,\"modifiedBy\":null},\"security\":{\"canRead\":true,\"canWrite\":true,\"isOwner\":true,\"isSuperOwner\":false}}";
+        String orgJSON = "{\"generalDesc\":{\"name\":\"New experiment payload\",\"purpose\":\"Checking how wiring works\",\"description\":\"Is it ok, you think so??\",\"comments\":null,\"executionDate\" : [ 2020, 1, 20 ]},\"contributionDesc\":{\"authors\":[{\"firstName\":\"Demo\",\"lastName\":\"User\",\"id\":4,\"login\":\"demo\",\"ORCID\":null}],\"curators\":[],\"institutions\":[{\"name\":\"University of Edinburgh\"}],\"fundings\":[]},\"experimentalDetails\":{\"measurementDesc\":{\"parameters\":[],\"technique\":null,\"equipment\":null,\"description\":null},\"growthEnvironments\":{\"environments\":[]},\"experimentalEnvironments\":{\"environments\":[]},\"executionDate\":[2016,10,5]},\"id\":0,\"features\":{\"hasTSData\":false,\"hasPPAJobs\":false,\"hasDataFiles\":false},\"species\":\"Arabidopsis thaliana\",\"dataCategory\":\"GEN_IMAGING\",\"provenance\":{\"created\":null,\"createdBy\":null,\"modified\":null,\"modifiedBy\":null},\"security\":{\"canRead\":true,\"canWrite\":true,\"isOwner\":true,\"isSuperOwner\":false}}";
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(serviceRoot)
                 .contentType(APPLICATION_JSON_UTF8)
@@ -408,6 +410,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         ExperimentalAssayView req = DomRepoTestBuilder.makeExperimentalAssayView();
         req.generalDesc.name = "Updated name";
+
         
         String orgJSON = mapper.writeValueAsString(req);
         
@@ -432,8 +435,51 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         assertEquals(pack.getId(),exp.id);
         assertEquals(exp.generalDesc.name,req.generalDesc.name);
+
+
         
     }
+    
+    @Test
+    public void updateExperimentUsesDateFromGeneralDescription() throws Exception {
+    
+        AssayPack pack = insertExperiment();
+        
+        assertTrue(expBoundles.findOne(pack.getId()).isPresent());
+        
+        ExperimentalAssayView req = DomRepoTestBuilder.makeExperimentalAssayView();
+        req.generalDesc.name = "Updated name";
+        LocalDate date = LocalDate.now().minus(1,ChronoUnit.YEARS);
+        req.generalDesc.executionDate = date;
+        req.experimentalDetails.executionDate = LocalDate.now().plus(1, ChronoUnit.DAYS);
+        
+        String orgJSON = mapper.writeValueAsString(req);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+pack.getId())
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("Update JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        
+        ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
+        assertNotNull(exp);
+        
+        assertEquals(pack.getId(),exp.id);
+        assertEquals(exp.generalDesc.name,req.generalDesc.name);
+        assertEquals(date, exp.generalDesc.executionDate);
+        assertEquals(date, exp.experimentalDetails.executionDate);
+        
+    }    
     
     @Test
     public void updateExperimentSavesAngularRequest() throws Exception {
@@ -441,7 +487,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         AssayPack pack = insertExperiment();        
         assertTrue(expBoundles.findOne(pack.getId()).isPresent());
         
-        String orgJSON = "{\"generalDesc\":{\"name\":\"Testing new experiment creationg\",\"purpose\":\"Checking if all the wiring works\",\"description\":\"asdfdsf dsfsdfd\",\"comments\":null},\"contributionDesc\":{\"authors\":[{\"firstName\":\"Demo\",\"lastName\":\"User\",\"id\":4,\"login\":\"demo\",\"ORCID\":null}],\"curators\":[],\"institutions\":[{\"name\":\"University of Edinburhg\"}],\"fundings\":[]},\"experimentalDetails\":{\"measurementDesc\":{\"parameters\":[],\"technique\":null,\"equipment\":null,\"description\":null},\"growthEnvironments\":{\"environments\":[]},\"experimentalEnvironments\":{\"environments\":[]},\"executionDate\":[2016,9,29]},\"id\":1020,\"features\":{\"hasTSData\":false,\"hasPPAJobs\":false,\"hasDataFiles\":false},\"species\":\"Homo sapiens\",\"dataCategory\":\"GEN_IMAGING\",\"provenance\":{\"created\":[2016,9,29,16,57,47,857000000],\"createdBy\":\"Demo User\",\"modified\":[2016,9,29,16,57,47,857000000],\"modifiedBy\":\"Demo User\"},\"security\":{\"canRead\":true,\"canWrite\":true,\"isOwner\":true,\"isSuperOwner\":false}}";
+        String orgJSON = "{\"generalDesc\":{\"name\":\"Testing new experiment creationg\",\"purpose\":\"Checking if all the wiring works\",\"description\":\"asdfdsf dsfsdfd\",\"comments\":null,\"executionDate\" : [ 2020, 1, 20 ]},\"contributionDesc\":{\"authors\":[{\"firstName\":\"Demo\",\"lastName\":\"User\",\"id\":4,\"login\":\"demo\",\"ORCID\":null}],\"curators\":[],\"institutions\":[{\"name\":\"University of Edinburhg\"}],\"fundings\":[]},\"experimentalDetails\":{\"measurementDesc\":{\"parameters\":[],\"technique\":null,\"equipment\":null,\"description\":null},\"growthEnvironments\":{\"environments\":[]},\"experimentalEnvironments\":{\"environments\":[]},\"executionDate\":[2016,9,29]},\"id\":1020,\"features\":{\"hasTSData\":false,\"hasPPAJobs\":false,\"hasDataFiles\":false},\"species\":\"Homo sapiens\",\"dataCategory\":\"GEN_IMAGING\",\"provenance\":{\"created\":[2016,9,29,16,57,47,857000000],\"createdBy\":\"Demo User\",\"modified\":[2016,9,29,16,57,47,857000000],\"modifiedBy\":\"Demo User\"},\"security\":{\"canRead\":true,\"canWrite\":true,\"isOwner\":true,\"isSuperOwner\":false}}";
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+pack.getId())
                 .contentType(APPLICATION_JSON_UTF8)

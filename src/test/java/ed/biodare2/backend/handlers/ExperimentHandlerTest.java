@@ -44,6 +44,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -198,6 +199,9 @@ public class ExperimentHandlerTest {
         assertNotNull(exp.growthEnvironments);
         assertNotNull(exp.measurementDesc);
         assertNotNull(exp.executionDate);
+        
+        // copies execution date to the view
+        assertEquals(exp.executionDate, assay.generalDesc.executionDate);
         
     }
     
@@ -570,6 +574,28 @@ public class ExperimentHandlerTest {
         assertSame(req.experimentalDetails, testExp.experimentalDetails);
         
     } 
+    
+    @Test
+    public void mergeRequestCopiesDateFromGeneralDesc() throws Exception {
+        
+        ExperimentalAssayView req = DomRepoTestBuilder.makeExperimentalAssayView();
+        
+        assertNotSame(req.generalDesc, testExp.generalDesc);
+        assertNotSame(req.contributionDesc, testExp.contributionDesc);
+        assertNotSame(req.experimentalDetails, testExp.experimentalDetails);
+        
+        LocalDate date = LocalDate.now().minus(1, ChronoUnit.DAYS);
+        req.generalDesc.executionDate = date;
+        testExp.experimentalDetails.executionDate = null;
+        
+        handler.mergeRequest(req, testExp);
+        
+        assertSame(req.generalDesc, testExp.generalDesc);
+        assertSame(req.contributionDesc, testExp.contributionDesc);
+        assertSame(req.experimentalDetails, testExp.experimentalDetails);
+        assertSame(date, testExp.experimentalDetails.executionDate);
+        
+    }    
     
     @Test
     public void makeDefaultBioCreatesBioWithOneEmptyEntry() {

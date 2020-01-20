@@ -10,7 +10,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
+import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -48,7 +51,7 @@ public class ExperimentalAssayViewTest {
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
-        System.out.println("ExperimentAssayView JSON:\n\n"+json+"\n");
+        // System.out.println("ExperimentAssayView JSON:\n\n"+json+"\n");
         
         ExperimentalAssayView cpy = mapper.readValue(json, ExperimentalAssayView.class);        
         assertEquals(org.id, cpy.id);
@@ -62,4 +65,21 @@ public class ExperimentalAssayViewTest {
         
     }
     
+    @Test
+    public void copyingConstructorUsesExecutionDateFromDetails() throws JsonProcessingException, IOException {
+
+        ExperimentalAssay assay = DomRepoTestBuilder.makeExperimentalAssay();
+        LocalDate date = LocalDate.now().minus(1, ChronoUnit.DAYS);
+        assay.experimentalDetails.executionDate = date;
+        
+        ExperimentalAssayView cpy = new ExperimentalAssayView(assay);        
+        assertEquals(date, cpy.generalDesc.executionDate);
+        assertEquals(assay.contributionDesc,cpy.contributionDesc);
+        assertEquals(assay.experimentalDetails,cpy.experimentalDetails);
+        assertEquals(assay.characteristic,cpy.features);
+        assertEquals(assay.species,cpy.species);
+        assertEquals(assay.dataCategory,cpy.dataCategory);
+        
+        
+    }    
 }

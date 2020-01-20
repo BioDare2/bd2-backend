@@ -39,6 +39,7 @@ import ed.biodare2.backend.features.search.ExperimentSearcher;
 import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
+import ed.biodare2.backend.repo.ui_dom.exp.ExperimentGeneralDescView;
 import ed.biodare2.backend.web.rest.HandlingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -271,8 +272,6 @@ public class ExperimentHandler extends BaseExperimentHandler {
     protected void setDefaultExpDetails(ExperimentalAssayView assay, BioDare2User user) {
         
    
-        GeneralDesc general = new GeneralDesc();
-        assay.generalDesc = general;
                 
         ContributionDesc contr = new ContributionDesc();
         contr.authors.add(account2Person(user)); 
@@ -293,6 +292,11 @@ public class ExperimentHandler extends BaseExperimentHandler {
         expDetails.executionDate = LocalDate.now();
         
         assay.experimentalDetails = expDetails;
+        
+        ExperimentGeneralDescView general = new ExperimentGeneralDescView();
+        general.executionDate = expDetails.executionDate;
+        assay.generalDesc = general;
+        
         
         assay.features = new ExperimentCharacteristic();
         
@@ -454,8 +458,13 @@ public class ExperimentHandler extends BaseExperimentHandler {
     protected void mergeRequest(ExperimentalAssayView req, ExperimentalAssay dest) {
         
         if (req.contributionDesc != null) dest.contributionDesc = req.contributionDesc;
-        if (req.generalDesc != null) dest.generalDesc = req.generalDesc;
         if (req.experimentalDetails != null) dest.experimentalDetails = req.experimentalDetails;
+        if (req.generalDesc != null) {
+            dest.generalDesc = req.generalDesc;
+            if (req.generalDesc.executionDate != null) {
+                dest.experimentalDetails.executionDate = req.generalDesc.executionDate;
+            }
+        }
         
         dest.species = req.species;
         dest.dataCategory = req.dataCategory;
