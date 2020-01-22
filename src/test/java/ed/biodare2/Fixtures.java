@@ -35,8 +35,10 @@ public class Fixtures {
     public UserAccount anonymous;
     public UserAccount demoUser;
     public UserAccount demoUser1;
+    public UserAccount demoUser2;    
     public UserAccount demoBoss;
     public UserAccount user1;
+    public UserAccount user2;
     public UserAccount admin;
     
     //public List<UserAccount> toSaveAccounts = new ArrayList<>();
@@ -177,6 +179,21 @@ public class Fixtures {
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.demoUser1 = accounts.save(acc);
+        
+        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc.setLogin("demo2");
+        acc.setFirstName("Demo");
+        acc.setLastName("User2");
+        acc.setEmail("biodare52@ed.ac.uk");
+        acc.setPassword(encoder.encode("demo"));
+        acc.setSupervisor(fixtures.demoBoss);
+        acc.setInstitution("University of Edinburgh");
+        acc.addGroup(fixtures.demoGroup); 
+        acc.setSubscription(makeSubsription());
+        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setRdmAspect(makeRDMAspect());
+        
+        fixtures.demoUser2 = accounts.save(acc);        
 
         acc = UserAccount.testInstance(ids.incrementAndGet());
         acc.setLogin("user1");
@@ -192,6 +209,21 @@ public class Fixtures {
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.user1 = accounts.save(acc); 
+        
+        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc.setLogin("user2");
+        acc.setPassword(encoder.encode("user2"));
+        acc.setFirstName("Second");
+        acc.setLastName("User");
+        acc.setEmail("biodare62@ed.ac.uk");
+        acc.setSupervisor(acc);
+        acc.setInstitution("University of Edinburgh");
+        acc.addGroup(fixtures.otherGroup);
+        acc.setSubscription(makeSubsription());
+        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setRdmAspect(makeRDMAspect());
+        
+        fixtures.user2 = accounts.save(acc);         
         
         acc = UserAccount.testInstance(ids.incrementAndGet());
         acc.setLogin("anonymous_1");

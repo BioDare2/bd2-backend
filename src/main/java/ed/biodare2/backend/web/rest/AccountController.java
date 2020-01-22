@@ -216,12 +216,41 @@ public class AccountController extends BioDare2Rest {
             log.info("Updated account: "+account.getLogin());
             return account2UserMap(account);
         } catch (UsersHandler.AccountHandlingException e) {
+            log.error("Cannot update account {} {}",userDetails.get("login"),e.getMessage(),e);
             throw new HandlingException(e.getMessage(),e);
         } catch(WebMappedException e) {
             log.error("Cannot update account {} {}",userDetails.get("login"),e.getMessage(),e);
             throw e;
         } catch (Exception e) {
             log.error("Cannot update account {} {}",userDetails.get("login"),e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        }         
+    } 
+
+    
+    @RequestMapping(value="password", method = RequestMethod.POST)
+    public Map<String,Object> updatePassword(@NotNull @RequestBody Map<String,String> userDetails,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("update password: {}; {}",userDetails.get("login"),user);
+        
+        if (user.isAnonymous())
+            throw new LogginRequiredException("Loggin to edit account");
+        
+        if (!user.getLogin().equals(userDetails.get("login")))
+            throw new InsufficientRightsException("You can only edit your own account");
+        
+        try {
+            BioDare2User account = usersHandler.updatePassword(userDetails,user);
+            user.setDirtySession(true);
+            tracker.userUpdate(account,user);
+            log.info("Updated password: "+account.getLogin());
+            return account2UserMap(account);
+        } catch (UsersHandler.AccountHandlingException e) {
+            throw new HandlingException(e.getMessage(),e);
+        } catch(WebMappedException e) {
+            log.error("Cannot update password {} {}",userDetails.get("login"),e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot update password {} {}",userDetails.get("login"),e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         }         
     } 

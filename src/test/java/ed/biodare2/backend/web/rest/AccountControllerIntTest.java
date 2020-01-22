@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -31,6 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 /**
  *
  * @author Zielu
@@ -280,11 +282,11 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
         
         when(captcha.verify(Matchers.anyString())).thenReturn(true);
                 
+        String orgPass = currentUser.getPassword();        
         
         Map<String,String> details = new HashMap<>();
         details.put("login",currentUser.getLogin());
         details.put("email","update@email.notacademic.pl");
-        details.put("password", "NewPassword");
         details.put("firstName","UP"+currentUser.getFirstName());
         details.put("lastName","UP"+currentUser.getLastName());
         details.put("institution","UP"+currentUser.getInstitution());        
@@ -301,6 +303,7 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
         assertNotNull(resp);
@@ -315,6 +318,54 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
         assertFalse(res.containsKey("password"));
         
         assertEquals("update@email.notacademic.pl",users.findByLogin(currentUser.getLogin()).get().getEmail());
+        assertEquals(orgPass,users.findByLogin(currentUser.getLogin()).get().getPassword());        
+    }   
+
+    @Test
+    // @Ignore
+    public void updatePasswordUpdatesTheAccount() throws Exception {
+        
+        currentUser = fixtures.user2;
+        mockAuthentication = authenticate(currentUser);
+        
+        when(captcha.verify(Matchers.anyString())).thenReturn(true);
+                
+        String orgEmail = currentUser.getEmail();
+        String orgFName = currentUser.getFirstName();
+        String orgPass = currentUser.getPassword();
+        
+        Map<String,String> details = new HashMap<>();
+        details.put("login",currentUser.getLogin());
+        details.put("password", "NewPassword");
+        details.put("currentPassword","user2");
+        
+        String orgJSON = mapper.writeValueAsString(details);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/password")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);        
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        // System.out.println("RESP: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        Map<String,String> res = mapper.readValue(resp.getResponse().getContentAsString(), MAP_TYPE);
+        assertNotNull(res);
+        
+        assertEquals(currentUser.getLogin(),res.get("login"));
+        assertEquals(orgEmail,res.get("email"));        
+        assertEquals(orgFName,res.get("firstName"));        
+        assertFalse(res.containsKey("password"));
+        
+        assertNotEquals(orgPass,users.findByLogin(currentUser.getLogin()).get().getPassword());
         
     }   
     

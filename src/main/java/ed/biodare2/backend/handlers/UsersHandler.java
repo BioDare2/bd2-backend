@@ -150,15 +150,45 @@ public class UsersHandler {
         if (!passwordEncoder.matches(userDetails.getOrDefault("currentPassword",""),user.getPassword()))
              throw new AccountHandlingException("Wrong current password");
         
-        String newPassword = details.getPassword();
-        if (details.getPassword().isEmpty()) details.setPassword(user.getPassword());
+        // String newPassword = details.getPassword();
+        // if (details.getPassword().isEmpty()) details.setPassword(user.getPassword());
+        // details.setPassword(newPassword);
+        
+        // we do it like that so it can pass the user validation with no password set
+        details.setPassword(user.getPassword());
+        
         details.setInitialEmail(user.getInitialEmail());
         
         validateUser(details);
         
-        details.setPassword(newPassword);
         
         updateDetails(details,user);
+        
+        return users.save(user);
+        
+    }
+
+    @Transactional
+    public BioDare2User updatePassword(Map<String, String> userDetails, BioDare2User invoker) throws AccountHandlingException {
+
+
+        String login = userDetails.getOrDefault("login", "");
+        if (!login.equals(invoker.getLogin()))
+            throw new AccountHandlingException("User can edit only its own account");
+        
+        UserAccount user = users.findByLogin(login).orElseThrow(() -> new NotFoundException("User "+login+" not found"));
+
+        if (!passwordEncoder.matches(userDetails.getOrDefault("currentPassword",""),user.getPassword()))
+             throw new AccountHandlingException("Wrong current password");
+        
+        String newPassword = userDetails.getOrDefault("password","");
+        
+        if (newPassword.trim().isEmpty())
+            throw new AccountHandlingException("Empty new password");
+        
+        checkPassword(newPassword);
+        
+        changePassword(newPassword,user);
         
         return users.save(user);
         
@@ -183,17 +213,20 @@ public class UsersHandler {
         user.setLastName(details.getLastName());
         user.setInstitution(details.getInstitution());
         
-        if (!details.getPassword().isEmpty()) {
+        /*if (!details.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(details.getPassword()));
-        }
+        }*/
     }
   
-     
+    protected void changePassword(String newPassword, UserAccount user) {
+        
+        user.setPassword(passwordEncoder.encode(newPassword));
+    }     
     
     protected void validateNewUser(UserAccount user) throws AccountHandlingException {
         
         validateUser(user);
-        
+        checkPassword(user.getPassword());
         checkAcademicEmail(user.getInitialEmail());
         checkUniqueLogin(user.getLogin());
         checkUniqueEmail(user.getEmail(),user.getLogin());
@@ -213,7 +246,7 @@ public class UsersHandler {
         if (!login_pattern.matcher(user.getLogin()).matches())
             throw new AccountHandlingException("Non alphanumeric login: "+user.getLogin());
         
-        checkPassword(user.getPassword());
+        // checkPassword(user.getPassword());
         
     }
 

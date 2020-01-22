@@ -190,7 +190,7 @@ public class UsersHandlerTest {
     }
     
     @Test
-    public void updateUpdatesTheUser() throws UsersHandler.AccountHandlingException {
+    public void updateUpdatesTheUserIgnoringPassword() throws UsersHandler.AccountHandlingException {
         
         BioDare2User user = fixtures.demoUser1;
         String currentPassword = "demo";
@@ -216,9 +216,78 @@ public class UsersHandlerTest {
         assertEquals(details.get("firstName"),up.getFirstName());
         assertEquals(details.get("lastName"),up.getLastName());
         assertEquals(details.get("institution"),up.getInstitution());
+        assertTrue(passwordEncoder.matches(currentPassword,up.getPassword()));
+        
+    } 
+
+    @Test
+    public void updateUpdatesTheUser() throws UsersHandler.AccountHandlingException {
+        
+        BioDare2User user = fixtures.demoUser1;
+        String currentPassword = "demo";
+        assertTrue(passwordEncoder.matches(currentPassword,user.getPassword()));
+        
+        Map<String,String> details = new HashMap<>();
+        details.put("login",user.getLogin());
+        details.put("email","updated@non.academic.pl");
+        details.put("firstName","UP"+user.getFirstName());
+        details.put("lastName","UP"+user.getLastName());
+        details.put("institution","UP"+user.getInstitution()); 
+        details.put("currentPassword",currentPassword);
+        
+        assertTrue(users.findByLogin(user.getLogin()).isPresent());
+        
+        BioDare2User res = handler.update(details,user);
+        assertNotNull(res);
+        assertEquals(res.getLogin(),user.getLogin());
+        
+        BioDare2User up = users.findByLogin(user.getLogin()).get();
+        assertEquals(details.get("email"),up.getEmail());
+        assertEquals(details.get("firstName"),up.getFirstName());
+        assertEquals(details.get("lastName"),up.getLastName());
+        assertEquals(details.get("institution"),up.getInstitution());
+        assertTrue(passwordEncoder.matches(currentPassword,up.getPassword()));
+        
+    } 
+    
+    @Test
+    public void updatePasswordChangesOnlyPassword() throws UsersHandler.AccountHandlingException {
+        
+        BioDare2User user = fixtures.demoUser2;
+        String currentPassword = "demo";
+        assertTrue(passwordEncoder.matches(currentPassword,user.getPassword()));
+        assertTrue(users.findByLogin(user.getLogin()).isPresent());
+        assertTrue(passwordEncoder.matches(currentPassword,users.findByLogin(user.getLogin()).get().getPassword()));
+        
+        String orgEmail = user.getEmail();
+        String changedEmail = "updated@non.academic.pl";
+        assertNotEquals(orgEmail, changedEmail);
+        
+        Map<String,String> details = new HashMap<>();
+        details.put("login",user.getLogin());
+        details.put("email",changedEmail);
+        details.put("password", "changed12");
+        details.put("firstName","UP"+user.getFirstName());
+        details.put("lastName","UP"+user.getLastName());
+        details.put("institution","UP"+user.getInstitution()); 
+        details.put("currentPassword",currentPassword);
+        
+        
+        
+        BioDare2User res = handler.updatePassword(details,user);
+        assertNotNull(res);
+        assertEquals(res.getLogin(),user.getLogin());
+        
+        BioDare2User up = users.findByLogin(user.getLogin()).get();
+        assertEquals(user.getEmail(),up.getEmail());
+        assertEquals(orgEmail,up.getEmail());
+        assertEquals(user.getFirstName(),up.getFirstName());
+        assertEquals(user.getLastName(),up.getLastName());
+        assertEquals(user.getInstitution(),up.getInstitution());
         assertTrue(passwordEncoder.matches("changed12",up.getPassword()));
         
     } 
+    
     
     @Test
     public void updateThrowsExceptionOnWrongPassword() throws UsersHandler.AccountHandlingException {
@@ -308,20 +377,15 @@ public class UsersHandlerTest {
     }
     
     @Test
-    public void updateDetailsSetsEncodedPasswordIfPresent() {
+    public void changePasswordChanges() {
         UserAccount user = Fixtures.build().demoUser;
         String old = user.getPassword();
         
-        UserAccount details = new UserAccount();
-        details.setPassword("xxx123");
-        
-        handler.updateDetails(details, user);
+        handler.changePassword("xxx123", user);
         
         assertNotSame(old,user.getPassword());
         
         assertTrue(passwordEncoder.matches("xxx123", user.getPassword()));
-        //assertSame(passwordEncoder.encode(details.getPassword()),passwordEncoder.encode(details.getPassword()));
-        //assertSame(passwordEncoder.encode(details.getPassword()),user.getPassword());
     }    
     
     @Test
@@ -552,7 +616,7 @@ public class UsersHandlerTest {
     }      
     
     @Test
-    public void validatesThrowsExceptionOnWeakPassword() throws Exception {
+    public void validatesNewThrowsExceptionOnWeakPassword() throws Exception {
         
         UserAccount user = new UserAccount();
         user.setLogin("blablabla");
@@ -562,18 +626,20 @@ public class UsersHandlerTest {
         user.setPassword("Difficult.12");
         user.setInstitution("Inst");
         
-        handler.validateUser(user);
+        handler.validateNewUser(user);
         
         List<String> wrong = Arrays.asList("short","nocapitalletter","NOSMALLLETTERS","12345678910");
         for (String pass :wrong) {
             try {
                 user.setPassword(pass);
-                handler.validateUser(user);
+                handler.validateNewUser(user);
                 fail("Exception expected");
             } catch (UsersHandler.AccountHandlingException e) {
                 //System.out.println("Validation: "+e.getMessage());
             }
         }
+        
+        
         
     }    
     
