@@ -134,7 +134,74 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(exps);
         assertFalse(exps.isEmpty());
         final long id = org.getId();
-        assertTrue(exps.stream().anyMatch( s -> s.id == id));    }    
+        assertTrue(exps.stream().anyMatch( s -> s.id == id));    
+    }    
+    
+    
+    @Test
+    public void getExperimentsAppliesPagination() throws Exception {
+    
+        AssayPack pack = insertPublicExperiment();
+        AssayPack pack2 = insertPublicExperiment();
+        ExperimentalAssay org = pack.getAssay();
+        
+        UserAccount user = fixtures.demoUser;
+
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
+                .param("onlyOwned", "false")
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("Exps JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        //List<ExperimentSummary> exps = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<List<ExperimentSummary>>() { });
+        ListWrapper<ExperimentSummary> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        assertNotNull(wrapper);
+        List<ExperimentSummary> exps = wrapper.data;
+        assertNotNull(exps);
+        assertFalse(exps.isEmpty());
+        assertEquals(25, wrapper.currentPage.pageSize);
+        final long id = org.getId();
+        assertTrue(exps.stream().anyMatch( s -> s.id == id));    
+        assertTrue(exps.stream().anyMatch( s -> s.id == pack2.getId())); 
+                
+        int total = wrapper.currentPage.length;
+        
+        // System.out.println( id +" "+pack2.getId());
+        // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
+        
+        builder = MockMvcRequestBuilders.get("/api/experiments")
+                .param("onlyOwned", "false")
+                .param("pageIndex","1")
+                .param("pageSize", ""+(total-1))
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user));
+
+        resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn(); 
+        
+        wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        assertNotNull(wrapper);
+        exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(1, exps.size());
+        assertEquals(1, wrapper.currentPage.pageIndex);
+        
+        // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
+
+        // assertTrue(exps.stream().anyMatch( s -> s.id == id || s.id == pack2.getId()));    
+        
+    }    
     
     @Test
     public void draftCreatesNewExperimentWithCurrentUserAsAuthor() throws Exception {

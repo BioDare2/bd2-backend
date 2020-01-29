@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import java.util.Objects;
 
 /**

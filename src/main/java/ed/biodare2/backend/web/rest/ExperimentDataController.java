@@ -7,7 +7,7 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
-import ed.biodare2.backend.features.tsdata.tableview.Page;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;

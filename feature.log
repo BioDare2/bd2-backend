@@ -1,4 +1,5 @@
-            ExperimentSummary with authors and exectution date
+            Experiments pagination
+            ExperimentSummary in lists with authors and exectution date
 2.4.4.251
             Password change as separate request
             GeneralDescView with execution date

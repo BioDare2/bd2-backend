@@ -16,7 +16,7 @@ import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
-import ed.biodare2.backend.features.tsdata.tableview.Page;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetType;
 import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;

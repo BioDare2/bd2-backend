@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.repo.ui_dom.tsdata;
 
-import ed.biodare2.backend.features.tsdata.tableview.Page;
+
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import java.util.ArrayList;
 import java.util.List;
 

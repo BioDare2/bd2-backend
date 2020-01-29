@@ -18,7 +18,7 @@ import ed.biodare2.backend.repo.dao.FileAssetRep;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
-import ed.biodare2.backend.features.tsdata.tableview.Page;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;

@@ -14,6 +14,7 @@ import ed.biodare2.backend.security.PermissionsResolver;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
 import java.util.List;
 import java.util.Map;
@@ -51,21 +52,28 @@ public class ExperimentController extends BioDare2Rest {
     
     @RequestMapping(path="experiments",method = RequestMethod.GET)
     @Transactional    
-    public ListWrapper<ExperimentSummary> getExperiments(@RequestParam(name = "onlyOwned",defaultValue = "true") boolean onlyOwned, @NotNull @AuthenticationPrincipal BioDare2User user) {
+    public ListWrapper<ExperimentSummary> getExperiments(
+            @RequestParam(name = "onlyOwned",defaultValue = "true") boolean onlyOwned, 
+            @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
+            @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
+            @NotNull @AuthenticationPrincipal BioDare2User user) {
         
         log.debug("get experiments, owned:{}; {}",onlyOwned,user);
 
         try {
           
-            try (Stream<ExperimentalAssay> exps = handler.listExperiments(user, onlyOwned)) {
+            pageSize = Math.min(pageSize, 1000);
+            Page page = new Page(pageIndex, pageSize);            
+            try (Stream<ExperimentalAssay> exps = handler.listExperiments(user, onlyOwned, page)) {
                 
                 List<ExperimentSummary> sums = exps
                                 .map( exp -> new ExperimentSummary(exp))
                                 .collect(Collectors.toList());
 
+                page.length = (int)handler.countExperiments(user, onlyOwned);
                 tracker.experimentList(user);
         
-                return new ListWrapper(sums);
+                return new ListWrapper(sums, page);
                 
             }
         } catch(WebMappedException e) {

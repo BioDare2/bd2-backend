@@ -40,6 +40,7 @@ import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentGeneralDescView;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.web.rest.HandlingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -238,7 +239,24 @@ public class ExperimentHandler extends BaseExperimentHandler {
     
     
     
-    
+    public long countExperiments(BioDare2User user, boolean onlyOwned) {
+        
+        try (LongStream ids = searchVisible(user, onlyOwned)) {
+            return ids.count();
+        }
+    }
+
+    public Stream<ExperimentalAssay> listExperiments(BioDare2User user, boolean onlyOwned, Page page) {
+        
+        LongStream ids = searchVisible(user, onlyOwned);
+        
+        return experiments.findByIds(ids)
+            .map(AssayPack::getAssay)
+            .sorted(Comparator.comparing((ExperimentalAssay a) -> a.provenance.modified).reversed())
+            .skip(page.first())
+            .limit(page.pageSize)
+        ;        
+    }    
 
         
         
@@ -508,6 +526,8 @@ public class ExperimentHandler extends BaseExperimentHandler {
         info.licence = licence;
         return info;
     }
+
+
 
 
 

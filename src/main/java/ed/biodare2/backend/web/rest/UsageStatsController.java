@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import ed.biodare2.backend.features.tsdata.tableview.Page;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;

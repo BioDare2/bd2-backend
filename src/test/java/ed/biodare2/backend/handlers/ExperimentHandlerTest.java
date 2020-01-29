@@ -37,6 +37,7 @@ import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.security.BioDare2User;
 import java.io.File;
 import java.io.IOException;
@@ -256,6 +257,42 @@ public class ExperimentHandlerTest {
         
     }
     
+    @Test
+    public void listExperimentsSortsAndAppliesPagination() {
+        
+        AssayPack p1 = MockReps.testAssayPack();
+        AssayPack p2 = MockReps.testAssayPack();
+        AssayPack p3 = MockReps.testAssayPack();
+        
+        p1.getAssay().provenance.modified = LocalDateTime.now();
+        p2.getAssay().provenance.modified = LocalDateTime.now().minus(2, ChronoUnit.DAYS);
+        p3.getAssay().provenance.modified = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
+        
+        when(searcher.findByOwner(any())).thenReturn(Arrays.asList(p1.getId(),p2.getId(),p3.getId()).stream().mapToLong( l -> l.longValue()));
+        when(experiments.findByIds((LongStream)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
+        
+        Page page = new Page(0,2);
+        List<ExperimentalAssay> exp = Arrays.asList(p1.getAssay(),p3.getAssay());
+        List<ExperimentalAssay> res = handler.listExperiments(user,true,page).collect(Collectors.toList());
+        assertEquals(exp,res);
+
+        when(searcher.findByOwner(any())).thenReturn(Arrays.asList(p1.getId(),p2.getId(),p3.getId()).stream().mapToLong( l -> l.longValue()));
+        when(experiments.findByIds((LongStream)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
+        
+        page = new Page(1,1);
+        exp = Arrays.asList(p3.getAssay());
+        res = handler.listExperiments(user,true,page).collect(Collectors.toList());
+        assertEquals(exp,res);
+        
+        when(searcher.findByOwner(any())).thenReturn(Arrays.asList(p1.getId(),p2.getId(),p3.getId()).stream().mapToLong( l -> l.longValue()));
+        when(experiments.findByIds((LongStream)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
+        
+        page = new Page(0,10);
+        exp = Arrays.asList(p1.getAssay(),p3.getAssay(),p2.getAssay());
+        res = handler.listExperiments(user,true,page).collect(Collectors.toList());
+        assertEquals(exp,res);
+    }    
+    
     
     @Test
     public void searchVisibleMergesPublicWithOwned() {
@@ -281,6 +318,25 @@ public class ExperimentHandlerTest {
         assertArrayEquals(exp, res);
     }    
     
+    @Test
+    public void countExperimentsCountsIdFromSearchStream() {
+        
+        
+        List<Long> owned = Arrays.asList(1L, 3L, 5L);
+        List<Long> open = Arrays.asList(2L, 3L);
+        
+        
+        when(searcher.findByOwner(any())).thenReturn(owned.stream().mapToLong(l -> l));
+        when(searcher.findPublic()).thenReturn(open.stream().mapToLong(l -> l));
+
+        long res = handler.countExperiments(user, true);
+        assertEquals(3, res);
+        
+        when(searcher.findByOwner(any())).thenReturn(owned.stream().mapToLong(l -> l));
+        when(searcher.findPublic()).thenReturn(open.stream().mapToLong(l -> l));
+        res = handler.countExperiments(user, false);
+        assertEquals(4, res);
+    }     
     
     @Test
     public void getExperimentGetsExperimentFromRep() {

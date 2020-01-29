@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.features.tsdata.tableview;
+package ed.biodare2.backend.repo.ui_dom.shared;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -15,6 +15,7 @@ public class Page {
     
     public int pageIndex;
     public int pageSize;
+    public int length;
     
     public Page() {};
 
@@ -25,6 +26,10 @@ public class Page {
         this.pageSize = pageSize;
     }
     
+    public Page(int pageIndex, int pageSize, int length) {
+        this(pageIndex, pageSize);
+        this.length = length;
+    }    
     
     
     @JsonIgnore
@@ -58,6 +63,9 @@ public class Page {
         if (this.pageSize != other.pageSize) {
             return false;
         }
+        if (this.length != other.length) {
+            return false;
+        }        
         return true;
     }
     
