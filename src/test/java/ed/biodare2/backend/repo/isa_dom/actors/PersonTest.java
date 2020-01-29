@@ -5,10 +5,11 @@
  */
 package ed.biodare2.backend.repo.isa_dom.actors;
 
-import ed.biodare2.backend.repo.isa_dom.actors.Person;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import java.io.IOException;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,5 +59,13 @@ public class PersonTest {
         assertEquals(org.lastName ,cpy.lastName);
         assertEquals(org,cpy);
         
+    }    
+    
+    @Test
+    public void joinsNames() {
+        List<Person> people = List.of( DomRepoTestBuilder.makePerson("T"),DomRepoTestBuilder.makePerson("S"));
+        
+        String res = Person.joinNames(people);
+        assertEquals("FirstT LastT, FirstS LastS", res);
     }    
 }

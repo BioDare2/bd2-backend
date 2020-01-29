@@ -5,11 +5,11 @@
  */
 package ed.biodare2.backend.repo.ui_dom.exp;
 
-import ed.biodare2.backend.repo.ui_dom.exp.ExperimentSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
+import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import java.io.IOException;
 import org.junit.After;
 import org.junit.Test;
@@ -55,8 +55,16 @@ public class ExperimentSummaryTest {
         assertEquals(org.generalDesc,cpy.generalDesc);
         assertEquals(org.features,cpy.features);
         assertEquals(org.provenance,cpy.provenance);
+        assertEquals(org.authors,cpy.authors);
         
-        
+    }
+    
+    @Test
+    public void hasAuthorsAsString()  {
+        ExperimentalAssay assay = DomRepoTestBuilder.makeExperimentalAssay();
+        ExperimentSummary org = new ExperimentSummary(assay);
+        assertNotNull(org.authors);
+        assertTrue(org.authors.contains(assay.contributionDesc.authors.get(0).getName()));
     }
     
 }

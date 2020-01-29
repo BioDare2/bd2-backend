@@ -7,7 +7,9 @@ package ed.biodare2.backend.repo.isa_dom.actors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 
@@ -73,7 +75,10 @@ public class Person implements Serializable {
         return true;
     }
 
-
+    public static String joinNames(List<Person> persons) {
+        
+        return persons.stream().map( p -> p.getName()).collect(Collectors.joining(", "));
+    }
 
 
 
