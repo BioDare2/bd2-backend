@@ -5,8 +5,6 @@
  */
 package ed.biodare2.backend.features.search.lucene;
 
-import ed.biodare2.EnvironmentVariables;
-import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.INDEX_DIR;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.annotation.PreDestroy;
@@ -30,7 +28,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class LuceneWriter implements AutoCloseable {
 
-    final static String INDEX_DIR = "index";
     final Logger log = LoggerFactory.getLogger(this.getClass());
     
     final IndexWriter indexWriter;
@@ -38,7 +35,7 @@ public class LuceneWriter implements AutoCloseable {
     @Autowired
     public LuceneWriter(@Value("luceneIndexDir") Path indexDir) throws IOException {
         
-        log.info("Lucene search uses index at: {}", indexDir);        
+        log.info("Lucene search writes uses index at: {}", indexDir);        
      
         IndexWriterConfig config = configWriter(configAnalyser());
         
@@ -55,6 +52,8 @@ public class LuceneWriter implements AutoCloseable {
     protected LuceneWriter(IndexWriter indexWriter) {
         this.indexWriter = indexWriter;
     }
+    
+
     
     public long writeDocument(Term id, Document doc) throws IOException {
         indexWriter.updateDocument(id, doc);

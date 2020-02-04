@@ -31,12 +31,14 @@ public class ExperimentsIndexerTest {
     
     LuceneWriter writer;
     ExperimentsIndexer instance;
+    LuceneSearcher searcher;
     
     @Before
     public void setUp() {
         
         writer = mock(LuceneWriter.class);
-        instance = new ExperimentsIndexer(writer);
+        searcher = mock(LuceneSearcher.class);
+        instance = new ExperimentsIndexer(writer, searcher);
     }
 
     @Test
