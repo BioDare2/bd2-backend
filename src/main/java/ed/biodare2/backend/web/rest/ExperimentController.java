@@ -63,19 +63,20 @@ public class ExperimentController extends BioDare2Rest {
         try {
           
             pageSize = Math.min(pageSize, 1000);
-            Page page = new Page(pageIndex, pageSize);            
-            try (Stream<ExperimentalAssay> exps = handler.listExperiments(user, onlyOwned, page)) {
-                
-                List<ExperimentSummary> sums = exps
-                                .map( exp -> new ExperimentSummary(exp))
-                                .collect(Collectors.toList());
+            Page page = new Page(pageIndex, pageSize); 
+            
+            ListWrapper<ExperimentalAssay> exps = handler.listExperiments(user, onlyOwned, page);
+            page = exps.currentPage;
+            
+            List<ExperimentSummary> sums = exps.data.stream()
+                            .map( exp -> new ExperimentSummary(exp))
+                            .collect(Collectors.toList());
 
-                page.length = (int)handler.countExperiments(user, onlyOwned);
-                tracker.experimentList(user);
+            tracker.experimentList(user);
         
-                return new ListWrapper(sums, page);
+            return new ListWrapper(sums, page);
                 
-            }
+            
         } catch(WebMappedException e) {
             log.error("Cannot retrieve experiments {}",e.getMessage(),e);
             throw e;

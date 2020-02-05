@@ -42,9 +42,11 @@ import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentGeneralDescView;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.web.rest.HandlingException;
+import ed.biodare2.backend.web.rest.ListWrapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
@@ -238,14 +240,15 @@ public class ExperimentHandler extends BaseExperimentHandler {
     }*/
     
     
-    
+    /*
     public long countExperiments(BioDare2User user, boolean onlyOwned) {
         
         try (LongStream ids = searchVisible(user, onlyOwned)) {
             return ids.count();
         }
-    }
+    } */
 
+    /*
     public Stream<ExperimentalAssay> listExperiments(BioDare2User user, boolean onlyOwned, Page page) {
         
         LongStream ids = searchVisible(user, onlyOwned);
@@ -256,31 +259,54 @@ public class ExperimentHandler extends BaseExperimentHandler {
             .skip(page.first())
             .limit(page.pageSize)
         ;        
-    }    
+    } */   
 
+    public ListWrapper<ExperimentalAssay> listExperiments(BioDare2User user, boolean onlyOwned, Page page) {
         
+        ListWrapper<Long> ids = searchVisible(user, onlyOwned, page.pageIndex, page.pageSize);
+        
+        Page currentPage = ids.currentPage;
+        
+        try ( Stream<AssayPack> packs = experiments.findByIds(ids.data)) {
+            
+            List<ExperimentalAssay> exps = packs
+                .map(AssayPack::getAssay)
+                .collect(Collectors.toList());
+        
+            return new ListWrapper<>(exps, currentPage);            
+        }
+
+    }         
         
         
 
-    
+    /*
     public Stream<ExperimentalAssay> listExperiments(BioDare2User user,boolean onlyOwned) {
         
 
-        LongStream ids = searchVisible(user, onlyOwned);
+        ListWrapper<Long> ids = searchVisible(user, onlyOwned);
         
         return experiments.findByIds(ids)
                 .map(AssayPack::getAssay)
                 .sorted(Comparator.comparing((ExperimentalAssay a) -> a.provenance.modified).reversed())
                 ;
                 
-    } 
-    
+    }*/
+
+    /*
     protected LongStream searchVisible(BioDare2User user,boolean onlyOwned) {
         
         LongStream ids = searcher.findByOwner(user);
         if (!onlyOwned) ids = LongStream.concat(ids, searcher.findPublic()).distinct();
         return ids;
+    }*/
+    
+    protected ListWrapper<Long> searchVisible(BioDare2User user, boolean onlyOwned,
+            int pageIndex, int pageSize) {
+        
+        return searcher.findAllVisible(user, !onlyOwned, pageIndex, pageSize);
     }
+    
     
     public Optional<AssayPack> getExperiment(long expId) {
         

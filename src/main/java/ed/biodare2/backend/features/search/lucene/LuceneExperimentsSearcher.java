@@ -51,7 +51,8 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
         log.info("Searcher closed");        
     }
     
-    public ListWrapper<Long> findAll(ExperimentVisibility visibility, SortOption sorting, boolean asc, int pageIndex, int pageSize) {
+    public ListWrapper<Long> findAllVisible(ExperimentVisibility visibility, 
+            SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         Query query = new MatchAllDocsQuery();        
         return find(query, visibility, sorting, asc, pageIndex, pageSize);

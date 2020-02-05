@@ -103,7 +103,7 @@ public class RDMSocialStatsController extends BioDare2Rest {
         if (userLogin.startsWith("demo") || userLogin.startsWith("test") || userLogin.startsWith("biodare"))
             return Collections.emptyList();
         
-        if (searcher.findByOwner(expPack.getDbSystemInfo().getAcl().getOwner()).count() < 5) {
+        if (searcher.findAllVisible(expPack.getDbSystemInfo().getAcl().getOwner(),false,0,10).currentPage.length < 5) {
             return Collections.emptyList();
         }
         

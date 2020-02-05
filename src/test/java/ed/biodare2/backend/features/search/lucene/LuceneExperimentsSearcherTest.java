@@ -378,7 +378,7 @@ public class LuceneExperimentsSearcherTest {
         int pageIndex = 0;
         int pageSize = 10;
         
-        ListWrapper<Long> ids = instance.findAll(visibility, sorting, asc, pageIndex, pageSize);
+        ListWrapper<Long> ids = instance.findAllVisible(visibility, sorting, asc, pageIndex, pageSize);
         // List<Long> exp = List.of(1L, 2L, 13L, 25L, 14L);
         List<Long> exp = List.of(1L, 2L, 13L);
         
@@ -387,7 +387,7 @@ public class LuceneExperimentsSearcherTest {
         visibility.showPublic = true;
         visibility.user = Optional.of("demo2");
         exp = List.of(2L, 25L, 14L);
-        ids = instance.findAll(visibility, sorting, asc, pageIndex, pageSize);
+        ids = instance.findAllVisible(visibility, sorting, asc, pageIndex, pageSize);
         assertEquals(exp, ids.data);
         
     }    
