@@ -27,11 +27,13 @@ import org.apache.lucene.search.TopDocs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author tzielins
  */
+@Service
 public class LuceneExperimentsSearcher implements AutoCloseable {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());

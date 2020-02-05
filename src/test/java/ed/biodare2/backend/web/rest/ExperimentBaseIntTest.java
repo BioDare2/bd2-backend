@@ -15,6 +15,7 @@ import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
+import ed.biodare2.backend.features.search.lucene.LuceneWriter;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.util.io.FileUtil;
 import java.io.IOException;
@@ -61,7 +62,10 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     static AtomicLong expIds = new AtomicLong(150);
     
     @Autowired
-    ExperimentsStorage experimentalStorage;    
+    ExperimentsStorage experimentalStorage; 
+    
+    @Autowired
+    LuceneWriter luceneWriter;
     
     @Before
     public void cleanTestSpace() throws IOException {
@@ -83,6 +87,8 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
         } catch (IOException e) {
             System.err.println("Could not clean exp dir"+e.getMessage());
         }
+        
+        luceneWriter.deleteAll();
     }
     
     @Transactional

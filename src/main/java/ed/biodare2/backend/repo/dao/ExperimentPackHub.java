@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.repo.dao;
 
+import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.dao.AssayPackAssembler.AssayPackImpl;
@@ -35,11 +36,14 @@ public class ExperimentPackHub {
     
     final AssayPackAssembler assembler;
     final SystemCopier copier;
+    final ExperimentIndexer indexer;
     
     @Autowired
-    ExperimentPackHub(AssayPackAssembler assembler,SystemCopier copier) {
+    ExperimentPackHub(AssayPackAssembler assembler,SystemCopier copier,
+            ExperimentIndexer indexer) {
         this.assembler = assembler;
         this.copier = copier;
+        this.indexer = indexer;
     }
     
     public Optional<AssayPack> findOneForWriting(long expId) {
@@ -82,8 +86,9 @@ public class ExperimentPackHub {
     @Transactional
     public AssayPack save(AssayPack pack) {
         
-        return assembler.save(pack);
-        
+        pack = assembler.save(pack);
+        indexer.indexExperiment(pack);
+        return pack;        
     }
     
     public AssayPack newPack(ExperimentalAssay experiment,SystemInfo sysInfo,EntityACL acl) {

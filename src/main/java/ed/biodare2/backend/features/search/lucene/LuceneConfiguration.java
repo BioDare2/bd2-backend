@@ -14,12 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author tzielins
  */
 @Configuration
+// @Component
 public class LuceneConfiguration {
     
     final static String INDEX_DIR = "index";
@@ -28,6 +30,7 @@ public class LuceneConfiguration {
     @Bean("luceneIndexDir")
     public Path luceneIndexDir(EnvironmentVariables environment) {
         Path indexDir = environment.storageDir.resolve(INDEX_DIR);
+        log.info("LuceneConfiguration indexDir: {}", indexDir);
         return indexDir;
         
     }

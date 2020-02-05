@@ -18,6 +18,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +34,9 @@ public class LuceneWriter implements AutoCloseable {
     final IndexWriter indexWriter;
 
     @Autowired
-    public LuceneWriter(@Value("luceneIndexDir") Path indexDir) throws IOException {
+    public LuceneWriter(@Qualifier("luceneIndexDir") Path indexDir) throws IOException {
         
-        log.info("Lucene search writes uses index at: {}", indexDir);        
+        log.info("Lucene search writes uses index at: {}", indexDir.toAbsolutePath());        
      
         IndexWriterConfig config = configWriter(configAnalyser());
         
@@ -62,6 +63,11 @@ public class LuceneWriter implements AutoCloseable {
         // return 1;
     }
     
+    public void deleteAll() throws IOException {
+        indexWriter.deleteAll();
+        indexWriter.commit();
+    }    
+    
     @Override
     @PreDestroy
     public void close() throws IOException {
@@ -85,6 +91,8 @@ public class LuceneWriter implements AutoCloseable {
     protected static FSDirectory configStorage(Path indexDir) throws IOException {
         return FSDirectory.open(indexDir);        
     } 
+
+
 
 
 }

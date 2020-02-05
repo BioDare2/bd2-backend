@@ -16,6 +16,7 @@ import java.util.Optional;
 import javax.annotation.PreDestroy;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SearcherFactory;
@@ -48,12 +49,15 @@ public class LuceneSearcher implements AutoCloseable {
     final SearcherManager searcherManager;
 
     @Autowired
-    public LuceneSearcher(@Value("luceneIndexDir") Path indexDir) throws IOException {
+    public LuceneSearcher( 
+            /* Only so that the directory is initalized before searcher*/ 
+            LuceneWriter writer) throws IOException {
         
-        log.info("Lucene search read uses index at: {}", indexDir);        
+        // log.info("Lucene search read uses index at: {}", indexDir);        
      
-        FSDirectory storage = configStorage(indexDir);
-        this.searcherManager = initManager(DirectoryReader.open(storage));
+        // FSDirectory storage = configStorage(indexDir);
+        // this.searcherManager = initManager(DirectoryReader.open(storage));
+        this.searcherManager = initManager(writer.indexWriter);
     }
     
     /**
@@ -97,9 +101,13 @@ public class LuceneSearcher implements AutoCloseable {
         
     }
     
+    protected static SearcherManager initManager(IndexWriter writer) throws IOException {
+        return new SearcherManager(writer, new SearcherFactory());
+    }
+    
     protected static SearcherManager initManager(DirectoryReader indexReader) throws IOException {
         return new SearcherManager(indexReader, new SearcherFactory());
-    }
+    }    
     
     public void updateIndex() throws IOException {
         searcherManager.maybeRefresh();
@@ -114,10 +122,10 @@ public class LuceneSearcher implements AutoCloseable {
     }
     
 
-    
+    /*
     protected static FSDirectory configStorage(Path indexDir) throws IOException {
         return FSDirectory.open(indexDir);        
-    } 
+    } */
 
     TopFieldDocs search(IndexSearcher searcher, Query query, Sort sort, int maxHits) throws IOException {
         TopFieldDocs hits = searcher.search(query, maxHits+1, sort);

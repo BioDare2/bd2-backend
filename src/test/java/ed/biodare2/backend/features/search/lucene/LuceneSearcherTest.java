@@ -56,7 +56,7 @@ public class LuceneSearcherTest {
         writer.indexWriter.addDocuments(docs);
         writer.indexWriter.commit();
         
-        searcher = new LuceneSearcher(DirectoryReader.open(writer.indexWriter));
+        searcher = new LuceneSearcher(writer);
     }
     
     @After
