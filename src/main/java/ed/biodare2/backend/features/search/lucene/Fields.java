@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class Fields {
     
-    public static final String EXP_ID = "ExpId";
-    public static final String EXP_ID_S = "ExpIdS";
+    public static final String ID = "Id";
+    public static final String ID_S = "IdS";
     
     public static final String NAME = "Name";
     public static final String NAME_S = "NameS";

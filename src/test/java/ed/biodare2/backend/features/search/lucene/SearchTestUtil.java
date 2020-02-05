@@ -24,7 +24,7 @@ public class SearchTestUtil {
         
         List<Document> docs = new ArrayList<>();
         
-        Document doc = ExperimentsIndexer.prepareDocument(
+        Document doc = LuceneExperimentsIndexer.prepareDocument(
                 
                 1, 
                 "Name dFirst doc clock LHY", 
@@ -43,7 +43,7 @@ public class SearchTestUtil {
         
         docs.add(doc);
         
-        doc = ExperimentsIndexer.prepareDocument(
+        doc = LuceneExperimentsIndexer.prepareDocument(
                 
                 2, 
                 "Name ASecond doc clock TOC1", 
@@ -62,7 +62,7 @@ public class SearchTestUtil {
         
         docs.add(doc);  
         
-        doc = ExperimentsIndexer.prepareDocument(
+        doc = LuceneExperimentsIndexer.prepareDocument(
                 
                 13, 
                 "Name aThird doc PRR9", 
@@ -81,7 +81,7 @@ public class SearchTestUtil {
         
         docs.add(doc);   
         
-        doc = ExperimentsIndexer.prepareDocument(
+        doc = LuceneExperimentsIndexer.prepareDocument(
                 
                 25, 
                 "Name BFith doc LHY", 
@@ -100,7 +100,7 @@ public class SearchTestUtil {
         
         docs.add(doc);         
 
-        doc = ExperimentsIndexer.prepareDocument(
+        doc = LuceneExperimentsIndexer.prepareDocument(
                 
                 14, 
                 "Name CFourth doc PRR7", 

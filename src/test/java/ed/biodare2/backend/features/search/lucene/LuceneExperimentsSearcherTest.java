@@ -7,8 +7,9 @@ package ed.biodare2.backend.features.search.lucene;
 
 import ed.biodare2.backend.features.search.ExperimentVisibility;
 import ed.biodare2.backend.features.search.SortOption;
-import static ed.biodare2.backend.features.search.lucene.Fields.EXP_ID;
+import static ed.biodare2.backend.features.search.lucene.Fields.*;
 import static ed.biodare2.backend.features.search.lucene.LuceneWriter.configStorage;
+import ed.biodare2.backend.web.rest.ListWrapper;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import org.junit.rules.TemporaryFolder;
  *
  * @author tzielins
  */
-public class ExperimentsSearcherTest {
+public class LuceneExperimentsSearcherTest {
     
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
@@ -45,9 +46,9 @@ public class ExperimentsSearcherTest {
     LuceneWriter writer;
     List<Document> docs;
     LuceneSearcher searcher;
-    ExperimentsSearcher instance;
+    LuceneExperimentsSearcher instance;
     
-    public ExperimentsSearcherTest() {
+    public LuceneExperimentsSearcherTest() {
     }
     
     @Before
@@ -75,9 +76,9 @@ public class ExperimentsSearcherTest {
         searcher = new LuceneSearcher(DirectoryReader.open(writer.indexWriter));
     }
     
-    ExperimentsSearcher makeInstance() throws IOException {
+    LuceneExperimentsSearcher makeInstance() throws IOException {
         initSearcher();
-        instance = new ExperimentsSearcher(searcher);
+        instance = new LuceneExperimentsSearcher(searcher);
         return instance;
     }
 
@@ -361,6 +362,34 @@ public class ExperimentsSearcherTest {
         } finally {
           searcher.searcherManager.release(index);
         }    
+    } 
+    
+    @Test
+    public void findAllGivesAllVisible() throws IOException {
+        
+
+        ExperimentVisibility visibility = new ExperimentVisibility();
+        visibility.showPublic = false;
+        visibility.user = Optional.of("demo1");
+        
+        SortOption sorting = SortOption.RANK;
+        boolean asc = true;        
+        
+        int pageIndex = 0;
+        int pageSize = 10;
+        
+        ListWrapper<Long> ids = instance.findAll(visibility, sorting, asc, pageIndex, pageSize);
+        // List<Long> exp = List.of(1L, 2L, 13L, 25L, 14L);
+        List<Long> exp = List.of(1L, 2L, 13L);
+        
+        assertEquals(exp, ids.data);
+        
+        visibility.showPublic = true;
+        visibility.user = Optional.of("demo2");
+        exp = List.of(2L, 25L, 14L);
+        ids = instance.findAll(visibility, sorting, asc, pageIndex, pageSize);
+        assertEquals(exp, ids.data);
+        
     }    
 
     protected List<Long> extractdIds(TopDocs hits, IndexSearcher index) throws IOException {
@@ -368,7 +397,7 @@ public class ExperimentsSearcherTest {
         List<Long> ids = new ArrayList<>(hits.scoreDocs.length);
         for (ScoreDoc hit: hits.scoreDocs) {
             Document doc = index.doc(hit.doc);
-            ids.add(doc.getField(EXP_ID).numericValue().longValue());
+            ids.add(doc.getField(ID).numericValue().longValue());
         }
         
         return ids;

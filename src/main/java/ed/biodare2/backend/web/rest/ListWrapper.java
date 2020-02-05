@@ -31,6 +31,10 @@ public class ListWrapper<T> {
         this.currentPage = currentPage;
     }
     
+    public ListWrapper(List<T> data, int pageIndex, int pageSize, int total) {
+        this(data, new Page(pageIndex, pageSize, total));
+    }    
+    
     public static Page fullPage(List<?> data) {
         return new Page(0, Math.max(data.size(),1), data.size());
     }

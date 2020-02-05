@@ -24,13 +24,13 @@ import static org.mockito.Mockito.*;
  *
  * @author tzielins
  */
-public class ExperimentsIndexerTest {
+public class LuceneExperimentsIndexerTest {
     
-    public ExperimentsIndexerTest() {
+    public LuceneExperimentsIndexerTest() {
     }
     
     LuceneWriter writer;
-    ExperimentsIndexer instance;
+    LuceneExperimentsIndexer instance;
     LuceneSearcher searcher;
     
     @Before
@@ -38,7 +38,7 @@ public class ExperimentsIndexerTest {
         
         writer = mock(LuceneWriter.class);
         searcher = mock(LuceneSearcher.class);
-        instance = new ExperimentsIndexer(writer, searcher);
+        instance = new LuceneExperimentsIndexer(writer, searcher);
     }
 
     @Test

@@ -5,7 +5,6 @@
  */
 package ed.biodare2.backend.features.search.lucene;
 
-import static ed.biodare2.backend.features.search.lucene.Fields.EXP_ID;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +19,7 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
+import static ed.biodare2.backend.features.search.lucene.Fields.ID;
 /**
  *
  * @author tzielins
@@ -61,9 +61,9 @@ public class LuceneWriterTest {
         
         try (LuceneWriter instance = new LuceneWriter(indexDir)) {
             Document doc = new Document();
-            doc.add(new StoredField(EXP_ID, 123));
+            doc.add(new StoredField(ID, 123));
             
-            Term id = new Term(EXP_ID,"123");
+            Term id = new Term(ID,"123");
             
             long resp = instance.writeDocument(id, doc);
             

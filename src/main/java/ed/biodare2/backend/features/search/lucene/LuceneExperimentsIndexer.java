@@ -40,7 +40,7 @@ import org.springframework.stereotype.Service;
  * @author tzielins
  */
 @Service
-public class ExperimentsIndexer implements AutoCloseable {
+public class LuceneExperimentsIndexer implements AutoCloseable {
     
     final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -48,7 +48,7 @@ public class ExperimentsIndexer implements AutoCloseable {
     final LuceneSearcher searcher;
     
     @Autowired
-    public ExperimentsIndexer(LuceneWriter writer, LuceneSearcher searcher) {
+    public LuceneExperimentsIndexer(LuceneWriter writer, LuceneSearcher searcher) {
         this.writer = writer;
         this.searcher = searcher;
     }
@@ -66,7 +66,7 @@ public class ExperimentsIndexer implements AutoCloseable {
         
         try {
             Document doc = prepareDocument(exp, sysInfo);
-            Term expIdTerm = new Term(EXP_ID,""+exp.getId());
+            Term expIdTerm = new Term(ID,""+exp.getId());
             long commit = writer.writeDocument(expIdTerm, doc);        
             searcher.updateIndex();
             return commit;
@@ -121,8 +121,8 @@ public class ExperimentsIndexer implements AutoCloseable {
         
         Document doc = new Document();
         
-        doc.add(new StoredField(EXP_ID, id));
-        doc.add(new NumericDocValuesField(EXP_ID_S, id));
+        doc.add(new StoredField(ID, id));
+        doc.add(new NumericDocValuesField(ID_S, id));
         
         doc.add(new TextField(NAME, name, Field.Store.NO));
         String shortName = name.length() > 50 ? name.substring(0,50) : name;

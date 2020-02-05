@@ -8,6 +8,7 @@ package ed.biodare2.backend.features.search.lucene;
 import ed.biodare2.backend.features.search.ExperimentVisibility;
 import ed.biodare2.backend.features.search.SortOption;
 import static ed.biodare2.backend.features.search.lucene.Fields.*;
+import ed.biodare2.backend.web.rest.ListWrapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import javax.annotation.PreDestroy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -30,7 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  * @author tzielins
  */
-public class ExperimentsSearcher implements AutoCloseable {
+public class LuceneExperimentsSearcher implements AutoCloseable {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
     final LuceneSearcher searcher;
@@ -38,7 +40,7 @@ public class ExperimentsSearcher implements AutoCloseable {
     final static int MAX_HITS = 10_000;
     
     @Autowired
-    public ExperimentsSearcher(LuceneSearcher searcher) {
+    public LuceneExperimentsSearcher(LuceneSearcher searcher) {
         this.searcher = searcher;
     }
     
@@ -49,9 +51,20 @@ public class ExperimentsSearcher implements AutoCloseable {
         log.info("Searcher closed");        
     }
     
-    public List<Long> findAll(ExperimentVisibility visibility, SortOption sort) {
-        return List.of();
+    public ListWrapper<Long> findAll(ExperimentVisibility visibility, SortOption sorting, boolean asc, int pageIndex, int pageSize) {
+        
+        Query query = new MatchAllDocsQuery();        
+        return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }
+    
+    protected ListWrapper<Long> find(Query query, ExperimentVisibility visibility, 
+            SortOption sorting, boolean asc, int pageIndex, int pageSize) {
+        
+        query = addVisibilityFilter(query, visibility);        
+        Optional<Sort> sort = sortCriteria(sorting, asc);
+                
+        return searcher.search(query, sort, pageIndex, pageSize);
+    }    
     
     
     protected Query visibilityFilter(ExperimentVisibility visibility) {
@@ -78,11 +91,21 @@ public class ExperimentsSearcher implements AutoCloseable {
                 .build();
     }
     
+    Query addVisibilityFilter(Query query, ExperimentVisibility visibility) {
+        
+        Query visiblityFilter = visibilityFilter(visibility);
+        
+        return new BooleanQuery.Builder()
+                .add(query, BooleanClause.Occur.MUST )
+                .add(visiblityFilter, BooleanClause.Occur.FILTER )
+                .build();
+    }    
+    
     protected Optional<Sort> sortCriteria(SortOption options, boolean asc) {
      
         switch(options) {
             case RANK: return Optional.empty();
-            case ID: return Optional.of(new Sort(new SortField(EXP_ID_S, SortField.Type.LONG, !asc)));
+            case ID: return Optional.of(new Sort(new SortField(ID_S, SortField.Type.LONG, !asc)));
             case NAME: return Optional.of(new Sort(new SortField(NAME_S, SortField.Type.STRING, !asc)));
             case FIRST_AUTHOR: return Optional.of(new Sort(new SortField(FIRST_AUTHOR_S, SortField.Type.STRING, !asc)));
             case UPLOAD_DATE: return Optional.of(new Sort(new SortField(UPLOADED_S, SortField.Type.LONG, !asc)));
@@ -91,6 +114,8 @@ public class ExperimentsSearcher implements AutoCloseable {
             default: throw new IllegalArgumentException("Unsuported sorting option "+options);
         }
     }
+
+
     
 
 }
