@@ -150,10 +150,11 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         AssayPack pack = insertExperiment();
         ExperimentalAssay exp = pack.getAssay();        
         
+        String owner = pack.getSystemInfo().security.owner;
         int series = insertData(pack);
 
         List<String> entry = usageStats.getDataEntry(pack.getId());
-        assertEquals(Arrays.asList("user",""+LocalDate.now().getYear(),""+series), entry);
+        assertEquals(Arrays.asList(owner,""+LocalDate.now().getYear(),""+series), entry);
 
     }
     

@@ -8,7 +8,7 @@ package ed.biodare2.backend.features.search.lucene;
 import ed.biodare2.backend.features.search.ExperimentVisibility;
 import ed.biodare2.backend.features.search.SortOption;
 import static ed.biodare2.backend.features.search.lucene.Fields.*;
-import static ed.biodare2.backend.features.search.lucene.LuceneWriter.configStorage;
+
 import ed.biodare2.backend.web.rest.ListWrapper;
 import java.io.IOException;
 import java.nio.file.Path;

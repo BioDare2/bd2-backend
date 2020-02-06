@@ -5,21 +5,26 @@
  */
 package ed.biodare2.backend.features.search.lucene;
 
+import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configStorage;
 import java.io.IOException;
 import java.nio.file.Path;
 import javax.annotation.PreDestroy;
+import javax.validation.constraints.NotNull;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -34,17 +39,23 @@ public class LuceneWriter implements AutoCloseable {
     final IndexWriter indexWriter;
 
     @Autowired
-    public LuceneWriter(@Qualifier("luceneIndexDir") Path indexDir) throws IOException {
+    public LuceneWriter(@NotNull Directory storage) throws IOException {
         
-        log.info("Lucene search writes uses index at: {}", indexDir.toAbsolutePath());        
-     
+        if (storage instanceof FSDirectory) {
+            Path dir = ((FSDirectory) storage).getDirectory();
+            log.info("LuceneWriter is using FS dir at {}", dir);
+        } else {
+            log.info("LuceneWriter is using {} as storage", storage.getClass().getSimpleName());
+        }
+        
         IndexWriterConfig config = configWriter(configAnalyser());
-        
-        FSDirectory storage = configStorage(indexDir);
-        
         indexWriter = new IndexWriter(storage, config);
         
     }
+    
+    public LuceneWriter(Path indexDir) throws IOException {        
+        this(configStorage(indexDir));
+    }    
     
     /**
      * Just for testing
@@ -88,9 +99,7 @@ public class LuceneWriter implements AutoCloseable {
         return indexWriterConfig;
     }
     
-    protected static FSDirectory configStorage(Path indexDir) throws IOException {
-        return FSDirectory.open(indexDir);        
-    } 
+
 
 
 
