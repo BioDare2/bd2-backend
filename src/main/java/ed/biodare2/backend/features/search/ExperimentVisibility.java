@@ -63,6 +63,12 @@ public class ExperimentVisibility implements Serializable {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "VIS:"+user.orElse("-")+(showPublic ? "+PUB" : "");
+    }
+    
     
     
 }

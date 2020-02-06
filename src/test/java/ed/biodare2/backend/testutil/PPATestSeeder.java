@@ -11,6 +11,7 @@ import ed.biodare2.backend.features.ppa.PPAUtils;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
@@ -22,6 +23,7 @@ import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.system_dom.ACLInfo;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
@@ -79,14 +81,18 @@ public class PPATestSeeder {
     //@Transactional
     public AssayPack insertExperiment(boolean isOpen) {
         ExperimentalAssay org = DomRepoTestBuilder.makeExperimentalAssay();
-        SystemInfo info = SystemDomTestBuilder.makeSystemInfo();
-        info.parentId = org.getId();
-        info.entityType = EntityType.EXP_ASSAY;
+        
         EntityACL acl = new EntityACL();
         acl.setPublic(isOpen);
         acl.setOwner(fixtures.user1);
         acl.setCreator(fixtures.user1);
         acl.setSuperOwner(fixtures.user1.getSupervisor());
+        
+        SystemInfo info = SystemDomTestBuilder.makeSystemInfo();
+        info.parentId = org.getId();
+        info.entityType = EntityType.EXP_ASSAY;
+        info.security = ExperimentHandler.convertACL(acl);
+        
         AssayPack pack = expBoundles.newPack(org, info, acl);
         pack = expBoundles.save(pack);
         rdmSocialHandler.registerNewAssay(pack, fixtures.user1);

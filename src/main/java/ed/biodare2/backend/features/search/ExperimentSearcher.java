@@ -15,6 +15,8 @@ import ed.biodare2.backend.web.rest.ListWrapper;
 import java.util.Optional;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ExperimentSearcher {
     
+    final Logger log = LoggerFactory.getLogger(this.getClass());    
     final DBSystemInfoRep dbSystemInfos;  
     final LuceneExperimentsSearcher luceneExperimentsSearcher;
     
@@ -50,11 +53,14 @@ public class ExperimentSearcher {
             SortOption sorting, boolean asc, 
             int pageIndex, int pageSize) {
         
+        log.info("\nSEARCHING {} {}", user.getLogin(), showPublic);
         ExperimentVisibility visibility = new ExperimentVisibility();
         if (!user.isAnonymous() && (user.getId() != null)) {
             visibility.user = Optional.of(user.getLogin());
         }
         visibility.showPublic = showPublic;
+
+        log.info("\nSEARCHING visibility {}", visibility);
         
         return luceneExperimentsSearcher.findAllVisible(visibility, sorting, asc, pageIndex, pageSize);
         

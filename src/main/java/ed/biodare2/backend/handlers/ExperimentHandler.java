@@ -473,7 +473,12 @@ public class ExperimentHandler extends BaseExperimentHandler {
         return prov;
     }
 
-    protected ACLInfo convertACL(EntityACL acl) {
+    /**
+     * It is public static so that tests can reuse this code to correctly populate sys info parts
+     * @param acl
+     * @return 
+     */
+    public static ACLInfo convertACL(EntityACL acl) {
         
         ACLInfo info = new ACLInfo();
         info.creator = acl.getCreator().getLogin();

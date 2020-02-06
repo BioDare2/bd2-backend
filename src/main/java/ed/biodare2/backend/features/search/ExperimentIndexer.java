@@ -34,6 +34,7 @@ public class ExperimentIndexer {
         
         long sT = System.currentTimeMillis();
         
+        log.info("\nIndexing {} owner {} public {}", pack.getId(), pack.getSystemInfo().security.owner, pack.getSystemInfo().security.isPublic);
         luceneExperimentsIndexer.indexExperiment(pack.getAssay(), pack.getSystemInfo());
         
         long dur = System.currentTimeMillis()-sT;
