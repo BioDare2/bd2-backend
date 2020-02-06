@@ -5,7 +5,11 @@
  */
 package ed.biodare2;
 
+import ed.biodare2.*;
 import ed.biodare2.backend.util.secrecy.encryption.Encryptor;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +36,16 @@ public class EnvironmentConfiguration {
     @Autowired
     Environment env;
     
-     
+
+    @Bean(destroyMethod = "clean")
+    TestFolder testFolder(@Value("${bd2.storage.dir}") String storageDirPath) throws IOException {
+        Path storageDir = Paths.get(storageDirPath);
+        return new TestFolder(storageDir);
+    }
+    
     @Bean
     public EnvironmentVariables environmentVariables(
+                                TestFolder testFolder,
                                 @Value("${bd2.storage.dir}") String storageDirPath,
                                 @Value("${bd2.backend.url}") String backendURL,
                                 @Value("${bd2.jobcentre.wsdl}") String jobcentreURL,
@@ -50,10 +61,10 @@ public class EnvironmentConfiguration {
                     "Cannot init environment missing email password");
         }
         
-        log.warn("\nENV STORAGE {}\n", storageDirPath);
+        log.warn("\nTEST ENV STORAGE with\ntmp: {}\nfrom{}\n", testFolder.tmp, storageDirPath);
         
         return new EnvironmentVariables(
-                storageDirPath, 
+                testFolder.tmp.toString(),//storageDirPath, 
                 backendURL, 
                 jobcentreURL, 
                 recaptchaSiteKey, 
