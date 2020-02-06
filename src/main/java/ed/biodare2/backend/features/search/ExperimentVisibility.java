@@ -18,6 +18,23 @@ public class ExperimentVisibility implements Serializable {
     public Optional<String> user = Optional.empty();
     public boolean showPublic = false;
 
+    public ExperimentVisibility() {
+        this(Optional.empty(), false);
+    }
+    
+    public ExperimentVisibility(String user) {
+        this(user, false);
+    }
+    
+    public ExperimentVisibility(String user, boolean showPublic) {
+        this(Optional.of(user), showPublic);
+    }
+    
+    public ExperimentVisibility(Optional<String> user, boolean showPublic) {
+        this.user = user;
+        this.showPublic = showPublic;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

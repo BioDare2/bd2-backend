@@ -121,7 +121,10 @@ public class LuceneExperimentsIndexer implements AutoCloseable {
         
         Document doc = new Document();
         
+        // for retrieval
         doc.add(new StoredField(ID, id));
+        // for term queries == for updating
+        doc.add(new StringField(ID, ""+id,Field.Store.NO));
         doc.add(new NumericDocValuesField(ID_S, id));
         
         doc.add(new TextField(NAME, name, Field.Store.NO));
