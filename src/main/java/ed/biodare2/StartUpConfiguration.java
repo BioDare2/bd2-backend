@@ -72,6 +72,30 @@ public class StartUpConfiguration {
         return (evt) -> {};
     }       
     
+    @Transactional
+    @Bean
+    @Profile("local")
+    @Order(10)
+    public CommandLineRunner indexRestore(Environment env,DBFixer fixer) {
+        
+        
+        log.warn("indexRestore called");
+        
+        if (isOnProduction(env)) {
+            throw new IllegalStateException("indexRestore called in production environment");
+        }
+        
+        if (!isOnProduction(env)) {
+            log.warn("RUNNING locally");
+        }            
+
+        fixer.reindexAll();    
+        
+        return (evt) -> {
+        
+        };
+    }       
+    
     /*
     @Transactional
     @Bean

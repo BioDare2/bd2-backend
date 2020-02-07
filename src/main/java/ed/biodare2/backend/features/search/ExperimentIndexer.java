@@ -6,7 +6,12 @@
 package ed.biodare2.backend.features.search;
 
 import ed.biodare2.backend.features.search.lucene.LuceneExperimentsIndexer;
+import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
+import ed.biodare2.backend.repo.system_dom.SystemInfo;
+import ed.robust.dom.util.Pair;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +39,35 @@ public class ExperimentIndexer {
         
         long sT = System.currentTimeMillis();
         
-        log.info("\nIndexing {} owner {} public {}", pack.getId(), pack.getSystemInfo().security.owner, pack.getSystemInfo().security.isPublic);
+        log.info("Indexing {} owner {} public {}", pack.getId(), pack.getSystemInfo().security.owner, pack.getSystemInfo().security.isPublic);
         luceneExperimentsIndexer.indexExperiment(pack.getAssay(), pack.getSystemInfo());
         
         long dur = System.currentTimeMillis()-sT;
         
         log.info("INDEXING EXP {} took\t{}",pack.getId(), dur);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void indexExperiments(List<AssayPack> packs) {
+        
+        long sT = System.currentTimeMillis();
+        
+        log.info("Indexing experiments");
+        
+        List<Pair<ExperimentalAssay,SystemInfo>> experiments = packs.stream()
+                .map( p -> new Pair<>(p.getAssay(), p.getSystemInfo()))
+                .collect(Collectors.toList());
+        
+        luceneExperimentsIndexer.indexExperiments(experiments);
+        
+        long dur = System.currentTimeMillis()-sT;
+        
+        log.info("INDEXING EXPERIMENTS {} took\t{}",experiments.size(), dur);
+        
+    }    
+
+    public void clear() {
+        
+        luceneExperimentsIndexer.clear();
     }
 }

@@ -50,7 +50,7 @@ public class EnvironmentConfiguration {
                     "Cannot init environment missing email password");
         }
         
-        log.warn("\nENV STORAGE {}\n", storageDirPath);
+        log.warn("ENV STORAGE {}", storageDirPath);
         
         return new EnvironmentVariables(
                 storageDirPath, 

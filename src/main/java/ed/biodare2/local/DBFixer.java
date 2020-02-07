@@ -28,15 +28,19 @@ import ed.biodare2.backend.repo.system_dom.FeaturesAvailability;
 import ed.biodare2.backend.repo.system_dom.ServiceLevel;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
+import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +93,9 @@ public class DBFixer {
     
     @Autowired
     PPAResultsHandler ppaResultsHandler;
+    
+    @Autowired
+    ExperimentIndexer experimentIndex;
     
     //@Autowired
     //TSDataHandler dataHandler;
@@ -303,6 +310,36 @@ public class DBFixer {
         });
         return acl;
     }
+    
+    
+    @Transactional
+    public void reindexAll() {
+        log.info("ReIndexing...");
+        
+        try (Stream<AssayPack> exps = experimentalAssays.getExerimentsIds()
+                                        .map( id -> expPacks.findOne(id))
+                                        .filter(Optional::isPresent)
+                                        .map(Optional::get)) {
+            
+                List<AssayPack> packs = exps.collect(Collectors.toList());
+                
+                experimentIndex.clear();
+                experimentIndex.indexExperiments(packs);
+                log.info("Reindexed {} experiments", packs.size());
+        } catch (Exception e) {
+            log.error("Could not reindex experiments: {}",e.getMessage(),e);
+        }
+            /*.forEach( exp -> {
+                try {
+                    experimentIndex.indexExperiment(exp);
+                    log.info("ReIndexed {}", exp.getId());
+                } catch (Exception e) {
+                    log.error("Could not reindex: {}, {}",exp.getId(),e.getMessage(),e);
+                }                
+            });*/
+        
+    }
+
     
     @Transactional
     public void updateLastIds(long BD1LIMIT) {
@@ -547,5 +584,7 @@ public class DBFixer {
                 ;
         
     } */ 
+
+
     
 }

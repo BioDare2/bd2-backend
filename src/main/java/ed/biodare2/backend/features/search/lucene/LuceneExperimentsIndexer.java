@@ -10,21 +10,22 @@ import ed.biodare2.backend.repo.isa_dom.actors.Person;
 import ed.biodare2.backend.repo.isa_dom.biodesc.DataCategory;
 import ed.biodare2.backend.repo.isa_dom.contribution.ContributionDesc;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
-import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.web.rest.ServerSideException;
+import ed.robust.dom.util.Pair;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PreDestroy;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -74,6 +75,33 @@ public class LuceneExperimentsIndexer implements AutoCloseable {
             throw new ServerSideException("Could not index exp "+exp.getId()+"; "+e.getMessage(),e);
         }
     }
+    
+    public long  indexExperiments(List<Pair<ExperimentalAssay, SystemInfo>> experiments)  {
+        
+        try {
+            List<Pair<Term, Document>> docs = experiments.stream()
+                .map( desc -> 
+                        new Pair<>(new Term(ID,""+desc.getLeft().getId()), 
+                                    prepareDocument(desc.getLeft(), desc.getRight())))
+                .collect(Collectors.toList());
+        
+            long commit = writer.writeDocuments(docs);
+            searcher.updateIndex();
+            return commit;
+        } catch (IOException e) {
+            throw new ServerSideException("Could not index experimenst; "+e.getMessage(),e);
+        }        
+    }   
+    
+    
+    public void clear() {
+        try {
+            writer.deleteAll();
+            searcher.updateIndex();
+        } catch (IOException e) {
+            throw new ServerSideException("Could not clear index "+e.getMessage(),e);
+        }    
+    }    
     
     protected Document prepareDocument(ExperimentalAssay exp, SystemInfo sysInfo) {
         
@@ -133,7 +161,8 @@ public class LuceneExperimentsIndexer implements AutoCloseable {
         doc.add(new SortedDocValuesField(NAME_S, new BytesRef(shortName)));
         
         doc.add(new TextField(PURPOSE, purpose, Field.Store.NO));
-        doc.add(new TextField(DESCRIPTION, description, Field.Store.NO));
+        if (description != null)
+            doc.add(new TextField(DESCRIPTION, description, Field.Store.NO));
 
         doc.add(new TextField(DATA_CATEGORY, dataCategory.longName, Field.Store.NO));
         doc.add(new StringField(SPECIES, species, Field.Store.NO));
@@ -204,5 +233,9 @@ public class LuceneExperimentsIndexer implements AutoCloseable {
         Person p = desc.authors.get(0);
         return p.lastName + " " + p.firstName;
     }
+
+
+
+
     
 }

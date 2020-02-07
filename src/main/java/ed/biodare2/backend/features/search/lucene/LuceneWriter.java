@@ -6,8 +6,10 @@
 package ed.biodare2.backend.features.search.lucene;
 
 import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configStorage;
+import ed.robust.dom.util.Pair;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
 import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
 import org.apache.lucene.analysis.Analyzer;
@@ -18,13 +20,9 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -74,6 +72,14 @@ public class LuceneWriter implements AutoCloseable {
         // return 1;
     }
     
+    public long writeDocuments(List<Pair<Term, Document>> docs) throws IOException {
+        for (Pair<Term, Document> unit : docs) {
+            indexWriter.updateDocument(unit.getLeft(), unit.getRight());
+        }
+        long resp = indexWriter.commit();
+        return resp;
+    }    
+    
     public void deleteAll() throws IOException {
         indexWriter.deleteAll();
         indexWriter.commit();
@@ -98,6 +104,8 @@ public class LuceneWriter implements AutoCloseable {
         indexWriterConfig.setCommitOnClose(true);  
         return indexWriterConfig;
     }
+
+
     
 
 
