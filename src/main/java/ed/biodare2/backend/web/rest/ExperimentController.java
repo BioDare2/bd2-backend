@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare2.backend.features.search.SortOption;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
@@ -53,19 +54,23 @@ public class ExperimentController extends BioDare2Rest {
     @RequestMapping(path="experiments",method = RequestMethod.GET)
     @Transactional    
     public ListWrapper<ExperimentSummary> getExperiments(
-            @RequestParam(name = "onlyOwned",defaultValue = "true") boolean onlyOwned, 
+            @RequestParam(name = "showPublic",defaultValue = "false") boolean showPublic, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
+            @RequestParam(name="sorting", defaultValue = "modified") String sorting,
+            @RequestParam(name="direction", defaultValue = "desc") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
-        log.debug("get experiments, owned:{}; {}",onlyOwned,user);
+        log.debug("get experiments, owned:{}; {}",!showPublic,user);
 
         try {
           
-            pageSize = Math.min(pageSize, 1000);
-            Page page = new Page(pageIndex, pageSize); 
+            Page page = paramsToPage(pageIndex, pageSize);
+
+            SortOption sort = paramsToSort(sorting, direction);
+            boolean ascending = "asc".equals(direction);
             
-            ListWrapper<ExperimentalAssay> exps = handler.listExperiments(user, onlyOwned, page);
+            ListWrapper<ExperimentalAssay> exps = handler.listExperiments(user, showPublic, sort, ascending, page);
             page = exps.currentPage;
             
             List<ExperimentSummary> sums = exps.data.stream()
@@ -255,6 +260,30 @@ public class ExperimentController extends BioDare2Rest {
     protected void verifyIsOwner(BioDare2User user,AssayPack exp) {
         if (! permissionsResolver.isOwner(exp.getACL(), user))
             throw new InsufficientRightsException("Only allowed for owner of: "+exp.getId());
+    }
+
+    static Page paramsToPage(int pageIndex, int pageSize) {
+        
+        pageSize = Math.min(pageSize, 1000);
+        pageSize = Math.max(pageSize, 1);
+        
+        pageIndex = pageIndex < 0 ? 0 : pageIndex;
+        
+        return new Page(pageIndex, pageSize);         
+    }
+
+    static SortOption paramsToSort(String sorting, String direction) {
+        
+        if (direction == null || direction.isBlank()) return SortOption.RANK;
+        
+        switch(sorting) {
+            case "author": return SortOption.FIRST_AUTHOR;
+            case "modified": return SortOption.MODIFICATION_DATE;
+            case "executed": return SortOption.EXECUTION_DATE;
+            case "uploaded": return SortOption.UPLOAD_DATE;
+            default: return SortOption.valueOf(sorting.toUpperCase());
+        }
+        
     }
     
 }

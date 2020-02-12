@@ -36,6 +36,7 @@ import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.ExperimentSearcher;
+import ed.biodare2.backend.features.search.SortOption;
 import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
@@ -261,9 +262,10 @@ public class ExperimentHandler extends BaseExperimentHandler {
         ;        
     } */   
 
-    public ListWrapper<ExperimentalAssay> listExperiments(BioDare2User user, boolean onlyOwned, Page page) {
+    public ListWrapper<ExperimentalAssay> listExperiments(BioDare2User user, boolean showPublic, 
+            SortOption sorting, boolean ascending, Page page) {
         
-        ListWrapper<Long> ids = searchVisible(user, onlyOwned, page.pageIndex, page.pageSize);
+        ListWrapper<Long> ids = searchVisible(user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
         
         Page currentPage = ids.currentPage;
         
@@ -301,10 +303,11 @@ public class ExperimentHandler extends BaseExperimentHandler {
         return ids;
     }*/
     
-    protected ListWrapper<Long> searchVisible(BioDare2User user, boolean onlyOwned,
+    protected ListWrapper<Long> searchVisible(BioDare2User user, boolean showPublic,
+            SortOption sorting, boolean ascending,
             int pageIndex, int pageSize) {
         
-        return searcher.findAllVisible(user, !onlyOwned, pageIndex, pageSize);
+        return searcher.findAllVisible(user, showPublic, sorting, ascending, pageIndex, pageSize);
     }
     
     

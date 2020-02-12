@@ -7,7 +7,10 @@ package ed.biodare2.backend.web.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.search.SortOption;
+import static ed.biodare2.backend.features.search.SortOption.*;
 import ed.biodare2.backend.handlers.ExperimentHandlerTest;
+import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentSummary;
@@ -15,6 +18,7 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
+import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +42,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -54,7 +59,9 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
 
     final String serviceRoot = "/api/experiment";
     
-    
+    @Autowired
+    ExperimentPackHub expBoundles;    
+
     
     @Test
     public void getExperimentsGetsCorrectJsonRepresentation() throws Exception {
@@ -115,7 +122,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertTrue(exps.isEmpty());
         
         builder = MockMvcRequestBuilders.get("/api/experiments")
-                .param("onlyOwned", "false")
+                .param("showPublic", "true")
                 .accept(APPLICATION_JSON_UTF8)
                 .with(authenticate(user));
 
@@ -150,7 +157,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
-                .param("onlyOwned", "false")
+                .param("showPublic", "true")
                 .accept(APPLICATION_JSON_UTF8)
                 .with(authenticate(user));
 
@@ -179,7 +186,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
         
         builder = MockMvcRequestBuilders.get("/api/experiments")
-                .param("onlyOwned", "false")
+                .param("showPublic", "true")
                 .param("pageIndex","1")
                 .param("pageSize", ""+(total-1))
                 .accept(APPLICATION_JSON_UTF8)
@@ -200,6 +207,79 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
 
         // assertTrue(exps.stream().anyMatch( s -> s.id == id || s.id == pack2.getId()));    
+        
+    }    
+    
+    
+    @Test
+    public void getExperimentsAppliesSorting() throws Exception {
+    
+        AssayPack pack = insertPublicExperiment();
+        AssayPack pack2 = insertPublicExperiment();
+        AssayPack pack3 = insertPublicExperiment();
+        
+        pack.getAssay().generalDesc.name = "Bsecond";
+        pack2.getAssay().generalDesc.name = "Afirst";
+        pack3.getAssay().generalDesc.name = "Cthird";
+        
+        expBoundles.save(expBoundles.enableWriting(pack));
+        expBoundles.save(expBoundles.enableWriting(pack2));
+        expBoundles.save(expBoundles.enableWriting(pack3));
+        
+        
+        UserAccount user = fixtures.demoUser;
+
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
+                .param("showPublic", "true")
+                .param("sorting", "name")
+                .param("direction", "asc")
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("Exps JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        //List<ExperimentSummary> exps = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<List<ExperimentSummary>>() { });
+        ListWrapper<ExperimentSummary> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        assertNotNull(wrapper);
+        List<ExperimentSummary> exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(3, exps.size());
+        
+        assertEquals(pack2.getId(), exps.get(0).id);
+        assertEquals(pack.getId(), exps.get(1).id);
+        assertEquals(pack3.getId(), exps.get(2).id);
+        
+        
+        builder = MockMvcRequestBuilders.get("/api/experiments")
+                .param("showPublic", "true")
+                .param("sorting", "name")
+                .param("direction", "desc")
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user)); 
+        
+        resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);     
+        
+        wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(3, exps.size());
+        
+        assertEquals(pack3.getId(), exps.get(0).id);
+        assertEquals(pack.getId(), exps.get(1).id);
+        assertEquals(pack2.getId(), exps.get(2).id);
         
     }    
     
@@ -734,5 +814,59 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
     }
     
+    @Test
+    public void pageConvertsParamsToSensibles() {
+        
+        int pageSize = 10;
+        int pageIndex = 1;
+        
+        Page page = ExperimentController.paramsToPage(pageIndex, pageSize);
+        assertEquals(new Page(1, 10), page);
+        
+        pageSize = 1500;
+        pageIndex = -1;
+        
+        page = ExperimentController.paramsToPage(pageIndex, pageSize);
+        assertEquals(new Page(0, 1000), page);        
+    }
     
+    @Test
+    public void sortingOptionsDefaultsToRankIfNoDirection() {
+        String sorting = "id";
+        String direction = null;
+        
+        SortOption sort = ExperimentController.paramsToSort(sorting, direction);
+        assertEquals(SortOption.RANK, sort);
+        
+        direction = "";
+        sort = ExperimentController.paramsToSort(sorting, direction);
+        assertEquals(SortOption.RANK, sort);        
+        
+        direction = "asc";
+        sort = ExperimentController.paramsToSort(sorting, direction);
+        assertEquals(SortOption.ID, sort);        
+        
+        sorting = "modified";
+        direction = "desc";
+        sort = ExperimentController.paramsToSort(sorting, direction);
+        assertEquals(SortOption.MODIFICATION_DATE, sort);        
+        
+    }
+    
+    @Test
+    public void sortingOptionsDecodesSimpleNames() {
+        
+        String[] terms = {"rank", "id", "name", "author", "executed", "modified"};
+        
+        SortOption[] exps = {RANK, ID, NAME, FIRST_AUTHOR, EXECUTION_DATE, MODIFICATION_DATE};
+        
+        for (int i = 0; i< terms.length; i++) {
+            String term = terms[i];
+            SortOption exp = exps[i];
+            
+            SortOption sort = ExperimentController.paramsToSort(term, "asc");
+            assertEquals(term, exp,sort);
+        }
+        
+    }
 }

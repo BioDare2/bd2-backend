@@ -33,6 +33,7 @@ import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.ExperimentSearcher;
+import ed.biodare2.backend.features.search.SortOption;
 import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
@@ -251,16 +252,18 @@ public class ExperimentHandlerTest {
         // p3.getAssay().provenance.modified = LocalDateTime.now().minus(1, ChronoUnit.DAYS);
         
         // when(searcher.findByOwner(any())).thenReturn(Arrays.asList(p1.getId(),p2.getId(),p3.getId()).stream().mapToLong( l -> l.longValue()));
-        when(searcher.findAllVisible(user, false, 0, 10)).thenReturn(new ListWrapper<>(Arrays.asList(p1.getId(),p2.getId(),p3.getId())));        
+        when(searcher.findAllVisible(user, true,SortOption.MODIFICATION_DATE, false , 0, 10)).thenReturn(new ListWrapper<>(Arrays.asList(p1.getId(),p2.getId(),p3.getId())));        
         when(experiments.findByIds((List<Long>)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
         
         List<ExperimentalAssay> exp = Arrays.asList(p1.getAssay(),p2.getAssay(),p3.getAssay());
         
         Page page = new Page(0, 10);
-        List<ExperimentalAssay> res = handler.listExperiments(user,true,page).data; 
+        SortOption sorting = SortOption.MODIFICATION_DATE;
+        boolean ascending = false;
+        List<ExperimentalAssay> res = handler.listExperiments(user,true,sorting, ascending, page).data; 
         
         assertEquals(exp,res);
-        verify(searcher).findAllVisible(user, false, 0, 10);
+        verify(searcher).findAllVisible(user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
         verify(experiments).findByIds((List<Long>)any());
         
     }    
