@@ -283,6 +283,100 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
     }    
     
+    
+    @Test
+    public void searchExperimentsSearchesAndSorts() throws Exception {
+    
+        AssayPack pack = insertPublicExperiment();
+        AssayPack pack2 = insertPublicExperiment();
+        AssayPack pack3 = insertPublicExperiment();
+        
+        pack.getAssay().generalDesc.name += "D clock Winterpride unique";
+        pack2.getAssay().generalDesc.name = "Afirst clock Winterpride";
+        pack3.getAssay().generalDesc.name = "Cthird missing";
+        
+        expBoundles.save(expBoundles.enableWriting(pack));
+        expBoundles.save(expBoundles.enableWriting(pack2));
+        expBoundles.save(expBoundles.enableWriting(pack3));
+        
+        
+        UserAccount user = fixtures.demoUser;
+
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments/search")
+                .param("showPublic", "true")
+                .param("sorting", "name")
+                .param("direction", "asc")
+                .param("query", "winterpride")
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        //System.out.println("Exps JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        //List<ExperimentSummary> exps = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<List<ExperimentSummary>>() { });
+        ListWrapper<ExperimentSummary> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        assertNotNull(wrapper);
+        List<ExperimentSummary> exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(2, exps.size());
+        
+        assertEquals(pack2.getId(), exps.get(0).id);
+        
+        
+        builder = MockMvcRequestBuilders.get("/api/experiments/search")
+                .param("showPublic", "true")
+                .param("sorting", "name")
+                .param("direction", "desc")
+                .param("query", "winterpride")                
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user)); 
+        
+        resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);     
+        
+        wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(2, exps.size());
+        
+        assertEquals(pack.getId(), exps.get(0).id);
+        
+        builder = MockMvcRequestBuilders.get("/api/experiments/search")
+                .param("showPublic", "true")
+                .param("sorting", "name")
+                .param("direction", "")
+                .param("query", "unique")                
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(user)); 
+        
+        resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);     
+        
+        wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<ExperimentSummary>>() { });
+        exps = wrapper.data;
+        assertNotNull(exps);
+        assertEquals(1, exps.size());
+        
+        assertEquals(pack.getId(), exps.get(0).id);
+        
+        
+    }    
+    
     @Test
     public void draftCreatesNewExperimentWithCurrentUserAsAuthor() throws Exception {
     

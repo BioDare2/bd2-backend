@@ -391,6 +391,14 @@ public class LuceneExperimentsSearcherTest {
         assertEquals(exp, ids.data);
         
     }    
+    
+    @Test
+    public void parseQueryConstructsQueryFromString() {
+        String queryString = "clock prr9";
+        
+        Query query = instance.parseQuery(queryString);
+        assertNotNull(query);
+    }
 
     protected List<Long> extractdIds(TopDocs hits, IndexSearcher index) throws IOException {
      
@@ -402,5 +410,65 @@ public class LuceneExperimentsSearcherTest {
         
         return ids;
         
-    }    
+    }   
+    
+    @Test
+    public void parsedQueryFindsCorrectDocs() throws Exception {
+        
+        
+        String queryString = "clock";
+        
+        ExperimentVisibility visibility = new ExperimentVisibility();
+        visibility.showPublic = true;
+        visibility.user = Optional.of("demo1");
+        
+        SortOption sorting = SortOption.RANK;
+        boolean asc = true;
+
+        int pageIndex = 0;
+        int pageSize = 10;
+        
+        
+        ListWrapper<Long> ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+
+        List<Long> exp = List.of(2L, 1L, 14L);
+
+        assertEquals(exp, ids.data);
+    }   
+    
+    @Test
+    public void searchQueryWorksForBioTerms() throws Exception {
+        
+        
+        String queryString = "LHY";
+        
+        ExperimentVisibility visibility = new ExperimentVisibility();
+        visibility.showPublic = true;
+        visibility.user = Optional.of("demo1");
+        
+        SortOption sorting = SortOption.RANK;
+        boolean asc = true;
+
+        int pageIndex = 0;
+        int pageSize = 10;
+        
+        
+        ListWrapper<Long> ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+
+        List<Long> exp = List.of(1L);
+
+        assertEquals(exp, ids.data);
+        
+        queryString = "prr9";
+        ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        exp = List.of(2L, 13L, 14L);
+
+        assertEquals(exp, ids.data);
+        
+        queryString = "prr7";
+        ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        exp = List.of(14L);
+
+        assertEquals(exp, ids.data);        
+    }     
 }

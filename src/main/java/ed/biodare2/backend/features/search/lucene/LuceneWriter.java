@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.search.lucene;
 
+import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configAnalyser;
 import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configStorage;
 import ed.robust.dom.util.Pair;
 import java.io.IOException;
@@ -93,10 +94,7 @@ public class LuceneWriter implements AutoCloseable {
         log.info("IndexWriter closed");
     }
     
-    protected static Analyzer configAnalyser() {
-        StandardAnalyzer analyzer = new StandardAnalyzer();
-        return analyzer;
-    }
+
     
     protected static IndexWriterConfig configWriter(Analyzer analyser) {
         IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyser);  

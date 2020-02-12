@@ -268,6 +268,28 @@ public class ExperimentHandlerTest {
         
     }    
     
+    @Test
+    public void searchExperimentsUsesTheIdsProvidedBySearcherAndFetchesFromRepo() {
+        
+        AssayPack p1 = MockReps.testAssayPack();
+        AssayPack p2 = MockReps.testAssayPack();
+        AssayPack p3 = MockReps.testAssayPack();
+        
+        when(searcher.findVisible("clock", user, true,SortOption.MODIFICATION_DATE, false , 0, 10)).thenReturn(new ListWrapper<>(Arrays.asList(p1.getId(),p2.getId(),p3.getId())));        
+        when(experiments.findByIds((List<Long>)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
+        
+        List<ExperimentalAssay> exp = Arrays.asList(p1.getAssay(),p2.getAssay(),p3.getAssay());
+        
+        Page page = new Page(0, 10);
+        SortOption sorting = SortOption.MODIFICATION_DATE;
+        boolean ascending = false;
+        List<ExperimentalAssay> res = handler.searchExperiments("clock", user,true,sorting, ascending, page).data; 
+        
+        assertEquals(exp,res);
+        verify(searcher).findVisible("clock", user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
+        verify(experiments).findByIds((List<Long>)any());
+        
+    }      
     /*
     @Test
     public void listExperimentsSortsThemByModificationDateDesc() {

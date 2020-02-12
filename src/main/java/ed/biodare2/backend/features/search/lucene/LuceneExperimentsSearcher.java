@@ -8,9 +8,12 @@ package ed.biodare2.backend.features.search.lucene;
 import ed.biodare2.backend.features.search.ExperimentVisibility;
 import ed.biodare2.backend.features.search.SortOption;
 import static ed.biodare2.backend.features.search.lucene.Fields.*;
+import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configAnalyser;
+import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.ListWrapper;
 import java.util.Optional;
 import javax.annotation.PreDestroy;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -24,7 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 /**
  *
  * @author tzielins
@@ -34,12 +38,14 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
     final LuceneSearcher searcher;
+    final Analyzer analyzer;
     
     final static int MAX_HITS = 10_000;
     
     @Autowired
     public LuceneExperimentsSearcher(LuceneSearcher searcher) {
         this.searcher = searcher;
+        this.analyzer = configAnalyser();
     }
     
     @Override
@@ -55,6 +61,14 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
         Query query = new MatchAllDocsQuery();        
         return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }
+    
+    public ListWrapper<Long> findVisible(String queryString, ExperimentVisibility visibility, 
+            SortOption sorting, boolean asc, int pageIndex, int pageSize) {
+        
+        Query query = parseQuery(queryString); 
+        // log.info("\nWill searech for:\n{}\n\n",query.toString());
+        return find(query, visibility, sorting, asc, pageIndex, pageSize);
+    }    
     
     protected ListWrapper<Long> find(Query query, ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
@@ -111,6 +125,21 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
             case MODIFICATION_DATE: return Optional.of(new Sort(new SortField(MODIFIED_S, SortField.Type.LONG, !asc)));
             case EXECUTION_DATE: return Optional.of(new Sort(new SortField(EXECUTED_S, SortField.Type.LONG, !asc)));
             default: throw new IllegalArgumentException("Unsuported sorting option "+options);
+        }
+    }
+
+    Query parseQuery(String queryString) {
+        
+        String[] fields = {NAME, PURPOSE, AUTHORS, WHOLE_CONTENT};
+        BooleanClause.Occur[] flags = new BooleanClause.Occur[fields.length];
+        for (int i = 0; i< flags.length; i++) {
+            flags[i] = BooleanClause.Occur.SHOULD;
+        }
+        
+        try {
+            return MultiFieldQueryParser.parse(queryString, fields, flags, analyzer);
+        } catch (ParseException e)  {
+            throw new HandlingException("Could not parse query: "+queryString+"; "+e.getMessage(),e);
         }
     }
 

@@ -215,6 +215,8 @@ public class LuceneSearcherTest {
         assertEquals(2, ids.currentPage.pageSize);
         assertEquals(5, ids.currentPage.length);
             
-    }     
+    } 
+
+   
     
 }

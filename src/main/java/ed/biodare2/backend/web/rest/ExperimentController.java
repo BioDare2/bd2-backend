@@ -92,6 +92,49 @@ public class ExperimentController extends BioDare2Rest {
         
     }    
     
+    @RequestMapping(path="experiments/search",method = RequestMethod.GET)
+    @Transactional    
+    public ListWrapper<ExperimentSummary> searchExperiments(
+            @RequestParam(name = "query",defaultValue = "") String query, 
+            @RequestParam(name = "showPublic",defaultValue = "false") boolean showPublic, 
+            @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
+            @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
+            @RequestParam(name="sorting", defaultValue = "modified") String sorting,
+            @RequestParam(name="direction", defaultValue = "desc") String direction,            
+            @NotNull @AuthenticationPrincipal BioDare2User user) {
+        
+        log.debug("search experiments, query:{}; {}",query,user);
+
+        try {
+          
+            Page page = paramsToPage(pageIndex, pageSize);
+
+            SortOption sort = paramsToSort(sorting, direction);
+            boolean ascending = "asc".equals(direction);
+            
+            ListWrapper<ExperimentalAssay> exps = handler.searchExperiments(query, user, showPublic, sort, ascending, page);
+            page = exps.currentPage;
+            
+            List<ExperimentSummary> sums = exps.data.stream()
+                            .map( exp -> new ExperimentSummary(exp))
+                            .collect(Collectors.toList());
+
+            tracker.experimentSearch(query, user);
+        
+            return new ListWrapper(sums, page);
+                
+            
+        } catch(WebMappedException e) {
+            log.error("Cannot retrieve experiments {}",e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot retrieve experiments {}",e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }    
+    
+    
     @RequestMapping(path="experiment/draft",method = RequestMethod.GET)
     public ExperimentalAssayView newDraft(@NotNull @AuthenticationPrincipal BioDare2User user) {
         

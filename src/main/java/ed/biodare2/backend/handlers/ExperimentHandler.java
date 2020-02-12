@@ -280,6 +280,24 @@ public class ExperimentHandler extends BaseExperimentHandler {
 
     }         
         
+    public ListWrapper<ExperimentalAssay> searchExperiments(String query,
+            BioDare2User user, boolean showPublic, 
+            SortOption sorting, boolean ascending, Page page) {
+        
+        ListWrapper<Long> ids = searchVisible(query, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
+        
+        Page currentPage = ids.currentPage;
+        
+        try ( Stream<AssayPack> packs = experiments.findByIds(ids.data)) {
+            
+            List<ExperimentalAssay> exps = packs
+                .map(AssayPack::getAssay)
+                .collect(Collectors.toList());
+        
+            return new ListWrapper<>(exps, currentPage);            
+        }
+
+    }      
         
 
     /*
@@ -310,6 +328,13 @@ public class ExperimentHandler extends BaseExperimentHandler {
         return searcher.findAllVisible(user, showPublic, sorting, ascending, pageIndex, pageSize);
     }
     
+    protected ListWrapper<Long> searchVisible(String query,
+            BioDare2User user, boolean showPublic,
+            SortOption sorting, boolean ascending,
+            int pageIndex, int pageSize) {
+        
+        return searcher.findVisible(query, user, showPublic, sorting, ascending, pageIndex, pageSize);
+    }    
     
     public Optional<AssayPack> getExperiment(long expId) {
         

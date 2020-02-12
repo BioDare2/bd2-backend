@@ -61,6 +61,24 @@ public class ExperimentSearcher {
         
     }
     
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    public ListWrapper<Long> findVisible(String query,
+            BioDare2User user, boolean showPublic,
+            SortOption sorting, boolean asc, 
+            int pageIndex, int pageSize) {
+        
+        log.info("\nSEARCHING {} {} q:{}", user.getLogin(), showPublic, query);
+        ExperimentVisibility visibility = new ExperimentVisibility();
+        if (!user.isAnonymous() && (user.getId() != null)) {
+            visibility.user = Optional.of(user.getLogin());
+        }
+        visibility.showPublic = showPublic;
+
+        log.info("\nSEARCHING visibility {}", visibility);
+        
+        return luceneExperimentsSearcher.findVisible(query, visibility, sorting, asc, pageIndex, pageSize);
+        
+    }    
     
     /*@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public LongStream findByOwner(BioDare2User owner) {

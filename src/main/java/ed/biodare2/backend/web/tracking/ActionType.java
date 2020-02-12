@@ -26,5 +26,6 @@ enum ActionType {
     ACTIVATED,
     RESET,
     IMPORT,
-    PUBLISH
+    PUBLISH,
+    SEARCH
 }

@@ -33,6 +33,10 @@ public class ExperimentTracker extends AbstractTracker {
     public void experimentList(BioDare2User user) {
         track(EXPERIMENT,LIST,user);
     }
+    
+    public void experimentSearch(String query, BioDare2User user) {
+        track(EXPERIMENT,SEARCH,query, user);
+    }    
 
     public void experimentDraft(BioDare2User user) {
         track(EXPERIMENT,DRAFT,user);

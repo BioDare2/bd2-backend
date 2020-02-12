@@ -8,6 +8,7 @@ package ed.biodare2.backend.features.search.lucene;
 import ed.biodare2.EnvironmentVariables;
 import java.io.IOException;
 import java.nio.file.Path;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -57,6 +58,11 @@ public class LuceneConfiguration {
 
     protected static FSDirectory configStorage(Path indexDir) throws IOException {
         return FSDirectory.open(indexDir);        
-    }     
+    }   
+    
+    protected static Analyzer configAnalyser() {
+        StandardAnalyzer analyzer = new StandardAnalyzer();
+        return analyzer;
+    }    
     
 }

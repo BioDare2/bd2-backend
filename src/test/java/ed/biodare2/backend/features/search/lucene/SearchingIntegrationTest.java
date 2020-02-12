@@ -126,5 +126,32 @@ public class SearchingIntegrationTest {
        
        hits = searcher.findAllVisible(visibility, sorting, asc, pageIndex, pageSize);
        assertEquals(2, hits.data.size());       
+    }  
+    
+    @Test
+    public void canSearchByQueryWhatWasIndexed() {
+        
+       ExperimentalAssay exp = makeExperimentalAssay();
+       exp.generalDesc.name = "Testing searching for wanderland";
+       SystemInfo sys = makeSystemInfo();
+       sys.security.owner = "tomek";
+       sys.security.isPublic = false;
+       
+       ExperimentVisibility visibility = new ExperimentVisibility("tomek");
+       SortOption sorting = SortOption.RANK;
+       boolean asc = true;
+       int pageIndex = 0;
+       int pageSize = 10;
+       
+       indexer.indexExperiment(exp, sys);
+       
+       ListWrapper<Long> hits = searcher.findVisible("missing", visibility, sorting, asc, pageIndex, pageSize);
+       
+       assertTrue(hits.data.isEmpty());
+       
+       
+       hits = searcher.findVisible("wanderland", visibility, sorting, asc, pageIndex, pageSize);
+       assertEquals(1, hits.data.size());
+       
     }    
 }
