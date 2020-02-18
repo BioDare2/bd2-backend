@@ -125,6 +125,7 @@ public class ExperimentHandlerTest {
         acl.setSuperOwner(user.getSupervisor());
         when(securityResolver.createNewACL(any())).thenReturn(acl);        
         doCallRealMethod().when(securityResolver).makePublic(any());
+        when(securityResolver.canRead(any(), any())).thenReturn(true);
         
         serviceLevelResolver = mock(ServiceLevelResolver.class);
         FeaturesAvailability avability = new FeaturesAvailability();
@@ -149,7 +150,8 @@ public class ExperimentHandlerTest {
                 searcher,
                 securityResolver,
                 serviceLevelResolver,
-                rdmSocialHandler
+                rdmSocialHandler,
+                securityResolver
         );
     }
     

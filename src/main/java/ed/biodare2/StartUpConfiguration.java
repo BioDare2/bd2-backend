@@ -82,6 +82,7 @@ public class StartUpConfiguration {
         log.warn("indexRestore called");
         
         if (isOnProduction(env)) {
+            log.warn("RUNNING inproduction");
             throw new IllegalStateException("indexRestore called in production environment");
         }
         

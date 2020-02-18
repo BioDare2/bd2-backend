@@ -74,6 +74,8 @@ public class ExperimentHandler extends BaseExperimentHandler {
     final ExperimentSearcher searcher;
     final RDMSocialHandler rdmSocialHandler;
     
+    final PermissionsResolver permissionsResolver;    
+    
     //final Comparator<ExperimentalAssay> modificationDateCmp = Comparator.comparing((ExperimentalAssay a) -> a.provenance.modified).reversed();
     
     @Autowired
@@ -82,13 +84,15 @@ public class ExperimentHandler extends BaseExperimentHandler {
             ExperimentSearcher searcher,
             PermissionsResolver securityResolver,
             ServiceLevelResolver serviceLevelResolver,
-            RDMSocialHandler rdmSocialHandler) {
+            RDMSocialHandler rdmSocialHandler,
+            PermissionsResolver permissionsResolver) {
         this.expIdGenerator = expIdGenerator;
         this.experiments = experiments;
         this.searcher =searcher;
         this.securityResolver = securityResolver;
         this.serviceLevelResolver = serviceLevelResolver;
         this.rdmSocialHandler = rdmSocialHandler;
+        this.permissionsResolver = permissionsResolver;
     }
 
     public ExperimentalAssayView newDraft(BioDare2User user) {
@@ -267,18 +271,26 @@ public class ExperimentHandler extends BaseExperimentHandler {
         
         ListWrapper<Long> ids = searchVisible(user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
         
-        Page currentPage = ids.currentPage;
+        return idsToVisibleAssays(ids, user);
+
+    } 
+    
+    protected ListWrapper<ExperimentalAssay> idsToVisibleAssays(ListWrapper<Long> ids, BioDare2User user) {
         
         try ( Stream<AssayPack> packs = experiments.findByIds(ids.data)) {
             
+            // filter based on visibility in case a query could be fabricated to
+            // disabled lucene filters or if the indexing async and it does not refelct
+            // current settings            
             List<ExperimentalAssay> exps = packs
+                .filter( exp -> permissionsResolver.canRead(exp.getACL(), user))
                 .map(AssayPack::getAssay)
                 .collect(Collectors.toList());
         
+            Page currentPage = ids.currentPage;
             return new ListWrapper<>(exps, currentPage);            
-        }
-
-    }         
+        }        
+    }
         
     public ListWrapper<ExperimentalAssay> searchExperiments(String query,
             BioDare2User user, boolean showPublic, 
@@ -286,16 +298,7 @@ public class ExperimentHandler extends BaseExperimentHandler {
         
         ListWrapper<Long> ids = searchVisible(query, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
         
-        Page currentPage = ids.currentPage;
-        
-        try ( Stream<AssayPack> packs = experiments.findByIds(ids.data)) {
-            
-            List<ExperimentalAssay> exps = packs
-                .map(AssayPack::getAssay)
-                .collect(Collectors.toList());
-        
-            return new ListWrapper<>(exps, currentPage);            
-        }
+        return idsToVisibleAssays(ids, user);        
 
     }      
         

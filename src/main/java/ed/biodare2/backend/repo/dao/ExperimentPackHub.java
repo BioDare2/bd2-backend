@@ -85,9 +85,10 @@ public class ExperimentPackHub {
     
     @Transactional
     public AssayPack save(AssayPack pack) {
-        
-        pack = assembler.save(pack);
+
+        // we first index then save so if indexing failes thare no records on exp
         indexer.indexExperiment(pack);
+        pack = assembler.save(pack);
         return pack;        
     }
     

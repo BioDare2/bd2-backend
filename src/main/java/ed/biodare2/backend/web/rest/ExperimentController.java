@@ -58,10 +58,10 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
             @RequestParam(name="sorting", defaultValue = "modified") String sorting,
-            @RequestParam(name="direction", defaultValue = "desc") String direction,            
+            @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
-        log.debug("get experiments, owned:{}; {}",!showPublic,user);
+        log.debug("get experiments, public:{}; {} dir:{} sort:{}",showPublic,user, direction, sorting);
 
         try {
           
@@ -73,7 +73,7 @@ public class ExperimentController extends BioDare2Rest {
             ListWrapper<ExperimentalAssay> exps = handler.listExperiments(user, showPublic, sort, ascending, page);
             page = exps.currentPage;
             
-            List<ExperimentSummary> sums = exps.data.stream()
+            List<ExperimentSummary> sums = exps.data.stream()                            
                             .map( exp -> new ExperimentSummary(exp))
                             .collect(Collectors.toList());
 
@@ -100,7 +100,7 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
             @RequestParam(name="sorting", defaultValue = "modified") String sorting,
-            @RequestParam(name="direction", defaultValue = "desc") String direction,            
+            @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
         log.debug("search experiments, query:{}; {}",query,user);
