@@ -5,7 +5,7 @@
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
 	<version>2.7.0.270</version>
-	<name>BioDare2-REST-Update</name>
+	<name>BioDare2-REST-Trunk</name>
 	<description>BioDare2 backend service</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
