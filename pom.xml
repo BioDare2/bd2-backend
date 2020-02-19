@@ -131,11 +131,11 @@
                 <!-- pool for lock --> 
                 
                 <!-- added as ed.biodare2.backend.repo.dao.PPAArtifactsRepTest was failing -->                    
-                <dependency>
+                <!--<dependency>
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                     <version>1.2.17</version>
-                </dependency>
+                </dependency>-->
                                 
                 <!-- excel utils -->
                 <dependency>
@@ -182,7 +182,7 @@
                 <dependency>
                     <groupId>ed.biodare.ppa</groupId>
                     <artifactId>jobcenter-dom</artifactId>
-                    <version>1.3.1</version>
+                    <version>1.4</version>
                 </dependency>
 
                 <dependency>
