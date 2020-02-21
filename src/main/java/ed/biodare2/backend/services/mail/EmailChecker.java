@@ -92,7 +92,11 @@ public class EmailChecker {
             ".concordia.ca",
             "@uv.es",
             ".uc3m.es",
-            "@nudz.cz"
+            "@nudz.cz",
+            "@ibpc.fr",
+            "@pvcf.udl.cat",
+            "@uni-konstanz.de"
+            
             
     ));
     
