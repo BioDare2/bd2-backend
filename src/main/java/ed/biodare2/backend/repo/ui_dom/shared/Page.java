@@ -15,7 +15,7 @@ public class Page {
     
     public int pageIndex;
     public int pageSize;
-    public int length;
+    public long length;
     
     public Page() {};
 
@@ -26,7 +26,7 @@ public class Page {
         this.pageSize = pageSize;
     }
     
-    public Page(int pageIndex, int pageSize, int length) {
+    public Page(int pageIndex, int pageSize, long length) {
         this(pageIndex, pageSize);
         this.length = length;
     }    

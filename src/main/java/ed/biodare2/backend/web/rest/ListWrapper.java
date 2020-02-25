@@ -31,7 +31,7 @@ public class ListWrapper<T> {
         this.currentPage = currentPage;
     }
     
-    public ListWrapper(List<T> data, int pageIndex, int pageSize, int total) {
+    public ListWrapper(List<T> data, int pageIndex, int pageSize, long total) {
         this(data, new Page(pageIndex, pageSize, total));
     }    
     

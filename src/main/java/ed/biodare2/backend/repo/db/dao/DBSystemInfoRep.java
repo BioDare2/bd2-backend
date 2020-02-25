@@ -12,6 +12,9 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -32,6 +35,13 @@ public interface DBSystemInfoRep extends JpaRepository<DBSystemInfo, Long> {
     
     @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.owner.id = :id")  
     Stream<DBSystemInfo> findByOwnerIdAndEntityType(@Param("id") long id,@Param("entityType") EntityType entityType);
+
+    @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND (dbinfo.acl.owner.id = :id OR dbinfo.acl.isOpen = TRUE)")  
+    Stream<DBSystemInfo> findByOpenOrOwnerIdAndEntityType(@Param("id") long id,@Param("entityType") EntityType entityType);
+
+    @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND (dbinfo.acl.owner.id = :id OR ((TRUE = :showPublic) AND (dbinfo.acl.isOpen = TRUE) ))")  
+    Page<DBSystemInfo> findByOpenOrOwnerIdAndEntityTypeWithPagination(@Param("id") long id,@Param("entityType") EntityType entityType, 
+                                                                      @Param("showPublic") boolean showPublic, Pageable pageable);
     
     @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = TRUE")  
     Stream<DBSystemInfo> findByOpenAndEntityType(@Param("entityType") EntityType entityType);

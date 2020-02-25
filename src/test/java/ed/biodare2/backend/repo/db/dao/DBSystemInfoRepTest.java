@@ -22,6 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.transaction.annotation.Transactional;
@@ -199,7 +204,7 @@ public class DBSystemInfoRepTest {
         info2 = repository.save(info2);    
         
         DBSystemInfo info3 = new DBSystemInfo();
-        info3.setParentId(13);
+        info3.setParentId(14);
         info3.setEntityType(EntityType.INVESTIGATION);
         info3.setAcl(new EntityACL());
         
@@ -207,15 +212,188 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
         
-        info3 = repository.save(info3);           
+        // differnt entity
+        info3 = repository.save(info3);   
+
+        DBSystemInfo info4 = new DBSystemInfo();
+        info4.setParentId(15);
+        info4.setEntityType(EntityType.EXP_ASSAY);
+        info4.setAcl(new EntityACL());
+        
+        info4.getAcl().setOwner(fixtures.user2);
+        info4.getAcl().setSuperOwner(fixtures.demoBoss);
+        info4.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        // different user
+        info4 = repository.save(info4);         
         
         infos = repository.findByOwnerIdAndEntityType(info.getAcl().getOwner().getId(),info.getEntityType()).collect(Collectors.toList());
         assertEquals(2,infos.size());
         assertTrue(infos.contains(info));
         assertTrue(infos.contains(info2));
         
+        infos = repository.findByOwnerIdAndEntityType(fixtures.user2.getId(),EntityType.EXP_ASSAY).collect(Collectors.toList());
+        assertEquals(1,infos.size());
+        assertTrue(infos.contains(info4));
     } 
     
+    @Test
+    //@Transactional
+    public void canFindByOpenOrOwnerId() {
+        
+        List<DBSystemInfo> infos = repository.findByOpenOrOwnerIdAndEntityType(info.getAcl().getOwner().getId(),info.getEntityType()).collect(Collectors.toList());
+        assertTrue(infos.isEmpty());
+        
+        info = repository.save(info);
+        assertNotNull(info);
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityType(info.getAcl().getOwner().getId(),info.getEntityType()).collect(Collectors.toList());
+        assertEquals(1,infos.size());
+        assertEquals(info,infos.get(0));
+        
+        DBSystemInfo info2 = new DBSystemInfo();
+        info2.setParentId(13);
+        info2.setEntityType(EntityType.EXP_ASSAY);
+        info2.setAcl(new EntityACL());
+        
+        info2.getAcl().setPublic(true);
+        info2.getAcl().setOwner(fixtures.user1);
+        info2.getAcl().setSuperOwner(fixtures.demoBoss);
+        info2.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        info2 = repository.save(info2);    
+        
+        DBSystemInfo info3 = new DBSystemInfo();
+        info3.setParentId(14);
+        info3.setEntityType(EntityType.INVESTIGATION);
+        info3.setAcl(new EntityACL());
+        
+        info3.getAcl().setOwner(fixtures.user1);
+        info3.getAcl().setSuperOwner(fixtures.demoBoss);
+        info3.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        // differnt entity
+        info3 = repository.save(info3);   
+
+        DBSystemInfo info4 = new DBSystemInfo();
+        info4.setParentId(15);
+        info4.setEntityType(EntityType.EXP_ASSAY);
+        info4.setAcl(new EntityACL());
+        
+        info4.getAcl().setOwner(fixtures.user2);
+        info4.getAcl().setSuperOwner(fixtures.demoBoss);
+        info4.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        // different user
+        info4 = repository.save(info4);         
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityType(info.getAcl().getOwner().getId(),info.getEntityType()).collect(Collectors.toList());
+        assertEquals(2,infos.size());
+        assertTrue(infos.contains(info));
+        assertTrue(infos.contains(info2));
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityType(fixtures.user2.getId(),EntityType.EXP_ASSAY).collect(Collectors.toList());
+        assertEquals(2,infos.size());
+        assertTrue(infos.contains(info2));
+        assertTrue(infos.contains(info4));
+    }     
+
+    @Test
+    //@Transactional
+    public void canFindByOpenOrOwnerIdWithPagination() {
+        
+        PageRequest page = PageRequest.of(0, 10);
+        boolean showPublic = true;
+        List<DBSystemInfo> infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(info.getAcl().getOwner().getId(),info.getEntityType(), showPublic, page).getContent();
+        assertTrue(infos.isEmpty());
+        
+        info = repository.save(info);
+        assertNotNull(info);
+        
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(info.getAcl().getOwner().getId(),info.getEntityType(), showPublic, page).getContent();
+        assertEquals(1,infos.size());
+        assertEquals(info,infos.get(0));
+        
+        DBSystemInfo info2 = new DBSystemInfo();
+        info2.setParentId(13);
+        info2.setEntityType(EntityType.EXP_ASSAY);
+        info2.setAcl(new EntityACL());
+        
+        info2.getAcl().setPublic(true);
+        info2.getAcl().setOwner(fixtures.user1);
+        info2.getAcl().setSuperOwner(fixtures.demoBoss);
+        info2.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        info2 = repository.save(info2);    
+        
+        DBSystemInfo info3 = new DBSystemInfo();
+        info3.setParentId(1);
+        info3.setEntityType(EntityType.EXP_ASSAY);
+        info3.setAcl(new EntityACL());
+        
+        info3.getAcl().setOwner(fixtures.user1);
+        info3.getAcl().setSuperOwner(fixtures.demoBoss);
+        info3.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        info3 = repository.save(info3);   
+
+        DBSystemInfo info4 = new DBSystemInfo();
+        info4.setParentId(2);
+        info4.setEntityType(EntityType.EXP_ASSAY);
+        info4.setAcl(new EntityACL());
+        
+        info4.getAcl().setOwner(fixtures.user2);
+        info4.getAcl().setSuperOwner(fixtures.demoBoss);
+        info4.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        // different user
+        info4 = repository.save(info4);         
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user1.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(3,infos.size());
+        assertTrue(infos.contains(info));
+        assertTrue(infos.contains(info2));
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user2.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(2,infos.size());
+        assertTrue(infos.contains(info2));
+        assertTrue(infos.contains(info4));
+        
+        page = PageRequest.of(0, 2);
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user1.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(2,infos.size());
+
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user2.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(2,infos.size());
+        
+        page = PageRequest.of(1, 2);
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user2.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(0,infos.size());
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user1.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(1,infos.size());
+        
+        page = PageRequest.of(0, 2, Sort.by("parentId"));
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user1.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(2, infos.size());
+        assertEquals(1, infos.get(0).getParentId());
+        assertEquals(12, infos.get(1).getParentId());
+        
+        page = PageRequest.of(0, 2, Sort.by("parentId").descending());
+        Page<DBSystemInfo> paged = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user1.getId(),EntityType.EXP_ASSAY, showPublic, page);
+        infos = paged.getContent();
+        assertEquals(2, infos.size());
+        assertEquals(13, infos.get(0).getParentId());
+        assertEquals(12, infos.get(1).getParentId());
+        assertEquals(3, paged.getTotalElements());
+        
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user2.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(2,infos.size());
+        showPublic = false;
+        infos = repository.findByOpenOrOwnerIdAndEntityTypeWithPagination(fixtures.user2.getId(),EntityType.EXP_ASSAY, showPublic, page).getContent();
+        assertEquals(1,infos.size());
+    }     
     
     @Test
     //@Transactional
