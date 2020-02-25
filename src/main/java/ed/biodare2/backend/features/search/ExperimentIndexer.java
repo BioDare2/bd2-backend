@@ -5,11 +5,14 @@
  */
 package ed.biodare2.backend.features.search;
 
+import static ed.biodare2.backend.features.search.IndexingUtil.*;
 import ed.biodare2.backend.features.search.lucene.LuceneExperimentsIndexer;
+import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.robust.dom.util.Pair;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -41,6 +44,7 @@ public class ExperimentIndexer {
         
         log.info("Indexing {} owner {} public {}", pack.getId(), pack.getSystemInfo().security.owner, pack.getSystemInfo().security.isPublic);
         luceneExperimentsIndexer.indexExperiment(pack.getAssay(), pack.getSystemInfo());
+        indexed(pack, LocalDateTime.now());
         
         long dur = System.currentTimeMillis()-sT;
         
@@ -58,7 +62,8 @@ public class ExperimentIndexer {
                 .map( p -> new Pair<>(p.getAssay(), p.getSystemInfo()))
                 .collect(Collectors.toList());
         
-        luceneExperimentsIndexer.indexExperiments(experiments);
+        luceneExperimentsIndexer.indexExperiments(experiments);        
+        packs.forEach(pack -> indexed(pack, LocalDateTime.now()));
         
         long dur = System.currentTimeMillis()-sT;
         
@@ -70,4 +75,27 @@ public class ExperimentIndexer {
         
         luceneExperimentsIndexer.clear();
     }
+
+    public void updateSearchInfo(AssayPack pack) {
+        
+        SearchInfo searchInfo = pack.getDbSystemInfo().getSearchInfo();
+        updateSearchInfo(searchInfo, pack.getAssay());
+    }
+
+    SearchInfo updateSearchInfo(SearchInfo searchInfo, ExperimentalAssay exp) {
+        
+        searchInfo.setModificationDate(LocalDateTime.now());
+        searchInfo.setExecutionDate(exp.experimentalDetails.executionDate.atTime(12, 0));
+        searchInfo.setName(trim(exp.getName(), 50));
+        searchInfo.setFirstAuthor(trim(author(exp.contributionDesc), 25));
+        
+        return searchInfo;
+    }
+
+    void indexed(AssayPack pack, LocalDateTime now) {
+        
+        pack.getDbSystemInfo().getSearchInfo().setIndexedDate(now);
+    }
+
+
 }

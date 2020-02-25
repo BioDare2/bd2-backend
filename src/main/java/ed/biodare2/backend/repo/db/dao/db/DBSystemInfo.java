@@ -67,6 +67,9 @@ public class DBSystemInfo implements Serializable {
     
     @OneToOne(cascade=CascadeType.ALL,orphanRemoval = true)
     EntityACL acl;
+
+    @OneToOne(cascade=CascadeType.ALL,orphanRemoval = true)
+    SearchInfo searchInfo;
     
     boolean deleted;
     
@@ -111,6 +114,14 @@ public class DBSystemInfo implements Serializable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public SearchInfo getSearchInfo() {
+        return searchInfo;
+    }
+
+    public void setSearchInfo(SearchInfo searchInfo) {
+        this.searchInfo = searchInfo;
     }
     
     

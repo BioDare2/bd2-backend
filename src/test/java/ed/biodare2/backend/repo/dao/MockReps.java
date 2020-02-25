@@ -5,14 +5,11 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.AssayPackAssembler;
-import ed.biodare2.backend.repo.dao.SystemInfoRep;
-import ed.biodare2.backend.repo.dao.ExperimentPackHub;
-import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
+import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 //import ed.biodare2.backend.handlers.ExperimentHandlerTest;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -112,6 +109,9 @@ public class MockReps {
         DBSystemInfo dbSys = DBSystemInfo.testInstance(1L);
         dbSys.setParentId(assay.getId());
         dbSys.setEntityType(EntityType.EXP_ASSAY);
+        
+        SearchInfo search = new SearchInfo();
+        dbSys.setSearchInfo(search);
         
         EntityACL acl = EntityACL.testInstance(1L);
         Fixtures f = Fixtures.build();

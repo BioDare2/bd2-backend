@@ -7,30 +7,23 @@ package ed.biodare2.backend.features.search.lucene;
 
 import static ed.biodare2.backend.features.search.lucene.Fields.*;
 import static ed.biodare2.backend.features.search.lucene.SearchTestUtil.testDocuments;
-import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeContributionDesc;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeExperimentalAssay;
-import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makePerson;
-import ed.biodare2.backend.repo.isa_dom.contribution.ContributionDesc;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.makeSystemInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,37 +70,6 @@ public class LuceneExperimentsIndexerTest {
         searcher.close();
     }
 
-    @Test
-    public void authorsJoinNames() {
-        
-        ContributionDesc desc = makeContributionDesc();
-        desc.authors.add(makePerson("Tomek"));
-        
-        String resp = instance.authors(desc);
-        
-        assertTrue(resp.contains("Firsttest"));
-        assertTrue(resp.contains("LastTomek"));
-        
-    }
-    
-    @Test
-    public void wholeContentContainsTheDetails() {
-        
-        ExperimentalAssay exp = makeExperimentalAssay();
-        String resp = instance.wholeContent(exp);
-        
-        // System.out.println(resp);
-        
-        assertTrue(resp.startsWith(exp.getId()+" "));
-        
-        assertTrue(resp.contains("Test experiment"));
-        assertTrue(resp.contains("To check code"));
-        assertTrue(resp.contains("A commment"));
-        assertTrue(resp.contains("A description"));
-
-        assertTrue(resp.contains(LocalDate.now().toString()));
-        
-    }
     
     @Test
     public void createsDocumentBasedOnExp() throws Exception {

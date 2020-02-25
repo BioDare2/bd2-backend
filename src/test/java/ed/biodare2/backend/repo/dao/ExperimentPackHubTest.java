@@ -5,9 +5,6 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.AssayPackAssembler;
-import ed.biodare2.backend.repo.dao.SystemCopier;
-import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
@@ -165,8 +162,9 @@ public class ExperimentPackHubTest {
         
         AssayPack pack = hub.save(testPack);
         assertSame(pack,testPack);
-        verify(assembler).save(testPack);
+        verify(indexer).updateSearchInfo(pack);
         verify(indexer).indexExperiment(pack);
+        verify(assembler).save(testPack);
     }
     
     @Test
@@ -196,7 +194,16 @@ public class ExperimentPackHubTest {
         assertEquals(pack.systemInfo.parentId,testPack.assay.getId());
         assertEquals(pack.dbSystemInfo.getParentId(),testPack.assay.getId());
         
-    }    
+    }  
+    
+    @Test
+    public void newPackAddsSearchInfo() {
+        
+        AssayPackImpl pack = (AssayPackImpl) hub.newPack(testPack.getAssay(), testPack.getSystemInfo(), testPack.getDbSystemInfo().getAcl());
+        assertNotNull(pack);
+        assertNotNull(pack.dbSystemInfo);
+        assertNotNull(pack.dbSystemInfo.getSearchInfo());
+    }     
     
     
 }

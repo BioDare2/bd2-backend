@@ -9,6 +9,7 @@ import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.dao.AssayPackAssembler.AssayPackImpl;
+import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -86,6 +87,8 @@ public class ExperimentPackHub {
     @Transactional
     public AssayPack save(AssayPack pack) {
 
+        indexer.updateSearchInfo(pack);
+        
         // we first index then save so if indexing failes thare no records on exp
         indexer.indexExperiment(pack);
         pack = assembler.save(pack);
@@ -103,6 +106,9 @@ public class ExperimentPackHub {
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setParentId(experiment.getId());
         dbSystemInfo.setAcl(acl);
+        
+        SearchInfo search = new SearchInfo();
+        dbSystemInfo.setSearchInfo(search);
         
         AssayPackImpl pack = new AssayPackImpl(experiment.getId(),experiment,sysInfo,dbSystemInfo);
         pack.readOnly = false;

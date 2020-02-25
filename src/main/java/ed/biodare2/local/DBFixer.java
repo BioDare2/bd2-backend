@@ -33,6 +33,7 @@ import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -288,6 +289,7 @@ public class DBFixer {
         db.setParentId(info.parentId);
         db.setEntityType(info.entityType);
         db.setAcl(toACL(info.security));
+        db.setSearchInfo(new SearchInfo());
         return db;
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage()+"; parent: "+info.parentId,e);
@@ -323,6 +325,8 @@ public class DBFixer {
             
                 List<AssayPack> packs = exps.collect(Collectors.toList());
                 
+                updateSearchInfo(packs);
+                
                 experimentIndex.clear();
                 experimentIndex.indexExperiments(packs);
                 log.info("Reindexed {} experiments", packs.size());
@@ -339,6 +343,18 @@ public class DBFixer {
             });*/
         
     }
+    
+    void updateSearchInfo(List<AssayPack> packs) {
+        
+        packs.forEach( pack -> {
+            if (pack.getDbSystemInfo().getSearchInfo() == null) {
+                pack.getDbSystemInfo().setSearchInfo(new SearchInfo());
+            }
+            experimentIndex.updateSearchInfo(pack);
+            dbSystemInfos.save(pack.getDbSystemInfo());
+            
+        });
+    }    
 
     
     @Transactional
@@ -584,6 +600,8 @@ public class DBFixer {
                 ;
         
     } */ 
+
+
 
 
     
