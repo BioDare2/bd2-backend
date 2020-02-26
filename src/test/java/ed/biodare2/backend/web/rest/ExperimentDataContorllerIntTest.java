@@ -51,6 +51,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
@@ -568,6 +570,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
+    // @Transactional(propagation = Propagation.REQUIRED)
     public void exportTSDataGivesCSVFile() throws Exception {
     
         AssayPack pack = insertExperiment();

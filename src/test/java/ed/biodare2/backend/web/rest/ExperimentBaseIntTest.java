@@ -101,7 +101,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
         
     }
     
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     AssayPack insertExperiment() {
         AssayPack exp = testSeeder.insertExperiment();
         

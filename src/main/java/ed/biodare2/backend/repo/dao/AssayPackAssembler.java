@@ -80,7 +80,7 @@ public class AssayPackAssembler {
     }
     
     
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     @CachePut(key="#pack.getId()")
     public AssayPack save(AssayPack pack) {
         

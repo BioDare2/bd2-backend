@@ -28,6 +28,8 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 /**
  *
  * @author Zielu
@@ -104,6 +106,7 @@ public class AssayPackAssemblerRepSpringTest {
     }    
     
     @Test
+    @Transactional()
     public void cachingWorks() {
 
 

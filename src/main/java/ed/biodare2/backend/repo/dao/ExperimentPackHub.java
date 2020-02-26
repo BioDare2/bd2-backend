@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -53,7 +54,7 @@ public class ExperimentPackHub {
         
     }
     
-    
+    @Transactional(propagation = Propagation.MANDATORY)
     public AssayPack enableWriting(AssayPack pack) {
         //AssayPackImpl boundle = (AssayPackImpl)pack;
         AssayPackImpl boundle = new AssayPackImpl(pack.getId(),copier.copy(pack.getAssay()),copier.copy(pack.getSystemInfo()),copier.copy(pack.getDbSystemInfo())); 
@@ -84,7 +85,7 @@ public class ExperimentPackHub {
             .map(Optional::get);
     }    
     
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public AssayPack save(AssayPack pack) {
 
         indexer.updateSearchInfo(pack);

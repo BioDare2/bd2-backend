@@ -69,7 +69,6 @@ public class DBSystemInfo implements Serializable {
     @OneToOne(cascade=CascadeType.ALL,orphanRemoval = true)
     EntityACL acl;
 
-    // @OneToOne(cascade=CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
     @OneToOne(cascade=CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
     SearchInfo searchInfo;
     

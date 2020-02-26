@@ -244,6 +244,7 @@ public class ExperimentController extends BioDare2Rest {
     }     
     
     @RequestMapping(value = "experiment/{expId}",method = RequestMethod.POST)
+    //@Transactional
     public ExperimentalAssayView updateExperiment(@PathVariable long expId,@RequestBody ExperimentalAssayView expDesc,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("update experiment: {}; {}",expId,user);
         

@@ -72,7 +72,7 @@ class SystemCopier {
         
     }
     
-    @Transactional(propagation = Propagation.REQUIRES_NEW) //hopefully it will detach the entry
+    @Transactional(propagation = Propagation.MANDATORY) 
     public DBSystemInfo copy(DBSystemInfo org) {
 
         DBSystemInfo cpy = dbSystemInfos.findById(org.getInnerId())

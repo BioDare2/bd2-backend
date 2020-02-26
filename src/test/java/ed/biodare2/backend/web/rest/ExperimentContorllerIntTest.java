@@ -66,6 +66,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
 
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void getExperimentsGetsCorrectJsonRepresentation() throws Exception {
     
         AssayPack pack = insertExperiment();
@@ -97,6 +98,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void getExperimentsCanListsVisiblePublicExperiments() throws Exception {
     
         AssayPack pack = insertPublicExperiment();
@@ -148,6 +150,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void getExperimentsAppliesPagination() throws Exception {
     
         AssayPack pack = insertPublicExperiment();
@@ -290,6 +293,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)    
     public void searchExperimentsSearchesAndSorts() throws Exception {
     
         AssayPack pack = insertPublicExperiment();
@@ -438,6 +442,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void getExperimentGetsCorrectJsonRepresentation() throws Exception {
     
         //ExperimentalAssay desc = DomRepoTestBuilder.makeExperiment(3);
@@ -613,6 +618,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }    
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updateThrowsInsufficientRightsForAnonymousUser() throws Exception {
     
         
@@ -648,6 +654,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updateExperimentSavesJsonRepresentationAsExperiment() throws Exception {
     
         AssayPack pack = insertExperiment();
@@ -687,6 +694,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updateExperimentUsesDateFromGeneralDescription() throws Exception {
     
         AssayPack pack = insertExperiment();
@@ -728,6 +736,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }    
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void updateExperimentSavesAngularRequest() throws Exception {
     
         AssayPack pack = insertExperiment();        
@@ -760,6 +769,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void publishThrowsInsufficientRightsForAnonymousUser() throws Exception {
     
         
@@ -793,6 +803,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void publishThrowsInsufficientRightsForNotOwnerUser() throws Exception {
     
         
