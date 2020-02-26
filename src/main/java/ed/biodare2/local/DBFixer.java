@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -314,14 +315,17 @@ public class DBFixer {
     }
     
     
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     public void reindexAll() {
         log.info("ReIndexing...");
         
         try (Stream<AssayPack> exps = experimentalAssays.getExerimentsIds()
                                         .map( id -> expPacks.findOne(id))
                                         .filter(Optional::isPresent)
-                                        .map(Optional::get)) {
+                                        .map(Optional::get)
+                                        .map( pack -> expPacks.enableWriting(pack))
+                                        .peek( pack -> pack.getDbSystemInfo().getSearchInfo())
+                ) {
             
                 List<AssayPack> packs = exps.collect(Collectors.toList());
                 
@@ -332,6 +336,7 @@ public class DBFixer {
                 log.info("Reindexed {} experiments", packs.size());
         } catch (Exception e) {
             log.error("Could not reindex experiments: {}",e.getMessage(),e);
+            throw e;
         }
             /*.forEach( exp -> {
                 try {
@@ -347,11 +352,19 @@ public class DBFixer {
     void updateSearchInfo(List<AssayPack> packs) {
         
         packs.forEach( pack -> {
-            if (pack.getDbSystemInfo().getSearchInfo() == null) {
-                pack.getDbSystemInfo().setSearchInfo(new SearchInfo());
+            
+            //pack = expPacks.enableWriting(pack);
+            //DBSystemInfo sysInfo = dbSystemInfos.findById(pack.getDbSystemInfo().getInnerId()).orElseThrow(
+            //        () -> new IllegalStateException("Missing DBSystemInfo for exp: "+pack.getId()));
+            
+            DBSystemInfo sysInfo = pack.getDbSystemInfo();
+            
+            if (sysInfo.getSearchInfo() == null) {
+                sysInfo.setSearchInfo(new SearchInfo());
             }
             experimentIndex.updateSearchInfo(pack);
-            dbSystemInfos.save(pack.getDbSystemInfo());
+            dbSystemInfos.save(sysInfo);
+            // expPacks.save(pack);
             
         });
     }    

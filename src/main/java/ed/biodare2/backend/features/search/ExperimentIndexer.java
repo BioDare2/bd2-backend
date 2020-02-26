@@ -84,7 +84,7 @@ public class ExperimentIndexer {
 
     SearchInfo updateSearchInfo(SearchInfo searchInfo, ExperimentalAssay exp) {
         
-        searchInfo.setModificationDate(LocalDateTime.now());
+        searchInfo.setModificationDate(exp.provenance.modified);
         searchInfo.setExecutionDate(exp.experimentalDetails.executionDate.atTime(12, 0));
         searchInfo.setName(trim(exp.getName(), 50));
         searchInfo.setFirstAuthor(trim(author(exp.contributionDesc), 25));
