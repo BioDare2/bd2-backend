@@ -11,6 +11,7 @@ import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.dao.AssayPackAssembler.AssayPackImpl;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class ExperimentPackHubTest {
         when(assembler.save(any())).then(returnsFirstArg());
         
         dbSysInfos = mock(DBSystemInfoRep.class);
-        when(dbSysInfos.findById(anyLong())).thenReturn(Optional.of(new DBSystemInfo()));
+        when(dbSysInfos.findById(anyLong())).thenReturn(Optional.of(emptySystemInfo(1)));
         
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();        

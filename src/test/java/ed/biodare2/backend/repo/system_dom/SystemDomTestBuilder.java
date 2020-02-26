@@ -16,6 +16,7 @@ import ed.biodare2.backend.repo.system_dom.ACLInfo;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
+import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentCharacteristic;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -106,7 +107,19 @@ public class SystemDomTestBuilder {
         db.setParentId(sys.parentId);
         db.setEntityType(sys.entityType);
         db.setAcl(makeDBACL(sys.security));
+        
+        db.setSearchInfo(makeSearchInfo("Exp "+sys.parentId, db.getAcl().getOwner().getLastName()));
         return db;
+    }
+    
+    public static DBSystemInfo emptySystemInfo(long parentId) {
+        DBSystemInfo db = new DBSystemInfo();
+        db.setParentId(parentId);
+        db.setEntityType(EntityType.EXP_ASSAY);
+        db.setAcl(new EntityACL());
+        
+        db.setSearchInfo(makeSearchInfo("Exp "+parentId, "Unknown"));
+        return db;        
     }
 
     public static EntityACL makeDBACL(ACLInfo sys) {
@@ -120,11 +133,23 @@ public class SystemDomTestBuilder {
         acl.setSuperOwner(u);
         return acl;
     }
+    
+    public static SearchInfo makeSearchInfo(String name, String firstAuthor) {
+        SearchInfo info = new SearchInfo();
+        info.setName(name);
+        info.setFirstAuthor(firstAuthor);
+        info.setCreationDate(LocalDateTime.now().minusDays(2));
+        info.setExecutionDate(LocalDateTime.now().minusDays(1));
+        info.setModificationDate(LocalDateTime.now());
+        return info;
+    }
+    
 
     public static FeaturesAvailability makeFeaturesAvailability() {
         FeaturesAvailability f = new FeaturesAvailability();
         f.serviceLevel = ServiceLevel.BASIC;
         return f;
     }
+
     
 }

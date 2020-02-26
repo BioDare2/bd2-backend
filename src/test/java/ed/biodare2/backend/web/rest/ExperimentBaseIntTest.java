@@ -17,6 +17,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.lucene.LuceneWriter;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.util.io.FileUtil;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,6 +48,9 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     
     @Autowired
     ExperimentPackHub expBoundles;
+    
+    @Autowired
+    DBSystemInfoRep systemInfos;
     
     @Autowired
     RDMSocialHandler rdmSocialHandler;
@@ -68,6 +73,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     LuceneWriter luceneWriter;
     
     @Before
+    @Transactional
     public void cleanTestSpace() throws IOException {
         
         Path experiments = experimentalStorage.getExperimentsDir();
@@ -89,6 +95,10 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
         }
         
         luceneWriter.deleteAll();
+        
+        systemInfos.deleteAll();
+        
+        
     }
     
     @Transactional
@@ -99,7 +109,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
         return exp;
     }
     
-    @Transactional
+    @Transactional(propagation = Propagation.MANDATORY)
     AssayPack insertPublicExperiment() {
 
         return testSeeder.insertExperiment(true);

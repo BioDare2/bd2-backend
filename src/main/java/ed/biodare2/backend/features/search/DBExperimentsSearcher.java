@@ -7,16 +7,10 @@ package ed.biodare2.backend.features.search;
 
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.security.BioDare2User;
-import ed.biodare2.backend.repo.dao.ExperimentPackHub;
-import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
-import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.web.rest.ListWrapper;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,9 +43,10 @@ public class DBExperimentsSearcher {
         Sort sort = sortCriteria(sorting, asc);
         PageRequest page = PageRequest.of(pageIndex, pageSize, sort);
         
-        Page<DBSystemInfo> paged = dbSystemInfos.findByOpenOrOwnerIdAndEntityTypeWithPagination(ownerId, EntityType.EXP_ASSAY, showPublic, page);
-        List<Long> ids = paged.map(db -> db.getParentId()).toList();
-        return new ListWrapper<>(ids, paged.getPageable().getPageNumber(), paged.getPageable().getPageSize(), paged.getTotalElements());
+        Page<Long> pagedIds = dbSystemInfos.findParentIdsByOpenOrOwnerIdAndEntityTypeWithPagination(ownerId, EntityType.EXP_ASSAY, showPublic, page);
+        return new ListWrapper<>(pagedIds.getContent(), 
+                pagedIds.getPageable().getPageNumber(), pagedIds.getPageable().getPageSize(), 
+                pagedIds.getTotalElements());
     }    
     
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
@@ -71,7 +66,24 @@ public class DBExperimentsSearcher {
                 .mapToLong( db -> db.getParentId());
     }
 
-    private Sort sortCriteria(SortOption sorting, boolean asc) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    Sort sortCriteria(SortOption sorting, boolean asc) {
+        
+        Sort sort = sortOption2Sort(sorting);
+        if (!asc) sort = sort.descending();
+        return sort;
+    }
+
+    Sort sortOption2Sort(SortOption sorting) {
+        
+        switch(sorting) {
+            case ID: return Sort.by("parentId");
+            case RANK: return Sort.by("creationDate").descending();
+            case NAME: return Sort.by("searchInfo.name");
+            case FIRST_AUTHOR: return Sort.by("searchInfo.firstAuthor");
+            case EXECUTION_DATE: return Sort.by("searchInfo.executionDate");
+            case MODIFICATION_DATE: return Sort.by("searchInfo.modificationDate");
+            case UPLOAD_DATE: return Sort.by("creationDate");
+            default: throw new IllegalArgumentException("Unsuported sorting by: "+sorting);
+        }
     }
 }

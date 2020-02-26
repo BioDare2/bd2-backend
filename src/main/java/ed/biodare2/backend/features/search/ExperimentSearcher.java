@@ -25,12 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ExperimentSearcher {
     
     final Logger log = LoggerFactory.getLogger(this.getClass());    
-    final DBSystemInfoRep dbSystemInfos;  
+    final DBExperimentsSearcher dbExperimentsSearcher;  
     final LuceneExperimentsSearcher luceneExperimentsSearcher;
     
     @Autowired
-    public ExperimentSearcher(DBSystemInfoRep dbSystemInfos, LuceneExperimentsSearcher luceneExperimentsSearcher) {
-        this.dbSystemInfos = dbSystemInfos;
+    public ExperimentSearcher(DBExperimentsSearcher dbExperimentsSearcher, LuceneExperimentsSearcher luceneExperimentsSearcher) {
+        this.dbExperimentsSearcher = dbExperimentsSearcher;
         this.luceneExperimentsSearcher = luceneExperimentsSearcher;
     }
 
@@ -48,16 +48,14 @@ public class ExperimentSearcher {
             SortOption sorting, boolean asc, 
             int pageIndex, int pageSize) {
         
-        log.info("\nSEARCHING {} {}", user.getLogin(), showPublic);
-        ExperimentVisibility visibility = new ExperimentVisibility();
-        if (!user.isAnonymous() && (user.getId() != null)) {
-            visibility.user = Optional.of(user.getLogin());
-        }
-        visibility.showPublic = showPublic;
-
-        log.info("\nSEARCHING visibility {}", visibility);
+        log.info("\nSEARCHING IN DB {} {}", user.getLogin(), showPublic);
         
-        return luceneExperimentsSearcher.findAllVisible(visibility, sorting, asc, pageIndex, pageSize);
+        Optional<Long> userId = Optional.empty();
+        if (!user.isAnonymous() && (user.getId() != null)) {
+            userId = Optional.of(user.getId());
+        }
+
+        return dbExperimentsSearcher.findAllVisible(userId, showPublic, sorting, asc, pageIndex, pageSize);
         
     }
     
@@ -80,19 +78,5 @@ public class ExperimentSearcher {
         
     }    
     
-    /*@Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public LongStream findByOwner(BioDare2User owner) {
-        
-        //anonymous user
-        if (owner.getId() == null) return LongStream.empty();
-        
-        return dbSystemInfos.findByOwnerIdAndEntityType(owner.getId(),EntityType.EXP_ASSAY)                
-                .mapToLong(db -> db.getParentId());
-    }  
-    
-    public LongStream findPublic() {
-        
-        return dbSystemInfos.findByOpenAndEntityType(EntityType.EXP_ASSAY)
-                .mapToLong( db -> db.getParentId());
-    }*/
+
 }

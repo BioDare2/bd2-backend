@@ -28,6 +28,7 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
 import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
@@ -86,8 +87,7 @@ public class ExperimentDataHandlerTest {
         info.parentId = testExp.getId();
         info.entityType = EntityType.EXP_ASSAY;
 
-        DBSystemInfo dbSystemInfo = new DBSystemInfo();
-        dbSystemInfo.setParentId(testExp.getId());
+        DBSystemInfo dbSystemInfo = emptySystemInfo(testExp.getId());
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setAcl(new EntityACL());
         

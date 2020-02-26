@@ -16,6 +16,7 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.makeSearchInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import java.util.Optional;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -46,6 +47,7 @@ public class MockReps {
             db.setParentId(exp.getId());
             db.setEntityType(EntityType.EXP_ASSAY);
             db.setAcl(acl);
+            db.setSearchInfo(makeSearchInfo("Exp "+exp.getId(), db.getAcl().getOwner().getLastName()));
             
             ExperimentPackTestImp p = new ExperimentPackTestImp();
             p.dbSystemInfo = db;

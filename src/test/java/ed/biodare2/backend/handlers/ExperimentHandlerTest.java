@@ -38,6 +38,7 @@ import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.web.rest.ListWrapper;
@@ -98,8 +99,7 @@ public class ExperimentHandlerTest {
         info.parentId = testExp.getId();
         info.entityType = EntityType.EXP_ASSAY;
 
-        DBSystemInfo dbSystemInfo = new DBSystemInfo();
-        dbSystemInfo.setParentId(testExp.getId());
+        DBSystemInfo dbSystemInfo = emptySystemInfo(testExp.getId());
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setAcl(new EntityACL());
         

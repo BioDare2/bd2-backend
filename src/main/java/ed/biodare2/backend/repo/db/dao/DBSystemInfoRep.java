@@ -39,8 +39,8 @@ public interface DBSystemInfoRep extends JpaRepository<DBSystemInfo, Long> {
     @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND (dbinfo.acl.owner.id = :id OR dbinfo.acl.isOpen = TRUE)")  
     Stream<DBSystemInfo> findByOpenOrOwnerIdAndEntityType(@Param("id") long id,@Param("entityType") EntityType entityType);
 
-    @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND (dbinfo.acl.owner.id = :id OR ((TRUE = :showPublic) AND (dbinfo.acl.isOpen = TRUE) ))")  
-    Page<DBSystemInfo> findByOpenOrOwnerIdAndEntityTypeWithPagination(@Param("id") long id,@Param("entityType") EntityType entityType, 
+    @Query("SELECT dbinfo.parentId FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND (dbinfo.acl.owner.id = :id OR ((TRUE = :showPublic) AND (dbinfo.acl.isOpen = TRUE) ))")  
+    Page<Long> findParentIdsByOpenOrOwnerIdAndEntityTypeWithPagination(@Param("id") long id,@Param("entityType") EntityType entityType, 
                                                                       @Param("showPublic") boolean showPublic, Pageable pageable);
     
     @Query("SELECT dbinfo FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = TRUE")  

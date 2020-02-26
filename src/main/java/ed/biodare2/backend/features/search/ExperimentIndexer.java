@@ -37,7 +37,7 @@ public class ExperimentIndexer {
         this.luceneExperimentsIndexer = luceneExperimentsIndexer;
     }
     
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.MANDATORY)
     public void indexExperiment(AssayPack pack) {
         
         long sT = System.currentTimeMillis();

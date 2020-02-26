@@ -7,6 +7,7 @@ package ed.biodare2.backend.features.accounts;
 
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.time.LocalDate;
@@ -63,7 +64,7 @@ public class AccountsCleanerTest {
     @Test
     public void hasNoEntriesChecksForDBSystemInfo() {
         UserAccount acc1 = UserAccount.testInstance(1);
-        when(systemInfos.findByAclOwner(eq(acc1))).thenReturn(Stream.of(new DBSystemInfo()));
+        when(systemInfos.findByAclOwner(eq(acc1))).thenReturn(Stream.of(emptySystemInfo(1)));
         
         assertFalse(cleaner.hasNoEntries(acc1));
         
@@ -114,7 +115,7 @@ public class AccountsCleanerTest {
         
         UserAccount acc2 = UserAccount.testInstance(2);
         acc2.setRegistrationDate(LocalDate.now().minusDays(10));
-        when(systemInfos.findByAclOwner(eq(acc2))).thenReturn(Stream.of(new DBSystemInfo()));
+        when(systemInfos.findByAclOwner(eq(acc2))).thenReturn(Stream.of(emptySystemInfo(1)));
         
         
         List<UserAccount> res = cleaner.filterFreshAndUsed(Arrays.asList(acc1,acc2));

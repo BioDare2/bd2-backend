@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -180,7 +182,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertTrue(exps.stream().anyMatch( s -> s.id == id));    
         assertTrue(exps.stream().anyMatch( s -> s.id == pack2.getId())); 
                 
-        int total = wrapper.currentPage.length;
+        long total = wrapper.currentPage.length;
         
         // System.out.println( id +" "+pack2.getId());
         // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
@@ -212,8 +214,10 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
+    @Transactional
     public void getExperimentsAppliesSorting() throws Exception {
     
+        
         AssayPack pack = insertPublicExperiment();
         AssayPack pack2 = insertPublicExperiment();
         AssayPack pack3 = insertPublicExperiment();
@@ -251,6 +255,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(wrapper);
         List<ExperimentSummary> exps = wrapper.data;
         assertNotNull(exps);
+        System.out.println("IDs "+ exps.stream().map(e -> e.id).collect(Collectors.toList()));
         assertEquals(3, exps.size());
         
         assertEquals(pack2.getId(), exps.get(0).id);
@@ -821,6 +826,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    @Transactional(propagation = Propagation.REQUIRED)
     public void publishPublishesTheExperiment() throws Exception {
     
         

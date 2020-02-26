@@ -14,6 +14,7 @@ import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.features.rdmsocial.dao.RDMAssetsAspectRep;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class RDMSocialHandlerTest {
         ExperimentPackTestImp pack = new ExperimentPackTestImp();
         pack.expId = id;
         
-        pack.dbSystemInfo = new DBSystemInfo();
+        pack.dbSystemInfo = emptySystemInfo(1);
 
         EntityACL acl = new EntityACL();
         acl.setOwner(fixtures.user1);
