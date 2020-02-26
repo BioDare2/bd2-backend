@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -119,7 +120,9 @@ public class UserAccount implements Serializable, BioDare2User {
     boolean PI = false;
     boolean asAdmin = false;
     boolean anonymous = false;
-    boolean backendOnly = false;    
+    boolean backendOnly = false;  
+    
+    @Column(name = "is_system")
     boolean system = false;
     
     boolean enabled = true;

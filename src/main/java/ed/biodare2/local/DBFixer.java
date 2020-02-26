@@ -123,9 +123,10 @@ public class DBFixer {
         group.setLongName("Demo Group");        
         UserGroup demoG = groups.findByName(group.getName()).orElseGet( () -> groups.save(group));
         
+        
         UserAccount sys;        
         sys = new UserAccount();
-        sys.setLogin("system");
+        sys.setLogin("system1");
         sys.setFirstName("System");
         sys.setLastName("User");
         sys.setEmail("biodare@ed.ac.uk");
@@ -290,7 +291,7 @@ public class DBFixer {
         db.setParentId(info.parentId);
         db.setEntityType(info.entityType);
         db.setAcl(toACL(info.security));
-        db.setSearchInfo(new SearchInfo());
+        // db.setSearchInfo(new SearchInfo());
         return db;
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e.getMessage()+"; parent: "+info.parentId,e);

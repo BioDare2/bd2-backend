@@ -17,6 +17,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.TableGenerator;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 
 
@@ -45,16 +46,20 @@ public class SearchInfo implements Serializable {
     @CreationTimestamp
     LocalDateTime creationDate;
     
+    @NotNull
     LocalDateTime modificationDate;    
     
+    @NotNull
     LocalDateTime executionDate;   
     
     LocalDateTime indexedDate;    
     
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
+    @NotNull
     String name;
     
-    @Column(length = 25)
+    @Column(length = 25, nullable = false)
+    @NotNull
     String firstAuthor;
 
     @Override

@@ -9,6 +9,7 @@ import ed.biodare2.backend.security.BioDare2Group;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,6 +53,7 @@ public class UserGroup implements BioDare2Group, Serializable {
     protected String longName;
     
     //protected boolean special;
+    @Column(name = "is_system")
     protected boolean system;
     
     @CreationTimestamp
