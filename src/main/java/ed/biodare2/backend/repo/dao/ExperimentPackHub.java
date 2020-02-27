@@ -14,6 +14,7 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -88,10 +89,10 @@ public class ExperimentPackHub {
     @Transactional(propagation = Propagation.MANDATORY)
     public AssayPack save(AssayPack pack) {
 
-        indexer.updateSearchInfo(pack);
-        
+        indexer.updateSearchInfo(pack);        
         // we first index then save so if indexing failes thare no records on exp
         indexer.indexExperiment(pack);
+        pack.getDbSystemInfo().getSearchInfo().setIndexedDate(LocalDateTime.now());
         pack = assembler.save(pack);
         return pack;        
     }

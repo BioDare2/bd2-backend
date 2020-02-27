@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -325,15 +326,16 @@ public class DBFixer {
                                         .filter(Optional::isPresent)
                                         .map(Optional::get)
                                         .map( pack -> expPacks.enableWriting(pack))
+                // so no DB problem
                                         .peek( pack -> pack.getDbSystemInfo().getSearchInfo())
                 ) {
             
                 List<AssayPack> packs = exps.collect(Collectors.toList());
                 
-                updateSearchInfo(packs);
-                
                 experimentIndex.clear();
                 experimentIndex.indexExperiments(packs);
+                
+                updateSearchInfo(packs);
                 log.info("Reindexed {} experiments", packs.size());
         } catch (Exception e) {
             log.error("Could not reindex experiments: {}",e.getMessage(),e);
@@ -364,6 +366,7 @@ public class DBFixer {
                 sysInfo.setSearchInfo(new SearchInfo());
             }
             experimentIndex.updateSearchInfo(pack);
+            sysInfo.getSearchInfo().setIndexedDate(LocalDateTime.now());
             dbSystemInfos.save(sysInfo);
             // expPacks.save(pack);
             

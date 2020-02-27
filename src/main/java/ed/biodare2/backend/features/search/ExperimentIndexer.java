@@ -44,7 +44,6 @@ public class ExperimentIndexer {
         
         log.info("Indexing {} owner {} public {}", pack.getId(), pack.getSystemInfo().security.owner, pack.getSystemInfo().security.isPublic);
         luceneExperimentsIndexer.indexExperiment(pack.getAssay(), pack.getSystemInfo());
-        indexed(pack, LocalDateTime.now());
         
         long dur = System.currentTimeMillis()-sT;
         
@@ -63,7 +62,6 @@ public class ExperimentIndexer {
                 .collect(Collectors.toList());
         
         luceneExperimentsIndexer.indexExperiments(experiments);        
-        packs.forEach(pack -> indexed(pack, LocalDateTime.now()));
         
         long dur = System.currentTimeMillis()-sT;
         
