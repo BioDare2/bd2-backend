@@ -60,7 +60,7 @@ public class StartUpConfiguration {
             } else {
                 log.warn("Running with persistent DB");
                 
-                
+                /*
                 fixer.configureAccounts();
                 fixer.restoreDBSystemInfos();
                 fixer.updateLastIds(BD1LIMIT);                

@@ -11,6 +11,7 @@ import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.EntityType;
+import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.makeSearchInfo;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,7 +71,8 @@ public class DBSystemInfoRepTest {
         info.getAcl().setPublic(false);
         info.getAcl().addCanWrite(fixtures.otherGroup);
         
-        info.setSearchInfo(new SearchInfo());
+        info.setSearchInfo(makeSearchInfo("Exp "+12, fixtures.user1.getLastName()));
+        
     }
 
     @Test
@@ -405,7 +407,7 @@ public class DBSystemInfoRepTest {
         boolean showPublic = true;
 
         info.setParentId(1);
-        info.setSearchInfo(new SearchInfo());
+        //info.setSearchInfo(makeSearchInfo("exp "+1, ));
         info.getSearchInfo().setName("C");
         info = repository.save(info);
         
@@ -419,7 +421,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
 
-        info2.setSearchInfo(new SearchInfo());
+        info2.setSearchInfo(makeSearchInfo("Exp +2", fixtures.user1.getLastName()));
         info2.getSearchInfo().setName("A");
         
         info2 = repository.save(info2);    
@@ -433,7 +435,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
         
-        info3.setSearchInfo(new SearchInfo());
+        info3.setSearchInfo(makeSearchInfo("Exp 3", fixtures.user1.getLastName()));
         info3.getSearchInfo().setName("AB");
         
         info3 = repository.save(info3);   
@@ -447,7 +449,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
         
-        info4.setSearchInfo(new SearchInfo());
+        info4.setSearchInfo(makeSearchInfo("Exp 4", fixtures.user1.getLastName()));
         info4.getSearchInfo().setName("D");
         
         

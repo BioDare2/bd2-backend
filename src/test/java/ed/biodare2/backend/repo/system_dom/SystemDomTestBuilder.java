@@ -135,6 +135,8 @@ public class SystemDomTestBuilder {
     }
     
     public static SearchInfo makeSearchInfo(String name, String firstAuthor) {
+        if (firstAuthor == null) firstAuthor =  "Unknown";
+        
         SearchInfo info = new SearchInfo();
         info.setName(name);
         info.setFirstAuthor(firstAuthor);
