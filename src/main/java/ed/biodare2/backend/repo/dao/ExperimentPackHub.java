@@ -89,9 +89,9 @@ public class ExperimentPackHub {
     @Transactional(propagation = Propagation.MANDATORY)
     public AssayPack save(AssayPack pack) {
 
-        indexer.updateSearchInfo(pack);        
         // we first index then save so if indexing failes thare no records on exp
         indexer.indexExperiment(pack);
+        indexer.updateSearchInfo(pack);        
         pack.getDbSystemInfo().getSearchInfo().setIndexedDate(LocalDateTime.now());
         pack = assembler.save(pack);
         return pack;        
