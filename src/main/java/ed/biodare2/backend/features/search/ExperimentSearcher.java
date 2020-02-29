@@ -6,7 +6,6 @@
 package ed.biodare2.backend.features.search;
 
 import ed.biodare2.backend.features.search.lucene.LuceneExperimentsSearcher;
-import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.web.rest.ListWrapper;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public class ExperimentSearcher {
             SortOption sorting, boolean asc, 
             int pageIndex, int pageSize) {
         
-        log.info("\nSEARCHING IN DB {} {}", user.getLogin(), showPublic);
+        //log.info("\nSEARCHING IN DB {} {}", user.getLogin(), showPublic);
         
         Optional<Long> userId = Optional.empty();
         if (!user.isAnonymous() && (user.getId() != null)) {
@@ -65,14 +64,14 @@ public class ExperimentSearcher {
             SortOption sorting, boolean asc, 
             int pageIndex, int pageSize) {
         
-        log.info("\nSEARCHING {} {} q:{}", user.getLogin(), showPublic, query);
+        //log.info("\nSEARCHING {} {} q:{}", user.getLogin(), showPublic, query);
         ExperimentVisibility visibility = new ExperimentVisibility();
         if (!user.isAnonymous() && (user.getId() != null)) {
             visibility.user = Optional.of(user.getLogin());
         }
         visibility.showPublic = showPublic;
 
-        log.info("\nSEARCHING visibility {}", visibility);
+        //log.info("\nSEARCHING visibility {}", visibility);
         
         return luceneExperimentsSearcher.findVisible(query, visibility, sorting, asc, pageIndex, pageSize);
         
