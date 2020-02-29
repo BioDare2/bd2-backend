@@ -96,6 +96,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                     set.totalTraces = ds.size();
                     set.traces = traces;
                     set.currentPage = page;
+                    set.currentPage.length = ds.size();
                     
                     return set;
                 });
@@ -182,14 +183,15 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         
         List<DataTrace> dataSet = dataHandler.getDataSet(exp, detrending).orElseThrow(()-> new NotFoundException("DataSet not found"));
 
-        dataSet = render(dataSet,displayProperties);
-        Path file = dataExporter.export(dataSet,exp,detrending,displayProperties);
+        // applying displayProperties not implemented
+        // dataSet = render(dataSet,displayProperties);
+        Path file = dataExporter.export(dataSet,exp,detrending);
         
         return file;
     }
 
     protected List<DataTrace> render(List<DataTrace> dataSet, Map<String, String> displayProperties) {
-        return dataSet;
+        throw new UnsupportedOperationException("Applying displayProperties to the data on the server not implemented");
     }
 
     protected DataBundle removeEmptySeries(DataBundle data) {

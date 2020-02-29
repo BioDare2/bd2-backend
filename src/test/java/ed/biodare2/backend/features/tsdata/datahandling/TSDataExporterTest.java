@@ -58,7 +58,7 @@ public class TSDataExporterTest {
         DetrendingType detrending = DetrendingType.POLY_DTR;
         Map<String, String> displayProperties = new HashMap<>();
         
-        List<List<String>> headers = instance.renderSetDescription(exp, detrending, displayProperties);
+        List<List<String>> headers = instance.renderSetDescription(exp, detrending);
         
         assertNotNull(headers);
         
@@ -162,7 +162,7 @@ public class TSDataExporterTest {
         Path file = testFolder.newFile().toPath();        
         assertEquals(0,Files.size(file));        
         
-        instance.export(traces, exp, detrending, displayProperties, file);
+        instance.export(traces, exp, detrending, file);
         
         assertTrue(Files.exists(file));
         assertTrue(Files.size(file) > 10);

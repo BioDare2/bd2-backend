@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +26,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TSDataExporter {
 
-    public Path export(List<DataTrace> dataSet, AssayPack exp, DetrendingType detrending, Map<String, String> displayProperties,Path file) throws IOException {
+    public Path export(List<DataTrace> dataSet, AssayPack exp, DetrendingType detrending, Path file) throws IOException {
         
-        List<List<String>> setDescription = renderSetDescription(exp,detrending,displayProperties);
+        List<List<String>> setDescription = renderSetDescription(exp,detrending);
         List<List<String>> dataHeaders = renderDataHeaders(dataSet);
         List<TimeSeries> data = renderData(dataSet);
         
@@ -39,14 +38,14 @@ public class TSDataExporter {
         
     }    
     
-    public Path export(List<DataTrace> dataSet, AssayPack exp, DetrendingType detrending, Map<String, String> displayProperties) throws IOException {
+    public Path export(List<DataTrace> dataSet, AssayPack exp, DetrendingType detrending) throws IOException {
 
         Path file = Files.createTempFile(null, null);
-        return export(dataSet, exp, detrending, displayProperties, file);
+        return export(dataSet, exp, detrending, file);
         
     }
 
-    protected List<List<String>> renderSetDescription(AssayPack exp, DetrendingType detrending, Map<String, String> displayProperties) {
+    protected List<List<String>> renderSetDescription(AssayPack exp, DetrendingType detrending) {
 
         List<List<String>> rows = new ArrayList<>();
         List<String> row;

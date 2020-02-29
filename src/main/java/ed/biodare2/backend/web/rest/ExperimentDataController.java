@@ -183,6 +183,7 @@ public class ExperimentDataController extends ExperimentController {
         
         Path data = null;
         try {
+            // display properties are not implemented
             data = dataHandler.exportData(exp,detrending,displayProperties);
 
             String contentType = "text/comma-separated-values";
