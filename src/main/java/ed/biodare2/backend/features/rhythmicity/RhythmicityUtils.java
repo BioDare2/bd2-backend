@@ -12,6 +12,7 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import java.util.List;
 import static ed.biodare.jobcentre2.dom.RhythmicityConstants.*;
+import static ed.biodare.jobcentre2.dom.RhythmicityConstants.BD2EJTK_PRESETS.*;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
@@ -77,6 +78,7 @@ public class RhythmicityUtils {
         job.parentId = expId;
         job.jobStatus = new JobStatus(null,State.SUBMITTED);
         
+        
         job.parameters = new HashMap<>(jobRequest.parameters);
         
 	job.parameters.put(DW_START, ""+request.windowStart);
@@ -103,15 +105,23 @@ public class RhythmicityUtils {
 
     public void completeRequest(RhythmicityRequest request) {
         
-        if (RhythmicityConstants.BD2EJTK_PRESETS.EJTK_CLASSIC.name().equals(request.preset)) {
+        if (EJTK_CLASSIC.name().equals(request.preset)) {
             request.periodMin = 24;
             request.periodMax =24;
         }
         
-        if (RhythmicityConstants.BD2EJTK_PRESETS.BD2_CLASSIC.name().equals(request.preset)) {
+        if (BD2_CLASSIC.name().equals(request.preset)) {
             request.periodMin = 18;
             request.periodMax = 35;
         }
+        
+        if (COS_1H.name().equals(request.preset) || COS_2H.name().equals(request.preset)
+                || COS_4H.name().equals(request.preset)) {
+            request.periodMin = 24;
+            request.periodMax =24;            
+        }
+        
+        
     }
     
     

@@ -77,7 +77,9 @@ public class RhythmicityResultsExporter {
         tb.printLabel("P. Asym");
         tb.printLabel("");
         tb.printLabel("JTK p from tau");
+        tb.printLabel("JTK p BH Corrected");
         tb.printLabel("bf corrected JTK p");
+        tb.printLabel("BH bf corrected p");
         tb.endln();
         
         results.results.forEach( entry -> {
@@ -100,7 +102,9 @@ public class RhythmicityResultsExporter {
             tb.printVal(roundToCenty(result.pattern.leftPortion));
             tb.printVal("");
             tb.printVal(result.p);
+            tb.printVal(result.pBH);
             tb.printVal(result.bfP);
+            tb.printVal(result.bfPBH);
 
             tb.endln();
         });

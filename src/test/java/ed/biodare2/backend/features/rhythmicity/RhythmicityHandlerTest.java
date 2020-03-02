@@ -297,7 +297,8 @@ public class RhythmicityHandlerTest {
         TSData data = new TSData(2,  makeTimeSeries(24));
         jobRequest.data = List.of(data);
         jobRequest.externalId = "123";
-        jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
+        // jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
+        jobRequest.parameters.put("PRESET", "COS_1H");
         
         try {
             instance.checkRequestSanity(jobRequest);
@@ -306,6 +307,8 @@ public class RhythmicityHandlerTest {
             String msg = "Unsupported method: "+null;
             assertEquals(msg, e.getMessage());
         }
+        
+
         
         jobRequest.method = "XXX";
         try {
@@ -318,6 +321,10 @@ public class RhythmicityHandlerTest {
         
         jobRequest.method = "BD2EJTK";
         instance.checkRequestSanity(jobRequest);
+        
+        jobRequest.method = "BD2JTK";
+        instance.checkRequestSanity(jobRequest);
+        
         
         jobRequest.parameters.put("PRESET", "XXX");
         try {

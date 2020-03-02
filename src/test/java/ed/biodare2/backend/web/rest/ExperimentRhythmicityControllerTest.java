@@ -109,6 +109,58 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
     }
     
     @Test
+    public void testNewJTKClassicRhythmicity() throws Exception {
+        
+        UUID jobId = UUID.randomUUID();
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();                
+        insertData(pack, 96);
+        
+        RhythmicityRequest rhythmicityRequest = makeRhythmicityRequest();
+        rhythmicityRequest.method = "BD2JTK";
+        rhythmicityRequest.preset = "COS_2H";        
+        
+        String orgJSON = mapper.writeValueAsString(rhythmicityRequest);
+        
+        when(rhythmicityService.submitJob(any())).thenReturn(jobId);
+        
+        assertFalse(exp.characteristic.hasRhythmicityJobs);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(serviceRoot+'/'+exp.getId()+"/rhythmicity")
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("newPPA JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
+        assertNotNull(info);
+        assertNotNull(info.get("analysis"));  
+        assertEquals(jobId.toString(), info.get("analysis"));
+
+        pack = expBoundles.findOne(pack.getId()).get();
+        exp = pack.getAssay();
+        assertTrue(exp.characteristic.hasRhythmicityJobs);
+        
+        assertTrue(rhythmicityRep.findJob(jobId, exp.getId()).isPresent());
+        String met = rhythmicityRep.findJob(jobId, exp.getId())
+                      .map( j -> j.parameters.get("METHOD"))
+                      .get();
+        assertEquals("BD2JTK",met);
+    }
+    
+    
+    @Test
     public void testGetJobs() throws Exception {
         
         AssayPack pack = insertExperiment();

@@ -129,7 +129,8 @@ public class RhythmicityHandler {
     void validateRequest(RhythmicityRequest request) throws ArgumentException {
         if (!request.isValid()) throw new ArgumentException("Not valid ppaRequest"); 
         
-        if (!request.method.equals(RHYTHMICITY_METHODS.BD2EJTK.name()))
+        if (!request.method.equals(RHYTHMICITY_METHODS.BD2EJTK.name()) && 
+                !request.method.equals(RHYTHMICITY_METHODS.BD2JTK.name()))
             throw new ArgumentException("Unsupported method: "+request.method);
         
         try {
@@ -374,7 +375,7 @@ public class RhythmicityHandler {
 
     void checkRequestSanity(TSDataSetJobRequest request) throws RhythmicityHandlingException {
         
-        if (!RHYTHMICITY_METHODS.BD2EJTK.name().equals(request.method)) {
+        if (!RHYTHMICITY_METHODS.BD2EJTK.name().equals(request.method) && !RHYTHMICITY_METHODS.BD2JTK.name().equals(request.method)) {
             throw new RhythmicityHandlingException("Unsupported method: "+request.method);
         }
         

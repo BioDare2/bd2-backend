@@ -118,7 +118,42 @@ public class RhythmicityUtilsTest {
         instance.completeRequest(request);
         assertEquals(1, request.periodMin, EPS);
         assertEquals(20, request.periodMax, EPS);
+        
     }
+    
+    @Test
+    public void completeRequestChangesCOS24Presets() {
+        RhythmicityRequest request = makeRhythmicityRequest();
+        request.periodMin = 1;
+        request.periodMax = 20;
+        request.preset = "COS_1H";
+        
+        instance.completeRequest(request);
+        assertEquals(24, request.periodMin, EPS);
+        assertEquals(24, request.periodMax, EPS);
+        request.preset = "COS_1H";
+        
+        request.periodMin = 1;
+        request.periodMax = 20;
+        request.preset = "COS_2H";
+        
+        instance.completeRequest(request);
+        assertEquals(24, request.periodMin, EPS);
+        assertEquals(24, request.periodMax, EPS);
+        request.preset = "COS_2H";
+        
+        request.periodMin = 1;
+        request.periodMax = 20;
+        request.preset = "COS_4H";
+        
+        instance.completeRequest(request);
+        assertEquals(24, request.periodMin, EPS);
+        assertEquals(24, request.periodMax, EPS);
+        request.preset = "COS_4H";
+        
+
+        
+    }    
     
     @Test
     public void prepareDataLeavesDataIfWindows0() {
