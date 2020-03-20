@@ -8,6 +8,7 @@ package ed.biodare2.backend.repo.dao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static ed.biodare2.backend.repo.dao.PPAArtifactsRep.JOB_SIMPLE_SUMMARY_FILE;
 import ed.biodare2.backend.repo.dao.PPAArtifactsRep.ExpJobKey;
+import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobIndResults;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
@@ -24,6 +25,7 @@ import ed.robust.dom.data.TimeSeries;
 
 import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.dom.param.Parameters;
+import ed.robust.dom.tsprocessing.FFT_PPA;
 import ed.robust.dom.tsprocessing.GenericPPAResult;
 import ed.robust.dom.tsprocessing.MESA_PPA;
 import ed.robust.dom.tsprocessing.PPA;
@@ -31,12 +33,14 @@ import ed.robust.dom.tsprocessing.PPAResult;
 import ed.robust.dom.tsprocessing.PPAStats;
 import ed.robust.dom.tsprocessing.ResultsEntry;
 import ed.robust.dom.tsprocessing.StatsEntry;
+import ed.robust.dom.tsprocessing.WeightingType;
 import ed.robust.jobcenter.dom.job.JobHandle;
 import ed.robust.jobcenter.dom.job.JobRequest;
 import ed.robust.jobcenter.dom.job.JobResult;
 import ed.robust.jobcenter.dom.job.TaskResult;
 import ed.robust.jobcenter.dom.state.State;
 import ed.robust.ppa.PPAMethod;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -690,5 +694,111 @@ public class PPAArtifactsRepTest {
         
     }
     
+    @Test
+    public void canReadPreJC2PPAJobSummary() throws Exception {
+        String fName = "preJC2_PPA_JOB_SUMMARY.json";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        Optional<PPAJobSummary> res = ppaRep.readJobSummary(f.toPath());
+        assertTrue(res.isPresent());
+        
+        PPAJobSummary job = res.get();
+        assertEquals(1017, job.jobId);
+        assertEquals("10311_NO_DTR", job.dataSetId);
+        assertEquals("NO_DTR", job.dataSetType);
+        assertEquals(State.FINISHED, job.state);
+    }
+    
+    @Test
+    public void canReadPreJC2PPAJobSimpleResults() throws Exception {
+        String fName = "preJC2_PPA_SIMPLE_RESULTS.json";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        PPAJobSimpleResults res = ppaRep.simpleResultsReader.readValue(f);
+
+        
+        assertEquals(1017, res.jobId);
+        assertEquals(10, res.results.size());
+        assertEquals(1, res.results.get(0).dataId);
+        assertEquals(23.47, res.results.get(0).period, EPS);
+        
+    }    
+    
+    @Test
+    public void canReadPreJC2PPAJobSimpleStats() throws Exception {
+        String fName = "preJC2_PPA_SIMPLE_STATS.json";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        PPAJobSimpleStats res = ppaRep.simpleStatsReader.readValue(f);
+
+        
+        assertEquals(1017, res.jobId);
+        assertEquals(5, res.stats.size());
+        assertEquals(1, res.stats.get(0).memberDataId);
+        assertEquals(2, res.stats.get(0).N);
+        assertEquals(23.7, res.stats.get(0).period, EPS);
+        
+    }    
+    
+    @Test
+    public void canReadPreJC2PPAJobResultsGroups() throws Exception {
+        String fName = "preJC2_PPA_GROUPED_RESULTS.json";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        PPAJobResultsGroups res = ppaRep.groupSummaryReader.readValue(f);
+
+        
+        assertEquals(1017, res.jobId);
+        assertEquals(5, res.groups.size());
+        assertEquals(1, res.groups.get(0).memberDataId);
+        assertEquals(2, res.groups.get(0).periods.size());
+        assertEquals(List.of(23.47,23.93), res.groups.get(0).periods);
+        
+    }    
+    
+    @Test
+    public void canReadPreJC2PPAJobIndResults() throws Exception {
+        String fName = "preJC2_PPA_RESULTS.xml";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        PPAJobIndResults res = ppaRep.xmlUtil.readFromFile(f.toPath(), PPAJobIndResults.class);
+
+        
+        assertEquals(10, res.results.size());
+        assertEquals(1017, res.results.get(0).jobId);
+        assertEquals(1, res.results.get(0).dataId);
+        assertEquals(23.47, res.results.get(0).getResult().getPeriod(),EPS);
+        assertTrue(res.results.get(0).getResult() instanceof FFT_PPA);
+        
+    } 
+    
+    @Test
+    public void canReadPreJC2JobSummary() throws Exception {
+        String fName = "preJC2_PPA_JOB_FULL.xml";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        JobSummary job = ppaRep.xmlUtil.readFromFile(f.toPath(), JobSummary.class);
+        
+        assertEquals(1017, job.getJobId());
+        assertEquals("10311_NO_DTR", job.getParams().getString(job.DATA_SET_ID));
+        assertEquals("NO_DTR", job.getDataSetType());
+        assertEquals(State.FINISHED, job.getStatus().getState());
+    } 
+    
+    @Test
+    public void canReadPreJC2StatsEntry() throws Exception {
+        String fName = "preJC2_PPA_FULL_STATS.xml";
+        File f = new File(this.getClass().getResource(fName).toURI());
+        
+        StatsEntry res = ppaRep.xmlUtil.readFromFile(f.toPath(), StatsEntry.class);
+
+        
+        assertEquals(1017, res.getJobId());
+        assertEquals(5, res.getStats().size());
+        assertEquals(1, res.getStats().get(0).getMemberDataId());
+        assertEquals(2, res.getStats().get(0).getPeriodStats().getN(WeightingType.None));
+        assertEquals(23.7, res.getStats().get(0).getPeriodStats().getMean(WeightingType.None), EPS);
+        
+    }      
     
 }

@@ -526,7 +526,7 @@ public class PPAArtifactsRep {
         });          
     }    
     
-    private Optional<PPAJobSummary> readJobSummary(Path jobFile) {
+    protected Optional<PPAJobSummary> readJobSummary(Path jobFile) {
         try {
         
             if (!Files.exists(jobFile)) {
