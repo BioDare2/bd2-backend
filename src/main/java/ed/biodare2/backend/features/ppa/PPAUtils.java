@@ -5,6 +5,10 @@
  */
 package ed.biodare2.backend.features.ppa;
 
+import static ed.biodare.jobcentre2.dom.PeriodConstants.PERIOD_MAX_KEY;
+import static ed.biodare.jobcentre2.dom.PeriodConstants.PERIOD_MIN_KEY;
+import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
+import ed.biodare2.backend.features.tsdata.TSUtil;
 import ed.robust.dom.param.Parameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -63,6 +67,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -1103,6 +1108,67 @@ public class PPAUtils {
         });
         
         return results;
+    }
+
+    TSDataSetJobRequest prepareJC2JobRequest(long expId, PPARequest request, List<DataTrace> dataSet) {
+        
+        TSDataSetJobRequest job = new TSDataSetJobRequest();
+        job.externalId = ""+expId;
+        job.method = request.method.name();
+        job.data = TSUtil.prepareTSData(dataSet, request.windowStart, request.windowEnd);
+        job.parameters = prepareParameters(request);
+        return job;
+    }
+
+    PPAJobSummary prepareNewPPAJobSummary(long expId, PPARequest ppaRequest, UUID jobId) {
+        
+        
+        PPAJobSummary jobSummary = new PPAJobSummary();
+        jobSummary.id = jobId.toString();
+        jobSummary.jobId = uuid2long(jobId);
+
+        jobSummary.state = State.SUBMITTED;
+        jobSummary.submitted = new Date();
+        
+        jobSummary.dataSetId = expId+"_"+ppaRequest.detrending.name();
+        jobSummary.dataSetType = dataType(ppaRequest);
+        jobSummary.dataSetTypeName = dataTypeLabel(ppaRequest);
+        jobSummary.dataWindow = dataWindow2String(ppaRequest.windowStart, ppaRequest.windowEnd);
+        jobSummary.dataWindowEnd = ppaRequest.windowEnd;
+        jobSummary.dataWindowStart = ppaRequest.windowStart;
+        jobSummary.max_period = ppaRequest.periodMax;
+        jobSummary.min_period = ppaRequest.periodMin;
+        jobSummary.method = ppaRequest.method;
+        jobSummary.modified = jobSummary.submitted;
+        
+	String summary = dataTypeLabel(ppaRequest)+" ";
+        summary+= jobSummary.dataWindow;
+	summary+= " p("+ppaRequest.periodMin+"-"+ppaRequest.periodMax+")";
+        
+        jobSummary.summary = summary;
+        
+
+
+        return jobSummary;
+    }
+
+    static final long uuid2long(UUID id) {
+        return id.getLeastSignificantBits()+id.getMostSignificantBits();
+    }
+    
+    String dataWindow2String(double windowStart, double windowEnd) {
+	String min = windowStart == 0 ? "min" : ""+windowStart;
+	String max = windowEnd == 0 ? "max" : ""+windowEnd;
+	return min+"-"+max;
+    }    
+
+    Map<String, String> prepareParameters(PPARequest request) {
+        
+        Map<String, String> params = new HashMap<>();
+        params.put("METHOD", request.method.name());
+        params.put(PERIOD_MIN_KEY, ""+request.periodMin);
+        params.put(PERIOD_MAX_KEY, ""+request.periodMax);
+        return params;        
     }
 
  

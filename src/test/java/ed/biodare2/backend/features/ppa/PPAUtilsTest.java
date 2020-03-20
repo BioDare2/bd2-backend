@@ -5,7 +5,11 @@
  */
 package ed.biodare2.backend.features.ppa;
 
+import static ed.biodare.jobcentre2.dom.PeriodConstants.PERIOD_MAX_KEY;
+import static ed.biodare.jobcentre2.dom.PeriodConstants.PERIOD_MIN_KEY;
+import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
@@ -35,8 +39,14 @@ import ed.robust.util.timeseries.TSGenerator;
 import ed.robust.util.timeseries.TimeSeriesFileHandler;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -383,6 +393,7 @@ public class PPAUtilsTest {
         assertEquals(171,sum.jobId);
         assertEquals(null,sum.lastError);
         assertEquals(35.0,sum.max_period,1E-6);
+        assertEquals(18.0,sum.min_period,1E-6);
         assertEquals("Attention: 0; ",sum.message);
         assertEquals(PPAMethod.NLLS,sum.method);
         assertEquals(job.getStatus().getModified(),sum.modified);
@@ -391,5 +402,78 @@ public class PPAUtilsTest {
         assertEquals(job.getStatus().getSubmitted(),sum.submitted);
         assertEquals("linear dtr min-max p(18.0-35.0)",sum.summary);
     }
+    
+    @Test
+    public void preparesCorrectlyNewPPAJobSummary() {
+    
+        long expId = 1234;
+        
+        PPARequest req = DomRepoTestBuilder.makePPARequest();
+        req.windowStart = 5;
+        req.windowEnd = 130;
+        
+        UUID id = UUID.randomUUID();
+        
+        PPAJobSummary sum = instance.prepareNewPPAJobSummary(expId, req, id);
+        assertEquals(0,sum.attentionCount);
+        assertEquals(false,sum.closed);
+        assertEquals(null,sum.completed);
+        assertEquals("1234_POLY_DTR",sum.dataSetId);
+        assertEquals("POLY_DTR",sum.dataSetType);
+        assertEquals("cubic dtr",sum.dataSetTypeName);
+        assertEquals("5.0-130.0",sum.dataWindow);
+        assertEquals(130,sum.dataWindowEnd,1E-6);
+        assertEquals(5,sum.dataWindowStart,1E-6);
+        assertEquals(0,sum.failures);
+        assertEquals(id.toString(),sum.id);
+        assertEquals(instance.uuid2long(id), sum.jobId);
+        assertEquals(null,sum.lastError);
+        assertEquals(35.0,sum.max_period,1E-6);
+        assertEquals(null,sum.message);
+        assertEquals(PPAMethod.MESA,sum.method);
+        assertEquals(LocalDate.now(),LocalDate.ofInstant(sum.modified.toInstant(),ZoneId.systemDefault()));
+        assertEquals(false,sum.needsAttention);
+        assertEquals(State.SUBMITTED,sum.state);
+        assertEquals(LocalDate.now(),LocalDate.ofInstant(sum.submitted.toInstant(),ZoneId.systemDefault()));
+        assertEquals("cubic dtr 5.0-130.0 p(18.0-35.0)",sum.summary);
+    
+    }
+
+    @Test
+    public void preparesCorrectlyParameters() {
+    
+        PPARequest req = DomRepoTestBuilder.makePPARequest();
+        req.windowStart = 5;
+        req.windowEnd = 130;
+        
+        Map<String, String> p = instance.prepareParameters(req);
+        assertEquals(PPAMethod.MESA.name(),p.get("METHOD"));   
+        assertEquals("35.0",p.get("PERIOD_MAX"));
+        assertEquals("18.0",p.get("PERIOD_MIN"));
+        
+    
+    }
+    
+    @Test
+    public void preparesCorrectlyJC2JobRequest() {
+    
+        long expId = 1234;
+        
+        PPARequest req = DomRepoTestBuilder.makePPARequest();
+        req.windowStart = 2;
+        req.windowEnd = 0;
+        List<DataTrace> dataSet = makeDataTraces(1,5,48);
+        TSDataSetJobRequest result = instance.prepareJC2JobRequest(expId, req, dataSet);
+        
+        assertNotNull(result);
+        assertEquals("1234", result.externalId);
+        assertEquals("MESA",result.method);
+        assertEquals(""+req.periodMin, result.parameters.get(PERIOD_MIN_KEY));
+        assertEquals(""+req.periodMax, result.parameters.get(PERIOD_MAX_KEY));
+        
+        assertEquals(5, result.data.size());
+        assertEquals(2.0, result.data.get(0).trace.getFirst().getTime(),1E-6);
+       
+    }    
     
 }

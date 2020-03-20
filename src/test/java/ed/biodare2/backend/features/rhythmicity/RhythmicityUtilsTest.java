@@ -8,6 +8,7 @@ package ed.biodare2.backend.features.rhythmicity;
 import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
+import ed.biodare2.backend.features.tsdata.TSUtil;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
@@ -60,38 +61,7 @@ public class RhythmicityUtilsTest {
         assertEquals(2.0, result.data.get(0).trace.getFirst().getTime(),1E-6);
     }
 
-    @Test
-    public void prepareDataTrimsData() {
 
-        List<DataTrace> dataSet = makeDataTraces(1,2,48);
-        double windowStart = 2;
-        double windowEnd = 5;
-        
-        List<TSData> data = instance.prepareData(dataSet, windowStart, windowEnd);
-        
-        assertEquals(2, data.get(0).trace.getFirst().getTime(),EPS);
-        assertEquals(5, data.get(0).trace.getLast().getTime(),EPS);
-        assertEquals(2, data.get(1).trace.getFirst().getTime(),EPS);
-        assertEquals(5, data.get(1).trace.getLast().getTime(),EPS);
-        
-    }
-    
-    @Test
-    public void prepareDataTrimsStartOfData() {
-
-        List<DataTrace> dataSet = makeDataTraces(1,2,48);
-        double windowStart = 2;
-        double windowEnd = 0;
-        
-        assertEquals(0, dataSet.get(0).trace.getFirst().getTime(),EPS);
-        assertEquals(47, dataSet.get(0).trace.getLast().getTime(),EPS);
-        
-        List<TSData> data = instance.prepareData(dataSet, windowStart, windowEnd);
-        
-        assertEquals(2, data.get(0).trace.getFirst().getTime(),EPS);
-        assertEquals(47, data.get(0).trace.getLast().getTime(),EPS);
-        
-    } 
     
     @Test
     public void completeRequestChangesPeriodMinMax() {
@@ -163,7 +133,7 @@ public class RhythmicityUtilsTest {
         double windowStart = 0;
         double windowEnd = 0;
         
-        List<TSData> data = instance.prepareData(dataSet, windowStart, windowEnd);
+        List<TSData> data = TSUtil.prepareTSData(dataSet, windowStart, windowEnd);
         
         assertSame(dataSet.get(0).trace, data.get(0).trace);
         assertSame(dataSet.get(1).trace, data.get(1).trace);

@@ -15,6 +15,7 @@ import java.util.Date;
  */
 public class PPAJobSummary {
     
+    public String id;
     public long jobId;
     public long parentId;
     public State state;

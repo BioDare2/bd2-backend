@@ -98,6 +98,11 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_PPA,NEW,exp.getId(),user,method.name(),analysisId);
         analysis.info("{}\t{}\t{}\t{}\t{}\t{}\t",EXP_PPA,NEW,exp.getId(),method.name(),analysisId,user.getLogin(),user.getSupervisor().getLogin());
     }
+    
+    public void ppaNew(AssayPack exp, UUID analysisId, PPAMethod method, BioDare2User user) {
+        track(EXP_PPA,NEW,exp.getId(),user,method.name(),analysisId.toString());
+        analysis.info("{}\t{}\t{}\t{}\t{}\t{}\t",EXP_PPA,NEW,exp.getId(),method.name(),analysisId,user.getLogin(),user.getSupervisor().getLogin());
+    }    
 
     public void ppaStats(AssayPack exp, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"STATS");
