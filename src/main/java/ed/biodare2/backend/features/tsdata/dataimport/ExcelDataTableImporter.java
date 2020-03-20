@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare.data.excel.Excel2TextConverter;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
@@ -12,7 +13,6 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTableImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.web.rest.ServerSideException;
-import ed.synthsys.util.excel.Excel2TextConverter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -5,9 +5,9 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
+import ed.biodare.data.excel.Excel2TextConverter;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
 import ed.biodare2.backend.web.rest.HandlingException;
-import ed.synthsys.util.excel.Excel2TextConverter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

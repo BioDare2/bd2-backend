@@ -6,9 +6,9 @@
 package ed.biodare2.backend.features.tsdata.tableview;
 
 import ed.robust.dom.util.Pair;
-import ed.synthsys.util.excel.ExcelDimensionChecker;
-import ed.synthsys.util.excel.ExcelFormatException;
-import ed.synthsys.util.excel.ModernExcelView;
+import ed.biodare.data.excel.ExcelDimensionChecker;
+import ed.biodare.data.excel.ExcelFormatException;
+import ed.biodare.data.excel.ModernExcelView;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;

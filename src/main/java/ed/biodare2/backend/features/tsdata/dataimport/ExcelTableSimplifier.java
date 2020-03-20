@@ -5,9 +5,9 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare.data.excel.ExcelFormatException;
+import ed.biodare.data.excel.ModernExcelView;
 import ed.biodare2.backend.web.rest.HandlingException;
-import ed.synthsys.util.excel.ExcelFormatException;
-import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;

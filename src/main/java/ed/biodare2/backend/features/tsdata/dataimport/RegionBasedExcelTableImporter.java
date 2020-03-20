@@ -5,6 +5,8 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare.data.excel.ExcelFormatException;
+import ed.biodare.data.excel.ModernExcelView;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
@@ -16,8 +18,6 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ExcelTSImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
 import ed.robust.dom.data.TimeSeries;
-import ed.synthsys.util.excel.ExcelFormatException;
-import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;

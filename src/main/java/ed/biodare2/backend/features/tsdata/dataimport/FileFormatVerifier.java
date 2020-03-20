@@ -5,10 +5,10 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
-import ed.bd.parser.topcount.TopCountReader;
+import ed.biodare.data.excel.ModernExcelView;
+import ed.biodare.data.topcount.TopCountReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
-import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
 import java.nio.file.Path;
 import org.slf4j.Logger;

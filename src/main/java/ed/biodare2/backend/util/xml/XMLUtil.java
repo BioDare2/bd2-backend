@@ -8,10 +8,8 @@ package ed.biodare2.backend.util.xml;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import ed.biodare2.backend.web.rest.ServerSideException;
-import ed.robust.dom.jobcenter.JobsContainer;
-import ed.robust.dom.tsprocessing.MESA_PPA;
+
 import ed.robust.dom.tsprocessing.PPAResult;
-import ed.robust.jobcenter.dom.job.JobResult;
 import java.nio.file.Path;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
