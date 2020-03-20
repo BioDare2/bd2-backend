@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
+import ed.biodare.data.excel.ModernExcelView;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
@@ -15,8 +16,6 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ExcelTSImportParameters;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
-import ed.robust.dom.data.TimeSeries;
-import ed.synthsys.util.excel.ModernExcelView;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;

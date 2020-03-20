@@ -4,7 +4,7 @@
  */
 package ed.robust.tranform.data;
 
-import ed.mesa.MesaLocalRegressionDetrending;
+import ed.biodare.period.mesa.implementation.MesaLocalRegressionDetrending;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.NormalizationType;
 import ed.robust.dom.data.TimeSeries;

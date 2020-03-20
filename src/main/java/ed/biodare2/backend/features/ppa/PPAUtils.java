@@ -242,6 +242,7 @@ public class PPAUtils {
         summary.dataWindow = job.getDataWindow();
         summary.dataWindowEnd = job.getParams().getDouble(JobSummary.DW_END, 0);
         summary.dataWindowStart = job.getDataWindowStart();
+
         summary.failures = job.getFailures();
         summary.jobId = job.getJobId();
         summary.lastError = job.getLastError();

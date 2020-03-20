@@ -6,7 +6,7 @@
 package ed.biodare2.backend.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ed.biodare.jobcentre2.dom.jsonmodule.TimeSeriesModule;
+
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.security.dao.db.EntityACL;
@@ -30,8 +30,8 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
 import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
+import ed.biodare2.backend.util.json.TimeSeriesModule;
 import ed.robust.dom.data.DetrendingType;
 //import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;

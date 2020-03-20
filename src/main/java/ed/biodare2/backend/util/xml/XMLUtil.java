@@ -10,6 +10,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import ed.biodare2.backend.web.rest.ServerSideException;
 
 import ed.robust.dom.tsprocessing.PPAResult;
+import ed.robust.jobcenter.dom.job.JobResult;
 import java.nio.file.Path;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;

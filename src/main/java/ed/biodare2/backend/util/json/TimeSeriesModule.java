@@ -5,22 +5,14 @@
  */
 package ed.biodare2.backend.util.json;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import ed.robust.dom.data.TimeSeries;
+import org.springframework.boot.jackson.JsonComponent;
+
 
 /**
- *
+ * It has to be here explicitly as otherwise it is not being picked up by jackson
  * @author Zielu
  */
-class TimeSeriesModule extends SimpleModule {
-    
-    private static final long serialVersionUID = 1L;
-
-    public TimeSeriesModule()
-    {
-        //super(PackageVersion.VERSION); 
-        addDeserializer(TimeSeries.class, new TimeSeriesDeSerializer());        
-        addSerializer(TimeSeries.class, new TimeSeriesSerializer());
-    }
+@JsonComponent
+public class TimeSeriesModule extends ed.biodare.data.json.TimeSeriesModule {
     
 }

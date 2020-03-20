@@ -8,7 +8,7 @@ package ed.biodare2.backend.util.json;
 import org.springframework.boot.jackson.JsonComponent;
 
 /**
- *
+ * It has to be here explicitly as otherwise it is not being picked up by jackson
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 @JsonComponent

@@ -5,10 +5,10 @@
  */
 package ed.biodare2.backend.features.tsdata.tableview;
 
+import ed.biodare.data.excel.ModernExcelView;
 import static ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader.getRowsNumber;
 import static ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader.isSuitableFormat;
 import ed.robust.dom.util.Pair;
-import ed.synthsys.util.excel.ModernExcelView;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
