@@ -694,7 +694,7 @@ public class PPAJC2ResultsHandlerTest {
         
         UUID jobId = UUID.randomUUID();
         PPAJobSummary job = new PPAJobSummary();
-        job.setUUID(jobId);
+        job.setID(jobId);
         
         job.dataSetType = "ASet";
         job.dataWindowStart= 1;
@@ -759,7 +759,7 @@ public class PPAJC2ResultsHandlerTest {
         orgData.put(2L,data);
 
         PPAJobSummary job = new PPAJobSummary();
-        job.setUUID(jobId);        
+        job.setID(jobId);        
         job.dataSetType = DetrendingType.NO_DTR.name();
         job.dataWindowStart= 1;
         job.state = (State.SUBMITTED); 

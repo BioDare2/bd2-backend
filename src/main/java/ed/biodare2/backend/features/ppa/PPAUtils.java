@@ -1127,7 +1127,7 @@ public class PPAUtils {
         
         
         PPAJobSummary jobSummary = new PPAJobSummary();
-        jobSummary.setUUID(jobId);
+        jobSummary.setID(jobId);
 
         jobSummary.state = State.SUBMITTED;
         jobSummary.submitted = new Date();

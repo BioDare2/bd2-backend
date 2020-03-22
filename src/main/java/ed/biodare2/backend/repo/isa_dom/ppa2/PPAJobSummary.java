@@ -44,7 +44,7 @@ public class PPAJobSummary {
     
     public String selections;
     
-    public void setUUID(UUID id) {
+    public void setID(UUID id) {
         this.uuid = id.toString();
         this.jobId = uuid2long(id);
     }

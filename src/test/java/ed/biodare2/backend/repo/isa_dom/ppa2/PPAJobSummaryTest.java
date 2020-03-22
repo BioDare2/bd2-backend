@@ -8,7 +8,6 @@ package ed.biodare2.backend.repo.isa_dom.ppa2;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import static ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleStatsTest.makeSimpleStats;
 import ed.robust.jobcenter.dom.state.State;
 import ed.robust.ppa.PPAMethod;
 import java.io.IOException;
