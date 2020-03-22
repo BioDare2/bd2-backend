@@ -425,7 +425,7 @@ public class PPAUtilsTest {
         assertEquals(130,sum.dataWindowEnd,1E-6);
         assertEquals(5,sum.dataWindowStart,1E-6);
         assertEquals(0,sum.failures);
-        assertEquals(id.toString(),sum.id);
+        assertEquals(id.toString(),sum.uuid);
         assertEquals(PPAJobSummary.uuid2long(id), sum.jobId);
         assertEquals(null,sum.lastError);
         assertEquals(35.0,sum.max_period,1E-6);

@@ -241,7 +241,7 @@ public class PPAJC2ResultsHandlerTest {
                 
         
         PPAJobSummary jobDesc = new PPAJobSummary();
-        jobDesc.id = jobId.toString();
+        jobDesc.uuid = jobId.toString();
         jobDesc.dataSetType = DetrendingType.NO_DTR.name();
         jobDesc.state = State.SUBMITTED;
         jobDesc.method = PPAMethod.NLLS;
@@ -254,7 +254,7 @@ public class PPAJC2ResultsHandlerTest {
         
         when(dataHandler.getDataSet(exp, DetrendingType.NO_DTR)).thenReturn(Optional.of(dataSet));
         
-        assertTrue(ppaRep.getJobResultsGroups(exp, jobDesc.id).groups.isEmpty());
+        assertTrue(ppaRep.getJobResultsGroups(exp, jobDesc.uuid).groups.isEmpty());
         instance.handleResults(exp, job);
         
         
@@ -372,7 +372,7 @@ public class PPAJC2ResultsHandlerTest {
         
         UUID jobId = UUID.randomUUID();
         PPAJobSummary job = new PPAJobSummary();
-        job.id = jobId.toString();
+        job.uuid = jobId.toString();
         job.dataSetType = DetrendingType.NO_DTR.name();
         job.dataWindowStart= 1;
         job.state = (State.SUBMITTED);        
@@ -422,7 +422,7 @@ public class PPAJC2ResultsHandlerTest {
         
         UUID jobId = UUID.randomUUID();
         PPAJobSummary job = new PPAJobSummary();
-        job.id = jobId.toString();
+        job.uuid = jobId.toString();
         job.dataSetType = DetrendingType.NO_DTR.name();
         job.dataWindowStart= 1;
         job.state = (State.SUBMITTED);         
@@ -669,7 +669,7 @@ public class PPAJC2ResultsHandlerTest {
         
         UUID jobId = UUID.randomUUID();
         PPAJobSummary job = new PPAJobSummary();
-        job.id = jobId.toString();
+        job.uuid = jobId.toString();
         job.dataSetType = DetrendingType.NO_DTR.name();
         job.dataWindowStart= 5;
         job.state = (State.SUBMITTED);         
@@ -840,7 +840,7 @@ public class PPAJC2ResultsHandlerTest {
         
         
         PPAJobSummary job = new PPAJobSummary();
-        job.id = jobId.toString();
+        job.uuid = jobId.toString();
         job.dataSetType = DetrendingType.NO_DTR.name();
         job.dataWindowStart= 1;
         job.state = (State.SUBMITTED);

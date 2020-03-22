@@ -229,13 +229,13 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         
         
         
-        job = ppaRep.getJobSummary(pack, job.id).get();
+        job = ppaRep.getJobSummary(pack, job.uuid).get();
         
         assertEquals(State.FINISHED.name(), job.state.name());
         assertNotNull(job.completed);
 
         
-        List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.id).stream().map( r -> r.getResult())
+        List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.uuid).stream().map( r -> r.getResult())
                 .collect(Collectors.toList());
         
         assertFalse(saved.isEmpty());

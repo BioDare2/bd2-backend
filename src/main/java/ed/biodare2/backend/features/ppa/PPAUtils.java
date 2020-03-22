@@ -251,7 +251,7 @@ public class PPAUtils {
         summary.failures = job.getFailures();
         
         summary.jobId = job.getJobId();
-        summary.id = ""+job.getJobId();
+        summary.uuid = ""+job.getJobId();
         
         summary.lastError = job.getLastError();
         summary.max_period = job.getParams().getDouble(PPAConstants.MAX_PERIOD,35);

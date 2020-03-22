@@ -295,11 +295,11 @@ public class PPAJC2ResultsHandler {
 	    DataTrace data = orgData.get(result.id);
 	    if (data == null)
 	    {
-		warn("Assembly results: No org data for result: "+result.id,job.id,0);
+		warn("Assembly results: No org data for result: "+result.id,job.uuid,0);
 		continue;
 	    }
 	    if (!submittedResults.add(result.id)) {
-		warn("Duplicate results for task: "+result.id,job.id,0);
+		warn("Duplicate results for task: "+result.id,job.uuid,0);
 	    }
 
 	    PPAResult ppa = result.result;
@@ -319,7 +319,7 @@ public class PPAJC2ResultsHandler {
 	missed.removeAll(submittedResults);
 
 	if (!missed.isEmpty()) {
-	    warn(missed.size()+ " results are missing, "+submittedResults.size()+" present",job.id,0);
+	    warn(missed.size()+ " results are missing, "+submittedResults.size()+" present",job.uuid,0);
 	    for (Long dataId : missed) {
 		DataTrace data = orgData.get(dataId);
 
@@ -396,7 +396,7 @@ public class PPAJC2ResultsHandler {
     
     protected PPAJobResultsGroups assemblyJobGroups(ListMap<ComplexId<Long>, ResultsEntry> groups, PPAJobSummary job) {
         
-	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.id);
+	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.uuid);
         clusters.periodMin = job.min_period;
         clusters.periodMax = job.max_period;
 
@@ -516,24 +516,24 @@ public class PPAJC2ResultsHandler {
 
     
     protected void saveJobFullStats(StatsEntry stats, AssayPack exp, PPAJobSummary job) {
-	ppaRep.saveJobFullStats(stats, exp,job.id);
+	ppaRep.saveJobFullStats(stats, exp,job.uuid);
     }
     
     protected void saveJobSimpleStats(PPAJobSimpleStats stats, AssayPack exp, PPAJobSummary job) {
-	ppaRep.saveJobSimpleStats(stats, exp, job.id);
+	ppaRep.saveJobSimpleStats(stats, exp, job.uuid);
     }
     
     
     protected void saveJobResultsGroups(PPAJobResultsGroups groupedResults, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobResultsGroups(groupedResults, exp, job.id);
+        ppaRep.saveJobResultsGroups(groupedResults, exp, job.uuid);
     }    
 
     protected void saveJobIndResults(List<ResultsEntry> results, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobIndResults(results,exp,job.id);
+        ppaRep.saveJobIndResults(results,exp,job.uuid);
     }  
     
     protected void saveJobSimpleResults(PPAJobSimpleResults results, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobSimpleResults(results,exp,job.id);
+        ppaRep.saveJobSimpleResults(results,exp,job.uuid);
     }    
 
     protected void saveFits(List<ResultsEntry> entries, UUID jobId, AssayPack exp) throws RobustDBException, RobustProcessException, IOException {
@@ -628,8 +628,8 @@ public class PPAJC2ResultsHandler {
 
     public long doPPASelection(PPAJobSummary summary, AssayPack exp, Map<Long, Integer> selection) {
 
-        PPAJobSummary job = ppaRep.getJobSummary(exp, summary.id).orElseThrow(() -> new HandlingException("JobSummary: "+summary.id+" cannot be found in biodare"));
-        List<ResultsEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.id);
+        PPAJobSummary job = ppaRep.getJobSummary(exp, summary.uuid).orElseThrow(() -> new HandlingException("JobSummary: "+summary.uuid+" cannot be found in biodare"));
+        List<ResultsEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.uuid);
         jobIndResults = applyUserResultsSelection(jobIndResults, selection);
         
         processJobResults(jobIndResults, job, exp);
@@ -766,7 +766,7 @@ public class PPAJC2ResultsHandler {
 
     protected PPAJobSimpleStats simplifyJobStats(List<PPAStats> fullStats,PPAJobSummary job) {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.id);
+        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.uuid);
         double dw = job.dataWindowStart;
         
         fullStats.forEach( entry -> {
@@ -781,7 +781,7 @@ public class PPAJC2ResultsHandler {
 
 
     protected PPAJobSimpleResults simplifyJobResults(List<ResultsEntry> entries, PPAJobSummary job) {
-        PPAJobSimpleResults res = new PPAJobSimpleResults(job.id);
+        PPAJobSimpleResults res = new PPAJobSimpleResults(job.uuid);
         
         //final long jobId = job.getJobId();
         final double windowStart = job.dataWindowStart;

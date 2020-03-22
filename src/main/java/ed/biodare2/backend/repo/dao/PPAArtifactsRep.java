@@ -409,12 +409,12 @@ public class PPAArtifactsRep {
     public void saveJobSummary(PPAJobSummary job, AssayPack exp)  {
         
         guard.guard(exp.getId(),()-> {
-            if (job.id == null) {
-                job.id = ""+job.jobId;
+            if (job.uuid == null) {
+                job.uuid = ""+job.jobId;
             }
             //Path ppaDir = getPPADir(exp);
             saveJobSummary(job, exp.getId());
-            jobSummaryCache.put(new ExpJobKey(exp.getId(), job.id), Optional.of(job));
+            jobSummaryCache.put(new ExpJobKey(exp.getId(), job.uuid), Optional.of(job));
         });
     }    
     
@@ -422,7 +422,7 @@ public class PPAArtifactsRep {
         
         try {
             
-            Path jobFile = jobSummaryFile(expId, job.id);
+            Path jobFile = jobSummaryFile(expId, job.uuid);
             
         
             jobSummaryWriter.writeValue(jobFile.toFile(),job);

@@ -436,7 +436,7 @@ public class PPAArtifactsRepTest {
         
         ppaRep.saveJobSummary(job, exp);
         
-        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.id));
+        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.uuid));
         assertReflectionEquals(job,cpy.get()); 
         
         Path file = expDir.resolve("PPA/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
