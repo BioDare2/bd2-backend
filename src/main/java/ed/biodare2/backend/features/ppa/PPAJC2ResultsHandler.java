@@ -396,7 +396,7 @@ public class PPAJC2ResultsHandler {
     
     protected PPAJobResultsGroups assemblyJobGroups(ListMap<ComplexId<Long>, ResultsEntry> groups, PPAJobSummary job) {
         
-	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.jobId);
+	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.id);
         clusters.periodMin = job.min_period;
         clusters.periodMax = job.max_period;
 
@@ -766,7 +766,7 @@ public class PPAJC2ResultsHandler {
 
     protected PPAJobSimpleStats simplifyJobStats(List<PPAStats> fullStats,PPAJobSummary job) {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.jobId);
+        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.id);
         double dw = job.dataWindowStart;
         
         fullStats.forEach( entry -> {
@@ -781,7 +781,7 @@ public class PPAJC2ResultsHandler {
 
 
     protected PPAJobSimpleResults simplifyJobResults(List<ResultsEntry> entries, PPAJobSummary job) {
-        PPAJobSimpleResults res = new PPAJobSimpleResults(job.jobId);
+        PPAJobSimpleResults res = new PPAJobSimpleResults(job.id);
         
         //final long jobId = job.getJobId();
         final double windowStart = job.dataWindowStart;

@@ -316,7 +316,7 @@ public class PPAArtifactsRepTest {
         
         
         PPAJobResultsGroups cpy = ppaRep.getJobResultsGroups(exp, jobId);
-        assertEquals(cpy.jobId,20);
+        assertEquals(cpy.uuid,"20");
         assertReflectionEquals(results,cpy); 
         
     }
@@ -324,7 +324,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void canSaveAndRetrieveJobSimpleStats() {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats(2);
+        PPAJobSimpleStats stats = new PPAJobSimpleStats("2");
         
         PPASimpleStats stat = makeSimpleStats();
         stats.stats.add(stat);
@@ -342,7 +342,7 @@ public class PPAArtifactsRepTest {
         
         
         PPAJobSimpleStats cpy = ppaRep.getJobSimpleStats(exp, jobId);
-        assertEquals(cpy.jobId,20);
+        assertEquals(cpy.uuid,"20");
         assertReflectionEquals(stats,cpy); 
         
     }
@@ -372,7 +372,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void canSaveAndRetrieveJobSimpleResults() {
         
-        PPAJobSimpleResults org = new PPAJobSimpleResults(3);
+        PPAJobSimpleResults org = new PPAJobSimpleResults("3");
         org.results.add(makePPASimpleResultEntry());        
         AssayPack exp = new MockExperimentPack(1);
         long jobId = 20;
@@ -381,7 +381,7 @@ public class PPAArtifactsRepTest {
         
         
         PPAJobSimpleResults cpy = ppaRep.getJobSimpleResults(exp, jobId);
-        assertEquals(cpy.jobId,20);
+        assertEquals(cpy.uuid,"20");
         assertReflectionEquals(org,cpy); 
         
     }
@@ -602,13 +602,13 @@ public class PPAArtifactsRepTest {
         assertEquals(1,ppaRep.getJobFullStats(exp, jobId).getStats().size());
         
         //job Results
-        PPAJobResultsGroups results = new PPAJobResultsGroups(jobId);
+        PPAJobResultsGroups results = new PPAJobResultsGroups("jobId");
         results.periodMax = 5;
         ppaRep.saveJobResultsGroups(results, exp, jobId);
         assertEquals(5,ppaRep.getJobResultsGroups(exp, jobId).periodMax,EPS);
         
         //job Stats
-        PPAJobSimpleStats jStats = new PPAJobSimpleStats(jobId);
+        PPAJobSimpleStats jStats = new PPAJobSimpleStats("jobId");
         jStats.stats.add(new PPASimpleStats());
         ppaRep.saveJobSimpleStats(jStats, exp, jobId);
         assertEquals(1,ppaRep.getJobSimpleStats(exp, jobId).stats.size());
@@ -717,7 +717,7 @@ public class PPAArtifactsRepTest {
         PPAJobSimpleResults res = ppaRep.simpleResultsReader.readValue(f);
 
         
-        assertEquals(1017, res.jobId);
+        //assertEquals(1017, res.jobId);
         assertEquals(10, res.results.size());
         assertEquals(1, res.results.get(0).dataId);
         assertEquals(23.47, res.results.get(0).period, EPS);
@@ -732,7 +732,7 @@ public class PPAArtifactsRepTest {
         PPAJobSimpleStats res = ppaRep.simpleStatsReader.readValue(f);
 
         
-        assertEquals(1017, res.jobId);
+        //assertEquals(1017, res.jobId);
         assertEquals(5, res.stats.size());
         assertEquals(1, res.stats.get(0).memberDataId);
         assertEquals(2, res.stats.get(0).N);
@@ -748,7 +748,7 @@ public class PPAArtifactsRepTest {
         PPAJobResultsGroups res = ppaRep.groupSummaryReader.readValue(f);
 
         
-        assertEquals(1017, res.jobId);
+        //assertEquals(1017, res.jobId);
         assertEquals(5, res.groups.size());
         assertEquals(1, res.groups.get(0).memberDataId);
         assertEquals(2, res.groups.get(0).periods.size());

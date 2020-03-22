@@ -13,8 +13,11 @@ import java.util.List;
  * @author tzielins
  */
 public class PPAJobResultsGroups {
-    
+  
+  //it used to number in JC1  
   public long jobId;
+  
+  public String uuid;
   public double periodMin;
   public double periodMax;
   
@@ -22,7 +25,11 @@ public class PPAJobResultsGroups {
   
   public PPAJobResultsGroups() {};
   
-  public PPAJobResultsGroups(long jobId) {
+  PPAJobResultsGroups(long jobId) {
       this.jobId = jobId;
   };
+  
+  public PPAJobResultsGroups(String jobId) {
+      this.uuid = jobId;
+  };  
 }

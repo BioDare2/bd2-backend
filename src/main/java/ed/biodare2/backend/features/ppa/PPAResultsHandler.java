@@ -399,7 +399,7 @@ public class PPAResultsHandler {
     
     protected PPAJobResultsGroups assemblyJobGroups(ListMap<ComplexId<Long>, ResultsEntry> groups, JobSummary job) {
         
-	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.getJobId());
+	PPAJobResultsGroups clusters = new PPAJobResultsGroups(""+job.getJobId());
         clusters.periodMin = job.getParams().getDouble(PPAConstants.MIN_PERIOD,0);
         clusters.periodMax = job.getParams().getDouble(PPAConstants.MAX_PERIOD,0);
 
@@ -773,7 +773,7 @@ public class PPAResultsHandler {
 
     protected PPAJobSimpleStats simplifyJobStats(List<PPAStats> fullStats,JobSummary job) {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.getJobId());
+        PPAJobSimpleStats stats = new PPAJobSimpleStats(""+job.getJobId());
         double dw = job.getDataWindowStart();
         
         fullStats.forEach( entry -> {
@@ -788,7 +788,7 @@ public class PPAResultsHandler {
 
 
     protected PPAJobSimpleResults simplifyJobResults(List<ResultsEntry> entries, JobSummary job) {
-        PPAJobSimpleResults res = new PPAJobSimpleResults(job.getJobId());
+        PPAJobSimpleResults res = new PPAJobSimpleResults(""+job.getJobId());
         
         //final long jobId = job.getJobId();
         final double windowStart = job.getDataWindowStart();

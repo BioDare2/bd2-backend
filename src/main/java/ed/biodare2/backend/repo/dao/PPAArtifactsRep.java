@@ -472,6 +472,7 @@ public class PPAArtifactsRep {
             Path jobStatsFile = jobSimpleStatsFile(exp.getId(), jobId);
                        
             //stats.jobId=jobId;
+            stats.uuid = jobId;
         
             simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
         
@@ -494,6 +495,7 @@ public class PPAArtifactsRep {
             //Path ppaDir = getPPADir(exp);
             Path resFile = jobSimpleResultsFile(exp.getId(), jobId);
             
+            res.uuid = jobId;
             //res.jobId=jobId;
         
             simpleResultsWriter.writeValue(resFile.toFile(),res);
@@ -516,6 +518,7 @@ public class PPAArtifactsRep {
             Path jobResultsFile = jobGroupedResultsFile(experiment.getId(), jobId);
             
             // results.jobId = jobId;
+            results.uuid = jobId;
             groupSummaryWriter.writeValue(jobResultsFile.toFile(),results);
 
         } catch (IOException e) {
@@ -622,9 +625,10 @@ public class PPAArtifactsRep {
             Path jobStatsFile = jobSimpleStatsFile(exp.getId(),jobId); 
             if (!Files.exists(jobStatsFile)) {
                 log.warn("Stats asked from not existing container in exp: {} {}",exp.getId(), jobId);
-                return new PPAJobSimpleStats();
+                return new PPAJobSimpleStats(jobId);
             }            
             PPAJobSimpleStats entry = simpleStatsReader.readValue(jobStatsFile.toFile());
+            if (entry.uuid == null) entry.uuid = jobId;
             return entry;
         } catch (IOException e) {
             throw new ServerSideException("Cannot read stats: "+e.getMessage(),e);
@@ -648,9 +652,10 @@ public class PPAArtifactsRep {
             Path resFile = jobSimpleResultsFile(exp.getId(),jobId); 
             if (!Files.exists(resFile)) {
                 log.warn("Results asked from not existing container in exp: {} {}",exp.getId(), jobId);
-                return new PPAJobSimpleResults();
+                return new PPAJobSimpleResults(jobId);
             }            
             PPAJobSimpleResults entry = simpleResultsReader.readValue(resFile.toFile());
+            if (entry.uuid == null) entry.uuid = jobId;
             return entry;
         } catch (IOException e) {
             throw new ServerSideException("Cannot read results: "+e.getMessage(),e);
@@ -670,9 +675,11 @@ public class PPAArtifactsRep {
         
             //Path ppaDir = getPPADir(experiment);
             Path jobResultsFile = jobGroupedResultsFile(experiment.getId(), jobId);
-            if (!Files.exists(jobResultsFile)) return new PPAJobResultsGroups();
+            if (!Files.exists(jobResultsFile)) return new PPAJobResultsGroups(jobId);
             
-            return groupSummaryReader.readValue(jobResultsFile.toFile());
+            PPAJobResultsGroups entry = groupSummaryReader.readValue(jobResultsFile.toFile());
+            if (entry.uuid == null) entry.uuid = jobId;
+            return entry;
 
         } catch (IOException e) {
             throw new ServerSideException("Cannot read results: "+e.getMessage(),e);

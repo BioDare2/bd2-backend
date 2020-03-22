@@ -13,13 +13,21 @@ import java.util.List;
  * @author tzielins
  */
 public class PPAJobSimpleResults {
+    // it used to be long from jobcentre1
     public long jobId;
+    
+    public String uuid;
+    
     
     public List<PPASimpleResultEntry> results = new ArrayList<>();
     
     public PPAJobSimpleResults() {};
     
-    public PPAJobSimpleResults(long jobId) {
+    PPAJobSimpleResults(long jobId) {
         this.jobId = jobId;
     }
+    
+    public PPAJobSimpleResults(String jobId) {
+        this.uuid = jobId;
+    }    
 }

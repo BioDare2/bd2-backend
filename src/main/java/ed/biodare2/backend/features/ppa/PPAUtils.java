@@ -249,7 +249,10 @@ public class PPAUtils {
         summary.dataWindowStart = job.getDataWindowStart();
 
         summary.failures = job.getFailures();
+        
         summary.jobId = job.getJobId();
+        summary.id = ""+job.getJobId();
+        
         summary.lastError = job.getLastError();
         summary.max_period = job.getParams().getDouble(PPAConstants.MAX_PERIOD,35);
         summary.min_period = job.getParams().getDouble(PPAConstants.MIN_PERIOD,18);
