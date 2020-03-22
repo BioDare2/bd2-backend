@@ -5,6 +5,8 @@
  */
 package ed.biodare2.backend.handlers;
 
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
@@ -448,6 +450,8 @@ public class PPAHandler {
         ppaRep.saveJobDetails(job,summary, exp);
         return summary;
     }
+
+
 
 
 

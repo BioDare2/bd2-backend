@@ -5,7 +5,11 @@
  */
 package ed.biodare2.backend.features.ppa;
 
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
@@ -15,6 +19,7 @@ import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.util.io.FileUtil;
+import ed.robust.dom.tsprocessing.PPAResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,15 +38,15 @@ public class PPAJC2Handler {
     final PPAArtifactsRep ppaRep;
     final TSDataHandler dataHandler;
     final PPAUtils ppaUtils;
-    final PPAAnalysisService ppaService;
-    final PPAResultsHandler ppaResultsHandler;
+    final PPAJC2AnalysisService ppaService;
+    final PPAJC2ResultsHandler ppaResultsHandler;
     final FileUtil fileUtil;
 
     
     @Autowired
     public PPAJC2Handler(ExperimentHandler experimentHandler,PPAArtifactsRep ppaRep,
-            PPAAnalysisService ppaService,TSDataHandler dataHandler,
-            PPAResultsHandler ppaResultsHandler) {
+            PPAJC2AnalysisService ppaService,TSDataHandler dataHandler,
+            PPAJC2ResultsHandler ppaResultsHandler) {
         
         this.ppaRep = ppaRep;
         this.ppaService = ppaService;
@@ -52,7 +57,7 @@ public class PPAJC2Handler {
         this.fileUtil = new FileUtil();
     }    
     
-    public UUID newPPA(AssayPack exp, PPARequest ppaRequest) throws ArgumentException {
+    public UUID newPPA(AssayPack exp, PPARequest ppaRequest) throws ArgumentException, JC2HandlingException {
         
         if (!ppaRequest.isValid()) throw new ArgumentException("Not valid ppaRequest");
         
@@ -75,8 +80,11 @@ public class PPAJC2Handler {
         
     }
 
-    UUID submitJob(TSDataSetJobRequest jobRequest) {
-        return UUID.randomUUID();
+    UUID submitJob(TSDataSetJobRequest jobRequest) throws JC2HandlingException {
+        return ppaService.submitJob(jobRequest);
     }
     
+    public void handleResults(AssayPack exp, PPAJobResults results) {
+        ppaResultsHandler.handleResults(exp, results);
+    }    
 }

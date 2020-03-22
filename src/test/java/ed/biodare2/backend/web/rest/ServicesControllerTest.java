@@ -6,23 +6,32 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.ppa.PPAUtils;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityServiceParameters;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2PPAResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
+import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
+import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.DetrendingType;
+import ed.robust.dom.tsprocessing.PPAResult;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -31,10 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -68,6 +74,10 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
     
     @Autowired
     RhythmicityServiceParameters rhythmicityParameters;
+    
+    @Autowired
+    PPAArtifactsRep ppaRep;
+    
     
     @Before
     @Override //so it will not configure security
@@ -160,6 +170,83 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         }*/
         
     }
+    
+    static class TypedPPAJobResults extends JobResults<TSResult<PPAResult>>{
+
+    } 
+    
+    @WithMockUser(value = "ppaserver",roles = {"SERVICE"})
+    @Test
+    public void testHandlePPA2Results() throws Exception {
+        
+        PPAUtils ppaUtils = new PPAUtils();
+        UUID jobId = UUID.randomUUID();
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay(); 
+        long expId = exp.getId();
+        insertData(pack);
+
+        PPARequest req = DomRepoTestBuilder.makePPARequest();        
+        PPAJobSummary job = ppaUtils.prepareNewPPAJobSummary(exp.getId(), req, jobId);        
+
+        ppaRep.saveJobSummary(job, pack);
+        
+        DetrendingType detrending = DetrendingType.valueOf(job.dataSetType);        
+        
+        PPAJobResults results = makeBD2PPAResults(jobId, expId); 
+        PPAResult example = results.results.get(0).result;
+        
+        results.results.clear();
+        
+        List<DataTrace> orgData = tsHandler.getDataSet(pack, detrending).get();
+        for (DataTrace trace : orgData) {
+            results.results.add(new TSResult(trace.dataId, example));
+        }
+        
+        String orgJSON = mapper.writeValueAsString(results);
+        
+        /*TestingAuthenticationToken authentication = new TestingAuthenticationToken(
+                rhythmicityParameters.ppaUsername,
+                rhythmicityParameters.ppaPassword, "SERVICE");
+        authentication.setAuthenticated(true);*/
+        
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/services/ppa2/results/"+expId)
+                .contentType(APPLICATION_JSON_UTF8)
+                .content(orgJSON)
+                .accept(APPLICATION_JSON_UTF8)                
+                ;//.with(SecurityMockMvcRequestPostProcessors.authentication(authentication));
+
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp);        
+        
+        
+        
+        job = ppaRep.getJobSummary(pack, job.id).get();
+        
+        assertEquals(State.FINISHED.name(), job.state.name());
+        assertNotNull(job.completed);
+
+        
+        List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.id).stream().map( r -> r.getResult())
+                .collect(Collectors.toList());
+        
+        assertFalse(saved.isEmpty());
+        
+        List<PPAResult> send = results.results.stream().map( r -> r.result).collect(Collectors.toList());
+        
+        assertEquals(send, saved);
+        
+        
+    }
+    
 
     
 }

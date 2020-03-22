@@ -6,8 +6,10 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
@@ -40,13 +42,16 @@ public class ServicesController extends BioDare2Rest {
     
     final ExperimentHandler experiments;
     final PPAHandler ppaHandler;
+    final PPAJC2Handler ppaHandler2;
     final RhythmicityHandler rhythmicityHandler;
             
     @Autowired
     public ServicesController(ExperimentHandler experiments,PPAHandler ppaHandler,
+            PPAJC2Handler ppaHandler2,
             RhythmicityHandler rhythmicityHandler) {        
         this.experiments = experiments;
         this.ppaHandler = ppaHandler;
+        this.ppaHandler2 = ppaHandler2;
         this.rhythmicityHandler = rhythmicityHandler;
     }
     
@@ -105,6 +110,30 @@ public class ServicesController extends BioDare2Rest {
             throw e;
         } catch (Exception e) {
             log.error("Cannot process results, system error {}",e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }      
+
+    @RequestMapping(value = "ppa2/results/{expId}", method = RequestMethod.POST)
+    public void handlePPA2Results(@PathVariable long expId,
+            @RequestBody PPAJobResults results) {
+        
+        if (results == null) throw new HandlingException("Null results recieved");
+        log.debug("handle ppa2 results; job:{}, exp: {}, results size: {}",results.jobId,expId,results.results.size());
+        
+        
+        AssayPack exp = experiments.getExperiment(expId)
+                        .orElseThrow(()-> new NotFoundException("Experiment "+expId+" not found"));        
+        
+        try {
+            ppaHandler2.handleResults(exp,results);
+            
+        } catch (HandlingException | ServerSideException e) {
+            log.error("Cannot process ppa results {}",e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot process ppa results, system error {}",e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
         

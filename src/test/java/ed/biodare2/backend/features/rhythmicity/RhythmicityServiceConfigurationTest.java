@@ -24,13 +24,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Import(SimpleRepoTestConfig.class)
-public class ServiceConfigurationTest {
+public class RhythmicityServiceConfigurationTest {
     
-    public ServiceConfigurationTest() {
+    public RhythmicityServiceConfigurationTest() {
     }
     
     @Autowired
-    ServiceConfiguration instance;
+    RhythmicityServiceConfiguration instance;
     
     @Autowired
     RhythmicityServiceParameters params;

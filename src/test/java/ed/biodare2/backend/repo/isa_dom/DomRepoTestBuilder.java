@@ -7,6 +7,7 @@ package ed.biodare2.backend.repo.isa_dom;
 
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import static ed.biodare.jobcentre2.dom.RhythmicityConstants.PRESET_KEY;
 import ed.biodare.jobcentre2.dom.State;
@@ -50,6 +51,9 @@ import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
+import ed.robust.dom.tsprocessing.CosComponent;
+import ed.robust.dom.tsprocessing.FFT_PPA;
+import ed.robust.dom.tsprocessing.PPAResult;
 
 import ed.robust.ppa.PPAMethod;
 import ed.robust.util.timeseries.TSGenerator;
@@ -356,6 +360,33 @@ public class DomRepoTestBuilder {
         return results;
                
     }    
+    
+    //public static JobResults<TSResult<PPAResult>> makeBD2PPAResults(UUID jobId, long expId) {
+    public static PPAJobResults makeBD2PPAResults(UUID jobId, long expId) {
+        return makeBD2PPAResults(jobId, expId, 1, 1);
+    }
+    
+    public static PPAJobResults makeBD2PPAResults(UUID jobId, long expId,
+            long idS, long idE) {
+        
+        PPAJobResults results = new PPAJobResults();
+        results.parentId = expId;
+        results.externalId = ""+expId;
+        results.jobId = jobId;
+        results.state = State.SUCCESS;
+        
+        for (long id = idS;id <= idE; id++) {
+            FFT_PPA entry = new FFT_PPA();
+            entry.addCOS(10, 0.1, 24, 0.2, 12, 0.1);
+            
+            TSResult<PPAResult> res = new TSResult<>(id, entry);
+            results.results.add(res);
+        }
+        
+        return results;
+               
+    }    
+    
 
     public static SimpleProvenance makeSimpleProvenance() {
         

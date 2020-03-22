@@ -30,8 +30,8 @@ public class PPAJC2HandlerTest {
     ExperimentHandler experimentHandler;
     PPAArtifactsRep ppaRep;
     TSDataHandler dataHandler;
-    PPAAnalysisService ppaService;
-    PPAResultsHandler ppaResultsHandler;
+    PPAJC2AnalysisService ppaService;
+    PPAJC2ResultsHandler ppaResultsHandler;
     
     PPAJC2Handler instance;
     
@@ -44,8 +44,8 @@ public class PPAJC2HandlerTest {
         experimentHandler = mock(ExperimentHandler.class);
         ppaRep = mock(PPAArtifactsRep.class);
         dataHandler = mock(TSDataHandler.class);
-        ppaService = mock(PPAAnalysisService.class);
-        ppaResultsHandler = mock(PPAResultsHandler.class);
+        ppaService = mock(PPAJC2AnalysisService.class);
+        ppaResultsHandler = mock(PPAJC2ResultsHandler.class);
         
         instance = new PPAJC2Handler(experimentHandler, ppaRep, ppaService, dataHandler, ppaResultsHandler);
     }
@@ -62,13 +62,13 @@ public class PPAJC2HandlerTest {
         when(dataHandler.getDataSet(exp, req.detrending)).thenReturn(Optional.of(dataSet));     
         
         UUID uid = UUID.randomUUID();
-        //when(ppaService.submitJob(any())).thenReturn(uid);
+        when(ppaService.submitJob(any())).thenReturn(uid);
         
         UUID res = instance.newPPA(exp, req);
         
         assertEquals(uid, res);
         verify(ppaRep).saveJobSummary(any(), any());
-        verify(experimentHandler).updateHasRhythmicityJobs(exp,true);
+        verify(experimentHandler).updateHasPPAJobs(exp,true);
         
     }    
 }

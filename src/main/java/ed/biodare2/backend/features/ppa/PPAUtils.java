@@ -1120,12 +1120,11 @@ public class PPAUtils {
         return job;
     }
 
-    PPAJobSummary prepareNewPPAJobSummary(long expId, PPARequest ppaRequest, UUID jobId) {
+    public PPAJobSummary prepareNewPPAJobSummary(long expId, PPARequest ppaRequest, UUID jobId) {
         
         
         PPAJobSummary jobSummary = new PPAJobSummary();
-        jobSummary.id = jobId.toString();
-        jobSummary.jobId = uuid2long(jobId);
+        jobSummary.setUUID(jobId);
 
         jobSummary.state = State.SUBMITTED;
         jobSummary.submitted = new Date();
@@ -1152,9 +1151,7 @@ public class PPAUtils {
         return jobSummary;
     }
 
-    static final long uuid2long(UUID id) {
-        return id.getLeastSignificantBits()+id.getMostSignificantBits();
-    }
+
     
     String dataWindow2String(double windowStart, double windowEnd) {
 	String min = windowStart == 0 ? "min" : ""+windowStart;

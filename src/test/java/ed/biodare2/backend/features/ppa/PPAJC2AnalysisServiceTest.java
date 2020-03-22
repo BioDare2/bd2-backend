@@ -3,18 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.features.rhythmicity;
+package ed.biodare2.backend.features.ppa;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
-import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
-import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
-import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
-import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
-import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
+import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
+import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,38 +19,38 @@ import static org.mockito.Mockito.*;
 
 /**
  *
- * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
+ * @author tzielins
  */
-public class RhythmicityServiceTest {
+public class PPAJC2AnalysisServiceTest {
     
-    public RhythmicityServiceTest() {
+    public PPAJC2AnalysisServiceTest() {
     }
     
-    RhythmicityService instance;
+    PPAJC2AnalysisService instance;
     JobCentreEndpointClient client;
-    RhythmicityServiceParameters parameters;
-    RhythmicityUtils utils;
+    PPAServiceParameters parameters;
+    PPAUtils utils;
     
     @Before
     public void setUp() throws Exception {
         
-        parameters = new RhythmicityServiceParameters();
+        parameters = new PPAServiceParameters();
         parameters.backendURL = new URL("http://localhost:9000");
         parameters.ppaUsername = "user1";
         parameters.ppaPassword = "password1";
         parameters.testClient = false;
         
         client = mock(JobCentreEndpointClient.class);
-        utils = new RhythmicityUtils();
+        utils = new PPAUtils();
                 
         
-        instance = new RhythmicityService(client, parameters);
+        instance = new PPAJC2AnalysisService(client, parameters);
     }
 
     
     @Test
     public void resultsHandlerEndpoint() {
-        String exp = "/api/services/rhythmicity/results/{externalId}";
+        String exp = "/api/services/ppa2/results/{externalId}";
         
         assertEquals(exp, instance.resultsHandlerEndpoint());
     }    
@@ -62,10 +58,10 @@ public class RhythmicityServiceTest {
     @Test
     public void testSumbitSendsOverWithCallBack() throws Exception {
         
-        RhythmicityRequest uiReq = makeRhythmicityRequest();
+        PPARequest req = DomRepoTestBuilder.makePPARequest();
         
         long expId = 123;
-        TSDataSetJobRequest jobRequest = utils.prepareJobRequest(expId, uiReq, List.of());
+        TSDataSetJobRequest jobRequest =utils.prepareJC2JobRequest(expId, req, List.of());
         assertFalse(jobRequest.callBackParameters.containsKey("ENDPOINT"));
                 
         UUID jobId = UUID.randomUUID();        
@@ -77,10 +73,7 @@ public class RhythmicityServiceTest {
         verify(client).submitJob(jobRequest);
         
         assertTrue(jobRequest.callBackParameters.containsKey("ENDPOINT"));
-        assertEquals("http://localhost:9000/api/services/rhythmicity/results/{externalId}",
+        assertEquals("http://localhost:9000/api/services/ppa2/results/{externalId}",
                 jobRequest.callBackParameters.get("ENDPOINT"));
-    }
-    
- 
-    
+    }    
 }

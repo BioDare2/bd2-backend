@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
 import ed.biodare2.backend.features.ppa.PPAHandlingException;
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.handlers.ArgumentException;
@@ -66,7 +67,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             resp.put("analysis", analysisId.toString());
             return resp;
             
-        } catch (ArgumentException| PPAHandlingException e) {
+        } catch (ArgumentException| JC2HandlingException e) {
             log.error("Cannot start ppa {} {}",expId,e.getMessage(),e);
             throw new HandlingException(e.getMessage());
         } catch(WebMappedException e) {

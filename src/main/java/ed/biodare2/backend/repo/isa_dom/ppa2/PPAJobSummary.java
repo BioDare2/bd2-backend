@@ -8,6 +8,7 @@ package ed.biodare2.backend.repo.isa_dom.ppa2;
 import ed.robust.jobcenter.dom.state.State;
 import ed.robust.ppa.PPAMethod;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  *
@@ -41,5 +42,14 @@ public class PPAJobSummary {
     public String dataSetType;
     public String dataSetTypeName;
     
+    public String selections;
     
+    public void setUUID(UUID id) {
+        this.id = id.toString();
+        this.jobId = uuid2long(id);
+    }
+    
+    public static final long uuid2long(UUID id) {
+        return id.getLeastSignificantBits()+id.getMostSignificantBits();
+    }    
 }

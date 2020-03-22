@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.features.rhythmicity;
+package ed.biodare2.backend.features.ppa;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare2.backend.features.jobcentre2.JC2Service;
@@ -13,14 +13,14 @@ import org.springframework.stereotype.Service;
 
 /**
  *
- * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
+ * @author tzielins
  */
 @Service
-public class RhythmicityService extends JC2Service {
+public class PPAJC2AnalysisService extends JC2Service {
 
     @Autowired
-    public RhythmicityService(@Qualifier(value = "rhythmicityClient") JobCentreEndpointClient client,
-            RhythmicityServiceParameters parameters
+    public PPAJC2AnalysisService(@Qualifier(value = "ppaClient") JobCentreEndpointClient client,
+            PPAServiceParameters parameters
     ) {
         super(client, parameters);
     }
@@ -28,6 +28,7 @@ public class RhythmicityService extends JC2Service {
 
     @Override
     protected String resultsHandlerEndpoint() {
-        return "/api/services/rhythmicity/results/{externalId}";
+        return "/api/services/ppa2/results/{externalId}";
     }
+    
 }

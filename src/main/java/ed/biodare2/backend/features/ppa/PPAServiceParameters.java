@@ -3,17 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.features.rhythmicity;
+package ed.biodare2.backend.features.ppa;
 
-import ed.biodare.jobcentre2.client.JobCentreEndpointDirections;
 import ed.biodare2.backend.features.jobcentre2.JC2ServiceParameters;
-import java.net.URL;
 
 /**
  *
- * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
+ * @author tzielins
  */
-public class RhythmicityServiceParameters extends JC2ServiceParameters {
- 
+public class PPAServiceParameters extends JC2ServiceParameters {
     
 }

@@ -21,6 +21,7 @@ import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
+import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.handlers.ArgumentException;
@@ -144,7 +145,11 @@ public class RhythmicityHandler {
 
     UUID submitJob(TSDataSetJobRequest jobRequest) throws RhythmicityHandlingException {
         
-        return rhythmicityService.submitJob(jobRequest);
+        try {
+            return rhythmicityService.submitJob(jobRequest);
+        } catch (JC2HandlingException e) {
+            throw new RhythmicityHandlingException(e);
+        }
     }
 
     @Transactional
@@ -302,7 +307,7 @@ public class RhythmicityHandler {
             }
             summary.jobStatus = status;
             return summary;
-        } catch (RhythmicityHandlingException e) {
+        } catch (JC2HandlingException e) {
             throw new HandlingException(e);
         }    
     }

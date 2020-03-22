@@ -235,7 +235,7 @@ public class PPAArtifactsRepTest {
         for (long expId = Integer.MAX_VALUE-2; expId < Integer.MAX_VALUE+3;expId++) {
             for (long jobId = Integer.MAX_VALUE-2; jobId< Integer.MAX_VALUE+3;jobId++ ) {
                 count++;
-                ExpJobKey key = new ExpJobKey(expId,jobId);
+                ExpJobKey key = new ExpJobKey(expId,""+jobId);
                 keys.add(key);
                 hashes.add(key.hashCode());
             }
@@ -436,7 +436,7 @@ public class PPAArtifactsRepTest {
         
         ppaRep.saveJobSummary(job, exp);
         
-        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.jobId));
+        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.id));
         assertReflectionEquals(job,cpy.get()); 
         
         Path file = expDir.resolve("PPA/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
@@ -475,8 +475,8 @@ public class PPAArtifactsRepTest {
         AssayPack exp = new MockExperimentPack(1);
         Path ppaDir = expDir.resolve(PPAArtifactsRep.PPA_DIR);        
 
-        long jobId = 3;
-        Path jobDir = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR).resolve(""+jobId);
+        String jobId = "3";
+        Path jobDir = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR).resolve(jobId);
         Files.createDirectories(jobDir);
         
         Path file = jobDir.resolve("cos.xml");

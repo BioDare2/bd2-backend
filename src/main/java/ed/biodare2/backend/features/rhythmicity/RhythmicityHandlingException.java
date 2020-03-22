@@ -5,11 +5,17 @@
  */
 package ed.biodare2.backend.features.rhythmicity;
 
+import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
+
 /**
  *
  * @author tzielins
  */
-public class RhythmicityHandlingException extends Exception {
+public class RhythmicityHandlingException extends JC2HandlingException {
+
+    public RhythmicityHandlingException(JC2HandlingException e) {
+        super(e.getMessage(), e.getCause());
+    }
     
     public RhythmicityHandlingException(String msg) {
         super(msg);
