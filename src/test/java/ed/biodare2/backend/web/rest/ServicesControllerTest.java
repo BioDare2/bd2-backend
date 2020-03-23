@@ -12,10 +12,12 @@ import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.ppa.PPAUtils;
+import ed.biodare2.backend.features.ppa.PPAUtilsJC2;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityServiceParameters;
 import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2PPAResults;
@@ -23,7 +25,8 @@ import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicit
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
+
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.DetrendingType;
@@ -76,7 +79,7 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
     RhythmicityServiceParameters rhythmicityParameters;
     
     @Autowired
-    PPAArtifactsRep ppaRep;
+    PPAArtifactsRepJC2 ppaRep;
     
     
     @Before
@@ -179,7 +182,7 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
     @Test
     public void testHandlePPA2Results() throws Exception {
         
-        PPAUtils ppaUtils = new PPAUtils();
+        PPAUtilsJC2 ppaUtils = new PPAUtilsJC2();
         UUID jobId = UUID.randomUUID();
         
         AssayPack pack = insertExperiment();
@@ -229,13 +232,13 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         
         
         
-        job = ppaRep.getJobSummary(pack, job.uuid).get();
+        job = ppaRep.getJobSummary(pack, job.jobId).get();
         
         assertEquals(State.FINISHED.name(), job.state.name());
         assertNotNull(job.completed);
 
         
-        List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.uuid).stream().map( r -> r.getResult())
+        List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.jobId).stream().map( r -> r.result)
                 .collect(Collectors.toList());
         
         assertFalse(saved.isEmpty());

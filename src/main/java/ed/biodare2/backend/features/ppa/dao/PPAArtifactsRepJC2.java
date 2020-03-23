@@ -53,10 +53,10 @@ import org.springframework.stereotype.Service;
  * @author tzielins
  */
 @Service
-public class PPAArtifactsRep {
+public class PPAArtifactsRepJC2 {
     
     
-    final static String PPA_DIR = "PPA";
+    final static String PPA_DIR = "PPA3";
     final static String BACKUP_DIR = "BACKUP";
     //final static String JOBS_FILE = "PPA_JOBS.xml";
     //final static String STATS_FILE = "PPA_STATS.xml";
@@ -64,13 +64,12 @@ public class PPAArtifactsRep {
     //final static String REQUESTS_DIR = "JOB_REQUESTS";
     
     final static String JOBS_DIR = "JOBS";
-    final static String JOB_FULL_RESULTS_FILE = "PPA_RESULTS.xml";
+    final static String JOB_FULL_RESULTS_FILE = "PPA_FULL_RESULTS.json";
     final static String JOB_SIMPLE_RESULTS_FILE = "PPA_SIMPLE_RESULTS.json";
     final static String JOB_GROUPED_RESULTS_FILE = "PPA_GROUPED_RESULTS.json";
     final static String JOB_FULL_STATS_FILE = "PPA_FULL_STATS.xml";
     final static String JOB_SIMPLE_STATS_FILE = "PPA_SIMPLE_STATS.json";
     final static String JOB_SIMPLE_SUMMARY_FILE = "PPA_JOB_SUMMARY.json";
-    final static String JOB_FULL_FILE = "PPA_JOB_FULL.xml";
     
     final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -130,7 +129,7 @@ public class PPAArtifactsRep {
      }
     
     @Autowired
-    public PPAArtifactsRep(ExperimentsStorage expStorage, @Qualifier("DomMapper") ObjectMapper mapper) {
+    public PPAArtifactsRepJC2(ExperimentsStorage expStorage, @Qualifier("DomMapper") ObjectMapper mapper) {
         this.expStorage = expStorage;
         
 

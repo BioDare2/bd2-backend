@@ -124,6 +124,10 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_PPA,DELETE,exp.getId(),user,"JOB",job.jobId);
     }   
     
+    public void ppaDeleteJob(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,DELETE,exp.getId(),user,"JOB",jobId);
+    }     
+    
     public void ppaJobDownload(AssayPack exp, long jobId, BioDare2User user) {
         track(EXP_PPA,DOWNLOAD,exp.getId(),user,"JOB",jobId);
     }    

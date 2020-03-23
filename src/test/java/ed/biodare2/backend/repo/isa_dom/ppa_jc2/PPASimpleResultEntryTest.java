@@ -8,6 +8,7 @@ package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.robust.dom.tsprocessing.PhaseType;
+import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -56,7 +57,7 @@ public class PPASimpleResultEntryTest {
         entry.failed = false;
         entry.circadian = true;
         entry.ignored = false;
-        entry.jobId = 6;
+        entry.jobId = UUID.randomUUID();
         entry.jobSummary = "linear dtr min-max p(18.0-35.0)";
         entry.label = "WT";
         entry.message = null;

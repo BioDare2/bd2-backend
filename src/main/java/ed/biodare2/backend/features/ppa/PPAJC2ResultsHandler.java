@@ -7,22 +7,25 @@ package ed.biodare2.backend.features.ppa;
 
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.PPAJobResults;
+import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.web.rest.HandlingException;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
-import static ed.biodare2.backend.features.ppa.PPAUtils.periodToInt;
-import static ed.biodare2.backend.features.ppa.PPAUtils.simplifyStats;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAResultsGroupSummary;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleResultEntry;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleStats;
+import static ed.biodare2.backend.features.ppa.PPAUtilsJC2.*;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobResultsGroups;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleResults;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleStats;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAResultsGroupSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleResultEntry;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleStats;
+
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
 
@@ -32,14 +35,13 @@ import ed.robust.dom.tsprocessing.FailedPPA;
 import ed.robust.dom.tsprocessing.PPAResult;
 import ed.robust.dom.tsprocessing.PPAStats;
 import ed.robust.dom.tsprocessing.PhaseType;
-import ed.robust.dom.tsprocessing.ResultsEntry;
+
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.dom.util.ComplexId;
 import ed.robust.dom.util.ListMap;
 import ed.robust.error.RobustDBException;
 import ed.robust.error.RobustProcessException;
-import ed.robust.jobcenter.dom.job.JobResult;
-import ed.robust.jobcenter.dom.state.State;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,16 +69,16 @@ public class PPAJC2ResultsHandler {
     final boolean DEBUG = true;
     final Logger logger = LoggerFactory.getLogger(this.getClass());
     final TSDataHandler dataHandler;
-    final PPAArtifactsRep ppaRep;
+    final PPAArtifactsRepJC2 ppaRep;
     final int JOB_WAITING_LIMIT;
     final int JOB_WAITING_TIME;
     
     @Autowired
-    public PPAJC2ResultsHandler(PPAArtifactsRep ppaRep,TSDataHandler dataHandler) {
+    public PPAJC2ResultsHandler(PPAArtifactsRepJC2 ppaRep,TSDataHandler dataHandler) {
         this(ppaRep, dataHandler, 6, 250);
     }
     
-    protected PPAJC2ResultsHandler(PPAArtifactsRep ppaRep,TSDataHandler dataHandler, int jobWaitingLimit, int jobWaitingTime) {
+    protected PPAJC2ResultsHandler(PPAArtifactsRepJC2 ppaRep,TSDataHandler dataHandler, int jobWaitingLimit, int jobWaitingTime) {
         this.dataHandler = dataHandler;
         this.ppaRep = ppaRep;
         this.JOB_WAITING_LIMIT = jobWaitingLimit;
@@ -121,7 +123,7 @@ public class PPAJC2ResultsHandler {
         try {
 	    Map<Long,DataTrace> orgData = getOrgData(exp,job);
 
-	    List<ResultsEntry> jobResultsEntries = buildResultsEntries(rawResults, orgData, job);
+	    List<PPAFullResultEntry> jobResultsEntries = buildResultsEntries(rawResults, orgData, job);
             
             //deal with fits firts so they are not passed over to containers
             saveFits(jobResultsEntries, jobId, exp);
@@ -157,11 +159,11 @@ public class PPAJC2ResultsHandler {
     
    
     
-    protected void processJobResults(List<ResultsEntry> jobResultsEntries, PPAJobSummary job,AssayPack exp) {
+    protected void processJobResults(List<PPAFullResultEntry> jobResultsEntries, PPAJobSummary job,AssayPack exp) {
         
             PPAJobSimpleResults simpleResults = simplifyJobResults(jobResultsEntries,job);
             
-            ListMap<ComplexId<Long>, ResultsEntry> resultsGroups = groupResults(jobResultsEntries);
+            ListMap<ComplexId<Long>, PPAFullResultEntry> resultsGroups = groupResults(jobResultsEntries);
             
             PPAJobResultsGroups groupedResults = assemblyJobGroups(resultsGroups,job);
             
@@ -179,7 +181,7 @@ public class PPAJC2ResultsHandler {
 
     }
 
-    protected void updateFinishedJobState(PPAJobSummary job,List<ResultsEntry> results) {
+    protected void updateFinishedJobState(PPAJobSummary job,List<PPAFullResultEntry> results) {
 	long failed = countFailed(results);
 	long needsAttention = countNeedsAttention(results);
 
@@ -206,7 +208,7 @@ public class PPAJC2ResultsHandler {
     }
 
 
-    protected void updateSelectedJobState(PPAJobSummary job,List<ResultsEntry> results,Map<Long, Integer> selection) {
+    protected void updateSelectedJobState(PPAJobSummary job,List<PPAFullResultEntry> results,Map<Long, Integer> selection) {
 	long needsAttention = countNeedsAttention(results);
 
 	job.attentionCount = (needsAttention);
@@ -220,9 +222,6 @@ public class PPAJC2ResultsHandler {
 	return !job.closed;
     }
 
-    protected void saveJobRawResults(JobResult<PPAResult> results, long jobId, AssayPack exp)   {
-        ppaRep.saveJobRawResults(results,jobId,exp,false);
-    }
     
     protected void updateOrgResults(PPAJobResults results, AssayPack exp) throws IOException  {
         ppaRep.saveJC2JobRawResults(results, results.jobId,exp,true);
@@ -285,9 +284,9 @@ public class PPAJC2ResultsHandler {
 
     }
     
-    protected List<ResultsEntry> buildResultsEntries(JobResults<TSResult<PPAResult>> results, Map<Long, DataTrace> orgData, PPAJobSummary job) {
+    protected List<PPAFullResultEntry> buildResultsEntries(JobResults<TSResult<PPAResult>> results, Map<Long, DataTrace> orgData, PPAJobSummary job) {
        
-	List<ResultsEntry> container = new ArrayList<>();
+	List<PPAFullResultEntry> container = new ArrayList<>();
         
         FakeIdExtractor fakeIds = new FakeIdExtractor(orgData.values());
 
@@ -297,15 +296,15 @@ public class PPAJC2ResultsHandler {
 	    DataTrace data = orgData.get(result.id);
 	    if (data == null)
 	    {
-		warn("Assembly results: No org data for result: "+result.id,job.uuid,0);
+		warn("Assembly results: No org data for result: "+result.id,job.jobId,0);
 		continue;
 	    }
 	    if (!submittedResults.add(result.id)) {
-		warn("Duplicate results for task: "+result.id,job.uuid,0);
+		warn("Duplicate results for task: "+result.id,job.jobId,0);
 	    }
 
 	    PPAResult ppa = result.result;
-	    ResultsEntry entry;
+	    PPAFullResultEntry entry;
 	    if (ppa != null) {
                 entry = buildResultsEntry(data,job,ppa,fakeIds);
 	    }
@@ -321,11 +320,11 @@ public class PPAJC2ResultsHandler {
 	missed.removeAll(submittedResults);
 
 	if (!missed.isEmpty()) {
-	    warn(missed.size()+ " results are missing, "+submittedResults.size()+" present",job.uuid,0);
+	    warn(missed.size()+ " results are missing, "+submittedResults.size()+" present",job.jobId,0);
 	    for (Long dataId : missed) {
 		DataTrace data = orgData.get(dataId);
 
-		ResultsEntry entry = buildResultsEntry(data,job,new FailedPPA("No result received"),fakeIds);
+		PPAFullResultEntry entry = buildResultsEntry(data,job,new FailedPPA("No result received"),fakeIds);
 		container.add(entry);
 
 	    }
@@ -335,14 +334,14 @@ public class PPAJC2ResultsHandler {
 	return container;
     }
     
-    protected ResultsEntry buildResultsEntry(DataTrace data, PPAJobSummary job, PPAResult result, FakeIdExtractor fakeIds) {
+    protected PPAFullResultEntry buildResultsEntry(DataTrace data, PPAJobSummary job, PPAResult result, FakeIdExtractor fakeIds) {
         
         
-	ResultsEntry entry = new ResultsEntry();
-	entry.setDataId(data.dataId);
-	entry.setDataType(job.dataSetType);
-	entry.setJobId(job.jobId);
-	entry.setResult(result);
+	PPAFullResultEntry entry = new PPAFullResultEntry();
+	entry.dataId = data.dataId;
+	entry.dataType = (job.dataSetType);
+	entry.jobId = (job.jobId);
+	entry.result = (result);
         
 	entry.orgId = data.traceRef;
         entry.rawDataId = data.rawDataId;
@@ -355,7 +354,7 @@ public class PPAJC2ResultsHandler {
     
     
     
-    protected List<PPAStats> calculateGroupsStats(ListMap<ComplexId<Long>, ResultsEntry> results) {
+    protected List<PPAStats> calculateGroupsStats(ListMap<ComplexId<Long>, PPAFullResultEntry> results) {
         
         ListMap<ComplexId<Long>,PPAResult> groups = filterResultsForStats(results);
         
@@ -368,7 +367,7 @@ public class PPAJC2ResultsHandler {
 	    PPAStats stats = calculateStats(groups.get(key));
             //it is from full data set cause there maybe nothign for stats subset
             //entries input groups are never empty            
-            ResultsEntry firstBfFileter = results.get(key).get(0);
+            PPAFullResultEntry firstBfFileter = results.get(key).get(0);
 	    stats.setBiolDescId(firstBfFileter.biolDescId);
 	    stats.setEnvironmentId(firstBfFileter.environmentId);
             stats.setMemberDataId(firstBfFileter.dataId);
@@ -387,18 +386,18 @@ public class PPAJC2ResultsHandler {
     }
     
     
-    protected StatsEntry assemblyFullStats(List<PPAStats> entries,long jobId) {
+    protected StatsEntry assemblyFullStats(List<PPAStats> entries,UUID jobId) {
 	StatsEntry statsEntry = new StatsEntry();
-	statsEntry.setJobId(jobId);
+	statsEntry.setUuid(jobId);
 
         entries.forEach( stats -> statsEntry.add(stats));
         
         return statsEntry;
     }
     
-    protected PPAJobResultsGroups assemblyJobGroups(ListMap<ComplexId<Long>, ResultsEntry> groups, PPAJobSummary job) {
+    protected PPAJobResultsGroups assemblyJobGroups(ListMap<ComplexId<Long>, PPAFullResultEntry> groups, PPAJobSummary job) {
         
-	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.uuid);
+	PPAJobResultsGroups clusters = new PPAJobResultsGroups(job.jobId);
         clusters.periodMin = job.min_period;
         clusters.periodMax = job.max_period;
 
@@ -419,12 +418,12 @@ public class PPAJC2ResultsHandler {
 	return clusters;    
     }  
     
-    protected PPAResultsGroupSummary joinResults(List<ResultsEntry> entries, double dataWindowStart) {
+    protected PPAResultsGroupSummary joinResults(List<PPAFullResultEntry> entries, double dataWindowStart) {
         
-        List<PPAResult> ppas = entries.stream().map( r -> r.getResult()).collect(Collectors.toList());
+        List<PPAResult> ppas = entries.stream().map( r -> r.result).collect(Collectors.toList());
         
         PPAResultsGroupSummary cluster = joinPPAResults(ppas, dataWindowStart);
-        final ResultsEntry first = entries.get(0);
+        final PPAFullResultEntry first = entries.get(0);
         cluster.memberDataId = first.dataId;
         cluster.rawId = first.rawDataId;
         cluster.bioId = first.biolDescId;
@@ -499,63 +498,63 @@ public class PPAJC2ResultsHandler {
         return cluster;
     }
   
-    protected long countFailed(List<ResultsEntry> results) {
+    protected long countFailed(List<PPAFullResultEntry> results) {
 	return results.stream()
-                .filter( r -> r.getResult() == null || r.getResult().hasFailed())
+                .filter( r -> r.result == null || r.result.hasFailed())
                 .count();
     }
 
 
-    protected long countNeedsAttention(List<ResultsEntry> results) {
+    protected long countNeedsAttention(List<PPAFullResultEntry> results) {
         
         return results.stream()
-                .filter( r -> r.getResult() != null)
-                .filter( r -> !r.getResult().isIgnored())
-                .filter( r -> r.getResult().needsAttention())
+                .filter( r -> r.result != null)
+                .filter( r -> !r.result.isIgnored())
+                .filter( r -> r.result.needsAttention())
                 .count();
     }
 
 
     
     protected void saveJobFullStats(StatsEntry stats, AssayPack exp, PPAJobSummary job) {
-	ppaRep.saveJobFullStats(stats, exp,job.uuid);
+	ppaRep.saveJobFullStats(stats, exp,job.jobId);
     }
     
     protected void saveJobSimpleStats(PPAJobSimpleStats stats, AssayPack exp, PPAJobSummary job) {
-	ppaRep.saveJobSimpleStats(stats, exp, job.uuid);
+	ppaRep.saveJobSimpleStats(stats, exp, job.jobId);
     }
     
     
     protected void saveJobResultsGroups(PPAJobResultsGroups groupedResults, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobResultsGroups(groupedResults, exp, job.uuid);
+        ppaRep.saveJobResultsGroups(groupedResults, exp, job.jobId);
     }    
 
-    protected void saveJobIndResults(List<ResultsEntry> results, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobIndResults(results,exp,job.uuid);
+    protected void saveJobIndResults(List<PPAFullResultEntry> results, AssayPack exp, PPAJobSummary job) {
+        ppaRep.saveJobIndResults(results,exp,job.jobId);
     }  
     
     protected void saveJobSimpleResults(PPAJobSimpleResults results, AssayPack exp, PPAJobSummary job) {
-        ppaRep.saveJobSimpleResults(results,exp,job.uuid);
+        ppaRep.saveJobSimpleResults(results,exp,job.jobId);
     }    
 
-    protected void saveFits(List<ResultsEntry> entries, UUID jobId, AssayPack exp) throws RobustDBException, RobustProcessException, IOException {
+    protected void saveFits(List<PPAFullResultEntry> entries, UUID jobId, AssayPack exp) throws RobustDBException, RobustProcessException, IOException {
 
 	Map<Long,TimeSeries> fits = new HashMap<>();
-        for (ResultsEntry entry : entries) {
-            PPAResult result = entry.getResult();
+        for (PPAFullResultEntry entry : entries) {
+            PPAResult result = entry.result;
             TimeSeries fit = result.getFit();
             if (fit != null)
-                fits.put(entry.getDataId(), fit);
+                fits.put(entry.dataId, fit);
         }
         
         ppaRep.saveFits(fits,jobId,exp);
     }
 
     
-    protected void clearFits(List<ResultsEntry> entries) {
+    protected void clearFits(List<PPAFullResultEntry> entries) {
         entries.forEach( entry -> {
-            if (entry.getResult() != null)
-                entry.getResult().setFit(null);
+            if (entry.result != null)
+                entry.result.setFit(null);
         });
     }    
     
@@ -583,10 +582,10 @@ public class PPAJC2ResultsHandler {
         }
     }
 
-    protected ListMap<ComplexId<Long>, ResultsEntry> groupResults(List<ResultsEntry> entries) {
-	ListMap<ComplexId<Long>, ResultsEntry> groups = new ListMap<>();
+    protected ListMap<ComplexId<Long>, PPAFullResultEntry> groupResults(List<PPAFullResultEntry> entries) {
+	ListMap<ComplexId<Long>, PPAFullResultEntry> groups = new ListMap<>();
         
-        for (ResultsEntry entry : entries) {
+        for (PPAFullResultEntry entry : entries) {
             if (entry.ignored) continue;
     
             ComplexId<Long> key = new ComplexId<>(entry.biolDescId,entry.environmentId);
@@ -599,7 +598,7 @@ public class PPAJC2ResultsHandler {
         
     }
 
-    protected ListMap<ComplexId<Long>, PPAResult> filterResultsForStats(ListMap<ComplexId<Long>, ResultsEntry> resultsGroups) {
+    protected ListMap<ComplexId<Long>, PPAResult> filterResultsForStats(ListMap<ComplexId<Long>, PPAFullResultEntry> resultsGroups) {
 	ListMap<ComplexId<Long>, PPAResult> groups = new ListMap<>();
         
         resultsGroups.entrySet().forEach( entry -> {
@@ -607,7 +606,7 @@ public class PPAJC2ResultsHandler {
             ComplexId<Long> key = entry.getKey();
             
             List<PPAResult> ppas = entry.getValue().stream()
-                    .map( e -> e.getResult())
+                    .map( e -> e.result)
                     .filter( ppa -> ppa != null)
                     .filter( ppa -> !ppa.hasFailed())
                     .filter( ppa -> !ppa.needsAttention())
@@ -630,8 +629,8 @@ public class PPAJC2ResultsHandler {
 
     public long doPPASelection(PPAJobSummary summary, AssayPack exp, Map<Long, Integer> selection) {
 
-        PPAJobSummary job = ppaRep.getJobSummary(exp, summary.uuid).orElseThrow(() -> new HandlingException("JobSummary: "+summary.uuid+" cannot be found in biodare"));
-        List<ResultsEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.uuid);
+        PPAJobSummary job = ppaRep.getJobSummary(exp, summary.jobId).orElseThrow(() -> new HandlingException("JobSummary: "+summary.jobId+" cannot be found in biodare"));
+        List<PPAFullResultEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.jobId);
         jobIndResults = applyUserResultsSelection(jobIndResults, selection);
         
         processJobResults(jobIndResults, job, exp);
@@ -663,7 +662,7 @@ public class PPAJC2ResultsHandler {
         for (PPAJobSummary job: finishedJobs) {  
             
             logger.info("Redoing ppa processing for {}:{}",exp.getId(),job.jobId);
-            List<ResultsEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.jobId);
+            List<PPAFullResultEntry> jobIndResults = ppaRep.getJobIndResults(exp, job.jobId);
             jobIndResults.sort(Comparator.comparing( e -> e.dataId));
             
             jobIndResults.stream().filter( e -> e.rawDataId == 0L).forEach( e -> {e.rawDataId = e.dataId;});
@@ -689,13 +688,13 @@ public class PPAJC2ResultsHandler {
                 .collect(Collectors.joining(";"));
     }
     
-    protected List<ResultsEntry> applyUserResultsSelection(List<ResultsEntry> entries, Map<Long, Integer> selectedValues) {
-	List<ResultsEntry> updatedResults = new ArrayList<>();
+    protected List<PPAFullResultEntry> applyUserResultsSelection(List<PPAFullResultEntry> entries, Map<Long, Integer> selectedValues) {
+	List<PPAFullResultEntry> updatedResults = new ArrayList<>();
 
 
-	    for (ResultsEntry entry : entries) {
+	    for (PPAFullResultEntry entry : entries) {
 
-                Integer selection = selectedValues.get(entry.getDataId());
+                Integer selection = selectedValues.get(entry.dataId);
 		if (selection == null) {
 		    updatedResults.add(entry);
 		} else {
@@ -709,9 +708,9 @@ public class PPAJC2ResultsHandler {
     
     
     
-    protected ResultsEntry updateEntrySelection(ResultsEntry entry, int selected) {
+    protected PPAFullResultEntry updateEntrySelection(PPAFullResultEntry entry, int selected) {
 
-	ResultsEntry updated = new ResultsEntry();
+	PPAFullResultEntry updated = new PPAFullResultEntry();
         updated.biolDescId = entry.biolDescId;
         updated.dataId = entry.dataId;
         updated.dataType = entry.dataType;
@@ -721,7 +720,7 @@ public class PPAJC2ResultsHandler {
         updated.orgId = entry.orgId;
         updated.ignored = entry.ignored;
         updated.rawDataId = entry.rawDataId;
-	updated.setResult(updateResultSelection(entry.getResult(),selected));
+	updated.result = updateResultSelection(entry.result,selected);
 
 	return updated;
     }
@@ -768,7 +767,7 @@ public class PPAJC2ResultsHandler {
 
     protected PPAJobSimpleStats simplifyJobStats(List<PPAStats> fullStats,PPAJobSummary job) {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.uuid);
+        PPAJobSimpleStats stats = new PPAJobSimpleStats(job.jobId);
         double dw = job.dataWindowStart;
         
         fullStats.forEach( entry -> {
@@ -782,14 +781,14 @@ public class PPAJC2ResultsHandler {
 
 
 
-    protected PPAJobSimpleResults simplifyJobResults(List<ResultsEntry> entries, PPAJobSummary job) {
-        PPAJobSimpleResults res = new PPAJobSimpleResults(job.uuid);
+    protected PPAJobSimpleResults simplifyJobResults(List<PPAFullResultEntry> entries, PPAJobSummary job) {
+        PPAJobSimpleResults res = new PPAJobSimpleResults(job.jobId);
         
         //final long jobId = job.getJobId();
         final double windowStart = job.dataWindowStart;
         
         entries.forEach( entry -> {
-            PPASimpleResultEntry simple = PPAUtils.simplifyResultsEntry(entry,windowStart);
+            PPASimpleResultEntry simple = PPAUtilsJC2.simplifyResultsEntry(entry,windowStart);
             res.results.add(simple);
         });
         

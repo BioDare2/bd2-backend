@@ -10,10 +10,11 @@ import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobResultsGroups;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleResults;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleStats;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
+
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPAFitPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
@@ -117,7 +118,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     } 
     
     @RequestMapping(value = "job/{jobId}/results/grouped", method = RequestMethod.GET)
-    public PPAJobResultsGroups getPPAJobResultsGrouped(@PathVariable long expId,@PathVariable String jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public PPAJobResultsGroups getPPAJobResultsGrouped(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAJobResultsGrouped; job:{} exp: {}; {}",jobId,expId,user);
         
         
@@ -126,7 +127,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             PPAJobResultsGroups resp = ppaHandler.getPPAJobResultsGrouped(exp,jobId);
-            tracker.ppaJobGroupedResults(exp,jobId,user);
+            tracker.ppaJobGroupedResults(exp,jobId.toString(),user);
             return resp;
             
         } catch (WebMappedException e) {
@@ -140,7 +141,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }
     
     @RequestMapping(value = "job/{jobId}/stats/simple", method = RequestMethod.GET)
-    public PPAJobSimpleStats getPPAJobSimpleStats(@PathVariable long expId,@PathVariable String jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public PPAJobSimpleStats getPPAJobSimpleStats(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAJobSimpleStats; job:{} exp: {}; {}",jobId,expId,user);
         
         
@@ -149,7 +150,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             PPAJobSimpleStats stats = ppaHandler.getPPAJobSimpleStats(exp,jobId);
-            tracker.ppaJobStats(exp,jobId,user);
+            tracker.ppaJobStats(exp,jobId.toString(),user);
             return stats;
         } catch (WebMappedException e) {
             log.error("Cannot retrieve PPA simple stats {} {} {}",jobId,expId,e.getMessage(),e);
@@ -161,7 +162,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }
     
     @RequestMapping(value = "job/{jobId}/results/simple", method = RequestMethod.GET)
-    public PPAJobSimpleResults getPPAJobSimpleResults(@PathVariable long expId,@PathVariable String jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public PPAJobSimpleResults getPPAJobSimpleResults(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAJobSimpleResults; job:{} exp: {}; {}",jobId,expId,user);
         
         
@@ -170,7 +171,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             PPAJobSimpleResults resp = ppaHandler.getPPAJobSimpleResults(exp,jobId);
-            tracker.ppaJobSimpleResults(exp,jobId,user);
+            tracker.ppaJobSimpleResults(exp,jobId.toString(),user);
             return resp;
             
         } catch (WebMappedException e) {
@@ -184,7 +185,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }    
     
     @RequestMapping(value = "job/{jobId}/results/select", method = RequestMethod.GET)
-    public ListWrapper<PPASelectGroup> getPPAForSelect(@PathVariable long expId,@PathVariable String jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public ListWrapper<PPASelectGroup> getPPAForSelect(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAForSelect; job:{} exp: {}; {}",jobId,expId,user);
         
         
@@ -192,7 +193,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             ListWrapper<PPASelectGroup> resp = new ListWrapper(ppaHandler.getPPAForSelect(exp,jobId));
-            tracker.ppaForSelect(exp,jobId,user);
+            tracker.ppaForSelect(exp,jobId.toString(),user);
             return resp;
             
         } catch (WebMappedException e) {
@@ -206,7 +207,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }     
     
     @RequestMapping(value = "job/{jobId}/results/select", method = RequestMethod.POST)
-    public Map<String,Object> doPPASelection(@PathVariable long expId,@PathVariable String jobId,@RequestBody Map<String,String> selectionParams,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public Map<String,Object> doPPASelection(@PathVariable long expId,@PathVariable UUID jobId,@RequestBody Map<String,String> selectionParams,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("update PPASelection; job:{} exp:{}; {}",jobId,expId,user);
         
         
@@ -215,7 +216,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             long needsAttention =  ppaHandler.doPPASelection(exp,jobId,selectionParams);
-            tracker.ppaSelect(exp,jobId,user);
+            tracker.ppaSelect(exp,jobId.toString(),user);
             
             Map<String,Object> resp = new HashMap<>();
             resp.put("needsAttention", needsAttention);
@@ -232,7 +233,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }  
     
     @RequestMapping(value = "job/{jobId}", method = RequestMethod.DELETE)
-    public PPAJobSummary deletePPAJob(@PathVariable long expId,@PathVariable String jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public PPAJobSummary deletePPAJob(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("delete PPAJob:{} exp:{}; {}",jobId,expId,user);
         
         
@@ -241,7 +242,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             PPAJobSummary job = ppaHandler.deletePPAJob(exp, jobId);
-            tracker.ppaDeleteJob(exp,job,user);
+            tracker.ppaDeleteJob(exp,job.jobId.toString(),user);
             return job;
         } catch (WebMappedException e) {
             log.error("Cannot delete PPA job {} {} {}",jobId,expId,e.getMessage(),e);
@@ -254,7 +255,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }
     
     @RequestMapping(value = "job/{jobId}/fits/{dataId}/{selectable}", method = RequestMethod.GET)
-    public PPAFitPack getDataFit(@PathVariable long expId,@PathVariable String jobId,
+    public PPAFitPack getDataFit(@PathVariable long expId,@PathVariable UUID jobId,
             @PathVariable long dataId, @PathVariable(required = false) Boolean selectable,
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAFit; job:{} data:{} exp:{}; {}",jobId,dataId,expId,user);
@@ -265,7 +266,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         try {
             PPAFitPack resp = ppaHandler.getDataFit(exp,jobId,dataId,selectable);        
-            tracker.ppaFit(exp,jobId,dataId,user);
+            tracker.ppaFit(exp,jobId.toString(),dataId,user);
             return resp;
         } catch (WebMappedException e) {
             log.error("Cannot retrieve PPA fit {} {} {}",jobId,expId,e.getMessage(),e);
@@ -278,7 +279,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
     }     
     
     @RequestMapping(value = "job/{jobId}/export/{phaseType}", method = RequestMethod.GET)
-    public void exportPPAJob(@PathVariable long expId,@PathVariable String jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
+    public void exportPPAJob(@PathVariable long expId,@PathVariable UUID jobId,@PathVariable PhaseType phaseType,@NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
         log.debug("export PPAJob:{} exp:{}; {}",jobId,expId,user);
         
         
@@ -292,7 +293,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             String contentType = "text/csv";
             String fileName = expId+"_job"+jobId+".ppa_data.csv";
             sendFile(results,fileName,contentType,false,response);
-            tracker.ppaJobDownload(exp,jobId,user);
+            tracker.ppaJobDownload(exp,jobId.toString(),user);
         } catch (WebMappedException e) {
             log.error("Cannot export PPA job results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;

@@ -5,9 +5,10 @@
  */
 package ed.biodare2.backend.features.ppa;
 
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class PPAJC2HandlerTest {
     
     ExperimentHandler experimentHandler;
-    PPAArtifactsRep ppaRep;
+    PPAArtifactsRepJC2 ppaRep;
     TSDataHandler dataHandler;
     PPAJC2AnalysisService ppaService;
     PPAJC2ResultsHandler ppaResultsHandler;
@@ -42,7 +43,7 @@ public class PPAJC2HandlerTest {
     public void setUp() {
         
         experimentHandler = mock(ExperimentHandler.class);
-        ppaRep = mock(PPAArtifactsRep.class);
+        ppaRep = mock(PPAArtifactsRepJC2.class);
         dataHandler = mock(TSDataHandler.class);
         ppaService = mock(PPAJC2AnalysisService.class);
         ppaResultsHandler = mock(PPAJC2ResultsHandler.class);

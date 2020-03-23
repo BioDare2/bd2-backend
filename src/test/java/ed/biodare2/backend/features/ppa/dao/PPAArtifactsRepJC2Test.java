@@ -7,8 +7,8 @@ package ed.biodare2.backend.features.ppa.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare.jobcentre2.dom.State;
-import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRep.ExpJobKey;
-import static ed.biodare2.backend.features.ppa.dao.PPAArtifactsRep.JOB_SIMPLE_SUMMARY_FILE;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2.ExpJobKey;
+import static ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2.JOB_SIMPLE_SUMMARY_FILE;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobIndResults;
@@ -52,7 +52,7 @@ import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEqua
  *
  * @author tzielins
  */
-public class PPAArtifactsRepTest {
+public class PPAArtifactsRepJC2Test {
     
 
     static double EPS = 1E-6;
@@ -61,7 +61,7 @@ public class PPAArtifactsRepTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
     
     ExperimentsStorage expStorage;
-    PPAArtifactsRep ppaRep;
+    PPAArtifactsRepJC2 ppaRep;
     Path expDir;
     PPATestSeeder seeder;
     
@@ -77,7 +77,7 @@ public class PPAArtifactsRepTest {
         mapper.findAndRegisterModules();
         
         seeder = new PPATestSeeder();
-        ppaRep = new PPAArtifactsRep(expStorage, mapper);
+        ppaRep = new PPAArtifactsRepJC2(expStorage, mapper);
         
     } 
     
@@ -85,11 +85,11 @@ public class PPAArtifactsRepTest {
     public void clearAllPPAArtefactsDeletesJobsFolder() throws IOException {
         
         AssayPack exp = new MockExperimentPack(1);
-        Path ppaDir = expDir.resolve(PPAArtifactsRep.PPA_DIR);        
+        Path ppaDir = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);        
         
         assertFalse(Files.exists(ppaDir));
 
-        Path jobs = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR);
+        Path jobs = ppaDir.resolve(PPAArtifactsRepJC2.JOBS_DIR);
         Path job = jobs.resolve("12");
         
         Files.createDirectories(job);
@@ -192,7 +192,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void getPPADirCreatesTheDirIfMissing() throws Exception {
 
-        Path exp = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path exp = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         assertFalse(Files.isDirectory(exp));
         
         Path resp = ppaRep.getPPADir(8);
@@ -202,7 +202,7 @@ public class PPAArtifactsRepTest {
     
     @Test
     public void getJobDirGetsSubfolderOfJobs() throws Exception {
-        Path ppa = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path ppa = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         UUID jobId = UUID.randomUUID();
         
         Path exp = ppa.resolve("JOBS").resolve(jobId.toString());
@@ -214,7 +214,7 @@ public class PPAArtifactsRepTest {
     
     @Test
     public void getJobDirCreatesTheFolderIfMissing() throws Exception {
-        Path ppa = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path ppa = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         UUID jobId = UUID.randomUUID();
         
         Path resp = ppaRep.getJobDir(4, jobId);
@@ -223,7 +223,7 @@ public class PPAArtifactsRepTest {
     
     @Test
     public void getJobDirCachesTheValue() throws Exception {
-        Path ppa = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path ppa = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         UUID jobId = UUID.randomUUID();
         
         //Path exp = ppa.resolve("JOBS/12");
@@ -238,7 +238,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void jobGroupedResultsFileGivesCorrectFileInJobFolder()  throws Exception {
 
-        Path ppa = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path ppa = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         UUID jobId = UUID.randomUUID();
         Path exp = ppa.resolve("JOBS").resolve(jobId.toString()).resolve(ppaRep.JOB_GROUPED_RESULTS_FILE);
         Path resp = ppaRep.jobGroupedResultsFile(6, jobId);
@@ -341,7 +341,7 @@ public class PPAArtifactsRepTest {
         Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(exp, job.jobId);
         assertReflectionEquals(job,cpy.get()); 
         
-        Path file = expDir.resolve("PPA/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
+        Path file = expDir.resolve("PPA3/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
         assertTrue(Files.exists(file));
     }
     
@@ -386,7 +386,7 @@ public class PPAArtifactsRepTest {
         Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.jobId));
         assertReflectionEquals(job,cpy.get()); 
         
-        Path file = expDir.resolve("PPA/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
+        Path file = expDir.resolve("PPA3/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
         assertTrue(Files.exists(file));
     }    
     
@@ -398,10 +398,10 @@ public class PPAArtifactsRepTest {
     public void deleteJobDirDeletesJobSubfolderAndItsContent() throws Exception {
         
         AssayPack exp = new MockExperimentPack(1);
-        Path ppaDir = expDir.resolve(PPAArtifactsRep.PPA_DIR);        
+        Path ppaDir = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);        
 
         UUID jobId = UUID.randomUUID();
-        Path jobDir = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR).resolve(jobId.toString());
+        Path jobDir = ppaDir.resolve(PPAArtifactsRepJC2.JOBS_DIR).resolve(jobId.toString());
         Files.createDirectories(jobDir);
         
         Path file = jobDir.resolve("cos.xml");
@@ -577,7 +577,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void jobIndResultsFileGivesCorrectFileInJobFolder()  throws Exception {
 
-        Path ppa = expDir.resolve(PPAArtifactsRep.PPA_DIR);
+        Path ppa = expDir.resolve(PPAArtifactsRepJC2.PPA_DIR);
         UUID jobId = UUID.randomUUID();
         Path exp = ppa.resolve("JOBS").resolve(jobId.toString()).resolve(ppaRep.JOB_FULL_RESULTS_FILE);
         Path resp = ppaRep.jobIndResultsFile(7, jobId);

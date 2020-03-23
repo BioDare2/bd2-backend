@@ -6,6 +6,7 @@
 package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.UUID;
 
 /**
  *
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class PPASimpleResultEntry {
     
     
-    public long jobId;
+    public UUID jobId;
 
     public long dataId;
     public long rawId;      
