@@ -26,7 +26,6 @@ import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAResultsGroupSummary;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleResultEntry;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleStats;
-import ed.biodare2.backend.repo.ui_dom.ppa.PPAResultsGroupJC2;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectItem;
 import ed.biodare2.backend.repo.ui_dom.shared.SimpleOption;
@@ -215,7 +214,7 @@ public class PPAUtilsJC2 {
     }    
 
     
-    
+    /*
     public List<PPAResultsGroupJC2> convertToUIPPAResults(Map<Long, List<PPASimpleResultEntry>> groups, List<PPAJobSummary> jobs,
             Map<String,FakeIdExtractor> idsCaches) {
 
@@ -251,7 +250,7 @@ public class PPAUtilsJC2 {
         ui.dataRef = idsCache.getDataRef(first.dataId);
         ui.rawDataId = first.rawId;
         return ui;
-    }
+    }*/
     
     
     protected String getLabel(ResultsGroup group,FakeIdExtractor idsCache) {
