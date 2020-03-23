@@ -10,14 +10,12 @@ import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleResultEntry;
-import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.tsprocessing.PhaseType;
 import ed.robust.util.TableBuilder;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.text.SimpleDateFormat;
 
 /**
  *

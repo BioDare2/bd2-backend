@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ed.biodare2.backend.repo.isa_dom.ppa2;
+package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author tzielins
  */
-public class PPAResultsGroupSummary {
+class PPAResultsGroupSummary {
     
   public long memberDataId;
   public long rawId;      

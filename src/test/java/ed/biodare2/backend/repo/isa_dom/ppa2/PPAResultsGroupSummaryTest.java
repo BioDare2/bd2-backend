@@ -5,10 +5,7 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa2;
 
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAResultsGroupSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.robust.dom.tsprocessing.PhaseType;

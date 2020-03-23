@@ -7,7 +7,6 @@ package ed.biodare2.backend.repo.isa_dom.ppa2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import static ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleResultEntryTest.makePPASimpleResultEntry;
 import ed.robust.dom.tsprocessing.PhaseType;
 import java.util.ArrayList;
 import java.util.List;

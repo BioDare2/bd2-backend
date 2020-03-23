@@ -5,10 +5,8 @@
  */
 package ed.biodare2.backend.features.ppa;
 
-import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
-import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ArgumentException;

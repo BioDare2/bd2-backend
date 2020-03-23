@@ -6,7 +6,6 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.features.jobcentre2.JC2HandlingException;
-import ed.biodare2.backend.features.ppa.PPAHandlingException;
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.handlers.ArgumentException;
 import ed.biodare2.backend.handlers.ExperimentHandler;

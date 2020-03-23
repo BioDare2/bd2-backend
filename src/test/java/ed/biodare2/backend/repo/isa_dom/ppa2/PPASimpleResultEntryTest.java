@@ -5,8 +5,6 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa2;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.robust.dom.tsprocessing.PhaseType;
