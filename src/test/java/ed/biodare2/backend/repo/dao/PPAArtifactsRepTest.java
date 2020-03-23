@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -496,15 +497,17 @@ public class PPAArtifactsRepTest {
     }
     
     @Test
-    public void getJobSummariesGivesSummariesOrderedByJobIdDescBasedOnlyOnSummaryFiles() throws Exception {
+    public void getJobSummariesGivesSummariesOrderedBySubmisionDataDescBasedOnlyOnSummaryFiles() throws Exception {
         AssayPack exp = new MockExperimentPack(1);
         PPAJobSummary s1 = new PPAJobSummary();
         s1.jobId = 3;
         s1.state = State.FAILED;
+        s1.submitted = (new Date(System.currentTimeMillis() - 3000));
         
         PPAJobSummary s2 = new PPAJobSummary();
         s2.jobId = 5;
         s2.state = State.FINISHED;
+        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
         
         ppaRep.saveJobSummary(s1, exp);
         ppaRep.saveJobSummary(s2, exp);
@@ -524,10 +527,12 @@ public class PPAArtifactsRepTest {
         PPAJobSummary s1 = new PPAJobSummary();
         s1.jobId = 3;
         s1.state = State.FAILED;
+        s1.submitted = (new Date(System.currentTimeMillis() - 3000));
         
         PPAJobSummary s2 = new PPAJobSummary();
         s2.jobId = 5;
         s2.state = State.FINISHED;
+        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
         
         ppaRep.saveJobSummary(s1, exp);
         ppaRep.saveJobSummary(s2, exp);
@@ -547,6 +552,7 @@ public class PPAArtifactsRepTest {
         s2 = new PPAJobSummary();
         s2.jobId = 5;
         s2.state = State.FINISHED;
+        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
 
         ppaRep.saveJobSummary(s2, exp);
         

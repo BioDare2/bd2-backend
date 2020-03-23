@@ -56,6 +56,7 @@ public class PPAResultsExporter {
         tb.printlnParam("Experiment ID", exp.getId());
         tb.printlnParam("Experiment name", exp.getName());
         tb.printlnParam("Job", job.jobId);
+        tb.printlnParam("Job UUID", job.uuid);
         tb.printParam("Submitted", job.submitted);
         tb.printlnParam("Finished", job.completed);
         tb.printlnParam("Method",job.method.friendlyName);

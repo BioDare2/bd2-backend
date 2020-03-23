@@ -558,6 +558,32 @@ public class PPAUtils {
     }
 
 
+    public Map<String, Path> saveToFiles2(List<PPAJobSummary> jobs, Map<Long, List<ResultsEntry>> resultsGroups, List<StatsEntry> jobsStats,
+            ExperimentalAssay exp,Map<String,FakeIdExtractor> idsCaches) throws IOException   {
+        
+        Map<Long,PPAJobSummary> jobsMap = jobs.stream().collect(Collectors.toMap( j -> j.jobId, j -> j));
+        
+	Map<String,Path> map = new HashMap<>();
+
+        Set<State> finished = EnumSet.of(State.FINISHED, State.SUCCESS);
+        
+        for (StatsEntry stats : jobsStats) {
+            PPAJobSummary job = jobsMap.get(stats.getJobId());
+            if (job == null) continue;
+            FakeIdExtractor idsCache = idsCaches.get(job.dataSetType);
+            
+	    if (finished.contains(job.state)) {
+		Path file = saveStatsToFile(job, stats,exp,idsCache);
+		map.put("Statistics "+job.uuid+".csv",file);
+	    }
+	}
+	
+	Path file = saveResultsToFile2(resultsGroups, jobsMap,exp,idsCaches);
+	map.put("Individual results.csv",file);
+
+	return map;
+        
+    }
 
     
     protected Path saveStatsToFile(JobSummary job, StatsEntry stats,ExperimentalAssay exp,FakeIdExtractor idsCache) throws IOException {
@@ -575,7 +601,23 @@ public class PPAUtils {
 	}
 	return file;        
     }
+    
+    protected Path saveStatsToFile(PPAJobSummary job, StatsEntry stats,ExperimentalAssay exp,FakeIdExtractor idsCache) throws IOException {
+        
+	Path file = Files.createTempFile(null, null);
 
+	try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+
+            if (stats == null || stats.getStats().isEmpty()) {
+                printNoJobMessage(job,writer,exp);
+            } else {
+                printStatsLegend(job,writer,exp);
+                printStats(job,stats,writer,idsCache);
+            }
+	}
+	return file;        
+    }
+    
     protected void printNoJobMessage(JobSummary job, BufferedWriter writer,ExperimentalAssay exp) throws IOException {
         TableBuilder tb = new TableBuilder(SEP, ESC);
         
@@ -589,13 +631,28 @@ public class PPAUtils {
         
         writer.write(tb.toString());
     }
+    
+    protected void printNoJobMessage(PPAJobSummary job, BufferedWriter writer,ExperimentalAssay exp) throws IOException {
+        TableBuilder tb = new TableBuilder(SEP, ESC);
+        
+        tb.printlnLabel("No statistics found");
+        tb.endln();
+        tb.printlnParam("Experiment ID", exp.getId());
+        tb.printlnParam("Experiment name", exp.getName());
+        
+        tb.printlnParam("Job", job.jobId);
+        tb.printlnParam("Job UUID", job.uuid);
+        tb.printlnParam("Summary",job.summary);
+        
+        writer.write(tb.toString());
+    }
 
     protected void printStatsLegend(JobSummary job, BufferedWriter writer, ExperimentalAssay exp) throws IOException {
         TableBuilder tb = new TableBuilder(SEP, ESC);
         tb.printlnParam("Experiment ID", exp.getId());
         tb.printlnParam("Experiment name", exp.getName());
         tb.printlnParam("Job", job.getJobId());
-        tb.printParam("Submitted", job.getStatus().getSubmitted());
+        tb.printParam("Submitted", job.getSubmitted());
         tb.printlnParam("Finished", job.getStatus().getCompleted());
         tb.printlnParam("Method",job.getMethod());
         tb.printlnParam("Params",job.getSummary());
@@ -617,6 +674,75 @@ public class PPAUtils {
         
         double[] phaseRelations;
         if (job.getDataWindowStart() != 0) phaseRelations = new double[]{0,job.getDataWindowStart()};
+        else phaseRelations = new double[]{0};
+        
+        
+        
+        for (PhaseType phase : phases) {
+            for (double phaseRelation : phaseRelations) {
+                
+                tb.printLabel("Phase "+phase.getFriendlyName());
+                tb.printLabel("Relative to "+phaseRelation);
+                writeStatsHead(tb);
+                tb.printLabel("");
+                
+                tb.printLabel("Circadian Phase "+phase.getFriendlyName());
+                tb.printLabel("Relative to "+phaseRelation);
+                writeStatsHead(tb);
+                tb.printLabel("");
+                
+                
+            }
+        }
+        
+        for (PhaseType phase : phases) {
+            tb.printLabel("Amplitude "+phase.getFriendlyName());
+            writeStatsHead(tb);
+            tb.printLabel("");
+        }
+        
+        tb.printLabel("GOF");
+        writeStatsHead(tb);
+        tb.printLabel("");
+        
+        tb.printLabel("ERR");
+        writeStatsHead(tb);
+        tb.printLabel("");
+        
+        tb.endln();
+        
+        writer.write(tb.toString());
+        
+    }
+    
+    protected void printStatsLegend(PPAJobSummary job, BufferedWriter writer, ExperimentalAssay exp) throws IOException {
+        TableBuilder tb = new TableBuilder(SEP, ESC);
+        tb.printlnParam("Experiment ID", exp.getId());
+        tb.printlnParam("Experiment name", exp.getName());
+        tb.printlnParam("Job", job.jobId);
+        tb.printlnParam("Job UUID", job.uuid);
+        tb.printParam("Submitted", job.submitted);
+        tb.printlnParam("Finished", job.completed);
+        tb.printlnParam("Method",job.method.friendlyName);
+        tb.printlnParam("Params",job.summary);
+        if (job.needsAttention) tb.printlnLabel("WARNING some results still need manual editing to be included in the stats");
+        tb.endln();
+        
+        
+        tb.printLabel("Data");
+        tb.printLabel("Conditions");
+        
+        
+        tb.printLabel("");
+        
+        tb.printLabel("Period");
+        writeStatsHead(tb);
+        tb.printLabel("");
+        
+        PhaseType[] phases = {PhaseType.ByFit,PhaseType.ByMethod,PhaseType.ByAvgMax,PhaseType.ByFirstPeak};
+        
+        double[] phaseRelations;
+        if (job.dataWindowStart != 0) phaseRelations = new double[]{0,job.dataWindowStart};
         else phaseRelations = new double[]{0};
         
         
@@ -761,6 +887,87 @@ public class PPAUtils {
         }
     }
     
+    protected void printStats(PPAJobSummary job, StatsEntry stats, BufferedWriter writer, FakeIdExtractor idsCache) throws IOException {
+        List<PPAStats> entries = sortEntries(stats,idsCache);
+        
+        for (PPAStats entry : entries) {
+            
+            TableBuilder tb = new TableBuilder(SEP, ESC);
+            tb.printLabel(idsCache.getBioLabel(entry.getBiolDescId()));
+            tb.printLabel(idsCache.getCondLabel(entry.getEnvironmentId()));
+            
+            
+            tb.printLabel("");
+            tb.printLabel("period");
+
+            WeightingType reqWeight = WeightingType.ByGOF;
+            Statistics stat = entry.getPeriod(WeightingType.None);
+            Statistics wStat = entry.getPeriod(reqWeight);
+            writeStats(tb,stat,wStat);
+            tb.printLabel("");
+            
+            PhaseType[] phases = {PhaseType.ByFit,PhaseType.ByMethod,PhaseType.ByAvgMax,PhaseType.ByFirstPeak};
+
+            double[] phaseRelations;
+            if (job.dataWindowStart != 0) phaseRelations = new double[]{0,job.dataWindowStart};
+            else phaseRelations = new double[]{0};
+
+
+
+            for (PhaseType phase : phases) {
+                for (double phaseRelation : phaseRelations) {
+
+                    tb.printLabel("Phase "+phase.getFriendlyName());
+                    tb.printLabel("Relative to "+phaseRelation);
+           
+                    stat = entry.getPhase(phase,WeightingType.None);
+                    wStat = entry.getPhase(phase,reqWeight);
+                    if (phaseRelation != 0)
+                        writePhaseStats(tb,stat,wStat,entry.getPeriod(WeightingType.None).getMean(),entry.getPeriod(reqWeight).getMean(),phaseRelation);
+                    else 
+                        writeStats(tb,stat,wStat);
+                    tb.printLabel("");
+
+                    tb.printLabel("Circadian Phase "+phase.getFriendlyName());
+                    tb.printLabel("Relative to "+phaseRelation);
+           
+                    stat = entry.getPhaseCirc(phase,WeightingType.None);
+                    wStat = entry.getPhaseCirc(phase,reqWeight);
+                    if (phaseRelation != 0)
+                        writePhaseStats(tb,stat,wStat,entry.getPeriod(WeightingType.None).getMean(),entry.getPeriod(reqWeight).getMean(),phaseRelation);
+                    else 
+                        writeStats(tb,stat,wStat);
+                    tb.printLabel("");                }
+            }
+            
+            for (PhaseType phase : phases) {
+                tb.printLabel("Amplitude "+phase.getFriendlyName());
+
+                    stat = entry.getAmplitude(phase,WeightingType.None);
+                    wStat = entry.getAmplitude(phase,reqWeight);
+                    writeStats(tb,stat,wStat);
+                    tb.printLabel("");
+            }
+            
+            
+            tb.printLabel("GOF");
+
+            stat = entry.getGOF();
+            writeStats(tb,stat,null);
+            tb.printLabel("");
+            
+            tb.printLabel("ERR");
+
+            stat = entry.getJoinedError();
+            writeStats(tb,stat,null);
+            tb.printLabel("");
+            
+            tb.endln();
+            
+            writer.write(tb.toString());    
+        }
+    }
+    
     protected void writeStats(TableBuilder tb, Statistics stat, Statistics wStat) {
         tb.printVal(stat.getN());
         if (wStat != null) {
@@ -831,6 +1038,23 @@ public class PPAUtils {
             } else {
                 printResultsLegend(writer,exp);
                 printResultsGroups(resultsGroups,jobs,writer,idsCaches);
+            }
+	}
+	return file;
+    } 
+    
+    protected Path saveResultsToFile2(Map<Long, List<ResultsEntry>> resultsGroups, Map<Long,PPAJobSummary> jobs, 
+            ExperimentalAssay exp, Map<String,FakeIdExtractor> idsCaches) throws IOException {
+        
+	Path file = Files.createTempFile(null, null);
+
+	try (BufferedWriter writer = Files.newBufferedWriter(file)) {
+
+            if (resultsGroups.isEmpty()) {
+                printNoResultsMessage(writer,exp);
+            } else {
+                printResultsLegend(writer,exp);
+                printResultsGroups2(resultsGroups,jobs,writer,idsCaches);
             }
 	}
 	return file;
@@ -915,7 +1139,22 @@ public class PPAUtils {
         
     }
     
-    
+    protected void printResultsGroups2(Map<Long, List<ResultsEntry>> resultsGroups, Map<Long,PPAJobSummary> jobs, 
+            BufferedWriter writer, Map<String,FakeIdExtractor> idsCaches) {
+        
+        resultsGroups.values().stream()
+                .sorted(Comparator.comparing((List<ResultsEntry> rg) -> rg.isEmpty() ? 0 : rg.get(0).getDataId()))
+                .forEachOrdered( group -> {
+                    try {
+                        printResultsGroup2(group,jobs,writer,idsCaches);
+                        writer.newLine();
+                    } catch (IOException e) {
+                        throw new ServerSideException("Cannot write results: "+e.getMessage(),e);
+                    }
+                });
+                ;
+        
+    }    
 
 
     protected void printResultsGroup(List<ResultsEntry> resultsGr, Map<Long,JobSummary> jobs, 
@@ -965,6 +1204,52 @@ public class PPAUtils {
     }
         
 
+    protected void printResultsGroup2(List<ResultsEntry> resultsGr, Map<Long,PPAJobSummary> jobs, 
+            BufferedWriter writer, Map<String,FakeIdExtractor> idsCaches) throws IOException {
+        for (ResultsEntry jobEntry : resultsGr) {
+            
+            PPAJobSummary job = jobs.get(jobEntry.getJobId());
+            FakeIdExtractor idsCache = idsCaches.get(job.dataSetType);
+            TableBuilder tb = new TableBuilder(SEP, ESC);
+
+            tb.printLabel(idsCache.getDataRef(jobEntry.getDataId())); //tb.printLabel(resultsGr.getOrgId());
+            tb.printLabel(getLabel(jobEntry, idsCache)); //it should be traced based
+            tb.printLabel("");//tb.printLabel(idsCache.getBioLabel(resultsGr.getBiolDescId()));
+            tb.printLabel("");//tb.printLabel(idsCache.getCondLabel(resultsGr.getEnvironmentId()));
+
+            tb.printLabel("");
+            
+            
+            tb.printVal(job.uuid);
+            tb.printLabel(job.submitted.toString());
+            tb.printLabel(job.method.name());
+            tb.printLabel(job.summary);
+            tb.printLabel(job.dataSetTypeName);
+            tb.printLabel(job.dataWindow);
+            
+            
+            PPAResult result = jobEntry.getResult();
+            String attention = "";
+            if (result.hasFailed()) {
+                attention = "FAILED "+result.getMessage();
+            } else if (result.isIgnored()) {
+                attention = "IGNORED";
+            } else if (result.needsAttention()) {
+                attention = "X";
+            }
+            tb.printLabel(attention);
+            //tb.printLabel("");
+            
+            if (!result.hasFailed()) {
+                printResult(result,job.dataWindowStart,tb);
+            }
+            
+            tb.endln();
+            writer.write(tb.toString());
+            
+        }
+    }
+    
     protected void printResult(PPAResult result, double dataWindowStart, TableBuilder tb) {
         tb.printVal(result.getPPAMethodSpecific().getPeriod());
         tb.printVal(result.getPPAMethodSpecific().getPeriodError());

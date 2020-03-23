@@ -50,8 +50,12 @@ public class TableBuilder {
     }
 
    public TableBuilder  printVal(String value) {
-        if (value.contains(SEP)) sb.append(escape(value));
-        else sb.append(value);
+        if (value == null) {
+            sb.append("NULL");
+        } else {
+            if (value.contains(SEP)) sb.append(escape(value));
+            else sb.append(value);
+        }
        
 	sb.append(SEP);
         return this;

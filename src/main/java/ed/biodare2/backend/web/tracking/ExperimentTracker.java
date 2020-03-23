@@ -127,12 +127,24 @@ public class ExperimentTracker extends AbstractTracker {
     public void ppaJobDownload(AssayPack exp, long jobId, BioDare2User user) {
         track(EXP_PPA,DOWNLOAD,exp.getId(),user,"JOB",jobId);
     }    
+    
+    public void ppaJobDownload(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,DOWNLOAD,exp.getId(),user,"JOB",jobId);
+    }    
 
     public void ppaJobGroupedResults(AssayPack exp, long jobId, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"JOB_GROUPED_RESULTS",jobId);
     }
     
+    public void ppaJobGroupedResults(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,VIEW,exp.getId(),user,"JOB_GROUPED_RESULTS",jobId);
+    }    
+    
     public void ppaJobSimpleResults(AssayPack exp, long jobId, BioDare2User user) {
+        track(EXP_PPA,VIEW,exp.getId(),user,"JOB_RESULTS",jobId);
+    }    
+    
+    public void ppaJobSimpleResults(AssayPack exp, String jobId, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"JOB_RESULTS",jobId);
     }    
     
@@ -140,17 +152,34 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_PPA,VIEW,exp.getId(),user,"JOB_STATS",jobId);
     }    
     
+    public void ppaJobStats(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,VIEW,exp.getId(),user,"JOB_STATS",jobId);
+    }    
+    
+    
     public void ppaForSelect(AssayPack exp, long jobId, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"JOB_RESULTS",jobId);
     }
+    
+    public void ppaForSelect(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,VIEW,exp.getId(),user,"JOB_RESULTS",jobId);
+    }    
 
     public void ppaSelect(AssayPack exp, long jobId, BioDare2User user) {
         track(EXP_PPA,UPDATE,exp.getId(),user,"JOB_RESULTS",jobId);
     }
 
+    public void ppaSelect(AssayPack exp, String jobId, BioDare2User user) {
+        track(EXP_PPA,UPDATE,exp.getId(),user,"JOB_RESULTS",jobId);
+    }
+    
     public void ppaFit(AssayPack exp, long jobId, long dataId, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"FIT",jobId,dataId);
     }
+    
+    public void ppaFit(AssayPack exp, String jobId, long dataId, BioDare2User user) {
+        track(EXP_PPA,VIEW,exp.getId(),user,"FIT",jobId,dataId);
+    }    
 
     public void ppaDownload(AssayPack exp, BioDare2User user) {
         track(EXP_PPA,DOWNLOAD,exp.getId(),user);

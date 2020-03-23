@@ -286,12 +286,16 @@ public class PPAArtifactsRep {
             }
         });
     }   
-    
+
     public Optional<Map<Long, TimeSeries>> getFits(long jobId, AssayPack exp) {
+        return getFits(""+jobId, exp);
+    }    
+    
+    public Optional<Map<Long, TimeSeries>> getFits(String jobId, AssayPack exp) {
         return guard.guard(exp.getId(),(id)-> {
             
             //Path ppaDir = getPPADir(exp);
-            Path jobDir = getJobDir(exp, jobId);
+            Path jobDir = getJobDir(exp.getId(), jobId);
             
             String fName = "fit."+jobId+".ser";
             Path file = jobDir.resolve(fName);
@@ -360,11 +364,11 @@ public class PPAArtifactsRep {
             return jobsDirs
                     .filter( f -> Files.isDirectory(f))
                     .map( f -> f.getFileName().toString())
-                    .map( jobId -> Long.parseLong(jobId))
+                    //.map( jobId -> Long.parseLong(jobId))
                     .map( jobId -> getJobSummary(exp, jobId))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .sorted(Comparator.comparing( (PPAJobSummary s) -> s.jobId).reversed())
+                    .sorted(Comparator.comparing( (PPAJobSummary s) -> s.submitted).reversed())
                     .collect(Collectors.toList());
                     
         } catch (IOException e) {

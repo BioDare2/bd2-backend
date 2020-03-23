@@ -155,6 +155,8 @@ public class PPAJC2ResultsHandler {
 
     }
     
+   
+    
     protected void processJobResults(List<ResultsEntry> jobResultsEntries, PPAJobSummary job,AssayPack exp) {
         
             PPAJobSimpleResults simpleResults = simplifyJobResults(jobResultsEntries,job);
