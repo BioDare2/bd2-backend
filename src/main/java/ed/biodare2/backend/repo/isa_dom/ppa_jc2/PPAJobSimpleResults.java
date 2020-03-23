@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * @author tzielins
  */
-class PPAJobSimpleResults {
+public class PPAJobSimpleResults {
     // it used to be long from jobcentre1
     // public long jobId;
     

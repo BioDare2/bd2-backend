@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author tzielins
  */
-class PPASimpleResultEntry {
+public class PPASimpleResultEntry {
     
     
     public long jobId;

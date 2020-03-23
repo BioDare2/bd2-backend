@@ -14,7 +14,7 @@ import java.util.function.Consumer;
  *
  * @author tzielins
  */
-class ValuesByPhase<T> {
+public class ValuesByPhase<T> {
   
   @JsonProperty("m")  
   T ByMethod;// = Double.NaN;

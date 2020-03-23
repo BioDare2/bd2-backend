@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  * @author tzielins
  */
-class PPASimpleStats {
+public class PPASimpleStats {
     
     public long memberDataId;
     public long rawId;      

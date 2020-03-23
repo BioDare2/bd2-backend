@@ -14,7 +14,7 @@ import java.util.UUID;
  *
  * @author Zielu
  */
-class PPAJobSummary {
+public class PPAJobSummary {
     
     public UUID jobId;
     public long oldId;

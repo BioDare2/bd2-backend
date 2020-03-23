@@ -7,13 +7,14 @@ package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
  *
  * @author tzielins
  */
-class PPAJobIndResults {
+public class PPAJobIndResults {
     
     public UUID jobId;
     
@@ -29,5 +30,35 @@ class PPAJobIndResults {
         this.jobId = jobId;
         this.results = results;
     };
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + Objects.hashCode(this.jobId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PPAJobIndResults other = (PPAJobIndResults) obj;
+        if (!Objects.equals(this.jobId, other.jobId)) {
+            return false;
+        }
+        if (!Objects.equals(this.results, other.results)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
 }

@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author tzielins
  */
-class PPAResultsGroupSummary {
+public class PPAResultsGroupSummary {
     
   public long memberDataId;
   public long rawId;      

@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * @author tzielins
  */
-class PPAJobResultsGroups {
+public class PPAJobResultsGroups {
   
   //it used to number in JC1  
   public UUID jobId;
