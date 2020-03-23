@@ -117,6 +117,31 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
     } 
     
+    @RequestMapping(value = "job/{jobId}", method = RequestMethod.GET)
+    public PPAJobSummary getPPAJob(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get PPAJob:{} exp:{}; {}",jobId,expId,user);
+        
+        
+        AssayPack exp = getExperimentForRead(expId,user);
+        
+        
+        try {
+            PPAJobSummary res = ppaHandler.getPPAJob(exp,jobId);
+            //if (res.parentId == 0) res.parentId = expId;
+            tracker.ppaJob(exp,jobId.toString(),user);
+            return res;
+            
+        } catch (WebMappedException e) {
+            log.error("Cannot retrieve PPA job {} {} {}",jobId,expId,e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot retrieve PPA job {} {} {}",jobId,expId,e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }  
+    
+    
     @RequestMapping(value = "job/{jobId}/results/grouped", method = RequestMethod.GET)
     public PPAJobResultsGroups getPPAJobResultsGrouped(@PathVariable long expId,@PathVariable UUID jobId,@NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get PPAJobResultsGrouped; job:{} exp: {}; {}",jobId,expId,user);

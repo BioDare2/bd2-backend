@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.ppa;
 
+import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
@@ -26,6 +27,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPAFitPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
 import ed.biodare2.backend.util.io.FileUtil;
+import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.robust.dom.data.DetrendingType;
@@ -38,8 +40,13 @@ import ed.robust.dom.util.Pair;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +64,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PPAJC2Handler {
 
+    static int OLD_MINUTES = 5;
     
     final ExperimentHandler experimentHandler;
     final PPAArtifactsRepJC2 ppaRep;
@@ -116,6 +124,13 @@ public class PPAJC2Handler {
         
         return ppaRep.getJobsSummaries(exp);
     } 
+    
+    public PPAJobSummary getPPAJob(AssayPack exp, UUID jobId) {
+        PPAJobSummary summary = tryToFindJobSummary(exp, jobId);
+        
+        if (isRunning(summary.state)) summary = refreshJob(summary,exp);
+        return summary;
+    }    
     
     public PPAJobResultsGroups getPPAJobResultsGrouped(AssayPack exp, UUID jobId) {
         //for checking jobId
@@ -329,6 +344,60 @@ public class PPAJC2Handler {
         FakeIdExtractor idsCache = new FakeIdExtractor(dataSet);
 
         return idsCache;
+    }  
+    
+    protected boolean isRunning(State state) {
+        return State.SUBMITTED.equals(state) || State.PROCESSING.equals(state);
+    }
+
+    protected PPAJobSummary refreshJob(PPAJobSummary summary, AssayPack exp) {
+        if (!isOldJob(summary)) return summary;
+        
+        try {
+            JobStatus status = ppaService.getJobStatus(summary.jobId);
+            
+            summary.state = (status.state);
+            summary.message = (status.message);
+            summary.modified = new Date();  
+            
+            if (hasFailed(status)) {
+                //ignore other status as they may get updated in the background
+                summary = updateFailedJob(summary,status);
+                ppaRep.saveJobSummary(summary, exp);
+
+            }
+            return summary; 
+        } catch (JC2HandlingException e) {
+            throw new HandlingException(e);
+        }             
+    }
+
+    protected boolean isOldJob(PPAJobSummary job) {
+        Instant old = Instant.now().minus(OLD_MINUTES, ChronoUnit.MINUTES);
+        
+        if (job.modified != null) {
+            return job.modified.toInstant().isBefore(old);
+        }        
+        return job.submitted.toInstant().isBefore(old);
+    }
+    
+    protected boolean hasFailed(JobStatus status) {
+        return State.ERROR.equals(status.state) || State.FAILED.equals(status.state);
+    }    
+    
+    protected PPAJobSummary updateFailedJob(PPAJobSummary job, JobStatus status) {
+        
+
+        //if (job.modified == null) job.modified = new Date();
+        //if (job.completed == null) job.completed = new Date();
+        job.completed = new Date();
+        job.closed = true;
+        job.lastError = status.message;
+        //job.setLastError(status.getMessage());
+        //job.setClosed(true);
+        
+        // PPAJobSummary summary = PPAUtils.simplifyJob(job);
+        return job;
     }    
     
 }
