@@ -251,7 +251,6 @@ public class PPAUtils {
         summary.failures = job.getFailures();
         
         summary.jobId = job.getJobId();
-        summary.uuid = ""+job.getJobId();
         
         summary.lastError = job.getLastError();
         summary.max_period = job.getParams().getDouble(PPAConstants.MAX_PERIOD,35);
@@ -574,7 +573,7 @@ public class PPAUtils {
             
 	    if (finished.contains(job.state)) {
 		Path file = saveStatsToFile(job, stats,exp,idsCache);
-		map.put("Statistics "+job.uuid+".csv",file);
+		map.put("Statistics "+job.jobId+".csv",file);
 	    }
 	}
 	
@@ -641,7 +640,6 @@ public class PPAUtils {
         tb.printlnParam("Experiment name", exp.getName());
         
         tb.printlnParam("Job", job.jobId);
-        tb.printlnParam("Job UUID", job.uuid);
         tb.printlnParam("Summary",job.summary);
         
         writer.write(tb.toString());
@@ -720,7 +718,6 @@ public class PPAUtils {
         tb.printlnParam("Experiment ID", exp.getId());
         tb.printlnParam("Experiment name", exp.getName());
         tb.printlnParam("Job", job.jobId);
-        tb.printlnParam("Job UUID", job.uuid);
         tb.printParam("Submitted", job.submitted);
         tb.printlnParam("Finished", job.completed);
         tb.printlnParam("Method",job.method.friendlyName);
@@ -1220,7 +1217,7 @@ public class PPAUtils {
             tb.printLabel("");
             
             
-            tb.printVal(job.uuid);
+            tb.printVal(job.jobId);
             tb.printLabel(job.submitted.toString());
             tb.printLabel(job.method.name());
             tb.printLabel(job.summary);
@@ -1408,11 +1405,11 @@ public class PPAUtils {
         return job;
     }
 
-    public PPAJobSummary prepareNewPPAJobSummary(long expId, PPARequest ppaRequest, UUID jobId) {
+    public PPAJobSummary prepareNewPPAJobSummary(long expId, PPARequest ppaRequest, long jobId) {
         
         
         PPAJobSummary jobSummary = new PPAJobSummary();
-        jobSummary.setID(jobId);
+        jobSummary.jobId = jobId;
 
         jobSummary.state = State.SUBMITTED;
         jobSummary.submitted = new Date();

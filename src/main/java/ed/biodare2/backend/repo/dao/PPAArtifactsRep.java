@@ -101,13 +101,13 @@ public class PPAArtifactsRep {
 
     protected static final class ExpJobKey {
         final long expId;
-        final String jobId;
+        final long jobId;
         final int hash;
         
-        ExpJobKey(long expId, String jobId) {
+        ExpJobKey(long expId, long jobId) {
             this.expId = expId;
             this.jobId = jobId;
-            this.hash = (int)(expId+jobId.hashCode());
+            this.hash = (int)(expId+jobId);
         }
 
         @Override
@@ -119,7 +119,7 @@ public class PPAArtifactsRep {
         public final boolean equals(Object obj) {
             if (obj instanceof ExpJobKey) {
                 ExpJobKey other = (ExpJobKey)obj;
-                return (Objects.equals(this.jobId,other.jobId) && this.expId == other.expId);
+                return ((this.jobId == other.jobId) && this.expId == other.expId);
             } else {
                 return false;
             }
@@ -184,10 +184,8 @@ public class PPAArtifactsRep {
         
     }
 
+ 
     public void deleteJobArtefacts(AssayPack exp, long jobId) {
-        deleteJobArtefacts(exp, ""+jobId);
-    }    
-    public void deleteJobArtefacts(AssayPack exp, String jobId) {
         
         guard.guard(exp.getId(),()-> {
              
@@ -198,31 +196,7 @@ public class PPAArtifactsRep {
     }
     
     
-    public Path saveJC2JobRawResults(PPAJobResults results, UUID jobId, AssayPack exp,boolean overwrite)  {
-        
-        return guard.guard(exp.getId(),(id)-> {
 
-        
-        try {
-        
-            Path jobDir = getJobDir(exp.getId(), jobId);
-            
-            String fName = "res."+jobId+".json";
-            Path file = jobDir.resolve(fName);
-            
-            
-            if (!overwrite && Files.exists(file)) throw new IOException("Results file already exists: "+file);
-
-            orgResultsWriter.writeValue(file.toFile(), results);
-            
-            return file;
-        
-            } catch (IOException e) {
-                throw new ServerSideException("Cannot save jobsresults containers: "+e.getMessage(),e);
-            }
-        });
-    
-    }
     
     public Path saveJobRawResults(JobResult<PPAResult> results, long jobId, AssayPack exp,boolean overwrite)  {
         
@@ -231,7 +205,7 @@ public class PPAArtifactsRep {
         
         try {
         
-            Path jobDir = getJobDir(exp, jobId);
+            Path jobDir = getJobDir(exp.getId(), jobId);
             
             String fName = "res."+jobId+".xml";
             Path file = jobDir.resolve(fName);
@@ -252,15 +226,9 @@ public class PPAArtifactsRep {
     }
     
     
+
+    
     public void saveFits(Map<Long, TimeSeries> fits, long jobId, AssayPack exp)  {
-        saveFits(fits, ""+jobId, exp);
-    }
-    
-    public void saveFits(Map<Long, TimeSeries> fits, UUID jobId, AssayPack exp)  {
-        saveFits(fits, jobId.toString(), exp);
-    }
-    
-    public void saveFits(Map<Long, TimeSeries> fits, String jobId, AssayPack exp)  {
         
         guard.guard(exp.getId(),()-> {
             
@@ -285,11 +253,9 @@ public class PPAArtifactsRep {
         });
     }   
 
-    public Optional<Map<Long, TimeSeries>> getFits(long jobId, AssayPack exp) {
-        return getFits(""+jobId, exp);
-    }    
     
-    public Optional<Map<Long, TimeSeries>> getFits(String jobId, AssayPack exp) {
+    
+    public Optional<Map<Long, TimeSeries>> getFits(long jobId, AssayPack exp) {
         return guard.guard(exp.getId(),(id)-> {
             
             //Path ppaDir = getPPADir(exp);
@@ -319,7 +285,7 @@ public class PPAArtifactsRep {
         
         //try {
         
-            Path jobDir = getJobDir(exp, jobId);
+            Path jobDir = getJobDir(exp.getId(), jobId);
             
             String fName = "req."+jobId+".xml";
             Path file = jobDir.resolve(fName);
@@ -362,7 +328,7 @@ public class PPAArtifactsRep {
             return jobsDirs
                     .filter( f -> Files.isDirectory(f))
                     .map( f -> f.getFileName().toString())
-                    //.map( jobId -> Long.parseLong(jobId))
+                    .map( jobId -> Long.parseLong(jobId))
                     .map( jobId -> getJobSummary(exp, jobId))
                     .filter(Optional::isPresent)
                     .map(Optional::get)
@@ -383,11 +349,8 @@ public class PPAArtifactsRep {
         
     }    
     
-    public void saveJobFullStats(StatsEntry stats, AssayPack exp, long jobId)  {
-        saveJobFullStats(stats, exp, ""+jobId);
-    }    
     
-    public void saveJobFullStats(StatsEntry stats, AssayPack exp, String jobId)  {
+    public void saveJobFullStats(StatsEntry stats, AssayPack exp, long jobId)  {
         
         guard.guard(exp.getId(),()-> {
             
@@ -397,7 +360,7 @@ public class PPAArtifactsRep {
             Path jobStatsFile = jobFullStatsFile(exp.getId(), jobId);
             
             
-            //stats.setJobId(jobId);
+            stats.setJobId(jobId);
         
             //simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
             saveToXMLFile(stats, jobStatsFile);
@@ -411,12 +374,9 @@ public class PPAArtifactsRep {
     public void saveJobSummary(PPAJobSummary job, AssayPack exp)  {
         
         guard.guard(exp.getId(),()-> {
-            if (job.uuid == null) {
-                job.uuid = ""+job.jobId;
-            }
             //Path ppaDir = getPPADir(exp);
             saveJobSummary(job, exp.getId());
-            jobSummaryCache.put(new ExpJobKey(exp.getId(), job.uuid), Optional.of(job));
+            jobSummaryCache.put(new ExpJobKey(exp.getId(), job.jobId), Optional.of(job));
         });
     }    
     
@@ -424,7 +384,7 @@ public class PPAArtifactsRep {
         
         try {
             
-            Path jobFile = jobSummaryFile(expId, job.uuid);
+            Path jobFile = jobSummaryFile(expId, job.jobId);
             
         
             jobSummaryWriter.writeValue(jobFile.toFile(),job);
@@ -460,11 +420,9 @@ public class PPAArtifactsRep {
             }*/           
     }
    
-    public void saveJobSimpleStats(PPAJobSimpleStats stats, AssayPack exp, long jobId)  {
-        saveJobSimpleStats(stats, exp, ""+jobId);
-    }
+
     
-    public void saveJobSimpleStats(PPAJobSimpleStats stats, AssayPack exp, String jobId)  {
+    public void saveJobSimpleStats(PPAJobSimpleStats stats, AssayPack exp, long jobId)  {
         
         guard.guard(exp.getId(),()-> {
             
@@ -473,8 +431,8 @@ public class PPAArtifactsRep {
             //Path ppaDir = getPPADir(exp);
             Path jobStatsFile = jobSimpleStatsFile(exp.getId(), jobId);
                        
-            //stats.jobId=jobId;
-            stats.uuid = jobId;
+            stats.jobId=jobId;
+            //stats.uuid = jobId;
         
             simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
         
@@ -484,11 +442,9 @@ public class PPAArtifactsRep {
         });
     }    
 
-    public void saveJobSimpleResults(PPAJobSimpleResults res, AssayPack exp, long jobId)  {
-        saveJobSimpleResults(res, exp, ""+jobId);
-    }    
+   
     
-    public void saveJobSimpleResults(PPAJobSimpleResults res, AssayPack exp, String jobId)  {
+    public void saveJobSimpleResults(PPAJobSimpleResults res, AssayPack exp, long jobId)  {
         
         guard.guard(exp.getId(),()-> {
             
@@ -497,8 +453,8 @@ public class PPAArtifactsRep {
             //Path ppaDir = getPPADir(exp);
             Path resFile = jobSimpleResultsFile(exp.getId(), jobId);
             
-            res.uuid = jobId;
-            //res.jobId=jobId;
+            //res.uuid = jobId;
+            res.jobId=jobId;
         
             simpleResultsWriter.writeValue(resFile.toFile(),res);
         
@@ -508,10 +464,8 @@ public class PPAArtifactsRep {
         });
     }    
     
+   
     public void saveJobResultsGroups(PPAJobResultsGroups results, AssayPack experiment, long jobId) {
-        saveJobResultsGroups(results, experiment, ""+jobId);
-    }    
-    public void saveJobResultsGroups(PPAJobResultsGroups results, AssayPack experiment, String jobId) {
         guard.guard(experiment.getId(),(id)-> {
           
         try {
@@ -520,7 +474,7 @@ public class PPAArtifactsRep {
             Path jobResultsFile = jobGroupedResultsFile(experiment.getId(), jobId);
             
             // results.jobId = jobId;
-            results.uuid = jobId;
+            results.jobId = jobId;
             groupSummaryWriter.writeValue(jobResultsFile.toFile(),results);
 
         } catch (IOException e) {
@@ -531,11 +485,9 @@ public class PPAArtifactsRep {
         
     }
     
-    public StatsEntry getJobFullStats(AssayPack exp, long jobId)  {
-        return getJobFullStats(exp,""+jobId);
-    }
+
     
-    public StatsEntry getJobFullStats(AssayPack exp, String jobId)  {
+    public StatsEntry getJobFullStats(AssayPack exp, long jobId)  {
 
         return guard.guard(exp.getId(),(id)-> {
 
@@ -572,18 +524,9 @@ public class PPAArtifactsRep {
     }    
     
 
+
+    
     public Optional<PPAJobSummary> getJobSummary(AssayPack exp, long jobId)  {
-
-        return getJobSummary(exp, ""+jobId);
-    }
-    
-    public Optional<PPAJobSummary> getJobSummary(AssayPack exp, UUID jobId)  {
-
-        return getJobSummary(exp, jobId.toString());
-    }
-    
-    
-    public Optional<PPAJobSummary> getJobSummary(AssayPack exp, String jobId)  {
 
         return jobSummaryCache.get(new ExpJobKey(exp.getId(), jobId));
         
@@ -612,11 +555,9 @@ public class PPAArtifactsRep {
         
     }
     
-    public PPAJobSimpleStats getJobSimpleStats(AssayPack exp, long jobId)  {
-        return getJobSimpleStats(exp, ""+jobId);
-    }    
     
-    public PPAJobSimpleStats getJobSimpleStats(AssayPack exp, String jobId)  {
+    
+    public PPAJobSimpleStats getJobSimpleStats(AssayPack exp, long jobId)  {
 
         return guard.guard(exp.getId(),(id)-> {
 
@@ -630,7 +571,7 @@ public class PPAArtifactsRep {
                 return new PPAJobSimpleStats(jobId);
             }            
             PPAJobSimpleStats entry = simpleStatsReader.readValue(jobStatsFile.toFile());
-            if (entry.uuid == null) entry.uuid = jobId;
+            if (entry.jobId == 0) entry.jobId = jobId;
             return entry;
         } catch (IOException e) {
             throw new ServerSideException("Cannot read stats: "+e.getMessage(),e);
@@ -639,11 +580,9 @@ public class PPAArtifactsRep {
         
     }
 
-    public PPAJobSimpleResults getJobSimpleResults(AssayPack exp, long jobId)  {
-        return getJobSimpleResults(exp, ""+jobId);
-    }    
     
-    public PPAJobSimpleResults getJobSimpleResults(AssayPack exp, String jobId)  {
+    
+    public PPAJobSimpleResults getJobSimpleResults(AssayPack exp, long jobId)  {
 
         return guard.guard(exp.getId(),(id)-> {
 
@@ -657,7 +596,7 @@ public class PPAArtifactsRep {
                 return new PPAJobSimpleResults(jobId);
             }            
             PPAJobSimpleResults entry = simpleResultsReader.readValue(resFile.toFile());
-            if (entry.uuid == null) entry.uuid = jobId;
+            if (entry.jobId == 0) entry.jobId = jobId;
             return entry;
         } catch (IOException e) {
             throw new ServerSideException("Cannot read results: "+e.getMessage(),e);
@@ -666,11 +605,8 @@ public class PPAArtifactsRep {
         
     }    
 
-    public PPAJobResultsGroups getJobResultsGroups(AssayPack experiment, long jobId) {
-        return getJobResultsGroups(experiment,""+jobId);
-    }    
     
-    public PPAJobResultsGroups getJobResultsGroups(AssayPack experiment, String jobId) {
+    public PPAJobResultsGroups getJobResultsGroups(AssayPack experiment, long jobId) {
         return guard.guard(experiment.getId(),(id)-> {
           
         try {
@@ -680,7 +616,7 @@ public class PPAArtifactsRep {
             if (!Files.exists(jobResultsFile)) return new PPAJobResultsGroups(jobId);
             
             PPAJobResultsGroups entry = groupSummaryReader.readValue(jobResultsFile.toFile());
-            if (entry.uuid == null) entry.uuid = jobId;
+            if (entry.jobId == 0) entry.jobId = jobId;
             return entry;
 
         } catch (IOException e) {
@@ -691,15 +627,9 @@ public class PPAArtifactsRep {
         
     }
     
+    
+    
     public void saveJobIndResults(List<ResultsEntry> results, AssayPack exp, long jobId) {
-        saveJobIndResults(results, exp, ""+jobId);
-    }
-    
-    public void saveJobIndResults(List<ResultsEntry> results, AssayPack exp, UUID jobId) {
-        saveJobIndResults(results, exp, jobId.toString());        
-    }
-    
-    public void saveJobIndResults(List<ResultsEntry> results, AssayPack exp, String jobId) {
         guard.guard(exp.getId(),()-> {
             
         //try {
@@ -717,11 +647,8 @@ public class PPAArtifactsRep {
         });
     }    
     
-    public List<ResultsEntry> getJobIndResults(AssayPack exp, long jobId) {
-        return getJobIndResults(exp, ""+jobId);
-    }    
     
-    public List<ResultsEntry> getJobIndResults(AssayPack exp, String jobId) {
+    public List<ResultsEntry> getJobIndResults(AssayPack exp, long jobId) {
         
         return guard.guard(exp.getId(),(id)-> {
             
@@ -772,35 +699,25 @@ public class PPAArtifactsRep {
             throw new ServerSideException("Cannot make jobDir: "+e.getMessage(),e);
         }
     }
+
     
-    protected Path getJobDir(long expId, UUID jobId) {
-        return getJobDir(expId, jobId.toString());
-    }
     
     protected Path getJobDir(long expId, long jobId) {
-        return getJobDir(expId, ""+jobId);
-    }
-    protected Path getJobDir(long expId, String jobId) {
         //return ppaDir.resolve(JOBS_DIR).resolve(""+jobId);
         return jobDirCache.get(new ExpJobKey(expId, jobId));
     }   
     
-    protected Path getJobDir(AssayPack exp, long jobId) {
-        //return ppaDir.resolve(JOBS_DIR).resolve(""+jobId);
-        return getJobDir(exp.getId(),""+jobId);
-    }   
+  
+    
+    
     
     protected Path jobGroupedResultsFile(long expId, long jobId) {
-        return jobGroupedResultsFile(expId,""+jobId);
-    }
-    
-    protected Path jobGroupedResultsFile(long expId, String jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_GROUPED_RESULTS_FILE);
     }    
     
-    protected Path jobSummaryFile(long expId, String jobId) {
+    protected Path jobSummaryFile(long expId, long jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_SIMPLE_SUMMARY_FILE);
@@ -812,41 +729,32 @@ public class PPAArtifactsRep {
         return jobDir.resolve(JOB_FULL_FILE);
     }    
     
-    protected Path jobSimpleStatsFile(long expId, long jobId) {
-        return jobSimpleStatsFile(expId, ""+jobId);
-    }
     
-    protected Path jobSimpleStatsFile(long expId, String jobId) {
+    
+    protected Path jobSimpleStatsFile(long expId, long jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_SIMPLE_STATS_FILE);
     }
     
-    protected Path jobSimpleResultsFile(long expId, long jobId) {
-        return jobSimpleResultsFile(expId,""+jobId);
-    }
     
-    protected Path jobSimpleResultsFile(long expId, String jobId) {
+    
+    protected Path jobSimpleResultsFile(long expId, long jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_SIMPLE_RESULTS_FILE);
     }    
     
-    protected Path jobFullStatsFile(long expId, long jobId) {
-        return jobFullStatsFile(expId, ""+jobId);
-    }
     
-    protected Path jobFullStatsFile(long expId, String jobId) {
+    
+    protected Path jobFullStatsFile(long expId, long jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_FULL_STATS_FILE);
     }     
     
-    protected Path jobIndResultsFile(long expId, long jobId) {
-        return jobIndResultsFile(expId, ""+jobId);
-    };
     
-    protected Path jobIndResultsFile(long expId, String jobId) {
+    protected Path jobIndResultsFile(long expId, long jobId) {
         
         Path jobDir = getJobDir(expId,jobId);
         return jobDir.resolve(JOB_FULL_RESULTS_FILE);
@@ -859,7 +767,7 @@ public class PPAArtifactsRep {
     }
 
 
-    protected void deleteJobDir(String jobId, AssayPack exp) {
+    protected void deleteJobDir(long jobId, AssayPack exp) {
         
         guard.guard(exp.getId(),()-> {
         

@@ -16,18 +16,12 @@ public class PPAJobSimpleResults {
     // it used to be long from jobcentre1
     public long jobId;
     
-    public String uuid;
-    
-    
     public List<PPASimpleResultEntry> results = new ArrayList<>();
     
-    public PPAJobSimpleResults() {};
+    PPAJobSimpleResults() {};
     
-    PPAJobSimpleResults(long jobId) {
+    public PPAJobSimpleResults(long jobId) {
         this.jobId = jobId;
     }
     
-    public PPAJobSimpleResults(String jobId) {
-        this.uuid = jobId;
-    }    
 }

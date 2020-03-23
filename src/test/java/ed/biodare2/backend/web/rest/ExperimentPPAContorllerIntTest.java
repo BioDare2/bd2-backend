@@ -295,8 +295,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         PPAJobResultsGroups groups = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobResultsGroups.class);
         assertNotNull(groups);        
         assertTrue(groups.groups.isEmpty());
-        //assertEquals(orgJob.getJobId(),groups.jobId);
-        assertEquals(""+orgJob.getJobId(),groups.uuid);
+        assertEquals(orgJob.getJobId(),groups.jobId);
+        //assertEquals(""+orgJob.getJobId(),groups.jobId);
         
     }
     
@@ -327,8 +327,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         PPAJobResultsGroups groups = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobResultsGroups.class);
         assertNotNull(groups);        
         assertFalse(groups.groups.isEmpty());
-        //assertEquals(orgJob.getJobId(),groups.jobId);
-        assertEquals(""+orgJob.getJobId(),groups.uuid);
+        assertEquals(orgJob.getJobId(),groups.jobId);
+        //assertEquals(""+orgJob.getJobId(),groups.uuid);
         assertEquals(4,groups.groups.size());
         
     }
@@ -360,8 +360,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         //assertNotNull(wrapper);
         PPAJobSimpleResults res = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobSimpleResults.class);
         assertNotNull(res);        
-        //assertEquals(orgJob.getJobId(),res.jobId);
-        assertEquals(""+orgJob.getJobId(),res.uuid);
+        assertEquals(orgJob.getJobId(),res.jobId);
+        //assertEquals(""+orgJob.getJobId(),res.uuid);
         assertFalse(res.results.isEmpty());
         assertEquals(12,res.results.size());
         
@@ -394,8 +394,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         //assertNotNull(wrapper);
         PPAJobSimpleResults res = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobSimpleResults.class);
         assertNotNull(res);        
-        //assertEquals(orgJob.getJobId(),res.jobId);
-        assertEquals(""+orgJob.getJobId(),res.uuid);        
+        assertEquals(orgJob.getJobId(),res.jobId);
+        //assertEquals(""+orgJob.getJobId(),res.uuid);        
         assertTrue(res.results.isEmpty());
         
     }
@@ -548,8 +548,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         
         PPAJobSimpleStats stats = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobSimpleStats.class);
         assertNotNull(stats);        
-        //assertEquals(orgJob.getJobId(),stats.jobId);
-        assertEquals(""+orgJob.getJobId(),stats.uuid);
+        assertEquals(orgJob.getJobId(),stats.jobId);
+        //assertEquals(""+orgJob.getJobId(),stats.uuid);
         assertEquals(4,stats.stats.size());
         
     }
@@ -579,8 +579,8 @@ public class ExperimentPPAContorllerIntTest extends ExperimentBaseIntTest {
         
         PPAJobSimpleStats stats = mapper.readValue(resp.getResponse().getContentAsString(),PPAJobSimpleStats.class);
         assertNotNull(stats);        
-        //assertEquals(orgJob.getJobId(),stats.jobId);
-        assertEquals(""+orgJob.getJobId(),stats.uuid);
+        assertEquals(orgJob.getJobId(),stats.jobId);
+        //assertEquals(""+orgJob.getJobId(),stats.uuid);
         assertEquals(0,stats.stats.size());
         
     }

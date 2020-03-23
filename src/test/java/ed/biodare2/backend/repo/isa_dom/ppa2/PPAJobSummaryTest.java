@@ -57,7 +57,6 @@ public class PPAJobSummaryTest {
     public static PPAJobSummary makePPAJobSummary() {
         
         PPAJobSummary job = new PPAJobSummary();
-        job.uuid = "123";
         job.jobId = 123;
         
         job.attentionCount = 2;

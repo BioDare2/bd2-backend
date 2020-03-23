@@ -406,7 +406,7 @@ public class PPAUtilsTest {
         req.windowStart = 5;
         req.windowEnd = 130;
         
-        UUID id = UUID.randomUUID();
+        long id = 12; //UUID.randomUUID();
         
         PPAJobSummary sum = instance.prepareNewPPAJobSummary(expId, req, id);
         assertEquals(0,sum.attentionCount);
@@ -419,8 +419,8 @@ public class PPAUtilsTest {
         assertEquals(130,sum.dataWindowEnd,1E-6);
         assertEquals(5,sum.dataWindowStart,1E-6);
         assertEquals(0,sum.failures);
-        assertEquals(id.toString(),sum.uuid);
-        assertEquals(PPAJobSummary.uuid2long(id), sum.jobId);
+        //assertEquals(id.toString(),sum.uuid);
+        assertEquals(id, sum.jobId);
         assertEquals(null,sum.lastError);
         assertEquals(35.0,sum.max_period,1E-6);
         assertEquals(null,sum.message);

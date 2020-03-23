@@ -16,7 +16,6 @@ import java.util.UUID;
  */
 public class PPAJobSummary {
     
-    public String uuid;
     public long jobId;
     public long parentId;
     public State state;
@@ -44,12 +43,4 @@ public class PPAJobSummary {
     
     public String selections;
     
-    public void setID(UUID id) {
-        this.uuid = id.toString();
-        this.jobId = uuid2long(id);
-    }
-    
-    public static final long uuid2long(UUID id) {
-        return id.getLeastSignificantBits()+id.getMostSignificantBits();
-    }    
 }

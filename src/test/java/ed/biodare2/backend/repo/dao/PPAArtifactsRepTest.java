@@ -176,7 +176,7 @@ public class PPAArtifactsRepTest {
         ppaRep.saveFits(fits, jobId, exp);
         
         //Path ppaDir = expDir.resolve(PPAArtifactsRep.PPA_DIR);
-        Path jobDir = ppaRep.getJobDir(exp, jobId);
+        Path jobDir = ppaRep.getJobDir(exp.getId(), jobId);
         assertTrue(Files.isDirectory(jobDir));
         
         Path fitFile = jobDir.resolve("fit.3.ser");
@@ -236,7 +236,7 @@ public class PPAArtifactsRepTest {
         for (long expId = Integer.MAX_VALUE-2; expId < Integer.MAX_VALUE+3;expId++) {
             for (long jobId = Integer.MAX_VALUE-2; jobId< Integer.MAX_VALUE+3;jobId++ ) {
                 count++;
-                ExpJobKey key = new ExpJobKey(expId,""+jobId);
+                ExpJobKey key = new ExpJobKey(expId,jobId);
                 keys.add(key);
                 hashes.add(key.hashCode());
             }
@@ -306,18 +306,18 @@ public class PPAArtifactsRepTest {
     
     @Test
     public void canSaveAndRetrieveJobGrouppedResults() {
-        PPAJobResultsGroups results = new PPAJobResultsGroups();
+        long jobId = 20;
+        PPAJobResultsGroups results = new PPAJobResultsGroups(jobId);
         results.groups.add(makePPAReplicateSet("cos1"));
         results.groups.add(makePPAReplicateSet("cos2"));
         
         AssayPack exp = new MockExperimentPack(1);
-        long jobId = 20;
         
         ppaRep.saveJobResultsGroups(results, exp, jobId);
         
         
         PPAJobResultsGroups cpy = ppaRep.getJobResultsGroups(exp, jobId);
-        assertEquals(cpy.uuid,"20");
+        assertEquals(cpy.jobId,20);
         assertReflectionEquals(results,cpy); 
         
     }
@@ -325,7 +325,8 @@ public class PPAArtifactsRepTest {
     @Test
     public void canSaveAndRetrieveJobSimpleStats() {
         
-        PPAJobSimpleStats stats = new PPAJobSimpleStats("2");
+        long jobId = 20;
+        PPAJobSimpleStats stats = new PPAJobSimpleStats(2);
         
         PPASimpleStats stat = makeSimpleStats();
         stats.stats.add(stat);
@@ -337,13 +338,12 @@ public class PPAArtifactsRepTest {
         assertNotNull(stats);
         
         AssayPack exp = new MockExperimentPack(1);
-        long jobId = 20;
         
         ppaRep.saveJobSimpleStats(stats, exp, jobId);
         
         
         PPAJobSimpleStats cpy = ppaRep.getJobSimpleStats(exp, jobId);
-        assertEquals(cpy.uuid,"20");
+        assertEquals(cpy.jobId,20);
         assertReflectionEquals(stats,cpy); 
         
     }
@@ -373,7 +373,7 @@ public class PPAArtifactsRepTest {
     @Test
     public void canSaveAndRetrieveJobSimpleResults() {
         
-        PPAJobSimpleResults org = new PPAJobSimpleResults("3");
+        PPAJobSimpleResults org = new PPAJobSimpleResults(3);
         org.results.add(makePPASimpleResultEntry());        
         AssayPack exp = new MockExperimentPack(1);
         long jobId = 20;
@@ -382,7 +382,7 @@ public class PPAArtifactsRepTest {
         
         
         PPAJobSimpleResults cpy = ppaRep.getJobSimpleResults(exp, jobId);
-        assertEquals(cpy.uuid,"20");
+        assertEquals(cpy.jobId,20);
         assertReflectionEquals(org,cpy); 
         
     }
@@ -437,7 +437,7 @@ public class PPAArtifactsRepTest {
         
         ppaRep.saveJobSummary(job, exp);
         
-        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.uuid));
+        Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.jobId));
         assertReflectionEquals(job,cpy.get()); 
         
         Path file = expDir.resolve("PPA/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
@@ -476,8 +476,8 @@ public class PPAArtifactsRepTest {
         AssayPack exp = new MockExperimentPack(1);
         Path ppaDir = expDir.resolve(PPAArtifactsRep.PPA_DIR);        
 
-        String jobId = "3";
-        Path jobDir = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR).resolve(jobId);
+        long jobId = 3;
+        Path jobDir = ppaDir.resolve(PPAArtifactsRep.JOBS_DIR).resolve(""+jobId);
         Files.createDirectories(jobDir);
         
         Path file = jobDir.resolve("cos.xml");
@@ -608,13 +608,13 @@ public class PPAArtifactsRepTest {
         assertEquals(1,ppaRep.getJobFullStats(exp, jobId).getStats().size());
         
         //job Results
-        PPAJobResultsGroups results = new PPAJobResultsGroups("jobId");
+        PPAJobResultsGroups results = new PPAJobResultsGroups(jobId);
         results.periodMax = 5;
         ppaRep.saveJobResultsGroups(results, exp, jobId);
         assertEquals(5,ppaRep.getJobResultsGroups(exp, jobId).periodMax,EPS);
         
         //job Stats
-        PPAJobSimpleStats jStats = new PPAJobSimpleStats("jobId");
+        PPAJobSimpleStats jStats = new PPAJobSimpleStats(jobId);
         jStats.stats.add(new PPASimpleStats());
         ppaRep.saveJobSimpleStats(jStats, exp, jobId);
         assertEquals(1,ppaRep.getJobSimpleStats(exp, jobId).stats.size());

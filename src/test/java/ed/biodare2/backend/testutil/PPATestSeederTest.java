@@ -218,7 +218,7 @@ public class PPATestSeederTest {
             Path file = workDir.resolve(job.getJobId()+".PPA_SIMPLE_RESULTS.json");
             List<ResultsEntry> entries = seeder.getJobIndResults(job);
             
-            PPAJobSimpleResults res = new PPAJobSimpleResults(""+job.getJobId());
+            PPAJobSimpleResults res = new PPAJobSimpleResults(job.getJobId());
         
             final double windowStart = job.getDataWindowStart();        
             entries.forEach( entry -> {

@@ -17,19 +17,15 @@ public class PPAJobResultsGroups {
   //it used to number in JC1  
   public long jobId;
   
-  public String uuid;
   public double periodMin;
   public double periodMax;
   
   public List<PPAResultsGroupSummary> groups = new ArrayList<>();
   
-  public PPAJobResultsGroups() {};
+  PPAJobResultsGroups() {};
   
-  PPAJobResultsGroups(long jobId) {
+  public PPAJobResultsGroups(long jobId) {
       this.jobId = jobId;
   };
   
-  public PPAJobResultsGroups(String jobId) {
-      this.uuid = jobId;
-  };  
 }
