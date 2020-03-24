@@ -34,19 +34,15 @@ import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
 import ed.robust.dom.tsprocessing.PPAResult;
 import ed.robust.dom.tsprocessing.PhaseType;
-import ed.robust.dom.tsprocessing.ResultsEntry;
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.dom.util.Pair;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -358,7 +354,7 @@ public class PPAJC2Handler {
             
             summary.state = (status.state);
             summary.message = (status.message);
-            summary.modified = new Date();  
+            summary.modified = LocalDateTime.now();  
             
             if (hasFailed(status)) {
                 //ignore other status as they may get updated in the background
@@ -373,12 +369,12 @@ public class PPAJC2Handler {
     }
 
     protected boolean isOldJob(PPAJobSummary job) {
-        Instant old = Instant.now().minus(OLD_MINUTES, ChronoUnit.MINUTES);
+        LocalDateTime old = LocalDateTime.now().minus(OLD_MINUTES, ChronoUnit.MINUTES);
         
         if (job.modified != null) {
-            return job.modified.toInstant().isBefore(old);
+            return job.modified.isBefore(old);
         }        
-        return job.submitted.toInstant().isBefore(old);
+        return job.submitted.isBefore(old);
     }
     
     protected boolean hasFailed(JobStatus status) {
@@ -390,7 +386,7 @@ public class PPAJC2Handler {
 
         //if (job.modified == null) job.modified = new Date();
         //if (job.completed == null) job.completed = new Date();
-        job.completed = new Date();
+        job.completed = LocalDateTime.now();
         job.closed = true;
         job.lastError = status.message;
         //job.setLastError(status.getMessage());

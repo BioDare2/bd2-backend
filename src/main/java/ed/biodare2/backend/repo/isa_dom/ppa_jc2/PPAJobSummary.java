@@ -7,7 +7,7 @@ package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
 import ed.biodare.jobcentre2.dom.State;
 import ed.robust.ppa.PPAMethod;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
@@ -20,9 +20,9 @@ public class PPAJobSummary {
     public long oldId;
     public long parentId;
     public State state;
-    public Date submitted;
-    public Date modified;
-    public Date completed;
+    public LocalDateTime submitted;
+    public LocalDateTime modified;
+    public LocalDateTime completed;
     public String message;
     public String lastError;
     public long attentionCount;

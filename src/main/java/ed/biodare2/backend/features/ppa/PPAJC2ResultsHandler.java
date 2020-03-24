@@ -43,6 +43,7 @@ import ed.robust.error.RobustDBException;
 import ed.robust.error.RobustProcessException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -143,7 +144,7 @@ public class PPAJC2ResultsHandler {
 	    error("Could not process results",jobId,exp.getId(),e);
 	    job.state = State.ERROR;
 	    job.message = "Cannot locally save the results";
-	    job.completed =new Date();
+	    job.completed = LocalDateTime.now();
 	    job.lastError = e.getMessage();
 	    job.closed = true;
             
@@ -196,8 +197,8 @@ public class PPAJC2ResultsHandler {
 	//status.setMessage(msg);
         job.message = msg;
         job.state = state;
-        job.modified = new Date();
-	job.completed = new Date();
+        job.modified = LocalDateTime.now();
+	job.completed = LocalDateTime.now();
 
         job.needsAttention = needsAttention > 0;
 	job.attentionCount = needsAttention;
@@ -214,7 +215,7 @@ public class PPAJC2ResultsHandler {
 	job.attentionCount = (needsAttention);
 	job.needsAttention = (needsAttention > 0);
         job.selections = mapSelection2String(selection);        
-        job.modified = (new Date());
+        job.modified = LocalDateTime.now();
     }
 
 

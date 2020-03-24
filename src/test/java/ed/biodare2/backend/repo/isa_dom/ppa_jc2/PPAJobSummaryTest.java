@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.biodare.jobcentre2.dom.State;
 import ed.robust.ppa.PPAMethod;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 import org.junit.After;
@@ -64,7 +65,7 @@ public class PPAJobSummaryTest {
         
         job.attentionCount = 2;
         job.closed = true;
-        job.completed = new Date();
+        job.completed = LocalDateTime.now();
         job.dataSetId ="10050_LIN_DTR";
         job.dataSetType = "LIN_DTR";
         job.dataSetTypeName = "linear dtr";
@@ -77,10 +78,10 @@ public class PPAJobSummaryTest {
         job.min_period = 18;
         job.message = "";
         job.method = PPAMethod.MESA;
-        job.modified = new Date();
+        job.modified = LocalDateTime.now();
         job.needsAttention = true;
         job.state = State.FINISHED;
-        job.submitted = new Date();
+        job.submitted = LocalDateTime.now();
         job.summary = "linear dtr min-120 p(18.0-35.0)";
         
         return job;

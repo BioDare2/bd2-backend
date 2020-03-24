@@ -56,6 +56,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -1006,7 +1007,7 @@ public class PPAUtilsJC2 {
         jobSummary.parentId = expId;
 
         jobSummary.state = State.SUBMITTED;
-        jobSummary.submitted = new Date();
+        jobSummary.submitted = LocalDateTime.now();
         
         jobSummary.dataSetId = expId+"_"+ppaRequest.detrending.name();
         jobSummary.dataSetType = dataType(ppaRequest);

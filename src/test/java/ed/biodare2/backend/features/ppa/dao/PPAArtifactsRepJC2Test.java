@@ -32,6 +32,7 @@ import ed.robust.dom.tsprocessing.StatsEntry;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -427,13 +428,13 @@ public class PPAArtifactsRepJC2Test {
         s1.jobId = UUID.randomUUID();
         s1.parentId = exp.getId();
         s1.state = State.FAILED;
-        s1.submitted = (new Date(System.currentTimeMillis() - 3000));
+        s1.submitted = LocalDateTime.now().minusHours(3);
         
         PPAJobSummary s2 = new PPAJobSummary();
         s2.jobId = UUID.randomUUID();
         s2.parentId = exp.getId();
         s2.state = State.FINISHED;
-        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
+        s2.submitted = LocalDateTime.now().minusHours(2);
         
         ppaRep.saveJobSummary(s1, exp);
         ppaRep.saveJobSummary(s2, exp);
@@ -454,13 +455,13 @@ public class PPAArtifactsRepJC2Test {
         s1.jobId = UUID.randomUUID();
         s1.parentId = exp.getId();
         s1.state = State.FAILED;
-        s1.submitted = (new Date(System.currentTimeMillis() - 3000));
+        s1.submitted = LocalDateTime.now().minusHours(3);
         
         PPAJobSummary s2 = new PPAJobSummary();
         s2.jobId = UUID.randomUUID();
         s2.parentId = exp.getId();
         s2.state = State.FINISHED;
-        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
+        s2.submitted = LocalDateTime.now().minusHours(2);
         
         ppaRep.saveJobSummary(s1, exp);
         ppaRep.saveJobSummary(s2, exp);
@@ -482,7 +483,7 @@ public class PPAArtifactsRepJC2Test {
         s2.jobId = s2Id;
         s2.parentId = exp.getId();
         s2.state = State.FINISHED;
-        s2.submitted = (new Date(System.currentTimeMillis() - 2000));
+        s2.submitted = LocalDateTime.now().minusHours(2);
 
         ppaRep.saveJobSummary(s2, exp);
         
