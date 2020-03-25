@@ -233,7 +233,7 @@ public class PPAJC2Handler {
         
     }  
 
-    public Path packResults(AssayPack exp) throws IOException {
+    public Path exportFullPPAResults(AssayPack exp) throws IOException {
         
         List<PPAJobSummary> jobs = ppaRep.getJobsSummaries(exp).stream()
                 .filter( job -> job.state.equals(State.FINISHED))
@@ -241,21 +241,21 @@ public class PPAJC2Handler {
                 
         if (jobs.isEmpty()) throw new NotFoundException("No finished jobs fould in exp: "+exp.getId());
         
-        Set<String> types = jobs.stream().map(j -> j.dataSetType).collect(Collectors.toSet());
-        Map<String,FakeIdExtractor> idsCaches = idsCacheByType(exp,types);        
-
-        Map<Long, List<PPAFullResultEntry>> innerResults = dataJoinedFullResults(exp, jobs); 
+        PPAResultsExporterJC2 exporter = new PPAResultsExporterJC2();
+        FakeIdExtractor idsCache = idsCache(exp, DetrendingType.LIN_DTR);
         
-        List<StatsEntry> innerStats = jobs.stream()
-                .map( job -> ppaRep.getJobFullStats(exp, job.jobId))
-                .collect(Collectors.toList());
+        Map<String,Path> files = new HashMap<>();
         
+        Path joinedResults = exportJoinedResults(exp, jobs, idsCache, tempFile(), exporter);
+        files.put(""+exp.getId()+".results.csv", joinedResults);
         
-        
-        Map<String,Path> files = ppaUtils.saveToFiles2(jobs, innerResults, innerStats, exp.getAssay(), idsCaches);
+        for (PPAJobSummary job : jobs) {
+            Path file = exportPPAStats(exp, job, idsCache, tempFile(), exporter);
+            files.put("statistics."+job.shortId()+".csv", file);
+        }
         
         try {
-            Path pack = fileUtil.zip(files,Files.createTempFile(null, null));
+            Path pack = fileUtil.zip(files,tempFile());
             return pack;
         } catch (IOException e) {
             throw new ServerSideException("Cannot created tmp zip file "+e.getMessage(),e);
@@ -265,24 +265,9 @@ public class PPAJC2Handler {
     }
     
     
-    protected Map<Long, List<PPAFullResultEntry>> dataJoinedFullResults(AssayPack exp,List<PPAJobSummary> jobs) {
-     
-        Map<Long, List<PPAFullResultEntry>> innerResults = jobs.parallelStream()
-                .filter( job -> job.state.equals(State.FINISHED))
-                .flatMap( job -> ppaRep.getJobIndResults(exp, job.jobId).parallelStream())
-                .collect(Collectors.groupingBy( entry -> entry.rawDataId));
-
-        return innerResults;
-        
-    }    
-    
-    protected Map<String,FakeIdExtractor> idsCacheByType(AssayPack exp,Collection<String> types) {
-        Map<String,FakeIdExtractor> map = new HashMap<>();
-        types.forEach( type -> {
-            map.put(type,idsCache(exp, DetrendingType.valueOf(type)));
-        });
-        return map;
-    }    
+    protected Path tempFile() throws IOException {
+        return Files.createTempFile(null, null);
+    }
     
     protected TimeSeries getFit(AssayPack exp, UUID jobId, long dataId) {
 
@@ -395,5 +380,22 @@ public class PPAJC2Handler {
         // PPAJobSummary summary = PPAUtils.simplifyJob(job);
         return job;
     }    
+
+    Path exportJoinedResults(AssayPack exp, List<PPAJobSummary> jobs, FakeIdExtractor idsCache, Path tempFile, PPAResultsExporterJC2 exporter) throws IOException {
+        
+        List<PPAFullResultEntry> results = jobs.stream().flatMap( job -> ppaRep.getJobIndResults(exp, job.jobId).stream())
+                .collect(Collectors.toList());
+        exporter.exportJoinedFullResults(exp.getAssay(), jobs, results, idsCache, tempFile);
+        return tempFile;
+    }
+
+    Path exportPPAStats(AssayPack exp, PPAJobSummary job, FakeIdExtractor idsCache, Path tempFile, PPAResultsExporterJC2 exporter) throws IOException {
+        
+        StatsEntry stats = ppaRep.getJobFullStats(exp, job.jobId);
+        exporter.exportPPAFullStats(exp.getAssay(), job, stats, idsCache, tempFile);
+        return tempFile;
+    }
+
+
     
 }

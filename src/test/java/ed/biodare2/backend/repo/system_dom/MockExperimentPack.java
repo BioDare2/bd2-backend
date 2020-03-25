@@ -38,7 +38,9 @@ public class MockExperimentPack implements AssayPack {
 
     @Override
     public ExperimentalAssay getAssay() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        ExperimentalAssay assay = new ExperimentalAssay(id);
+        assay.generalDesc.name = ("Test exp "+id);
+        return assay;
     }
 
     @Override

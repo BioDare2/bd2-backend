@@ -347,7 +347,7 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         
         Path results = null;
         try {
-            results = ppaHandler.packResults(exp);
+            results = ppaHandler.exportFullPPAResults(exp);
 
             String contentType = "application/zip";
             String fileName = expId+".ppa_data.zip";

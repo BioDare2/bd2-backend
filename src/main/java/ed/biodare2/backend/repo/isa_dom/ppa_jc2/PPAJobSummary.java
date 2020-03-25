@@ -51,5 +51,10 @@ public class PPAJobSummary {
     
     public static final long uuid2long(UUID id) {
         return id.getLeastSignificantBits()+id.getMostSignificantBits();
-    }    
+    } 
+    
+    public String shortId() {
+        final String id = jobId.toString();
+        return jobId.toString().substring(0, id.indexOf("-") );
+    }
 }
