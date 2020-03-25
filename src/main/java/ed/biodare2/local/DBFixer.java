@@ -7,7 +7,9 @@ package ed.biodare2.local;
 
 import static ed.biodare2.IdsConfiguration.ASSETSID_PROVIDER;
 import static ed.biodare2.IdsConfiguration.EXPID_PROVIDER;
+import ed.biodare2.backend.features.ppa.PPA2ToPPA3Migrator;
 import ed.biodare2.backend.features.ppa.PPAResultsHandler;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.UserGroupRep;
@@ -33,6 +35,7 @@ import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
+import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.io.IOException;
@@ -99,6 +102,12 @@ public class DBFixer {
     
     @Autowired
     ExperimentIndexer experimentIndex;
+    
+    @Autowired
+    PPAArtifactsRep ppa2Rep;
+
+    @Autowired
+    PPAArtifactsRepJC2 ppa3RepJC2;
     
     //@Autowired
     //TSDataHandler dataHandler;
@@ -617,6 +626,31 @@ public class DBFixer {
                 ;
         
     } */ 
+
+    @Transactional
+    public void migratePPA2ToPPA3() {
+        log.info("Migrating ppa2 artifacts");
+        
+        PPA2ToPPA3Migrator migrator = new PPA2ToPPA3Migrator(ppa2Rep, ppa3RepJC2);
+                
+        experimentalAssays.getExerimentsIds()
+            .map( id -> expPacks.findOne(id))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .filter( pack -> pack.getSystemInfo().experimentCharacteristic.hasPPAJobs)
+                .forEach( exp -> {
+                    try {
+                        log.info("Migrating ppa artifacts for {}",exp.getId());
+                        migrator.migrate(exp);
+                        
+                        //int fixed = ppaResultsHandler.redoJobsStatsAndSummaries(exp);
+                        log.info("Migrated ppa2 artifacts for {}",exp.getId());
+                    } catch (Exception e) {
+                        log.error("Could not move ppa artifacts for: {}, {}",exp.getId(),e.getMessage(),e);
+                    }
+                });
+                ;
+    }
 
 
 

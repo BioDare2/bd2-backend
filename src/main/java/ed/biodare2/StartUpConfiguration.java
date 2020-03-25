@@ -95,7 +95,30 @@ public class StartUpConfiguration {
         return (evt) -> {
         
         };
-    }       
+    }  
+    
+    
+    @Transactional
+    @Bean
+    @Order(10)
+    public CommandLineRunner ppa2ToPPA3(Environment env,DBFixer fixer) {
+        
+        log.warn("ppa migration called");
+        
+        if (!isOnProduction(env)) {
+            log.warn("RUNNING locally");
+            
+            fixer.migratePPA2ToPPA3();
+            
+        } else {
+            log.warn("RUNNING in production");
+         
+            //fixer.migratePPA2ToPPA3();
+        
+        }
+        return (evt) -> {};
+    } 
+    //*/    
     
     /*
     @Transactional
