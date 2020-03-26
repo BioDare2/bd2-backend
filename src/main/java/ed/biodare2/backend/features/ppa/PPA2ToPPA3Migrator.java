@@ -9,11 +9,17 @@ import ed.biodare.jobcentre2.dom.State;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
+import ed.robust.dom.data.TimeSeries;
+import ed.robust.dom.tsprocessing.ResultsEntry;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +34,12 @@ public class PPA2ToPPA3Migrator {
     
     PPAArtifactsRep ppa2Rep;
     PPAArtifactsRepJC2 ppa3RepJC2;
+    PPAJC2ResultsHandler resultsHandler;
     
-    public PPA2ToPPA3Migrator(PPAArtifactsRep ppa2Rep, PPAArtifactsRepJC2 ppa3RepJC2) {
+    public PPA2ToPPA3Migrator(PPAArtifactsRep ppa2Rep, PPAArtifactsRepJC2 ppa3RepJC2, PPAJC2ResultsHandler resultsHandler) {
         this.ppa2Rep = ppa2Rep;
         this.ppa3RepJC2 = ppa3RepJC2;
+        this.resultsHandler = resultsHandler;
     }
 
     public void migrate(AssayPack exp) {
@@ -52,9 +60,18 @@ public class PPA2ToPPA3Migrator {
         }
     }
 
-    void migrate(PPAJobSummary oldJob, AssayPack exp) {
+    ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary migrate(PPAJobSummary oldJob, AssayPack exp) {
         
         ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary job = upgradeJob(oldJob, exp.getId());
+        Map<Long, TimeSeries> fits = ppa2Rep.getFits(oldJob.jobId, exp).orElse(new HashMap<>());
+        List<PPAFullResultEntry> jobResults = upgradeResults(ppa2Rep.getJobIndResults(exp, oldJob.jobId), job);
+        
+        ppa3RepJC2.saveJobSummary(job, exp);
+        if (!fits.isEmpty())
+            ppa3RepJC2.saveFits(fits, job.jobId, exp);
+        if (!jobResults.isEmpty())
+            resultsHandler.processJobResults(jobResults, job, exp);
+        return job;
     }
 
     ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary upgradeJob(PPAJobSummary oldJob, long expId) {
@@ -88,8 +105,29 @@ public class PPA2ToPPA3Migrator {
     }
     
         
+    List<PPAFullResultEntry> upgradeResults(List<ResultsEntry> oldResults, ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary job) {
         
-    
+        List<PPAFullResultEntry> newResults = new ArrayList<>(oldResults.size());
+        for (ResultsEntry oldResult: oldResults) {
+            PPAFullResultEntry result = upgradeResult(oldResult, job);
+            newResults.add(result);
+        }
+        return newResults;
+    }
+        
+    PPAFullResultEntry upgradeResult(ResultsEntry oldResult, ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary job) {
+        PPAFullResultEntry newResult = new PPAFullResultEntry();
+        newResult.jobId = job.jobId;
+        newResult.dataId = oldResult.dataId;
+        newResult.biolDescId = oldResult.biolDescId;
+        newResult.dataType = oldResult.dataType;
+        newResult.environmentId = oldResult.environmentId;
+        newResult.ignored = oldResult.ignored;
+        newResult.orgId = oldResult.orgId;
+        newResult.rawDataId = oldResult.rawDataId;
+        newResult.result = oldResult.getResult();
+        return newResult;
+    }    
 
     LocalDateTime toLocalDate(Date date) {
         
@@ -104,5 +142,8 @@ public class PPA2ToPPA3Migrator {
         
         return State.valueOf(state.name());
     }
+
+
+
     
 }

@@ -8,6 +8,7 @@ package ed.biodare2.local;
 import static ed.biodare2.IdsConfiguration.ASSETSID_PROVIDER;
 import static ed.biodare2.IdsConfiguration.EXPID_PROVIDER;
 import ed.biodare2.backend.features.ppa.PPA2ToPPA3Migrator;
+import ed.biodare2.backend.features.ppa.PPAJC2ResultsHandler;
 import ed.biodare2.backend.features.ppa.PPAResultsHandler;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
@@ -109,6 +110,8 @@ public class DBFixer {
     @Autowired
     PPAArtifactsRepJC2 ppa3RepJC2;
     
+    @Autowired
+    PPAJC2ResultsHandler jc2ResultsHandler;
     //@Autowired
     //TSDataHandler dataHandler;
     
@@ -631,7 +634,7 @@ public class DBFixer {
     public void migratePPA2ToPPA3() {
         log.info("Migrating ppa2 artifacts");
         
-        PPA2ToPPA3Migrator migrator = new PPA2ToPPA3Migrator(ppa2Rep, ppa3RepJC2);
+        PPA2ToPPA3Migrator migrator = new PPA2ToPPA3Migrator(ppa2Rep, ppa3RepJC2, jc2ResultsHandler);
                 
         experimentalAssays.getExerimentsIds()
             .map( id -> expPacks.findOne(id))
