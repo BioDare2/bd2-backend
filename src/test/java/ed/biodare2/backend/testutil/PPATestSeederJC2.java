@@ -6,6 +6,7 @@
 package ed.biodare2.backend.testutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
  * @author tzielins
@@ -46,7 +48,8 @@ public class PPATestSeederJC2 {
     
     public static ObjectMapper makeMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();        
+        mapper.findAndRegisterModules();  
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         return mapper;
     }
     
@@ -99,6 +102,24 @@ public class PPATestSeederJC2 {
     public void testGetData() throws RobustFormatException, IOException {
         assertEquals(10, getData().size());
     }
+    
+    @Test
+    public void testFullStatsCanBeSerializedToJSONAndBack() throws IOException {
+        PPAJobSummary job = getJobSummary();
+        StatsEntry stats1 = getJobFullXMLStats(job2name(job));
+        StatsEntry stats2 = getJobFullXMLStats(job2name(job));
+        
+        assertReflectionEquals(stats1, stats2);
+        
+        String json = mapper.writeValueAsString(stats1);
+        stats2 = mapper.readValue(json, StatsEntry.class);
+        System.out.println(json);
+        String json2 = mapper.writeValueAsString(stats2);
+        assertEquals(json, json2);
+        
+        assertReflectionEquals(stats1, stats2);
+        
+    }    
 
     public PPAJobSummary getJobSummary() throws IOException {
         return getJobSummary(fftJob);
@@ -129,12 +150,17 @@ public class PPATestSeederJC2 {
         Path f = getJobFile(job, "PPA_SIMPLE_STATS.json");
         return mapper.readValue(f.toFile(), PPAJobSimpleStats.class);
     }
-    
+
     public StatsEntry getJobFullStats(PPAJobSummary job) throws IOException {
         return getJobFullStats(job2name(job));
     }
 
     public StatsEntry getJobFullStats(String job) throws IOException {
+        Path f = getJobFile(job, "PPA_FULL_STATS.json");
+        return mapper.readValue(f.toFile(), StatsEntry.class);
+    }     
+
+    public StatsEntry getJobFullXMLStats(String job) throws IOException {
         Path f = getJobFile(job, "PPA_FULL_STATS.xml");
         return xmlUtil.readFromFile(f, StatsEntry.class);
     }  

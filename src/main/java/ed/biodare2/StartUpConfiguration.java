@@ -99,7 +99,7 @@ public class StartUpConfiguration {
     
     
     @Transactional
-    @Bean
+    //@Bean
     @Profile("local")
     @Order(10)
     public CommandLineRunner ppa2ToPPA3(Environment env,DBFixer fixer) {

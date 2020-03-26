@@ -23,7 +23,6 @@ import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 
 import ed.biodare2.backend.util.io.FileUtil;
-import ed.biodare2.backend.util.xml.XMLUtil;
 import ed.robust.dom.data.TimeSeries;
 
 import ed.robust.dom.tsprocessing.StatsEntry;
@@ -67,7 +66,7 @@ public class PPAArtifactsRepJC2 {
     final static String JOB_FULL_RESULTS_FILE = "PPA_FULL_RESULTS.json";
     final static String JOB_SIMPLE_RESULTS_FILE = "PPA_SIMPLE_RESULTS.json";
     final static String JOB_GROUPED_RESULTS_FILE = "PPA_GROUPED_RESULTS.json";
-    final static String JOB_FULL_STATS_FILE = "PPA_FULL_STATS.xml";
+    final static String JOB_FULL_STATS_FILE = "PPA_FULL_STATS.json";
     final static String JOB_SIMPLE_STATS_FILE = "PPA_SIMPLE_STATS.json";
     final static String JOB_SIMPLE_SUMMARY_FILE = "PPA_JOB_SUMMARY.json";
     
@@ -85,6 +84,9 @@ public class PPAArtifactsRepJC2 {
 
     final ObjectReader fullResultsReader;
     final ObjectWriter fullResultsWriter;        
+
+    final ObjectReader fullStatsReader;
+    final ObjectWriter fullStatsWriter; 
     
     final ObjectReader jobSummaryReader;
     final ObjectWriter jobSummaryWriter;  
@@ -95,7 +97,7 @@ public class PPAArtifactsRepJC2 {
     //final ResourceLock<Long> resourceLock = new ResourceLock<>(60);
     
     final FileUtil fileUtil = new FileUtil();
-    final XMLUtil xmlUtil = new XMLUtil();
+    // final XMLUtil xmlUtil = new XMLUtil();
     final ResourceGuard<Long> guard = new ResourceGuard<>(60);
    
     final LoadingCache<ExpJobKey, Path> jobDirCache;
@@ -144,7 +146,10 @@ public class PPAArtifactsRepJC2 {
         this.jobSummaryWriter = mapper.writerFor(PPAJobSummary.class); 
 
         this.fullResultsReader = mapper.readerFor(PPAJobIndResults.class);
-        this.fullResultsWriter = mapper.writerFor(PPAJobIndResults.class);         
+        this.fullResultsWriter = mapper.writerFor(PPAJobIndResults.class);    
+        
+        this.fullStatsReader = mapper.readerFor(StatsEntry.class);
+        this.fullStatsWriter = mapper.writerFor(StatsEntry.class);
         
         this.orgResultsWriter = mapper.writerFor(PPAJobResults.class);
         
@@ -316,20 +321,19 @@ public class PPAArtifactsRepJC2 {
         
         guard.guard(exp.getId(),()-> {
             
-        //try {
+        try {
         
-            //Path ppaDir = getPPADir(exp);
             Path jobStatsFile = jobFullStatsFile(exp.getId(), jobId);
             
             
             //stats.setJobId(jobId);
         
+            fullStatsWriter.writeValue(jobStatsFile.toFile(), stats);
             //simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
-            saveToXMLFile(stats, jobStatsFile);
         
-            /*} catch (IOException e) {
-                throw new ServerSideException("Cannot save job simple stats: "+e.getMessage(),e);
-            }*/
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot save full stats stats: "+e.getMessage(),e);
+            }
         });
     }    
     
@@ -425,6 +429,7 @@ public class PPAArtifactsRepJC2 {
 
         return guard.guard(exp.getId(),(id)-> {
 
+        try {
         
             //Path ppaDir = getPPADir(exp);            
             Path jobStatsFile = jobFullStatsFile(exp.getId(),jobId); 
@@ -432,8 +437,12 @@ public class PPAArtifactsRepJC2 {
                 log.debug("Stats asked from not existing container in exp: {} {}",exp.getId(), jobId);
                 return new StatsEntry(jobId);
             }            
-            StatsEntry entry = xmlUtil.readFromFile(jobStatsFile, StatsEntry.class);
+            //StatsEntry entry = xmlUtil.readFromFile(jobStatsFile, StatsEntry.class);
+            StatsEntry entry = fullStatsReader.readValue(jobStatsFile.toFile());
             return entry;
+        } catch (IOException e) {
+            throw new ServerSideException("Cannot read job full stats: "+e.getMessage(),e);
+        }            
         });  
         
     }
@@ -641,9 +650,6 @@ public class PPAArtifactsRepJC2 {
     
     
 
-    protected void saveToXMLFile(Object elm, Path file) {
-        xmlUtil.saveToFile(elm,file);
-    }
 
 
     protected void deleteJobDir(UUID jobId, long expId) {

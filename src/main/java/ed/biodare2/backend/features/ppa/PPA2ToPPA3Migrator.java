@@ -130,7 +130,7 @@ public class PPA2ToPPA3Migrator {
     }    
 
     LocalDateTime toLocalDate(Date date) {
-        
+        if (date == null) return null;
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
     }
 
