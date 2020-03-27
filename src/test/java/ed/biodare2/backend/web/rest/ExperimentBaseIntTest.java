@@ -7,6 +7,7 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.testutil.PPATestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
@@ -18,6 +19,7 @@ import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.lucene.LuceneWriter;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
+import ed.biodare2.backend.testutil.PPATestSeederJC2;
 import ed.biodare2.backend.util.io.FileUtil;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -46,6 +48,10 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     @Autowired
     PPATestSeeder testSeeder;
     
+    @Autowired    
+    PPATestSeederJC2 ppaTestSeeder;
+            
+    
     @Autowired
     ExperimentPackHub expBoundles;
     
@@ -63,6 +69,9 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     
     @Autowired
     PPAArtifactsRep ppaRep;
+    
+    @Autowired
+    PPAArtifactsRepJC2 ppaRepJC2;
     
     static AtomicLong expIds = new AtomicLong(150);
     

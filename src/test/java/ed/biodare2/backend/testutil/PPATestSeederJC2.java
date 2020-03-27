@@ -7,35 +7,48 @@ package ed.biodare2.backend.testutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
+import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
+import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
+import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobIndResults;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobResultsGroups;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleResults;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleStats;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
+import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.util.xml.XMLUtil;
+import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.robust.dom.data.TimeSeries;
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.error.RobustFormatException;
 import ed.robust.util.timeseries.TimeSeriesFileHandler;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
  * @author tzielins
  */
+@Service
 public class PPATestSeederJC2 {
     
     public ObjectMapper mapper;
@@ -46,6 +59,12 @@ public class PPATestSeederJC2 {
     
     XMLUtil xmlUtil = new XMLUtil();
     
+    @Autowired
+    PPAArtifactsRepJC2 ppaRep;
+    
+    @Autowired
+    TSDataHandler tsHandler;    
+    
     public static ObjectMapper makeMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();  
@@ -54,72 +73,18 @@ public class PPATestSeederJC2 {
     }
     
     public PPATestSeederJC2() {
-        mapper = makeMapper();
+        this(makeMapper());
     }
+    
+    @Autowired
+    public PPATestSeederJC2(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }    
     
     /*public PPATestSeederJC2(ObjectMapper mapper) {
         this.mapper = mapper;
     }*/
     
-    @Test
-    public void testFiles() {
-        
-        Path f = getJobFile(fftJob, "PPA_JOB_SUMMARY.json");
-        assertTrue(Files.isRegularFile(f));
-        
-    }
-    
-    @Test
-    public void testJobSummary() throws IOException {
-        assertNotNull(getJobSummary());
-    }
-    
-    @Test
-    public void testJobSimpleResults() throws IOException {
-        assertNotNull(getJobSimpleResults(getJobSummary()));
-        
-    }
-    
-    @Test
-    public void testJobSimpleStats() throws IOException {
-        assertNotNull(getJobSimpleStats(getJobSummary()));
-        
-    } 
-    
-    @Test
-    public void testJobFullStats() throws IOException {
-        assertEquals(5, getJobFullStats(getJobSummary()).getStats().size());
-        
-    }    
-    
-    @Test
-    public void testJobFullResults() throws IOException {
-        assertEquals(10, getJobFullResults(getJobSummary()).results.size());
-        
-    }     
-    
-    @Test
-    public void testGetData() throws RobustFormatException, IOException {
-        assertEquals(10, getData().size());
-    }
-    
-    @Test
-    public void testFullStatsCanBeSerializedToJSONAndBack() throws IOException {
-        PPAJobSummary job = getJobSummary();
-        StatsEntry stats1 = getJobFullXMLStats(job2name(job));
-        StatsEntry stats2 = getJobFullXMLStats(job2name(job));
-        
-        assertReflectionEquals(stats1, stats2);
-        
-        String json = mapper.writeValueAsString(stats1);
-        stats2 = mapper.readValue(json, StatsEntry.class);
-        System.out.println(json);
-        String json2 = mapper.writeValueAsString(stats2);
-        assertEquals(json, json2);
-        
-        assertReflectionEquals(stats1, stats2);
-        
-    }    
 
     public PPAJobSummary getJobSummary() throws IOException {
         return getJobSummary(fftJob);
@@ -176,7 +141,20 @@ public class PPATestSeederJC2 {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }    
+    } 
+    
+    public PPAJobResultsGroups getJobResultsGroups(PPAJobSummary job) {
+        return getJobResultsGroups(job2name(job));
+    }
+
+    public PPAJobResultsGroups getJobResultsGroups(String job) {
+        try {
+            Path f = getJobFile(job, "PPA_GROUPED_RESULTS.json");
+            return  mapper.readValue(f.toFile(), PPAJobResultsGroups.class);    
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }    }
+    
     
 
     public List<DataTrace> getData() throws RobustFormatException, IOException {
@@ -191,6 +169,23 @@ public class PPATestSeederJC2 {
         }
         return traces;
     }
+    
+    public Map<Long, TimeSeries> getFits(PPAJobSummary job) {
+        return getFits(job2name(job));
+    }
+    
+    public Map<Long, TimeSeries> getFits(String job) {
+        Path file = getJobFile(job, "fit."+job+".ser");
+        
+            try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+                
+                Map<Long, TimeSeries> map = (Map<Long, TimeSeries>)in.readObject();
+                return map;
+                
+            } catch (IOException|ClassNotFoundException e) {
+                throw new ServerSideException("Cannot read fits: "+e.getMessage(),e);
+            }        
+    }    
     
     public DataTrace makeTrace(int i, TimeSeries data) {
             DataTrace trace = new DataTrace();
@@ -220,6 +215,60 @@ public class PPATestSeederJC2 {
     String job2name(PPAJobSummary job) {
         return job.jobId.toString().substring(0,4);
     }
+
+    public List<PPAJobSummary> getJobs() throws IOException {
+        return List.of(getJobSummary(fftJob),getJobSummary(mesaJob));
+    }
+
+    public void seedJustJob(PPAJobSummary job, AssayPack exp) {
+        job.parentId = exp.getId();
+        ppaRep.saveJobSummary(job, exp);
+    }
+
+    public void seedFullJob(PPAJobSummary job, AssayPack exp) {
+        try {
+        job.parentId = exp.getId();
+        seedData(getData(),exp);
+        seedJustJob(job, exp);
+        seedJobArtifacts(job,exp);
+        } catch (IOException | RobustFormatException e) {
+            throw new RuntimeException("Cannot seed job "+e.getMessage(),e);
+        }
+        
+    }
+
+
+    void seedJobArtifacts(PPAJobSummary job, AssayPack exp) throws IOException {
+        UUID jobId = job.jobId;
+        PPAJobIndResults indResults = getJobFullResults(job);
+        PPAJobSimpleResults simpleRes = getJobSimpleResults(job);
+        PPAJobResultsGroups grouped = getJobResultsGroups(job);
+        PPAJobSimpleStats simpleStats = getJobSimpleStats(job);
+        StatsEntry fullStats = getJobFullStats(job);
+        Map<Long,TimeSeries> fits = getFits(job);
+        
+        ppaRep.saveJobIndResults(indResults.results, exp, jobId);
+        ppaRep.saveJobSimpleResults(simpleRes, exp, jobId);
+        ppaRep.saveJobResultsGroups(grouped, exp, jobId);
+        ppaRep.saveJobSimpleStats(simpleStats, exp, jobId);
+        ppaRep.saveJobFullStats(fullStats, exp, jobId);
+        ppaRep.saveFits(fits, jobId, exp);
+    }
+
+    public void seedData(List<DataTrace> data, AssayPack exp) {
+        
+        DataBundle rawData = new DataBundle();
+        rawData.data.addAll(data);
+        
+        try {
+            tsHandler.handleNewData(exp, rawData);
+        } catch (DataProcessingException e) {
+            throw new RuntimeException("Cannot seed data: "+e.getMessage(),e);
+        }        
+    }
+    
+
+
 
 
 
