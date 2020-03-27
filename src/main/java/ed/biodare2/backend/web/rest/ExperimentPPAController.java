@@ -42,8 +42,8 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author tzielins
  */
-@RestController
-@RequestMapping("api/experiment/{expId}/ppa")
+//@RestController
+//@RequestMapping("api/experiment/{expId}/ppa")
 public class ExperimentPPAController extends ExperimentController {
 
     final PPAHandler ppaHandler;
