@@ -97,7 +97,8 @@ public class StartUpConfiguration {
         };
     }  
     
-    
+
+    /*
     @Transactional
     @Bean
     @Profile("local")

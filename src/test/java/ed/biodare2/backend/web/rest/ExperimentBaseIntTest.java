@@ -11,7 +11,6 @@ import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.testutil.PPATestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -67,11 +66,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     @Autowired
     TSDataHandler tsHandler;
     
-    @Autowired
-    PPAArtifactsRep ppaRep;
     
-    @Autowired
-    PPAArtifactsRepJC2 ppaRepJC2;
     
     static AtomicLong expIds = new AtomicLong(150);
     

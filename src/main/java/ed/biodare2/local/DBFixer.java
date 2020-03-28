@@ -7,9 +7,7 @@ package ed.biodare2.local;
 
 import static ed.biodare2.IdsConfiguration.ASSETSID_PROVIDER;
 import static ed.biodare2.IdsConfiguration.EXPID_PROVIDER;
-import ed.biodare2.backend.features.ppa.PPA2ToPPA3Migrator;
 import ed.biodare2.backend.features.ppa.PPAJC2ResultsHandler;
-import ed.biodare2.backend.features.ppa.PPAResultsHandler;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.security.dao.UserAccountRep;
@@ -34,12 +32,9 @@ import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
-import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -98,14 +93,10 @@ public class DBFixer {
     @Autowired
     IdGenerators generators;
     
-    @Autowired
-    PPAResultsHandler ppaResultsHandler;
     
     @Autowired
     ExperimentIndexer experimentIndex;
     
-    @Autowired
-    PPAArtifactsRep ppa2Rep;
 
     @Autowired
     PPAArtifactsRepJC2 ppa3RepJC2;
@@ -523,29 +514,7 @@ public class DBFixer {
                 });*/
     } 
     
-    @Transactional
-    //@Deprecated
-    public void redoJobsProcessing() {
      
-        log.info("Fixing circadian stats and results");
-        
-        experimentalAssays.getExerimentsIds()
-            .map( id -> expPacks.findOne(id))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .filter( pack -> pack.getSystemInfo().experimentCharacteristic.hasPPAJobs)
-                .forEach( exp -> {
-                    try {
-                        int fixed = ppaResultsHandler.redoResultsProcessing(exp);
-                        log.info("Recalculated stats and summaries for {}",exp.getId());
-                    } catch (IOException e) {
-                        log.error("Could not redo stats for: {}, {}",exp.getId(),e.getMessage(),e);
-                    }
-                });
-                ;
-        
-    }
-    
     
     @Transactional
     //@Deprecated
@@ -630,6 +599,7 @@ public class DBFixer {
         
     } */ 
 
+    /*
     @Transactional
     public void migratePPA2ToPPA3() {
         log.info("Migrating ppa2 artifacts");
@@ -653,7 +623,7 @@ public class DBFixer {
                     }
                 });
                 ;
-    }
+    }*/
 
 
 

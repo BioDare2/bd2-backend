@@ -48,7 +48,7 @@ public class EnvironmentConfiguration {
                                 TestFolder testFolder,
                                 @Value("${bd2.storage.dir}") String storageDirPath,
                                 @Value("${bd2.backend.url}") String backendURL,
-                                @Value("${bd2.jobcentre.wsdl}") String jobcentreURL,
+                                //@Value("${bd2.jobcentre.wsdl}") String jobcentreURL,
                                 @Value("${bd2.recaptcha.site-key}") String recaptchaSiteKey,
                                 @Value("${bd2.recaptcha.secret-key}") String recaptchaSecretKey,
                                 @Value("${spring.mail.host}") String mailHost,
@@ -66,7 +66,7 @@ public class EnvironmentConfiguration {
         return new EnvironmentVariables(
                 testFolder.tmp.toString(),//storageDirPath, 
                 backendURL, 
-                jobcentreURL, 
+                //jobcentreURL, 
                 recaptchaSiteKey, 
                 recaptchaSecretKey,
                 mailHost, 

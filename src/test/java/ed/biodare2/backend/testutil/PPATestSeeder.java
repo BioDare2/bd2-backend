@@ -7,33 +7,22 @@ package ed.biodare2.backend.testutil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.Fixtures;
-import ed.biodare2.backend.features.ppa.PPAUtils;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobIndResults;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobResultsGroups;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleResults;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSimpleStats;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
-import ed.biodare2.backend.repo.system_dom.ACLInfo;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.security.dao.db.EntityACL;
-import ed.robust.dom.data.TimeSeries;
 import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.dom.jobcenter.JobsContainer;
-import ed.robust.dom.tsprocessing.ResultsEntry;
-import ed.robust.dom.tsprocessing.StatsEntry;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
@@ -41,7 +30,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,9 +52,6 @@ public class PPATestSeeder {
 
     @Autowired 
     Fixtures fixtures;
-    
-    @Autowired
-    PPAArtifactsRep ppaRep;
     
     @Autowired
     TSDataHandler tsHandler;
@@ -114,25 +99,6 @@ public class PPATestSeeder {
         
     }
     
-    public JobSummary getJob() {
-        return getJobs().get(0);
-    }
-    
-    //@Transactional
-    public void seedJustJob(JobSummary job, AssayPack exp) {
-        //System.out.println("Seeding job "+job+":"+job.needsAttention());
-        PPAJobSummary summary = PPAUtils.simplifyJob(job);
-        //ppaRep.saveJobSummary(summary, exp);
-        //ppaRep.saveJobFullDescription(job, exp);
-        ppaRep.saveJobDetails(job,summary, exp);
-    }
-    
-    //@Transactional
-    public void seedFullJob(JobSummary job, AssayPack exp) {
-        seedData(getData(),exp);
-        seedJustJob(job,exp);
-        seedJobArtifacts(job,exp);
-    }
     
     //@Transactional
     public void seedData(List<DataTrace> data, AssayPack exp) {
@@ -146,70 +112,6 @@ public class PPATestSeeder {
         }
     }
 
-    //@Transactional
-    protected void seedJobArtifacts(JobSummary job, AssayPack exp) {
-        List<ResultsEntry> indResults = getJobIndResults(job);
-        PPAJobSimpleResults simpleRes = getJobSimpleResults(job);
-        PPAJobResultsGroups grouped = getJobResultsGroups(job);
-        PPAJobSimpleStats simpleStats = getJobSimpleStats(job);
-        StatsEntry fullStats = getJobFullStats(job);
-        Map<Long,TimeSeries> fits = getFits(job);
-        
-        long jobId = job.getJobId();
-        
-        try {
-        ppaRep.saveFits(fits, jobId, exp);
-        ppaRep.saveJobIndResults(indResults, exp, jobId);
-        ppaRep.saveJobSimpleResults(simpleRes, exp, jobId);
-        ppaRep.saveJobResultsGroups(grouped, exp, jobId);
-        ppaRep.saveJobSimpleStats(simpleStats, exp, jobId);
-        ppaRep.saveJobFullStats(fullStats, exp, jobId);
-        
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot seed jobs artifacts: "+e.getMessage(),e);
-        }
-        
-    }    
-    
-    
-    public PPAJobSimpleStats getJobSimpleStats(JobSummary job) {
-        Path file = getJobRelatedFile(job, "PPA_SIMPLE_STATS.json");
-        return fromJSON(file,PPAJobSimpleStats.class);
-    }
-    
-    public PPAJobSimpleResults getJobSimpleResults(JobSummary job) {
-        Path file = getJobRelatedFile(job, "PPA_SIMPLE_RESULTS.json");
-        return fromJSON(file,PPAJobSimpleResults.class);
-    }    
-    
-    public StatsEntry getJobFullStats(JobSummary job) {
-        Path file = getJobRelatedFile(job, "PPA_FULL_STATS.xml");
-        StatsEntry stats = (StatsEntry) JAXB.unmarshal(file.toFile(), StatsEntry.class);
-        return stats;
-    }    
-    
-    public List<ResultsEntry> getJobIndResults(JobSummary job) {
-        Path file = getJobRelatedFile(job, "PPA_RESULTS.xml");
-        PPAJobIndResults container = (PPAJobIndResults) JAXB.unmarshal(file.toFile(), PPAJobIndResults.class);
-        return container.results;
-    }
-    
-    public PPAJobResultsGroups getJobResultsGroups(JobSummary job) {
-        Path file = getJobRelatedFile(job, "GROUPED_RESULTS.json");
-        return fromJSON(file,PPAJobResultsGroups.class);
-    }
-    
-    public Map<Long, TimeSeries> getFits(JobSummary job) {
-        Path file = getJobRelatedFile(job, "fit.ser");
-        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
-
-            Map<Long, TimeSeries> map = (Map<Long, TimeSeries>)in.readObject();
-            return map;
-
-        } catch (IOException|ClassNotFoundException e) {
-            throw new RuntimeException("Cannot read fits: "+e.getMessage(),e);
-        }        
-    }
     
     public List<DataTrace> getData() {
         return getData("SHORT");        

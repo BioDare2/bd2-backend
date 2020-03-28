@@ -29,7 +29,7 @@ public class PPAJC2AnalysisServiceTest {
     PPAJC2AnalysisService instance;
     JobCentreEndpointClient client;
     PPAServiceParameters parameters;
-    PPAUtils utils;
+    PPAUtilsJC2 utils;
     
     @Before
     public void setUp() throws Exception {
@@ -41,9 +41,8 @@ public class PPAJC2AnalysisServiceTest {
         parameters.testClient = false;
         
         client = mock(JobCentreEndpointClient.class);
-        utils = new PPAUtils();
                 
-        
+        utils = new PPAUtilsJC2();
         instance = new PPAJC2AnalysisService(client, parameters);
     }
 

@@ -8,6 +8,7 @@ package ed.biodare2.backend.handlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ed.biodare2.Fixtures;
+import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
@@ -66,7 +67,7 @@ public class ExperimentDataHandlerTest {
     TSDataExporter dataExporter;
     FileAssetRep fileAssets;
     AssetsParamRep assetsParams;
-    PPAHandler ppaHandler;
+    PPAJC2Handler ppaHandler;
     RhythmicityHandler rhythmicityHandler;
     UserAccount user;
     
@@ -104,7 +105,7 @@ public class ExperimentDataHandlerTest {
         
         fileAssets = mock(FileAssetRep.class);
         assetsParams = mock(AssetsParamRep.class);
-        ppaHandler = mock(PPAHandler.class);
+        ppaHandler = mock(PPAJC2Handler.class);
         
         rhythmicityHandler = mock(RhythmicityHandler.class);
         

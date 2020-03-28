@@ -8,6 +8,7 @@ package ed.biodare2.backend.web.rest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import static ed.biodare2.backend.features.ppa.PPAUtilsJC2.periodToInt;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
@@ -42,6 +43,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
@@ -62,6 +64,8 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
 
     final String serviceRoot = "/api/experiment";
     
+    @Autowired
+    PPAArtifactsRepJC2 ppaRepJC2;
     
     
     PPARequest preparePPARequest() {

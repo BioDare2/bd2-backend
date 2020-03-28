@@ -72,7 +72,7 @@ public class ValuesByPhaseTest {
         assertNotNull(json);
         //System.out.println(json);
         
-        ed.biodare2.backend.repo.isa_dom.ppa2.ValuesByPhase cpy = mapper.readValue(json, ed.biodare2.backend.repo.isa_dom.ppa2.ValuesByPhase.class); 
+        ValuesByPhase cpy = mapper.readValue(json, ValuesByPhase.class); 
         //System.out.println(cpy.get(PhaseType.ByFit).getClass());
         assertEquals(org,cpy);
         assertReflectionEquals(org,cpy); 

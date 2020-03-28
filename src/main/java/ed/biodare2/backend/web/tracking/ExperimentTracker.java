@@ -8,7 +8,7 @@ package ed.biodare2.backend.web.tracking;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetVersion;
 import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import static ed.biodare2.backend.web.tracking.TargetType.*;
@@ -117,7 +117,7 @@ public class ExperimentTracker extends AbstractTracker {
     }
     
     public void ppaJob(AssayPack exp, PPAJobSummary res, BioDare2User user) {
-        track(EXP_PPA,VIEW,exp.getId(),user,"JOB",res.jobId);
+        track(EXP_PPA,VIEW,exp.getId(),user,"JOB",res.jobId.toString());
     }
 
     public void ppaJob(AssayPack exp, String jobId, BioDare2User user) {
@@ -125,7 +125,7 @@ public class ExperimentTracker extends AbstractTracker {
     }    
     
     public void ppaDeleteJob(AssayPack exp, PPAJobSummary job, BioDare2User user) {
-        track(EXP_PPA,DELETE,exp.getId(),user,"JOB",job.jobId);
+        track(EXP_PPA,DELETE,exp.getId(),user,"JOB",job.jobId.toString());
     }   
     
     public void ppaDeleteJob(AssayPack exp, String jobId, BioDare2User user) {

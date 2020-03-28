@@ -7,8 +7,8 @@ package ed.biodare2.backend.features.ppa;
 
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+//import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+//import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.TimeSeries;
@@ -25,13 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Left here in case I need the migration code to fix some problems after migrtion
  * @author tzielins
  */
-public class PPA2ToPPA3Migrator {
+class PPA2ToPPA3Migrator {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());
     
+    /*
     PPAArtifactsRep ppa2Rep;
     PPAArtifactsRepJC2 ppa3RepJC2;
     PPAJC2ResultsHandler resultsHandler;
@@ -143,7 +144,7 @@ public class PPA2ToPPA3Migrator {
         return State.valueOf(state.name());
     }
 
-
+    */
 
     
 }

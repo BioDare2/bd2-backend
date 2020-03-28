@@ -112,6 +112,8 @@ public class PPAJC2Handler {
         return ppaService.submitJob(jobRequest);
     }
     
+    
+    
     public void handleResults(AssayPack exp, PPAJobResults results) {
         ppaResultsHandler.handleResults(exp, results);
     }  
@@ -180,6 +182,11 @@ public class PPAJC2Handler {
         Map<Long, Integer> selection = parseSelectionParams(selectionParams);
         return ppaResultsHandler.doPPASelection(summary, exp, selection);
     }
+    
+    public void clearPPA(AssayPack exp) throws IOException {
+        ppaRep.clearAllPPAArtefacts(exp);
+        experimentHandler.updateHasPPAJobs(exp,false);
+    }    
 
     public PPAJobSummary deletePPAJob(AssayPack exp, UUID jobId) {
 

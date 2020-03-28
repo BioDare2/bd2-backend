@@ -44,11 +44,11 @@ public class EnvironmentVariablesTest {
         assertNotNull(instance.backendURL);
     }    
     
-    @Test
+    /*@Test
     public void hasJobcentreURL() {
         
         assertNotNull(instance.jobcentreURL);
-    }    
+    }*/    
     
     @Test
     public void hasReCaptchaKeys() {
