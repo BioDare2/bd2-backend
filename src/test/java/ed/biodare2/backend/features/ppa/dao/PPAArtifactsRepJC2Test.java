@@ -24,7 +24,7 @@ import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleStats;
 import static ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleStatsTest.makeSimpleStats;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
-import ed.biodare2.backend.testutil.PPATestSeeder;
+import ed.biodare2.backend.testutil.ExpTestSeeder;
 import ed.robust.dom.data.TimeSeries;
 
 import ed.robust.dom.tsprocessing.PPAStats;
@@ -64,7 +64,7 @@ public class PPAArtifactsRepJC2Test {
     ExperimentsStorage expStorage;
     PPAArtifactsRepJC2 ppaRep;
     Path expDir;
-    PPATestSeeder seeder;
+    ExpTestSeeder seeder;
     
     
     @Before
@@ -77,7 +77,7 @@ public class PPAArtifactsRepJC2Test {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
         
-        seeder = new PPATestSeeder();
+        seeder = new ExpTestSeeder();
         ppaRep = new PPAArtifactsRepJC2(expStorage, mapper);
         
     } 

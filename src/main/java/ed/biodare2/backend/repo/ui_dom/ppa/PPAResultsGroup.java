@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.repo.ui_dom.ppa;
 
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPASimpleResultEntry;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleResultEntry;
 import java.util.ArrayList;
 import java.util.List;
 

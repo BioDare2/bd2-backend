@@ -8,10 +8,10 @@ package ed.biodare2.backend.features.ppa;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
+//import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobIndResults;
-import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
+//import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobIndResults;
+//import ed.biodare2.backend.repo.isa_dom.ppa2.PPAJobSummary;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- *
+ * Kept in case need reviving
  * @author tzielins
  */
 public class PPA2ToPPA3MigratorTest {
@@ -49,6 +49,7 @@ public class PPA2ToPPA3MigratorTest {
     public PPA2ToPPA3MigratorTest() {
     }
     
+    /*
     ObjectMapper mapper = PPATestSeederJC2.makeMapper();
     PPAArtifactsRep ppa2Rep;
     PPAArtifactsRepJC2 ppa3RepJC2; 
@@ -176,5 +177,5 @@ public class PPA2ToPPA3MigratorTest {
             throw new RuntimeException(e);
         }
     }    
-    
+    */
 }

@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.handlers;
 
+import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.web.rest.NotFoundException;
 import ed.biodare2.backend.web.rest.ServerSideException;
@@ -28,7 +29,6 @@ import ed.biodare2.backend.repo.system_dom.OperationType;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
 import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
-import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.robust.dom.data.DetrendingType;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -52,7 +52,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
     final AssetsParamRep assetsParams;
     final TSDataHandler dataHandler;
     final TSDataExporter dataExporter;
-    final PPAHandler ppaHandler;
+    final PPAJC2Handler ppaHandler;
     final RhythmicityHandler rhythmicityHandler;
     
     public static final String TSAssetName = "ts_data_file_1";
@@ -61,7 +61,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
             TSImportHandler importHandler, 
             TSDataHandler dataHandler,
             TSDataExporter dataExporter,
-            PPAHandler ppaHandler,
+            PPAJC2Handler ppaHandler,
             RhythmicityHandler rhythmicityHandler,
             FileAssetRep fileAssets, 
             AssetsParamRep assetsParams

@@ -475,7 +475,7 @@ public class PPAJC2ResultsHandler {
             cluster.phasesToZeroCirc.put(phase,
                         okResults.stream()
                             .map( res -> res.getPPA(phase))
-                            .map( ppa -> PPAUtils.circadianPhase(ppa))
+                            .map( ppa -> PPAUtilsJC2.circadianPhase(ppa))
                             .collect(Collectors.toList())
                     
                     );
@@ -483,14 +483,14 @@ public class PPAJC2ResultsHandler {
             cluster.phasesToWindow.put(phase,
                         okResults.stream()
                             .map( res -> res.getPPA(phase))
-                            .map( ppa -> PPAUtils.relativePhase(ppa,dataWindowStart))
+                            .map( ppa -> PPAUtilsJC2.relativePhase(ppa,dataWindowStart))
                             .collect(Collectors.toList())                    
                     );
             
             cluster.phasesToWindowCirc.put(phase,
                         okResults.stream()
                             .map( res -> res.getPPA(phase))
-                            .map( ppa -> PPAUtils.circadianRelativePhase(ppa,dataWindowStart))
+                            .map( ppa -> PPAUtilsJC2.circadianRelativePhase(ppa,dataWindowStart))
                             .collect(Collectors.toList())                    
                     );
             

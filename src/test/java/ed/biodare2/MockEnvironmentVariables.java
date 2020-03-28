@@ -13,7 +13,7 @@ public class MockEnvironmentVariables {
     
     public String storageDir = ".";
     public String backendURL = "http://localhost";
-    public String jobcentreURL = "http://localhost:8084/JobCenter/PPAJobCenterWS?wsdl";
+    //public String jobcentreURL = "http://localhost:8084/JobCenter/PPAJobCenterWS?wsdl";
     
     public String recaptchaSiteKey = "";
     public String recaptchaSecretKey = "";
@@ -27,7 +27,7 @@ public class MockEnvironmentVariables {
         return new EnvironmentVariables(
                     storageDir, 
                     backendURL,
-                    jobcentreURL, 
+                    //jobcentreURL, 
                     recaptchaSiteKey, 
                     recaptchaSecretKey, 
                     mailHost, 

@@ -11,7 +11,6 @@ import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.backend.features.ppa.PPAUtils;
 import ed.biodare2.backend.features.ppa.PPAUtilsJC2;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityServiceParameters;

@@ -10,7 +10,6 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import ed.biodare2.backend.web.rest.ServerSideException;
 
 import ed.robust.dom.tsprocessing.PPAResult;
-import ed.robust.jobcenter.dom.job.JobResult;
 import java.nio.file.Path;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
@@ -33,11 +32,11 @@ public class XMLUtil {
             .build(key -> makeJaxbContext(key));
          
         
-        try {
-            cache.put(JobResult.class, JAXBContext.newInstance(JobResult.class,PPAResult.class));         
+        /*try {
+            //cache.put(JobResult.class, JAXBContext.newInstance(JobResult.class,PPAResult.class));         
         } catch (JAXBException e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     static JAXBContext makeJaxbContext(Class key) {
@@ -62,9 +61,9 @@ public class XMLUtil {
         }
     }
     
-    public void savePPAToFile(JobResult elm, Path file) {
+    //public void savePPAToFile(JobResult elm, Path file) {
 
-        saveToFile(elm,file);
+    //    saveToFile(elm,file);
         /*
         try {
         JAXBContext ctx = JAXBContext.newInstance(elm.getClass(),PPAResult.class);
@@ -75,7 +74,7 @@ public class XMLUtil {
            //e.printStackTrace();
            throw new RuntimeException(e);
         }*/
-    }    
+    //}    
 
     public <T> T readFromFile(Path file, Class<T> aClass) {
         //return JAXB.unmarshal(file.toFile(), aClass);

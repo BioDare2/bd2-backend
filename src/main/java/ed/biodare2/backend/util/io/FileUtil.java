@@ -5,7 +5,6 @@
  */
 package ed.biodare2.backend.util.io;
 
-import ed.robust.util.ZipMaker;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;

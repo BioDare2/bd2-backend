@@ -7,10 +7,10 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.backend.testutil.PPATestSeeder;
+import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
+import ed.biodare2.backend.testutil.ExpTestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
-import ed.biodare2.backend.repo.dao.PPAArtifactsRep;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -18,6 +18,7 @@ import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.lucene.LuceneWriter;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
+import ed.biodare2.backend.testutil.PPATestSeederJC2;
 import ed.biodare2.backend.util.io.FileUtil;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -44,7 +45,9 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
  
     @Autowired
-    PPATestSeeder testSeeder;
+    ExpTestSeeder testSeeder;
+    
+            
     
     @Autowired
     ExperimentPackHub expBoundles;
@@ -61,8 +64,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     @Autowired
     TSDataHandler tsHandler;
     
-    @Autowired
-    PPAArtifactsRep ppaRep;
+    
     
     static AtomicLong expIds = new AtomicLong(150);
     

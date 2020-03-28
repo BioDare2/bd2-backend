@@ -18,7 +18,7 @@ public class EnvironmentVariables {
     
     final public Path storageDir;
     final public URL backendURL;
-    final public URL jobcentreURL;
+    //final public URL jobcentreURL;
     
     final public String recaptchaSiteKey;
     final public String recaptchaSecretKey;
@@ -30,7 +30,7 @@ public class EnvironmentVariables {
     
     public EnvironmentVariables(String storageDirPath,
                                 String backendURL,
-                                String jobcentreURL,
+                                //String jobcentreURL,
                                 String recaptchaSiteKey,
                                 String recaptchaSecretKey,
                                 String mailHost,
@@ -44,11 +44,11 @@ public class EnvironmentVariables {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Problem with backendURL: "+e.getMessage(),e);
         }
-        try {
+        /*try {
             this.jobcentreURL = new URL(jobcentreURL);
         } catch (MalformedURLException e) {
             throw new RuntimeException("Problem with jobcentreURL: "+e.getMessage(),e);
-        } 
+        }*/ 
         this.recaptchaSiteKey = recaptchaSiteKey;
         this.recaptchaSecretKey = recaptchaSecretKey;
         

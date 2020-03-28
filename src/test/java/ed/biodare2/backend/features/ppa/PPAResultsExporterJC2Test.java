@@ -16,7 +16,7 @@ import ed.robust.dom.tsprocessing.PhaseType;
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.error.RobustFormatException;
 import ed.robust.ppa.PPAMethod;
-import ed.robust.util.TableBuilder;
+import ed.biodare2.backend.util.TableBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
