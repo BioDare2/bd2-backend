@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
@@ -43,7 +44,9 @@ public class RhythmicityUtils {
         Map<String, String> params = new HashMap<>();
         params.put("METHOD", request.method);
         params.put(PRESET_KEY, request.preset);
-        params.put(NULL_SIZE_KEY, ""+DEFAULT_NULL_SIZE);
+        if (!request.method.equals(RhythmicityConstants.RHYTHMICITY_METHODS.BD2JTK.name())) {
+            params.put(NULL_SIZE_KEY, ""+DEFAULT_NULL_SIZE);
+        } 
         params.put(PERIOD_MIN_KEY, ""+request.periodMin);
         params.put(PERIOD_MAX_KEY, ""+request.periodMax);
         return params;

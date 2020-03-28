@@ -60,6 +60,27 @@ public class RhythmicityUtilsTest {
         assertEquals(5, result.data.size());
         assertEquals(2.0, result.data.get(0).trace.getFirst().getTime(),1E-6);
     }
+    
+    @Test
+    public void testPrepareJobRequestDoesNotHaveNullForClassicJTK() {
+        long expId = 123L;
+        RhythmicityRequest request = makeRhythmicityRequest();
+        request.method ="BD2JTK";
+        request.windowStart = 2;
+        List<DataTrace> dataSet = makeDataTraces(1,5,48);
+        TSDataSetJobRequest result = instance.prepareJobRequest(expId, request, dataSet);
+        
+        assertNotNull(result);
+        assertEquals("123", result.externalId);
+        assertEquals("BD2JTK",result.method);
+        assertEquals("BD2_CLASSIC", result.parameters.get(RhythmicityConstants.PRESET_KEY));
+        assertEquals(null, result.parameters.get(RhythmicityConstants.NULL_SIZE_KEY));
+        assertEquals(""+request.periodMin, result.parameters.get(RhythmicityConstants.PERIOD_MIN_KEY));
+        assertEquals(""+request.periodMax, result.parameters.get(RhythmicityConstants.PERIOD_MAX_KEY));
+        
+        assertEquals(5, result.data.size());
+        assertEquals(2.0, result.data.get(0).trace.getFirst().getTime(),1E-6);
+    }    
 
 
     

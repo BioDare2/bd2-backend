@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare.rhythm.ejtk.patterns.JTKPattern;
@@ -122,6 +123,7 @@ public class RhythmicityResultsExporter {
         tb.printlnParam("Experiment ID", exp.getId());
         tb.printlnParam("Experiment name", exp.getName());
         tb.printlnParam("Job", job.jobId.toString());
+        tb.printlnParam("Method", RhythmicityConstants.methodFriendlyName(job.parameters.get("METHOD")));        
         tb.printParam("Submitted", job.jobStatus.submitted);
         tb.printlnParam("Finished", job.jobStatus.completed);
         job.parameters.forEach( (key, val) -> {
@@ -134,7 +136,7 @@ public class RhythmicityResultsExporter {
 
     protected String patternToShape(JTKPattern pattern) {
         switch (pattern.waveform) {
-          case ASYM_COSINE: return "ACOS";
+          case ASYM_COSINE: return (pattern.leftPortion == 0.5) ? "COS" : "ACOS";
           case ASYM_COS_SPIKE: return "SPIKE";
           case ASYM_COS_SPIKE_NEG: return "NSPIKE";
           default: return pattern.waveform.name();

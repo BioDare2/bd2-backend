@@ -380,16 +380,31 @@ public class RhythmicityHandler {
 
     void checkRequestSanity(TSDataSetJobRequest request) throws RhythmicityHandlingException {
         
-        if (!RHYTHMICITY_METHODS.BD2EJTK.name().equals(request.method) && !RHYTHMICITY_METHODS.BD2JTK.name().equals(request.method)) {
+        RHYTHMICITY_METHODS method;
+        
+        try {
+            method = RHYTHMICITY_METHODS.valueOf(request.method);
+        } catch (IllegalArgumentException e) {
+            throw new RhythmicityHandlingException("Unknown method: "+request.method);
+        }
+        
+        if (!RHYTHMICITY_METHODS.BD2EJTK.equals(method) && !RHYTHMICITY_METHODS.BD2JTK.equals(method)) {
             throw new RhythmicityHandlingException("Unsupported method: "+request.method);
         }
         
-        String preset = request.parameters.getOrDefault(RhythmicityConstants.PRESET_KEY, "MISSING");
+        String presetN = request.parameters.getOrDefault(RhythmicityConstants.PRESET_KEY, "MISSING");
+        BD2EJTK_PRESETS preset;
+        
         try {
-            
-            RhythmicityConstants.BD2EJTK_PRESETS.valueOf(preset);
+            preset = BD2EJTK_PRESETS.valueOf(presetN);
         } catch (IllegalArgumentException e) {
-            throw new RhythmicityHandlingException("Unsupported preset: "+preset);
+            throw new RhythmicityHandlingException("Unknown preset: "+presetN);
+        }
+        
+        if (RHYTHMICITY_METHODS.BD2JTK.equals(method)) {
+            if (!List.of(BD2EJTK_PRESETS.COS_1H, BD2EJTK_PRESETS.COS_2H, BD2EJTK_PRESETS.COS_4H).contains(preset)) {
+                throw new RhythmicityHandlingException("Classic JTK should be used only with COS presets not "+preset);                
+            }
         }
         
         if (request.data.isEmpty()) {

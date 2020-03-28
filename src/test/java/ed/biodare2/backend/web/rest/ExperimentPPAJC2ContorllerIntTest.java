@@ -78,7 +78,7 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
-    //@Ignore("service not available during tests")
+    @Ignore("JobCentre not available during tests")
     public void newPPAInvokesPPAProcessing() throws Exception {
     
         //ExperimentalAssay desc = DomRepoTestBuilder.makeExperiment(15);

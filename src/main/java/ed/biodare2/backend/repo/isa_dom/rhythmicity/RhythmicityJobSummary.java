@@ -22,15 +22,15 @@ public class RhythmicityJobSummary implements Serializable {
 
     private static final long serialVersionUID = 10L;
     
-    public static final String METHOD_ID = "METHOD_ID";
-    public static final String METHOD_NAME = "METHOD_NAME";
+    //public static final String METHOD_ID = "METHOD_ID";
+    //public static final String METHOD_NAME = "METHOD_NAME";
     public static final String PARAMS_SUMMARY = "PARAMS_SUMMARY";
     public static final String DW_END = "DW_END";
     public static final String DW_START = "DW_START";
     public static final String DATA_SET_TYPE = "DATA_SET_TYPE";
     public static final String DATA_SET_TYPE_NAME = "DATA_SET_TYPE_NAME";
     public static final String DATA_SET_ID = "DATA_SET_ID";
-    public static final String SELECTIONS = "PERIOD_SELECTIONS";
+    //public static final String SELECTIONS = "PERIOD_SELECTIONS";
     
     
     public UUID jobId;

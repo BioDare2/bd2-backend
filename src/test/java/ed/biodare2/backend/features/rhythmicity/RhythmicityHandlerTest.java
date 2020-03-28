@@ -299,23 +299,13 @@ public class RhythmicityHandlerTest {
         jobRequest.externalId = "123";
         // jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
         jobRequest.parameters.put("PRESET", "COS_1H");
-        
-        try {
-            instance.checkRequestSanity(jobRequest);
-            fail("Exception expected");
-        } catch (RhythmicityHandlingException e) {
-            String msg = "Unsupported method: "+null;
-            assertEquals(msg, e.getMessage());
-        }
-        
-
-        
         jobRequest.method = "XXX";
+        
         try {
             instance.checkRequestSanity(jobRequest);
             fail("Exception expected");
         } catch (RhythmicityHandlingException e) {
-            String msg = "Unsupported method: XXX";
+            String msg = "Unknown method: XXX";
             assertEquals(msg, e.getMessage());
         }
         
@@ -331,9 +321,19 @@ public class RhythmicityHandlerTest {
             instance.checkRequestSanity(jobRequest);
             fail("Exception expected");
         } catch (RhythmicityHandlingException e) {
-            String msg = "Unsupported preset: XXX";
+            String msg = "Unknown preset: XXX";
             assertEquals(msg, e.getMessage());
         }
+        
+        jobRequest.method = "BD2JTK";
+        jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
+        try {
+            instance.checkRequestSanity(jobRequest);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+            String msg = "Classic JTK should be used only with COS presets not EJTK_CLASSIC";
+            assertEquals(msg, e.getMessage());
+        }        
     }
  
     
