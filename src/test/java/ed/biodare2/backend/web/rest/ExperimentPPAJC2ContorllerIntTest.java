@@ -24,6 +24,7 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPAFitPack;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPAResultsGroup;
 import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
+import ed.biodare2.backend.testutil.PPATestSeederJC2;
 import ed.robust.dom.tsprocessing.PhaseType;
 
 
@@ -66,6 +67,9 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
     
     @Autowired
     PPAArtifactsRepJC2 ppaRepJC2;
+    
+    @Autowired    
+    PPATestSeederJC2 ppaTestSeeder;
     
     
     PPARequest preparePPARequest() {

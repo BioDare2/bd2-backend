@@ -8,7 +8,7 @@ package ed.biodare2.backend.web.rest;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
-import ed.biodare2.backend.testutil.PPATestSeeder;
+import ed.biodare2.backend.testutil.ExpTestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
@@ -45,10 +45,8 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
  
     @Autowired
-    PPATestSeeder testSeeder;
+    ExpTestSeeder testSeeder;
     
-    @Autowired    
-    PPATestSeederJC2 ppaTestSeeder;
             
     
     @Autowired
