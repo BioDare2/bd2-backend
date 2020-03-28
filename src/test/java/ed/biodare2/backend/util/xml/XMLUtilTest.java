@@ -5,10 +5,6 @@
  */
 package ed.biodare2.backend.util.xml;
 
-import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
-import ed.biodare2.backend.testutil.PPATestSeeder;
-import ed.biodare2.backend.testutil.PPATestSeederJC2;
-import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.dom.tsprocessing.MESA_PPA;
 import ed.robust.dom.tsprocessing.PPA;
 import ed.robust.dom.tsprocessing.PPAResult;

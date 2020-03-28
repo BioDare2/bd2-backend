@@ -15,7 +15,7 @@ import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicit
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
-import ed.robust.util.TableBuilder;
+import ed.biodare2.backend.util.TableBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -20,7 +20,7 @@ import ed.robust.dom.tsprocessing.PhaseType;
 import ed.robust.dom.tsprocessing.Statistics;
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.dom.tsprocessing.WeightingType;
-import ed.robust.util.TableBuilder;
+import ed.biodare2.backend.util.TableBuilder;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;

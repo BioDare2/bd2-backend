@@ -14,7 +14,6 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
-import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.util.timeseries.TSGenerator;
 import ed.robust.util.timeseries.TimeSeriesFileHandler;
 import java.nio.file.Files;
@@ -59,11 +58,6 @@ public class PPATestSeederTest {
     TSDataHandler tsHandler;
    
     
-    @Test
-    public void getJobsReadsTheJobs() {
-        List<JobSummary> jobs = seeder.getJobs();
-        assertEquals(2,jobs.size());
-    }
     
     
     @Test

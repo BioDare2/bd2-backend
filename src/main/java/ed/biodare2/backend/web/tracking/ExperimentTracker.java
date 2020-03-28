@@ -14,7 +14,6 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import static ed.biodare2.backend.web.tracking.TargetType.*;
 import static ed.biodare2.backend.web.tracking.ActionType.*;
 import ed.robust.dom.data.DetrendingType;
-import ed.robust.dom.jobcenter.JobSummary;
 import ed.robust.ppa.PPAMethod;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -112,10 +111,6 @@ public class ExperimentTracker extends AbstractTracker {
         track(EXP_PPA,VIEW,exp.getId(),user,"INDIVIDUALS");
     }
 
-    public void ppaJob(AssayPack exp, JobSummary res, BioDare2User user) {
-        track(EXP_PPA,VIEW,exp.getId(),user,"JOB",res.getJobId());
-    }
-    
     public void ppaJob(AssayPack exp, PPAJobSummary res, BioDare2User user) {
         track(EXP_PPA,VIEW,exp.getId(),user,"JOB",res.jobId.toString());
     }

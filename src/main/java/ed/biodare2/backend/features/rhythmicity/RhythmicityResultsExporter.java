@@ -13,7 +13,7 @@ import static ed.biodare2.backend.features.ppa.PPAUtilsJC2.roundToCenty;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
-import ed.robust.util.TableBuilder;
+import ed.biodare2.backend.util.TableBuilder;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;

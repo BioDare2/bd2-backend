@@ -21,8 +21,6 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.security.dao.db.EntityACL;
-import ed.robust.dom.jobcenter.JobSummary;
-import ed.robust.dom.jobcenter.JobsContainer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
@@ -89,15 +87,6 @@ public class PPATestSeeder {
     }
     
 
-    public List<JobSummary> getJobs() {
-
-        String fName = "PPA_JOBS.xml";
-        Path file = getResourceFile(fName);
-
-        JobsContainer res = (JobsContainer) JAXB.unmarshal(file.toFile(), JobsContainer.class);
-        return res.getSorted();
-        
-    }
     
     
     //@Transactional
@@ -148,9 +137,6 @@ public class PPATestSeeder {
         }
     }
     
-    protected Path getJobRelatedFile(JobSummary job,String fName) {
-        return getResourceFile(job.getJobId()+"."+fName);
-    }
     
     protected Path getResourceFile(String name) {
         URL url = this.getClass().getResource(name);

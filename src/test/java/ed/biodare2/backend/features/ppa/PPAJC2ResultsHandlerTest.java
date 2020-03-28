@@ -30,7 +30,6 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.robust.dom.data.DetrendingType;
-import ed.robust.dom.jobcenter.JobsContainer;
 
 
 import ed.robust.dom.tsprocessing.FFT_PPA;
@@ -128,23 +127,6 @@ public class PPAJC2ResultsHandlerTest {
         }
     }
     
-    private static JobsContainer giveTestsJobs() {
-        return readTestJobs("PPA_JOBS.xml");
-    }
-    
-    
-    protected static JobsContainer readTestJobs(String fName) {
-     
-        try {
-        File file = new File(PPAJC2ResultsHandlerTest.class.getResource(fName).toURI());
-        JAXBContext context = JAXBContext.newInstance(JobsContainer.class);
-        
-        JobsContainer res = (JobsContainer)context.createUnmarshaller().unmarshal(file);        
-        return res;
-        } catch (URISyntaxException| JAXBException e) {
-            throw new RuntimeException("xml reading error: "+e.getMessage(),e);
-        }
-    }    
     
     private static StatsEntryContainer giveTestsStats() {
         return readTestStats("PPA_STATS.xml");
