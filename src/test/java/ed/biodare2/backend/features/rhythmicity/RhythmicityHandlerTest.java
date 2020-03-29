@@ -7,6 +7,9 @@ package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.JobStatus;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants.BD2EJTK_PRESETS;
+import ed.biodare.jobcentre2.dom.RhythmicityConstants.RHYTHMICITY_METHODS;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
@@ -338,48 +341,60 @@ public class RhythmicityHandlerTest {
  
     
     @Test
-    public void checkRequestSanityChecksData() throws Exception {
+    public void checkDataSizeChecks() throws Exception {
         
-        TSDataSetJobRequest jobRequest  = new TSDataSetJobRequest();
-        TSData data = new TSData(2,  makeTimeSeries(24));
-        jobRequest.data = List.of(data);
-        jobRequest.externalId = "123";
-        jobRequest.parameters.put("PRESET", "EJTK_CLASSIC");
-        jobRequest.method = "BD2EJTK";
+        TSData trace = new TSData(2,  makeTimeSeries(24));
+        List<TSData> data = List.of(trace);
+        RHYTHMICITY_METHODS method = RHYTHMICITY_METHODS.BD2EJTK;
+        BD2EJTK_PRESETS preset = BD2EJTK_PRESETS.BD2_CLASSIC;
         
-        instance.checkRequestSanity(jobRequest);
+        instance.checkDataSize(data, method, preset);
         
-        jobRequest.data = List.of();
+        data = List.of();
         try {
-            instance.checkRequestSanity(jobRequest);
+            instance.checkDataSize(data, method, preset);
             fail("Exception expected");
         } catch (RhythmicityHandlingException e) {
             String msg = "Empty data set";
             assertEquals(msg, e.getMessage());
         }
         
-        jobRequest.data = new ArrayList<>(MAX_DATA_SET_SIZE);
-        for (int i = 1; i<= MAX_DATA_SET_SIZE+1; i++) jobRequest.data.add(data);
+        data = new ArrayList<>(MAX_DATA_SET_SIZE);
+        for (int i = 1; i<= MAX_DATA_SET_SIZE+1; i++) data.add(trace);
         
         try {
-            instance.checkRequestSanity(jobRequest);
+            instance.checkDataSize(data, method, preset);
             fail("Exception expected");
         } catch (RhythmicityHandlingException e) {
             String msg = "BioDare can only test up to 50000 timeseries, got: 50001";
             assertEquals(msg, e.getMessage());
         }
         
-        jobRequest.data = List.of(data);
-        instance.checkRequestSanity(jobRequest);
+        data = List.of(trace);
+        instance.checkDataSize(data, method, preset);
         
-        data.trace = makeTimeSeries(6*24);
+        data = new ArrayList<>(data);
+        data.add(new TSData(3,  makeTimeSeries(11*24)));
         try {
-            instance.checkRequestSanity(jobRequest);
+            instance.checkDataSize(data, method, preset);
             fail("Exception expected");
         } catch (RhythmicityHandlingException e) {
-            String msg = "BioDare can only test data with up to 120 time points, got: 144";
-            assertEquals(msg, e.getMessage());
         }
+        
+        preset = BD2EJTK_PRESETS.EJTK_CLASSIC;
+        instance.checkDataSize(data, method, preset);
+        
+        data.add(new TSData(4,  makeTimeSeries(101*24)));
+        try {
+            instance.checkDataSize(data, method, preset);
+            fail("Exception expected");
+        } catch (RhythmicityHandlingException e) {
+        }
+        
+        method = RHYTHMICITY_METHODS.BD2JTK;
+        preset = BD2EJTK_PRESETS.COS_1H;
+        instance.checkDataSize(data, method, preset);
+        
     }
     
 }

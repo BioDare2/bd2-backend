@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import static ed.biodare.jobcentre2.dom.RhythmicityConstants.*;
 import ed.biodare.jobcentre2.dom.State;
+import ed.biodare.jobcentre2.dom.TSData;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
@@ -67,6 +68,10 @@ public class RhythmicityHandler {
     
     int JOB_WAITING_LIMIT;
     int JOB_WAITING_TIME;    
+    
+    final static long JTK_TOTAL_LIMIT = 100*24*10*10_000; //100 days of every tenth hour data 10k total series
+    final static long EJTK_GENERAL_LIMIT = 100*24; //100 days every hour
+    final static long EJTK_BD2_CLASSIC_LIMIT = 10*24; //10 days every hour
 
     @Autowired
     public RhythmicityHandler(ExperimentHandler experimentHandler, 
@@ -407,37 +412,60 @@ public class RhythmicityHandler {
             }
         }
         
-        if (request.data.isEmpty()) {
+        checkDataSize(request.data, method, preset);
+        
+        
+    }
+
+    void checkDataSize(List<TSData> data, RHYTHMICITY_METHODS method, BD2EJTK_PRESETS preset) throws RhythmicityHandlingException {
+        if (data.isEmpty()) {
             throw new RhythmicityHandlingException("Empty data set");
         }
         
-        if (request.data.size() > MAX_DATA_SET_SIZE) {
+        if (data.size() > MAX_DATA_SET_SIZE) {
             throw new RhythmicityHandlingException("BioDare can only test up to "+
-                    MAX_DATA_SET_SIZE+" timeseries, got: "+request.data.size());
+                    MAX_DATA_SET_SIZE+" timeseries, got: "+data.size());
         }
         
-        long empties = request.data.stream()
+        long empties = data.stream()
                 .filter( d -> d.trace.isEmpty())
                 .count();
         
-        if (empties == request.data.size()) {
+        if (empties == data.size()) {
             throw new RhythmicityHandlingException("All timeseries are empty after trimming");
         }
+
+        long totalPoints = data.stream()
+            .mapToInt( d -> d.trace.size()).sum();        
         
-        long maxPoints = request.data.stream()
+        long maxPoints = data.stream()
                 .mapToInt( d -> d.trace.size())
                 .max().orElse(0);
         
-        // for BD2 preset it takes too long for 5 days of data, reduce the limit to 4 days
-        // which takes 12 minutes for 100_000 NULL hipotesis.
-        int limit = RhythmicityConstants.BD2EJTK_PRESETS.BD2_CLASSIC.name().equals(preset) ?
-                MAX_TIMEPOINTS - 24 : MAX_TIMEPOINTS;
+        if (method.equals(RHYTHMICITY_METHODS.BD2JTK)) {
+
+            
+            if (totalPoints > JTK_TOTAL_LIMIT) {
+                throw new RhythmicityHandlingException("BioDare can only JTK test dataset with up to "+
+                    JTK_TOTAL_LIMIT+" total time points, got: "+totalPoints);            
+            }
+            
+            if (maxPoints > JTK_TOTAL_LIMIT/50) {
+                throw new RhythmicityHandlingException("BioDare can only JTK test series with up to "+
+                    JTK_TOTAL_LIMIT/50+" timepoints, got: "+maxPoints);                            
+            }
+        } else {
         
-        if (maxPoints > limit) {
-            throw new RhythmicityHandlingException("BioDare can only test data with up to "+
-                    limit+" time points, got: "+maxPoints);            
+            long limit = EJTK_GENERAL_LIMIT;
+            if (preset.equals(BD2EJTK_PRESETS.BD2_CLASSIC)) {
+                limit = EJTK_BD2_CLASSIC_LIMIT;
+            }
+                    
+            if (maxPoints > limit) {
+                throw new RhythmicityHandlingException("BioDare can only eJTK test data with up to "+
+                        limit+" time points, got: "+maxPoints);            
+            }
         }
-        
     }
 
 
