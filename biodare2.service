@@ -1,0 +1,12 @@
+[Unit]
+Description=biodare2
+Requires=jc2-ppa.service jc2-rhythm.service
+After=syslog.target jc2-ppa.service jc2-rhythm.service
+
+[Service]
+User=biodare
+ExecStart=/localdisk/services/biodare2/biodare2.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
