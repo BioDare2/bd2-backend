@@ -73,7 +73,7 @@ public class StatusController extends BioDare2Rest {
     
     @RequestMapping(value = "shutdown/set/{inMinutes}",  method = RequestMethod.GET)
     public Map<String,String> setShutdown(@PathVariable int inMinutes, @NotNull @AuthenticationPrincipal UserDetails currentUser) {
-        log.debug("Server shutdown set in {} by {}",inMinutes, currentUser.getUsername());
+        log.debug("Server shutdown is being set in {} by {}",inMinutes, currentUser.getUsername());
         
         if (!currentUser.getUsername().equals("test")) {
             throw new InsufficientRightsException("Unauthrised to set shutdown");
