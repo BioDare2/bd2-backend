@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import static ed.biodare2.backend.web.rest.AbstractIntTestBase.APPLICATION_JSON_UTF8;
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import static org.mockito.Mockito.*;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 /**
  *
  * @author tzielins
@@ -47,6 +49,9 @@ public class StatusControllerTest {
     
     @MockBean
     DBSystemInfoRep systemInfos;
+    
+    @Autowired
+    StatusController controller;
     
     public StatusControllerTest() {
     }
@@ -69,7 +74,7 @@ public class StatusControllerTest {
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.print())
+                //.andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
         assertNotNull(resp);        
@@ -97,7 +102,7 @@ public class StatusControllerTest {
 
         
         MvcResult resp = mockMvc.perform(builder)
-                .andDo(MockMvcResultHandlers.print())
+                //.andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().is5xxServerError())
                 .andReturn();
 
@@ -106,5 +111,130 @@ public class StatusControllerTest {
         
         
     }
+    
+    @Test
+    public void makesCorrectShutdownMessage() {
+        
+        LocalDateTime shutDownTime = LocalDateTime.now();
+        String message = controller.shutdownMessage(shutDownTime);
+        assertEquals("BioDare shuts down now", message);
+        
+        shutDownTime = LocalDateTime.now().plusMinutes(3);
+        message = controller.shutdownMessage(shutDownTime);
+        assertEquals("BioDare shuts down in 3 minutes", message);
+    }
+    
+    @Test
+    public void setsShutdown() throws Exception {
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/status/shutdown/set/3")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)                
+                .with(SecurityMockMvcRequestPostProcessors.user("test"));
+
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                //.andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp); 
+        
+        assertTrue(controller.isShutingDown);
+        
+        Map<String, String> status = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() { });
+        
+        assertFalse(status.isEmpty());
+        
+        assertTrue(status.containsKey("shutdown"));
+        assertEquals("BioDare shuts down in 3 minutes", status.get("shutdown"));
+        
+        
+    }   
+    
+    @Test
+    public void resetsShutdown() throws Exception {
+        
+        controller.isShutingDown = true;
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/status/shutdown/reset")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)                
+                .with(SecurityMockMvcRequestPostProcessors.user("test"));
+
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                //.andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp); 
+        
+        assertFalse(controller.isShutingDown);
+        
+        Map<String, String> status = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() { });
+        
+        assertTrue(status.isEmpty());
+        
+    }  
+    
+    @Test
+    public void shutdownGivesMessage() throws Exception {
+        
+        controller.isShutingDown = true;
+        controller.shutDownTime = LocalDateTime.now().plusMinutes(5);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/status/shutdown")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8);                
+                //.with(SecurityMockMvcRequestPostProcessors.user("test"));
+
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp); 
+        
+        assertTrue(controller.isShutingDown);
+        
+        Map<String, String> status = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() { });
+        
+        assertTrue(status.containsKey("shutdown"));
+        // assertEquals("BioDare shuts down in 5 minutes", status.get("shutdown"));
+        
+    }      
+    
+    @Test
+    public void shutdownGivesEmptyIfNotSet() throws Exception {
+        
+        controller.isShutingDown = false;
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/status/shutdown")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)                
+                .with(SecurityMockMvcRequestPostProcessors.user("test"));
+
+        
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andDo(MockMvcResultHandlers.print())
+                .andReturn();
+
+        assertNotNull(resp); 
+        
+        assertFalse(controller.isShutingDown);
+        
+        Map<String, String> status = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, String>>() { });
+        
+        assertTrue(status.isEmpty());
+        
+    }      
+    
     
 }
