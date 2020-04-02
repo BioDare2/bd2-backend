@@ -45,6 +45,7 @@ import org.junit.Ignore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -452,6 +453,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/"+org.getId())
                 .accept(APPLICATION_JSON_UTF8)
+                //.with(authenticate(fixtures.user2));
                 .with(mockAuthentication);
 
         MvcResult resp = mockMvc.perform(builder)

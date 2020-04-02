@@ -149,6 +149,9 @@ public class ExperimentController extends BioDare2Rest {
         tracker.experimentDraft(user);
         
         return exp;
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot make draft {}",e.getMessage(),e);
             throw e;
@@ -186,6 +189,9 @@ public class ExperimentController extends BioDare2Rest {
         tracker.experimentView(exp,user);
         
         return handler.assayToView(exp, user);
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot retrieve experiment {} {}",expId,e.getMessage(),e);
             throw e;
@@ -207,6 +213,9 @@ public class ExperimentController extends BioDare2Rest {
         tracker.experimentNew(view.id,user);
         return view;
         
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot insert experiment {} {}",expDesc.id,e.getMessage(),e);
             throw e;
@@ -257,6 +266,9 @@ public class ExperimentController extends BioDare2Rest {
         ExperimentalAssayView view = handler.update(exp,expDesc,user);
         tracker.experimentUpdate(exp,user);
         return view;
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot update experiment {} {}",expId,e.getMessage(),e);
             throw e;
@@ -281,6 +293,9 @@ public class ExperimentController extends BioDare2Rest {
         ExperimentalAssayView view = handler.publish(exp,licence,user);
         tracker.experimentPublish(exp,user);
         return view;
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot publish experiment {} {}",expId,e.getMessage(),e);
             throw e;

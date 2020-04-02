@@ -69,6 +69,9 @@ public class ExperimentDataController extends ExperimentController {
             resp.put("imported", seriesNr);
             return resp;
             
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot import timeseries {} {}",expId,e.getMessage(),e);
             throw e;
@@ -133,6 +136,9 @@ public class ExperimentDataController extends ExperimentController {
             TimeSeriesMetrics metrics = dataHandler.getTSDataMetrics(exp).orElseThrow(()-> new NotFoundException("Data metrics not found"));
             return metrics;
             
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot get data metrics {} {}",expId,e.getMessage(),e);
             throw e;
@@ -161,6 +167,9 @@ public class ExperimentDataController extends ExperimentController {
             tracker.dataView(exp,detrending,user);
             return resp;
             
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
             throw e;
@@ -191,6 +200,9 @@ public class ExperimentDataController extends ExperimentController {
             sendFile(data,fileName,contentType,false,response);
             
             tracker.dataDownload(exp,detrending,user);
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot export timeseries {} {} {}",expId,detrending,e.getMessage(),e);
             throw e;

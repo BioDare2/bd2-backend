@@ -60,6 +60,9 @@ public class ExperimentFilesController extends ExperimentController {
             tracker.fileNew(exp,file,user);
         });
         return resp;
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot attach files {} {}",expId,e.getMessage(),e);
             throw e;
@@ -81,6 +84,9 @@ public class ExperimentFilesController extends ExperimentController {
         ListWrapper<FileAsset> resp = new ListWrapper<>(filesHandler.getFiles(exp));
         tracker.fileList(exp,user);
         return resp;
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot get files {} {}",expId,e.getMessage(),e);
             throw e;
@@ -106,6 +112,9 @@ public class ExperimentFilesController extends ExperimentController {
         
         sendAsset(asset, exp, response);
         tracker.fileDownload(exp,fileId,asset,user);
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot get file {} {} {}",expId,fileId,e.getMessage(),e);
             throw e;
@@ -130,6 +139,9 @@ public class ExperimentFilesController extends ExperimentController {
         
         sendAsset(asset, exp, response);
         tracker.fileDownload(exp,fileId,asset,user);
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot get file version {} {} {}",expId,fileId,e.getMessage(),e);
             throw e;

@@ -80,6 +80,9 @@ public class ExperimentRhythmicityController extends ExperimentController {
         } catch (ArgumentException e) {
             log.error("Cannot start rhythmicity test {} {}",expId,e.getMessage(),e);
             throw new HandlingException(e.getMessage());
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot start rhythmicity test {} {}",expId,e.getMessage(),e);
             throw e;
@@ -104,6 +107,9 @@ public class ExperimentRhythmicityController extends ExperimentController {
             tracker.ppaList(exp,user);
             return resp;
             
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot retrieve RhythmicityJobs jobs {} {}",expId,e.getMessage(),e);
             throw e;
@@ -128,7 +134,10 @@ public class ExperimentRhythmicityController extends ExperimentController {
             // tracker.rhythmicityJob(exp,res,user);
             return res;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve Rhythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -151,7 +160,10 @@ public class ExperimentRhythmicityController extends ExperimentController {
             tracker.rhythmicityResults(exp,jobId,user);
             return resp;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve rhythmicity results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -176,7 +188,10 @@ public class ExperimentRhythmicityController extends ExperimentController {
             RhythmicityJobSummary job = rhythmicityHandler.deleteRhythmicityJob(exp, jobId);
             tracker.rhythmicityDeleteJob(exp,job,user);
             return job;
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot delete rhythmicity job {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -204,7 +219,10 @@ public class ExperimentRhythmicityController extends ExperimentController {
             String fileName = expId+"_job"+jobId+".ejtk_data.csv";
             sendFile(results,fileName,contentType,false,response);
             tracker.rhythmicityJobDownload(exp,jobId,user);
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot export Rhythmicity job results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {

@@ -81,6 +81,9 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
         } catch (ArgumentException| JC2HandlingException e) {
             log.error("Cannot start ppa {} {}",expId,e.getMessage(),e);
             throw new HandlingException(e.getMessage());
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot start ppa {} {}",expId,e.getMessage(),e);
             throw e;
@@ -107,6 +110,9 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             tracker.ppaList(exp,user);
             return resp;
             
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
         } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA jobs {} {}",expId,e.getMessage(),e);
             throw e;
@@ -131,7 +137,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             tracker.ppaJob(exp,jobId.toString(),user);
             return res;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA job {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -155,7 +164,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             tracker.ppaJobGroupedResults(exp,jobId.toString(),user);
             return resp;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA results groupped {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -177,7 +189,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             PPAJobSimpleStats stats = ppaHandler.getPPAJobSimpleStats(exp,jobId);
             tracker.ppaJobStats(exp,jobId.toString(),user);
             return stats;
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA simple stats {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -199,7 +214,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             tracker.ppaJobSimpleResults(exp,jobId.toString(),user);
             return resp;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA simple results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -221,7 +239,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             tracker.ppaForSelect(exp,jobId.toString(),user);
             return resp;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA results for select {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -247,7 +268,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             resp.put("needsAttention", needsAttention);
             return resp;
             
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot do PPA results select {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -269,7 +293,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             PPAJobSummary job = ppaHandler.deletePPAJob(exp, jobId);
             tracker.ppaDeleteJob(exp,job.jobId.toString(),user);
             return job;
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot delete PPA job {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -293,7 +320,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             PPAFitPack resp = ppaHandler.getDataFit(exp,jobId,dataId,selectable);        
             tracker.ppaFit(exp,jobId.toString(),dataId,user);
             return resp;
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot retrieve PPA fit {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -319,7 +349,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             String fileName = expId+"_job"+jobId+".ppa_data.csv";
             sendFile(results,fileName,contentType,false,response);
             tracker.ppaJobDownload(exp,jobId.toString(),user);
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot export PPA job results {} {} {}",jobId,expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
@@ -353,7 +386,10 @@ public class ExperimentPPAJC2Controller extends ExperimentController {
             String fileName = expId+".ppa_data.zip";
             sendFile(results,fileName,contentType,false,response);
             tracker.ppaDownload(exp,user);
-        } catch (WebMappedException e) {
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
             log.error("Cannot export joined PPA results {} {}",expId,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
