@@ -21,6 +21,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class ExcelDataTableReader implements DataTableReader {
+
+
     
     
     final Path file;
@@ -33,6 +35,18 @@ public class ExcelDataTableReader implements DataTableReader {
     public static boolean isSuitableFormat(Path file) throws IOException {
         
         return ModernExcelView.isExcelFile(file);
+    } 
+    
+    public static Optional<String> checkFormatError(Path file) throws IOException {
+        
+        if (!ModernExcelView.isExcelFile(file)) return Optional.of("wrong content");
+        ExcelDataTableReader reader = new ExcelDataTableReader(file);
+        List<List<Object>> records = reader.readRecords(0, 5);
+        long notEmpty = records.stream().flatMap( r -> r.stream())
+                        .filter (r -> r != null)
+                        .count();
+        if (notEmpty == 0) return Optional.of("empty 1st sheet");
+        return Optional.empty();
     }    
   
 

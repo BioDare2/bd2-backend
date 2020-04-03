@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -143,15 +144,16 @@ public class FileViewController extends BioDare2Rest {
         }
         
         try {
-            boolean resp = formatVerifier.verify(file, format);
             tracker.fileFormatCheck(fileId,format,user);
-            if (!resp)
-                throw new HandlingException("Is not a valid "+format+" file");
-            return resp;
+            formatVerifier.verify(file, format);
+            return true;
+        } catch (FormatException e) {
+            log.warn("FormatException {}", e.getMessage());
+            throw e;
         } catch (WebMappedException e) {
             log.error("Cannot verify format: {} {} {}",fileId,format,e.getMessage(),e);
             throw e;
-       } catch (Exception e) {
+        } catch (Exception e) {
             log.error("Cannot verify format: {} {} {}",fileId,format,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
@@ -170,11 +172,16 @@ public class FileViewController extends BioDare2Rest {
     
     protected ImportFormat getFormat(Path file) throws IOException {
         
-        if (formatVerifier.verify(file, ImportFormat.EXCEL_TABLE))
-            return ImportFormat.EXCEL_TABLE;
+        try {
+            if (formatVerifier.verify(file, ImportFormat.EXCEL_TABLE))
+                return ImportFormat.EXCEL_TABLE;
+        } catch (FormatException e) {}
         
-        if (formatVerifier.verify(file, ImportFormat.TOPCOUNT))
-            return ImportFormat.TOPCOUNT;
+        try {
+            if (formatVerifier.verify(file, ImportFormat.TOPCOUNT))
+                return ImportFormat.TOPCOUNT;
+        } catch (FormatException e) {}
+        
         throw new HandlingException("Cannot guess file format");
         
     }    

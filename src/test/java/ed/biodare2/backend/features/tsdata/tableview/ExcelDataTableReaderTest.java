@@ -74,6 +74,26 @@ public class ExcelDataTableReaderTest {
     }
     
     @Test
+    public void checFormatErrosReturnsError() throws Exception {
+        Path file = testFolder.newFile().toPath();
+        
+        assertTrue(ExcelDataTableReader.checkFormatError(file).isPresent());
+        
+        List<String> lines = List.of("alkafaf","ma","kota","kot ma ale");        
+        Files.write(file, lines);        
+        assertTrue(ExcelDataTableReader.checkFormatError(file).isPresent());
+
+        file = excelFileLocation("empty-1st-sheet.xlsx");
+        assertTrue(ExcelDataTableReader.checkFormatError(file).isPresent());
+        //System.out.println(ExcelDataTableReader.checkFormatError(file).get());
+        
+                
+        file = excelFileLocation("data-sheet.xlsx");
+        assertFalse(ExcelDataTableReader.checkFormatError(file).isPresent());
+                
+    }    
+    
+    @Test
     public void calculatesCorrectSize() throws Exception {
         
         Files.copy(excelFileLocation("empty.xlsx"), dataFile, StandardCopyOption.REPLACE_EXISTING);

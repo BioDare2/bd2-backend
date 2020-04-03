@@ -5,12 +5,14 @@
  */
 package ed.biodare2.backend.features.tsdata.dataimport;
 
-import ed.biodare.data.excel.ModernExcelView;
 import ed.biodare.data.topcount.TopCountReader;
+import ed.biodare2.backend.features.tsdata.tableview.ExcelDataTableReader;
 import ed.biodare2.backend.features.tsdata.tableview.TextDataTableReader;
 import ed.biodare2.backend.repo.isa_dom.dataimport.ImportFormat;
+import ed.biodare2.backend.web.rest.FormatException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,50 +26,39 @@ public class FileFormatVerifier {
     
     final TopCountReader topcount = new TopCountReader(false);
 
-    public static class FormatException extends Exception {
+    public boolean verify(Path file,ImportFormat format) throws IOException, FormatException {
         
-        public FormatException(String msg) {
-            super(msg);
+        Optional<String> error = checkFormatError(file, format);
+        if (error.isPresent()) {
+            throw new FormatException("Is not a valid "+format+" file: "+error.get());
         }
+        return true;
     }
     
-    public boolean verify(Path file,ImportFormat format) throws IOException {
-        
+    protected Optional<String> checkFormatError(Path file,ImportFormat format) throws IOException {
         switch(format) {
             case EXCEL_TABLE: return verifyExcel(file);
             case TOPCOUNT: return verifyTopcount(file);
             case TAB_SEP: return verifyTextTable(file,"\t");
             case COMA_SEP: return verifyTextTable(file,",");
             default: throw new IllegalArgumentException("Unsuported format: "+format);
-        }
+        }        
     }
     
-    
-    
-    protected boolean verifyExcel(Path file) throws IOException {
-
-        if (!ModernExcelView.isExcelFile(file)) {
-            return false;
-        }
-
-        return true;
-    }
-    
-    protected boolean verifyTopcount(Path file) throws IOException {
+    protected Optional<String> verifyExcel(Path file) throws IOException {
         
-        return topcount.isSuitableFormat(file);
-        /*
-        if (!topcount.isSuitableFormat(file)) {
-            return false; //throw new FormatException("Is not a valid topcount file");
-        }
-
-        return true;    
-        */
+        return ExcelDataTableReader.checkFormatError(file);
     }
     
-    boolean verifyTextTable(Path file, String sep) throws IOException {
+    protected Optional<String> verifyTopcount(Path file) throws IOException {
         
-        return TextDataTableReader.isSuitableFormat(file, sep);
+        return topcount.isSuitableFormat(file) ? Optional.empty() : Optional.of("wrong content");
+
+    }
+    
+    protected Optional<String> verifyTextTable(Path file, String sep) throws IOException {
+        
+        return TextDataTableReader.isSuitableFormat(file, sep) ? Optional.empty() : Optional.of("wrong content");
     }
 
 

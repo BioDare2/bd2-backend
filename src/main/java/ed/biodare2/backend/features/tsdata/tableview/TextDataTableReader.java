@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class TextDataTableReader implements DataTableReader {
+
     
     final public Path file;
     final public String sep;
@@ -46,7 +47,7 @@ public class TextDataTableReader implements DataTableReader {
         
         return separators > 5;
     }
-
+    
     static int countPresence(String line, String sep) {
         
         int count = 0;
