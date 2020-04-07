@@ -6,8 +6,6 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.testutil.ExpTestSeeder;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
@@ -18,14 +16,12 @@ import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.lucene.LuceneWriter;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
-import ed.biodare2.backend.testutil.PPATestSeederJC2;
 import ed.biodare2.backend.util.io.FileUtil;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

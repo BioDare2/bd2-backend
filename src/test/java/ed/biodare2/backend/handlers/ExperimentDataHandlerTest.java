@@ -251,6 +251,30 @@ public class ExperimentDataHandlerTest {
     }
     
     @Test
+    public void getBinnedTSDataGivesPagedData() {
+     
+        List<DataTrace> data = makeDataTraces(1,100);
+        assertEquals(100, data.size());
+        
+        AssayPack expPack = testBoundle;        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        when(dataHandler.getBinnedDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
+        
+        Page page = new Page(3,30);
+        
+        Optional<TraceSet> oDataset = handler.getBinnedTSData(expPack, detrending, page);
+        assertTrue(oDataset.isPresent());
+        
+        TraceSet dataset = oDataset.get();
+        assertEquals(10,dataset.traces.size());
+        // System.out.println(dataset.get(0).label);
+        assertTrue(dataset.traces.get(0).label.startsWith("90.["));
+        assertEquals(100, dataset.totalTraces);
+        assertEquals(page, dataset.currentPage);
+        
+    }    
+    
+    @Test
     public void getTSDataGivesEmptyIfBehindPage() {
      
         List<DataTrace> data = makeDataTraces(1,100);

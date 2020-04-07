@@ -102,6 +102,27 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                 });
     }
     
+    public Optional<TraceSet> getBinnedTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
+        
+        final int toSkip = page.pageIndex*page.pageSize;
+        return dataHandler.getBinnedDataSet(exp, detrending)
+                .map( ds -> {
+                    List<Trace> traces  = ds.stream()
+                        .skip(toSkip)
+                        .limit(page.pageSize)
+                        .map(this::toUITrace)
+                        .collect(Collectors.toList());
+                    
+                    TraceSet set = new TraceSet();
+                    set.totalTraces = ds.size();
+                    set.traces = traces;
+                    set.currentPage = page;
+                    set.currentPage.length = ds.size();
+                    
+                    return set;
+                });
+    }    
+    
     protected Trace toUITrace(DataTrace data) {
         Trace trace = new Trace();
         trace.label = data.traceNr+".["+data.traceRef+"] "+data.details.dataLabel;

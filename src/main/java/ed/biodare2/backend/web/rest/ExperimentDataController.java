@@ -180,6 +180,36 @@ public class ExperimentDataController extends ExperimentController {
         
     }      
     
+    @RequestMapping(value = "{detrending}/binned", method = RequestMethod.GET)
+    public TraceSet getBinnedTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
+            @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
+            @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
+            @NotNull @AuthenticationPrincipal BioDare2User user) {
+        log.debug("get binned TimeSeries; exp:{} {}; {}",expId,detrending,user);
+        
+        AssayPack exp = getExperimentForRead(expId,user);
+        
+        if (detrending == null) detrending = DetrendingType.LIN_DTR;
+        
+        try {
+            Page page = new Page(pageIndex, pageSize);
+            TraceSet resp = dataHandler.getBinnedTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
+            tracker.dataView(exp,detrending,user);
+            return resp;
+            
+        } catch(InsufficientRightsException e) {
+            log.error("Insufficient rights: {} {}",user.getLogin(), e.getMessage());
+            throw e;
+        } catch(WebMappedException e) {
+            log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
+            throw new ServerSideException(e.getMessage());
+        } 
+        
+    }      
+    
     @RequestMapping(value = "{detrending}/export", method = RequestMethod.GET)
     public void exportTSData(@PathVariable long expId,@PathVariable DetrendingType detrending, @RequestParam Map<String,String> displayProperties, @NotNull @AuthenticationPrincipal BioDare2User user,HttpServletResponse response) {
         log.debug("export TimeSeries; exp:{} {}; {}",expId,detrending,user);
