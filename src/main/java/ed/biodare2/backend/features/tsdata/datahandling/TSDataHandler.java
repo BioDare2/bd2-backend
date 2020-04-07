@@ -44,6 +44,7 @@ public class TSDataHandler {
     final static String DATA_DIR = "DATA2";
     
     final TimeSeriesTransformer transformer = TimeSeriesTrfImp.getInstance();
+    final HourlyBinner binner = new HourlyBinner();
     
     final ExperimentsStorage expStorage;
     final ObjectMapper mapper;
@@ -83,6 +84,13 @@ public class TSDataHandler {
         
         storeData(processed,dataDir);
         storeMetrics(metrics, dataDir);
+        
+        if (shouldPreCalculateBinned(standardData)) {
+            Map<DetrendingType,List<DataTrace>> binned = binData(processed);
+            storeBinnedData(binned, dataDir);
+        } else {
+            clearPreCalculateBinned(dataDir);
+        }
         
         return standardData.size();
     }
@@ -241,5 +249,95 @@ public class TSDataHandler {
         return true;
         
     }
+
+    protected boolean shouldPreCalculateBinned(List<DataTrace> series) {
+        double averageStep = series.stream()
+                .mapToDouble(dt -> dt.trace.getAverageStep())
+                .average()
+                .orElse(0);
+        
+        return averageStep < 1.5;
+    }
+
+    protected Map<DetrendingType, List<DataTrace>> binData(Map<DetrendingType, List<DataTrace>> detrended) {
+        
+        Map<DetrendingType, List<DataTrace>> binned = new EnumMap<>(DetrendingType.class);
+        
+        detrended.forEach( (detrending, traces) -> {
+        
+            binned.put(detrending,binTraces(traces));
+        });
+        
+        return binned;
+    }
+    
+    protected List<DataTrace> binTraces(List<DataTrace> traces) {
+        return traces.parallelStream()
+                    .map( t -> binTrace(t))
+                    .collect(Collectors.toList());
+    }
+    
+    protected DataTrace binTrace(DataTrace org) {
+        DataTrace binned = org.clone();
+        binned.trace = binner.binToHour(org.trace);
+        return binned;
+    }
+
+    protected void storeBinnedData(Map<DetrendingType, List<DataTrace>> bundles, Path dataPath) {
+        
+        for (DetrendingType detrending : bundles.keySet()) {
+        
+            Path file = dataPath.resolve(detrendingToBinFile(detrending));
+            try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
+                out.writeObject(bundles.get(detrending));
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot store binned data: "+e.getMessage(),e);
+            }
+        }    
+    }
+    
+    protected Optional<List<DataTrace>> getBinnedDataSet(DetrendingType detrending,Path dataDir) throws ServerSideException {
+        
+        Path file = dataDir.resolve(detrendingToBinFile(detrending));
+        if (!Files.exists(file)) return Optional.empty();
+        
+        try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
+            
+            return Optional.of((List)in.readObject());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e.getMessage(),e);
+        } catch(IOException e) {
+            throw new ServerSideException("Cannot read binned data set: "+e.getMessage(),e);
+        }
+    } 
+    
+    protected void clearPreCalculateBinned(Path dataPath) {
+        for (DetrendingType detrending : DetrendingType.values()) {
+        
+            Path file = dataPath.resolve(detrendingToBinFile(detrending));
+            try {
+                if (Files.exists(file))
+                    Files.delete(file);
+            } catch (IOException e) {
+                throw new ServerSideException("Cannot clear binned data: "+e.getMessage(),e);
+            }
+        } 
+    } 
+    
+    protected final String detrendingToBinFile(DetrendingType detrending) {
+        return detrending.name()+".binned.ser";
+    }
+    
+    @Cacheable(key="{#exp.getId(),#detrending,8}",unless="#result == null")    
+    public Optional<List<DataTrace>> getBinnedDataSet(AssayPack exp,DetrendingType detrending) throws ServerSideException {
+        
+        Path dataDir = getDataStorage(exp.getId());
+        
+        return getBinnedDataSet(detrending, dataDir)
+                .or(() -> getDataSet(detrending, dataDir).map( traces -> binTraces(traces)));
+        
+    }    
+
+
     
 }

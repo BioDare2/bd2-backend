@@ -10,6 +10,7 @@ import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics;
+import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
 import java.nio.file.Files;
@@ -387,5 +388,380 @@ public class TSDataHandlerTest {
         assertTrue(read.isPresent());
         assertEquals(metrics, read.get());
     }
+    
+    @Test
+    public void shouldPreCalculateBinnedIsFalseForSparcedData() {
+        
+        TimeSeries serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(3,1);
+        serie.add(5,1);
+        serie.add(7,1);
+        
+        DataTrace trace = new DataTrace();
+        trace.trace = serie;
+        
+        List<DataTrace> series = List.of(trace);
+        
+        assertFalse(instance.shouldPreCalculateBinned(series));
+        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,1);
+        serie.add(3,1);
+        
+        trace = new DataTrace();
+        trace.trace = serie;
+        
+        series = List.of(trace);        
+        assertTrue(instance.shouldPreCalculateBinned(series));        
+        
+    }
+    
+    @Test
+    public void shouldPreCalculateBinnedIsFalseForGenerallySparcedData() {
+        
+        TimeSeries serie = new TimeSeries();
+        serie.add(0, 1);
+        serie.add(0.1, 1);
+        serie.add(0.2, 1);
+        serie.add(1, 1);
+        serie.add(1.1, 1);
+        
+        DataTrace trace = new DataTrace();
+        trace.trace = serie;
+        
+        
+        List<DataTrace> series = List.of(trace);
+        
+        assertTrue(instance.shouldPreCalculateBinned(series));
+        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(3,1);
+        serie.add(5,1);
+        serie.add(7,1);
+        DataTrace trace2 = new DataTrace();
+        trace2.trace = serie;
+        
+        series = List.of(trace, trace2, trace2, trace2);
+        assertFalse(instance.shouldPreCalculateBinned(series));
+    }
+    
+    @Test
+    public void binDataBinsTraces() {
+        
+        TimeSeries serie = new TimeSeries();
+        serie.add(0, 1);
+        serie.add(0.1, 2);
+        serie.add(0.2, 3);
+        serie.add(1, 1);
+        serie.add(1.1, 1);
+        
+        DataTrace trace = new DataTrace();
+        trace.trace = serie; 
+        trace.dataId = 1;
+        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(3,2);
+        serie.add(4,3);
+        DataTrace trace2 = new DataTrace();
+        trace2.trace = serie;        
+        trace2.dataId = 2;
+        
+        Map<DetrendingType, List<DataTrace>> detrended = Map.of(DetrendingType.LIN_DTR, List.of(trace, trace2));
+        
+        Map<DetrendingType, List<DataTrace>> binned = instance.binData(detrended);
+        
+        assertEquals(detrended.size(), binned.size());
+        List<DataTrace> results = binned.get(DetrendingType.LIN_DTR);
+        assertNotNull(results);
+        
+        assertEquals(1, results.get(0).dataId);
+        assertEquals(2, results.get(1).dataId);
+
+        serie = new TimeSeries();
+        serie.add(0,2);
+        serie.add(1,1);
+        assertEquals(serie, results.get(0).trace);
+        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,1.5);
+        serie.add(3,2);
+        serie.add(4,3);
+        assertEquals(serie, results.get(1).trace);
+        
+
+    }
+    
+    @Test
+    public void storeBinnedDataSavesToFiles() throws Exception {
+        
+        Map<DetrendingType, List<DataTrace>> bundles = new HashMap<>();
+        
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.NO_DTR,data);
+        
+        data = new ArrayList<>();        
+        trace = new DataTrace();
+        trace.traceRef = "C";        
+        serie = new TimeSeries();
+        serie.add(0,1);
+        serie.add(1,3);
+        serie.add(3,7);
+        serie.add(4,9);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.BAMP_DTR,data);
+        
+        Path dir = testFolder.newFolder().toPath();
+        instance.storeBinnedData(bundles, dir);
+        
+        assertEquals(2,Files.list(dir).count());
+        
+        Path file = dir.resolve(DetrendingType.BAMP_DTR+".binned.ser");
+        assertTrue(Files.isRegularFile(file));
+    }
+    
+    @Test
+    public void storedBinnedDataCanBeRetrived() throws Exception {
+        
+        Map<DetrendingType, List<DataTrace>> bundles = new HashMap<>();
+        
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.NO_DTR,data);
+        
+        data = new ArrayList<>();        
+        trace = new DataTrace();
+        trace.traceRef = "C";        
+        serie = new TimeSeries();
+        serie.add(0,1);
+        serie.add(1,3);
+        serie.add(3,7);
+        serie.add(4,9);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.BAMP_DTR,data);
+        
+        Path dir = testFolder.newFolder().toPath();
+        instance.storeBinnedData(bundles, dir);
+        
+        List<DataTrace> res = instance.getBinnedDataSet(DetrendingType.BAMP_DTR, dir).get();
+        
+        assertEquals(data.size(),res.size());
+        assertEquals(data.get(0).traceRef,res.get(0).traceRef);
+        assertEquals(data.get(0).trace,res.get(0).trace);
+    }  
+    
+
+    @Test
+    public void clearPreCalculateRemovesStored() throws Exception {
+        
+        Map<DetrendingType, List<DataTrace>> bundles = new HashMap<>();
+        
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.NO_DTR,data);
+        
+        data = new ArrayList<>();        
+        trace = new DataTrace();
+        trace.traceRef = "C";        
+        serie = new TimeSeries();
+        serie.add(0,1);
+        serie.add(1,3);
+        serie.add(3,7);
+        serie.add(4,9);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.BAMP_DTR,data);
+        
+        Path dir = testFolder.newFolder().toPath();
+        instance.storeBinnedData(bundles, dir);
+        
+        long stored = Files.list(dir).count();
+        assertTrue(stored > 0);
+        
+        instance.clearPreCalculateBinned(dir);
+        stored = Files.list(dir).count();
+        assertEquals(0, stored);
+        
+    }  
+    
+    @Test
+    public void getBinnedDataSetGivesPrerecorded() throws Exception {
+        
+        Map<DetrendingType, List<DataTrace>> bundles = new HashMap<>();
+        
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A1";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(2,2);
+        serie.add(3,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B1";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.LIN_DTR,data);
+        
+        AssayPack exp = mock(AssayPack.class);
+        when(exp.getId()).thenReturn(123L);
+        
+        Path expDir = testFolder.newFolder().toPath();
+        when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
+        
+        
+        Path dir = instance.getDataStorage(123);
+        instance.storeBinnedData(bundles, dir);
+        
+        List<DataTrace> res = instance.getBinnedDataSet(exp, DetrendingType.LIN_DTR).get();
+
+        
+        
+        assertEquals(data.size(),res.size());
+        assertEquals(data.get(0).traceRef,res.get(0).traceRef);
+        assertEquals(data.get(0).trace,res.get(0).trace);
+    }  
+    
+    @Test
+    public void getBinnedDataSetCalculatesOnTheFly() throws Exception {
+        
+        Map<DetrendingType, List<DataTrace>> bundles = new HashMap<>();
+        
+        List<DataTrace> data = new ArrayList<>();
+        
+        DataTrace trace;
+        TimeSeries serie;
+        
+        trace = new DataTrace();
+        trace.traceRef = "A1";        
+        serie = new TimeSeries();
+        serie.add(1,1);
+        serie.add(3,2);
+        serie.add(5,3);
+        trace.trace = serie;
+        data.add(trace);
+        
+        TimeSeries expected = new TimeSeries();
+        expected.add(1,1);
+        expected.add(2,1.5);
+        expected.add(3,2);
+        expected.add(4,2.5);
+        expected.add(5,3);
+        
+        trace = new DataTrace();
+        trace.traceRef = "B1";        
+        serie = new TimeSeries();
+        serie.add(1,2);
+        serie.add(2,3);
+        serie.add(3,4);
+        trace.trace = serie;
+        data.add(trace);
+        
+        bundles.put(DetrendingType.LIN_DTR,data);
+        
+        AssayPack exp = mock(AssayPack.class);
+        when(exp.getId()).thenReturn(123L);
+        
+        Path expDir = testFolder.newFolder().toPath();
+        when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
+        
+        
+        Path dir = instance.getDataStorage(123);
+        instance.storeData(bundles, dir);
+        
+        List<DataTrace> res = instance.getBinnedDataSet(exp, DetrendingType.LIN_DTR).get();
+
+        
+        
+        assertEquals(data.size(),res.size());
+        assertEquals(data.get(0).traceRef,res.get(0).traceRef);
+        
+        assertEquals(expected,res.get(0).trace);
+    }    
+    
     
 }

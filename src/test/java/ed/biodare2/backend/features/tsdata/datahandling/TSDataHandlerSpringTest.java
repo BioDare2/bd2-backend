@@ -111,9 +111,11 @@ public class TSDataHandlerSpringTest {
         trace.dataId = trace.traceNr;
         trace.rawDataId = trace.dataId;
         serie = new TimeSeries();
-        serie.add(1,2);
-        serie.add(2,3);
-        serie.add(3,4);
+        serie.add(1.1,2);
+        serie.add(1.2,2);
+        serie.add(2.2,3);
+        serie.add(3.0,4);
+        serie.add(3.3,4);
         trace.trace = serie;
         dataBoundle.data.add(trace);  
         return dataBoundle;
@@ -159,6 +161,78 @@ public class TSDataHandlerSpringTest {
         
         
     }   
+
+
+    @Test
+    public void binnedCachingWorks() throws Exception {
+
+        DataBundle db1 = makeBoundle();
+        handler.handleNewData(exp, db1);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        List<DataTrace> set1 = handler.getBinnedDataSet(exp, detrending).get();
+        
+        List<DataTrace> set2 = handler.getBinnedDataSet(exp, detrending).get();  
+        
+        assertSame(set1,set2);
+        
+        set2 = handler.getBinnedDataSet(exp, DetrendingType.POLY_DTR).get(); 
+        
+        assertNotSame(set1,set2);
+        
+        
+    }   
+    
+    @Test
+    public void binnedCachingDoesNotInterfereWorks() throws Exception {
+
+        DataBundle db1 = makeBoundle();
+        handler.handleNewData(exp, db1);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        List<DataTrace> set1 = handler.getDataSet(exp, detrending).get();
+        
+        List<DataTrace> binset1 = handler.getBinnedDataSet(exp, detrending).get();
+        
+        List<DataTrace> set2 = handler.getDataSet(exp, detrending).get();   
+        List<DataTrace> binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+        
+        assertSame(set1,set2);
+        assertSame(binset1,binset2);
+        
+        assertNotSame(set1,binset1);
+        assertNotEquals(set1,binset1);
+        
+        
+    }     
+    
+    @Test
+    public void handleNewDataInvalidesDataAndBinnedCache() throws Exception {
+
+        DataBundle db1 = makeBoundle();
+        handler.handleNewData(exp, db1);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        List<DataTrace> set1 = handler.getDataSet(exp, detrending).get();
+        
+        List<DataTrace> binset1 = handler.getBinnedDataSet(exp, detrending).get();
+        
+        List<DataTrace> set2 = handler.getDataSet(exp, detrending).get();   
+        List<DataTrace> binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+        
+        assertSame(set1,set2);
+        assertSame(binset1,binset2);
+        
+        handler.handleNewData(exp, db1);
+        
+        set2 = handler.getDataSet(exp, detrending).get();   
+        binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+
+        assertNotSame(set1,set2);
+        assertNotSame(binset1,binset2);
+        
+        
+    }     
     
     @Test
     public void handleNewDataInvalidesCache() throws Exception {
