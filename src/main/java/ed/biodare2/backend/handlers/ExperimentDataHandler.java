@@ -89,7 +89,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                     List<Trace> traces  = ds.stream()
                         .skip(toSkip)
                         .limit(page.pageSize)
-                        .map(this::toUITrace)
+                        .map(d -> toUITrace(d, true))
                         .collect(Collectors.toList());
                     
                     TraceSet set = new TraceSet();
@@ -110,7 +110,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                     List<Trace> traces  = ds.stream()
                         .skip(toSkip)
                         .limit(page.pageSize)
-                        .map(this::toUITrace)
+                        .map(d -> toUITrace(d, false))
                         .collect(Collectors.toList());
                     
                     TraceSet set = new TraceSet();
@@ -123,9 +123,16 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                 });
     }    
     
-    protected Trace toUITrace(DataTrace data) {
+    protected Trace toUITrace(DataTrace data, boolean fullLabel) {
         Trace trace = new Trace();
-        trace.label = data.traceNr+".["+data.traceRef+"] "+data.details.dataLabel;
+        trace.traceNr = data.traceNr;
+        trace.dataId = data.dataId;
+        trace.traceRef = "["+data.traceRef+"]";
+        if (fullLabel) {
+            trace.label = data.traceNr+".["+data.traceRef+"] "+data.details.dataLabel;
+        } else {
+            trace.label = ""+data.details.dataLabel;
+        }
         trace.setTimeseries(data.trace);
         return trace;
     }

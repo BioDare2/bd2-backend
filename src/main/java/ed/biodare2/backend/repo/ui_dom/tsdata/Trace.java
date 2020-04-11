@@ -15,7 +15,10 @@ import java.util.List;
  * @author Zielu
  */
 public class Trace {
- 
+
+  public int traceNr;  
+  public long dataId; 
+  public String traceRef;
   public String label;
   public boolean fill = false;
   public List<Timepoint> data = new ArrayList<>();

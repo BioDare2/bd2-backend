@@ -23,6 +23,7 @@ import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
+import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.dataimport.FileImportRequest;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -31,9 +32,11 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
+import ed.biodare2.backend.repo.ui_dom.tsdata.Trace;
 import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.biodare2.backend.util.json.TimeSeriesModule;
 import ed.robust.dom.data.DetrendingType;
+import ed.robust.dom.data.TimeSeries;
 //import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;
 import java.io.IOException;
@@ -244,7 +247,7 @@ public class ExperimentDataHandlerTest {
         TraceSet dataset = oDataset.get();
         assertEquals(10,dataset.traces.size());
         // System.out.println(dataset.get(0).label);
-        assertTrue(dataset.traces.get(0).label.startsWith("90.["));
+        assertEquals(90, dataset.traces.get(0).traceNr);
         assertEquals(100, dataset.totalTraces);
         assertEquals(page, dataset.currentPage);
         
@@ -268,7 +271,8 @@ public class ExperimentDataHandlerTest {
         TraceSet dataset = oDataset.get();
         assertEquals(10,dataset.traces.size());
         // System.out.println(dataset.get(0).label);
-        assertTrue(dataset.traces.get(0).label.startsWith("90.["));
+        //assertTrue(dataset.traces.get(0).label.startsWith("90.["));
+        assertEquals(90, dataset.traces.get(0).traceNr);
         assertEquals(100, dataset.totalTraces);
         assertEquals(page, dataset.currentPage);
         
@@ -293,5 +297,32 @@ public class ExperimentDataHandlerTest {
         assertEquals(0,dataset.traces.size());
         assertEquals(100,dataset.totalTraces);
         
-    }    
+    } 
+    
+    @Test
+    public void toUITraceCopiesIds() {
+        
+        DataTrace trace = new DataTrace();
+        trace.traceNr = 1;
+        trace.dataId = 123;
+        trace.traceRef = "A3";
+        trace.details = new DataColumnProperties("Cookoo");
+        trace.trace = new TimeSeries();
+        trace.trace.add(1,2);
+        
+        Trace resp = handler.toUITrace(trace, false);
+        assertNotNull(resp);
+        assertEquals(1, resp.traceNr);
+        assertEquals(123, resp.dataId);
+        assertEquals("[A3]", resp.traceRef);
+        assertEquals("Cookoo", resp.label);
+        
+        resp = handler.toUITrace(trace, true);
+        assertNotNull(resp);
+        assertEquals(1, resp.traceNr);
+        assertEquals(123, resp.dataId);
+        assertEquals("[A3]", resp.traceRef);
+        assertEquals("1.[A3] Cookoo", resp.label);
+        
+    }
 }

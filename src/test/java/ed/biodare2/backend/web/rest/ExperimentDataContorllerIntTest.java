@@ -607,7 +607,8 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(pageSize, data.size());
         assertFalse(data.get(0).data.isEmpty());
         //System.out.println(data.get(0).label);
-        assertTrue(data.get(0).label.startsWith("51.["));
+        //assertTrue(data.get(0).label.startsWith("51.["));
+        assertEquals(51, data.get(0).traceNr);
         
         
     }    
