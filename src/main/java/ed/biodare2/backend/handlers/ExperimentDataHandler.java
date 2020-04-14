@@ -127,6 +127,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         Trace trace = new Trace();
         trace.traceNr = data.traceNr;
         trace.dataId = data.dataId;
+        trace.key = data.dataId;
         trace.traceRef = "["+data.traceRef+"]";
         if (fullLabel) {
             trace.label = data.traceNr+".["+data.traceRef+"] "+data.details.dataLabel;

@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class Trace {
 
+  public long key;  
   public int traceNr;  
   public long dataId; 
   public String traceRef;
