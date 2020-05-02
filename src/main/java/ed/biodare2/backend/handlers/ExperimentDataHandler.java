@@ -102,10 +102,10 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                 });
     }
     
-    public Optional<TraceSet> getBinnedTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
+    public Optional<TraceSet> getHourlyTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
         
         final int toSkip = page.pageIndex*page.pageSize;
-        return dataHandler.getBinnedDataSet(exp, detrending)
+        return dataHandler.getHourlyDataSet(exp, detrending)
                 .map( ds -> {
                     List<Trace> traces  = ds.stream()
                         .skip(toSkip)

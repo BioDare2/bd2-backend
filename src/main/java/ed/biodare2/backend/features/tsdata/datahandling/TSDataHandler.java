@@ -44,7 +44,7 @@ public class TSDataHandler {
     final static String DATA_DIR = "DATA2";
     
     final TimeSeriesTransformer transformer = TimeSeriesTrfImp.getInstance();
-    final HourlyBinner binner = new HourlyBinner();
+    final HourlyBinningRounder rounder = new HourlyBinningRounder();
     
     final ExperimentsStorage expStorage;
     final ObjectMapper mapper;
@@ -85,11 +85,11 @@ public class TSDataHandler {
         storeData(processed,dataDir);
         storeMetrics(metrics, dataDir);
         
-        if (shouldPreCalculateBinned(standardData)) {
-            Map<DetrendingType,List<DataTrace>> binned = binData(processed);
-            storeBinnedData(binned, dataDir);
+        if (shouldPreCalculateHourly(standardData)) {
+            Map<DetrendingType,List<DataTrace>> rounded = roundTimes(processed);
+            storeHourlyData(rounded, dataDir);
         } else {
-            clearPreCalculateBinned(dataDir);
+            clearPreCalculateHourly(dataDir);
         }
         
         return standardData.size();
@@ -250,55 +250,63 @@ public class TSDataHandler {
         
     }
 
-    protected boolean shouldPreCalculateBinned(List<DataTrace> series) {
+    protected boolean shouldPreCalculateHourly(List<DataTrace> series) {
         double averageStep = series.stream()
                 .mapToDouble(dt -> dt.trace.getAverageStep())
                 .average()
                 .orElse(0);
         
-        return averageStep < 1.5;
+        /*
+        int points = series.stream()
+                    .mapToInt(dt -> dt.trace.size())
+                    .max().orElse(0);
+        */            
+        if (averageStep < 1.5) return true;           
+        //if (points > 50 && series.size() > 25) return true;
+        if (series.size() > 500) return true;
+        return false;
     }
 
-    protected Map<DetrendingType, List<DataTrace>> binData(Map<DetrendingType, List<DataTrace>> detrended) {
+    protected Map<DetrendingType, List<DataTrace>> roundTimes(Map<DetrendingType, List<DataTrace>> detrended) {
         
         Map<DetrendingType, List<DataTrace>> binned = new EnumMap<>(DetrendingType.class);
         
         detrended.forEach( (detrending, traces) -> {
         
-            binned.put(detrending,binTraces(traces));
+            binned.put(detrending,roundTimesInTraces(traces));
         });
         
         return binned;
     }
     
-    protected List<DataTrace> binTraces(List<DataTrace> traces) {
+    protected List<DataTrace> roundTimesInTraces(List<DataTrace> traces) {
         return traces.parallelStream()
-                    .map( t -> binTrace(t))
+                    .map( t -> roundTimesInTrace(t))
                     .collect(Collectors.toList());
     }
     
-    protected DataTrace binTrace(DataTrace org) {
+    protected DataTrace roundTimesInTrace(DataTrace org) {
         DataTrace binned = org.clone();
-        binned.trace = binner.binToHour(org.trace);
+        binned.trace = rounder.binToHour(org.trace);
         return binned;
     }
 
-    protected void storeBinnedData(Map<DetrendingType, List<DataTrace>> bundles, Path dataPath) {
+    protected void storeHourlyData(Map<DetrendingType, List<DataTrace>> bundles, Path dataPath) {
         
         for (DetrendingType detrending : bundles.keySet()) {
         
-            Path file = dataPath.resolve(detrendingToBinFile(detrending));
+            Path file = dataPath.resolve(detrendingToHourlyFile(detrending));
             try (ObjectOutputStream out = new ObjectOutputStream(Files.newOutputStream(file))) {
                 out.writeObject(bundles.get(detrending));
             } catch (IOException e) {
-                throw new ServerSideException("Cannot store binned data: "+e.getMessage(),e);
+                throw new ServerSideException("Cannot store rounded data: "+e.getMessage(),e);
             }
         }    
     }
     
-    protected Optional<List<DataTrace>> getBinnedDataSet(DetrendingType detrending,Path dataDir) throws ServerSideException {
+    protected Optional<List<DataTrace>> getHourlyDataSet(DetrendingType detrending,Path dataDir) throws ServerSideException {
         
-        Path file = dataDir.resolve(detrendingToBinFile(detrending));
+        Path file = dataDir.resolve(detrendingToHourlyFile(detrending));
         if (!Files.exists(file)) return Optional.empty();
         
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
@@ -307,14 +315,14 @@ public class TSDataHandler {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e.getMessage(),e);
         } catch(IOException e) {
-            throw new ServerSideException("Cannot read binned data set: "+e.getMessage(),e);
+            throw new ServerSideException("Cannot read rounded data set: "+e.getMessage(),e);
         }
     } 
     
-    protected void clearPreCalculateBinned(Path dataPath) {
+    protected void clearPreCalculateHourly(Path dataPath) {
         for (DetrendingType detrending : DetrendingType.values()) {
         
-            Path file = dataPath.resolve(detrendingToBinFile(detrending));
+            Path file = dataPath.resolve(detrendingToHourlyFile(detrending));
             try {
                 if (Files.exists(file))
                     Files.delete(file);
@@ -324,17 +332,17 @@ public class TSDataHandler {
         } 
     } 
     
-    protected final String detrendingToBinFile(DetrendingType detrending) {
-        return detrending.name()+".binned.ser";
+    protected final String detrendingToHourlyFile(DetrendingType detrending) {
+        return detrending.name()+".hourly.ser";
     }
     
     @Cacheable(key="{#exp.getId(),#detrending,8}",unless="#result == null")    
-    public Optional<List<DataTrace>> getBinnedDataSet(AssayPack exp,DetrendingType detrending) throws ServerSideException {
+    public Optional<List<DataTrace>> getHourlyDataSet(AssayPack exp,DetrendingType detrending) throws ServerSideException {
         
         Path dataDir = getDataStorage(exp.getId());
         
-        return getBinnedDataSet(detrending, dataDir)
-                .or(() -> getDataSet(detrending, dataDir).map( traces -> binTraces(traces)));
+        return getHourlyDataSet(detrending, dataDir)
+                .or(() -> getDataSet(detrending, dataDir).map( traces -> roundTimesInTraces(traces)));
         
     }    
 

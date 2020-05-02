@@ -403,7 +403,7 @@ public class TSDataHandlerTest {
         
         List<DataTrace> series = List.of(trace);
         
-        assertFalse(instance.shouldPreCalculateBinned(series));
+        assertFalse(instance.shouldPreCalculateHourly(series));
         
         serie = new TimeSeries();
         serie.add(1,1);
@@ -414,7 +414,7 @@ public class TSDataHandlerTest {
         trace.trace = serie;
         
         series = List.of(trace);        
-        assertTrue(instance.shouldPreCalculateBinned(series));        
+        assertTrue(instance.shouldPreCalculateHourly(series));        
         
     }
     
@@ -434,7 +434,7 @@ public class TSDataHandlerTest {
         
         List<DataTrace> series = List.of(trace);
         
-        assertTrue(instance.shouldPreCalculateBinned(series));
+        assertTrue(instance.shouldPreCalculateHourly(series));
         
         serie = new TimeSeries();
         serie.add(1,1);
@@ -445,7 +445,7 @@ public class TSDataHandlerTest {
         trace2.trace = serie;
         
         series = List.of(trace, trace2, trace2, trace2);
-        assertFalse(instance.shouldPreCalculateBinned(series));
+        assertFalse(instance.shouldPreCalculateHourly(series));
     }
     
     @Test
@@ -472,7 +472,7 @@ public class TSDataHandlerTest {
         
         Map<DetrendingType, List<DataTrace>> detrended = Map.of(DetrendingType.LIN_DTR, List.of(trace, trace2));
         
-        Map<DetrendingType, List<DataTrace>> binned = instance.binData(detrended);
+        Map<DetrendingType, List<DataTrace>> binned = instance.roundTimes(detrended);
         
         assertEquals(detrended.size(), binned.size());
         List<DataTrace> results = binned.get(DetrendingType.LIN_DTR);
@@ -488,7 +488,6 @@ public class TSDataHandlerTest {
         
         serie = new TimeSeries();
         serie.add(1,1);
-        serie.add(2,1.5);
         serie.add(3,2);
         serie.add(4,3);
         assertEquals(serie, results.get(1).trace);
@@ -540,11 +539,11 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.newFolder().toPath();
-        instance.storeBinnedData(bundles, dir);
+        instance.storeHourlyData(bundles, dir);
         
         assertEquals(2,Files.list(dir).count());
         
-        Path file = dir.resolve(DetrendingType.BAMP_DTR+".binned.ser");
+        Path file = dir.resolve(DetrendingType.BAMP_DTR+".hourly.ser");
         assertTrue(Files.isRegularFile(file));
     }
     
@@ -592,9 +591,9 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.newFolder().toPath();
-        instance.storeBinnedData(bundles, dir);
+        instance.storeHourlyData(bundles, dir);
         
-        List<DataTrace> res = instance.getBinnedDataSet(DetrendingType.BAMP_DTR, dir).get();
+        List<DataTrace> res = instance.getHourlyDataSet(DetrendingType.BAMP_DTR, dir).get();
         
         assertEquals(data.size(),res.size());
         assertEquals(data.get(0).traceRef,res.get(0).traceRef);
@@ -646,12 +645,12 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.newFolder().toPath();
-        instance.storeBinnedData(bundles, dir);
+        instance.storeHourlyData(bundles, dir);
         
         long stored = Files.list(dir).count();
         assertTrue(stored > 0);
         
-        instance.clearPreCalculateBinned(dir);
+        instance.clearPreCalculateHourly(dir);
         stored = Files.list(dir).count();
         assertEquals(0, stored);
         
@@ -695,9 +694,9 @@ public class TSDataHandlerTest {
         
         
         Path dir = instance.getDataStorage(123);
-        instance.storeBinnedData(bundles, dir);
+        instance.storeHourlyData(bundles, dir);
         
-        List<DataTrace> res = instance.getBinnedDataSet(exp, DetrendingType.LIN_DTR).get();
+        List<DataTrace> res = instance.getHourlyDataSet(exp, DetrendingType.LIN_DTR).get();
 
         
         
@@ -720,6 +719,7 @@ public class TSDataHandlerTest {
         trace.traceRef = "A1";        
         serie = new TimeSeries();
         serie.add(1,1);
+        serie.add(1.6,1.5);
         serie.add(3,2);
         serie.add(5,3);
         trace.trace = serie;
@@ -729,7 +729,6 @@ public class TSDataHandlerTest {
         expected.add(1,1);
         expected.add(2,1.5);
         expected.add(3,2);
-        expected.add(4,2.5);
         expected.add(5,3);
         
         trace = new DataTrace();
@@ -753,7 +752,7 @@ public class TSDataHandlerTest {
         Path dir = instance.getDataStorage(123);
         instance.storeData(bundles, dir);
         
-        List<DataTrace> res = instance.getBinnedDataSet(exp, DetrendingType.LIN_DTR).get();
+        List<DataTrace> res = instance.getHourlyDataSet(exp, DetrendingType.LIN_DTR).get();
 
         
         

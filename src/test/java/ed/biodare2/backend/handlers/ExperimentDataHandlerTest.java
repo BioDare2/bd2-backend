@@ -261,11 +261,11 @@ public class ExperimentDataHandlerTest {
         
         AssayPack expPack = testBoundle;        
         DetrendingType detrending = DetrendingType.LIN_DTR;
-        when(dataHandler.getBinnedDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
+        when(dataHandler.getHourlyDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
         
         Page page = new Page(3,30);
         
-        Optional<TraceSet> oDataset = handler.getBinnedTSData(expPack, detrending, page);
+        Optional<TraceSet> oDataset = handler.getHourlyTSData(expPack, detrending, page);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();

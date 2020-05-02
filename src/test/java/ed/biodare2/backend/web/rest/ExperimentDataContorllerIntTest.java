@@ -569,7 +569,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
     
     
     @Test
-    public void getBinnedTSDataReturnsPagedDataFromDataSet() throws Exception {
+    public void getHourlyTSDataReturnsPagedDataFromDataSet() throws Exception {
     
         
         AssayPack pack = insertExperiment();
@@ -584,7 +584,7 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         DetrendingType detrending = DetrendingType.LIN_DTR;
         
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/"+detrending.name()+"/binned")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/"+detrending.name()+"/hourly")
                 .param("pageIndex", ""+pageIndex)
                 .param("pageSize", ""+pageSize)
                 .contentType(APPLICATION_JSON_UTF8)

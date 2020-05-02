@@ -180,12 +180,12 @@ public class ExperimentDataController extends ExperimentController {
         
     }      
     
-    @RequestMapping(value = "{detrending}/binned", method = RequestMethod.GET)
-    public TraceSet getBinnedTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
+    @RequestMapping(value = "{detrending}/hourly", method = RequestMethod.GET)
+    public TraceSet getHourlyTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
             @NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("get binned TimeSeries; exp:{} {}; {}",expId,detrending,user);
+        log.debug("get hourly TimeSeries; exp:{} {}; {}",expId,detrending,user);
         
         AssayPack exp = getExperimentForRead(expId,user);
         
@@ -193,7 +193,7 @@ public class ExperimentDataController extends ExperimentController {
         
         try {
             Page page = new Page(pageIndex, pageSize);
-            TraceSet resp = dataHandler.getBinnedTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
+            TraceSet resp = dataHandler.getHourlyTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
             tracker.dataView(exp,detrending,user);
             return resp;
             

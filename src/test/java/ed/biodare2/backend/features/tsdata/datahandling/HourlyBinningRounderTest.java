@@ -14,16 +14,17 @@ import static org.junit.Assert.*;
  *
  * @author tzielins
  */
-public class HourlyBinnerTest {
+public class HourlyBinningRounderTest {
     
-    public HourlyBinnerTest() {
+    public HourlyBinningRounderTest() {
     }
     
-    HourlyBinner instance;
+    HourlyBinningRounder instance;
     
     @Before
     public void setUp() {
-        instance = new HourlyBinner();
+        
+        instance = new HourlyBinningRounder();
     }
 
     @Test
@@ -89,14 +90,12 @@ public class HourlyBinnerTest {
 
         in.add(0, 1);
         in.add(2, 2);
+        in.add(4.6, 8);
         in.add(5, 4);
         
         exp.add(0, 1);
-        exp.add(1, 1.5);
         exp.add(2, 2);
-        exp.add(3, 3);
-        exp.add(4, 3);
-        exp.add(5, 4);
+        exp.add(5, 6);
         assertEquals(exp, instance.binToHour(in));
         
         in = new TimeSeries();
@@ -104,26 +103,12 @@ public class HourlyBinnerTest {
         in.add(1.8, 2);
         in.add(4.9, 4);
         in.add(5.4, 4);
-        assertEquals(exp, instance.binToHour(in));
-    }    
-    
-    @Test
-    public void addMissingBinsAddsEntries() {
         
-        TimeSeries in = new TimeSeries();
-        TimeSeries exp = new TimeSeries();
-
-        instance.addMissingBins(in, 1, 2, 1, 2);
-        exp.add(1,1.5);
-        assertEquals(exp, in);
-        
-        in = new TimeSeries();
-        instance.addMissingBins(in, 2, 4, 1, 2);
         exp = new TimeSeries();
-        exp.add(2, 1.5);
-        exp.add(3, 1.5);
-        assertEquals(exp, in);
+        exp.add(0, 1);
+        exp.add(2, 2);
+        exp.add(5, 4);
         
-    }
-    
+        assertEquals(exp, instance.binToHour(in));
+    }      
 }

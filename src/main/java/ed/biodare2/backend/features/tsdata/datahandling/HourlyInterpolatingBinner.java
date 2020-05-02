@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author tzielins
  */
-public class HourlyBinner {
+public class HourlyInterpolatingBinner {
     
     
     public TimeSeries binToHour(TimeSeries serie) {

@@ -170,13 +170,13 @@ public class TSDataHandlerSpringTest {
         handler.handleNewData(exp, db1);
         
         DetrendingType detrending = DetrendingType.LIN_DTR;
-        List<DataTrace> set1 = handler.getBinnedDataSet(exp, detrending).get();
+        List<DataTrace> set1 = handler.getHourlyDataSet(exp, detrending).get();
         
-        List<DataTrace> set2 = handler.getBinnedDataSet(exp, detrending).get();  
+        List<DataTrace> set2 = handler.getHourlyDataSet(exp, detrending).get();  
         
         assertSame(set1,set2);
         
-        set2 = handler.getBinnedDataSet(exp, DetrendingType.POLY_DTR).get(); 
+        set2 = handler.getHourlyDataSet(exp, DetrendingType.POLY_DTR).get(); 
         
         assertNotSame(set1,set2);
         
@@ -192,10 +192,10 @@ public class TSDataHandlerSpringTest {
         DetrendingType detrending = DetrendingType.LIN_DTR;
         List<DataTrace> set1 = handler.getDataSet(exp, detrending).get();
         
-        List<DataTrace> binset1 = handler.getBinnedDataSet(exp, detrending).get();
+        List<DataTrace> binset1 = handler.getHourlyDataSet(exp, detrending).get();
         
         List<DataTrace> set2 = handler.getDataSet(exp, detrending).get();   
-        List<DataTrace> binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+        List<DataTrace> binset2 = handler.getHourlyDataSet(exp, detrending).get();          
         
         assertSame(set1,set2);
         assertSame(binset1,binset2);
@@ -215,10 +215,10 @@ public class TSDataHandlerSpringTest {
         DetrendingType detrending = DetrendingType.LIN_DTR;
         List<DataTrace> set1 = handler.getDataSet(exp, detrending).get();
         
-        List<DataTrace> binset1 = handler.getBinnedDataSet(exp, detrending).get();
+        List<DataTrace> binset1 = handler.getHourlyDataSet(exp, detrending).get();
         
         List<DataTrace> set2 = handler.getDataSet(exp, detrending).get();   
-        List<DataTrace> binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+        List<DataTrace> binset2 = handler.getHourlyDataSet(exp, detrending).get();          
         
         assertSame(set1,set2);
         assertSame(binset1,binset2);
@@ -226,7 +226,7 @@ public class TSDataHandlerSpringTest {
         handler.handleNewData(exp, db1);
         
         set2 = handler.getDataSet(exp, detrending).get();   
-        binset2 = handler.getBinnedDataSet(exp, detrending).get();          
+        binset2 = handler.getHourlyDataSet(exp, detrending).get();          
 
         assertNotSame(set1,set2);
         assertNotSame(binset1,binset2);
