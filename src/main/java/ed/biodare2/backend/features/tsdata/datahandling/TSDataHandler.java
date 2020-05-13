@@ -251,6 +251,8 @@ public class TSDataHandler {
     }
 
     protected boolean shouldPreCalculateHourly(List<DataTrace> series) {
+        if (true) return false;
+        
         double averageStep = series.stream()
                 .mapToDouble(dt -> dt.trace.getAverageStep())
                 .average()
