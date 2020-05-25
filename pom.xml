@@ -4,13 +4,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
-	<version>2.11.0.290</version>
+	<version>2.12.0.290</version>
 	<name>BioDare2-REST-Trunk</name>
 	<description>BioDare2 backend service</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.6.RELEASE</version>
+		<version>2.3.0.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -48,6 +48,15 @@
     </dependencyManagement> 
     
 	<dependencies>
+
+                <!-- to be run when upgrading spring -->
+                <!--
+                <dependency>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-properties-migrator</artifactId>
+                        <scope>runtime</scope>
+                </dependency> -->
+            
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
@@ -68,6 +77,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+                
+                
 
 		<dependency>
 			<groupId>com.h2database</groupId>

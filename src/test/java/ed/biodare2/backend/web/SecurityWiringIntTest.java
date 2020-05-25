@@ -167,8 +167,10 @@ public class SecurityWiringIntTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
 
         Map<String,String> obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
+        //System.out.println(obj.toString());
+
         //assertEquals("Bad credentials",obj.get("message"));
-        assertEquals("Unauthorized",obj.get("message"));
+        assertEquals("Unauthorized",obj.get("error"));
     }   
     
     @Test
@@ -198,8 +200,10 @@ public class SecurityWiringIntTest {
             response = template.getForEntity(baseURL() + "/user", String.class);
             assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
             obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
+            //System.out.println(obj.toString());
+
             //assertEquals("Bad credentials",obj.get("message"));
-            assertEquals("Unauthorized",obj.get("message"));
+            assertEquals("Unauthorized",obj.get("error"));
         }
         
         template = new TestRestTemplate(login,good,TestRestTemplate.HttpClientOption.ENABLE_COOKIES);
@@ -207,7 +211,7 @@ public class SecurityWiringIntTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
         //assertEquals("User account is locked",obj.get("message"));
-        assertEquals("Unauthorized",obj.get("message"));
+        assertEquals("Unauthorized",obj.get("error"));
         
     }     
     
@@ -336,7 +340,8 @@ public class SecurityWiringIntTest {
 
         Map<String,String> obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
         //assertEquals("Bad credentials",obj.get("message"));
-        assertEquals("Forbidden",obj.get("message"));
+        //System.out.println(obj.toString());
+        assertEquals("Forbidden",obj.get("error"));
         //assertEquals("Unauthorized",obj.get("message"));
     }      
     
