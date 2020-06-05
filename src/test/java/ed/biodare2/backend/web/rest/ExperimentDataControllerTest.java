@@ -11,6 +11,7 @@ import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.features.tsdata.dataimport.RegionBasedExcelTableImporterTest;
 import ed.biodare2.backend.features.tsdata.dataimport.DataTableImporterTest;
 import ed.biodare2.backend.features.tsdata.dataimport.TopCountImporterTest;
+
 import ed.biodare2.backend.handlers.ExperimentDataHandlerTest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
 import ed.biodare2.backend.repo.isa_dom.dataimport.CellRange;
@@ -64,7 +65,7 @@ import org.springframework.util.MultiValueMap;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 @DirtiesContext
-public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
+public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
  
     //@Autowired
     //CacheManager cache;
@@ -609,6 +610,56 @@ public class ExperimentDataContorllerIntTest extends ExperimentBaseIntTest {
         //System.out.println(data.get(0).label);
         //assertTrue(data.get(0).label.startsWith("51.["));
         assertEquals(51, data.get(0).traceNr);
+        
+        
+    }    
+    
+    @Test
+    public void getHourlyTSDataReturnsSortedPagedDataFromDataSet() throws Exception {
+    
+        
+        AssayPack pack = insertExperiment();
+        ExperimentalAssay exp = pack.getAssay();        
+        
+        int series = insertData(pack, "SHORT");
+        int pageIndex = 0;
+        int pageSize = 25;
+        
+        //assertEquals(600, series);
+        
+        DetrendingType detrending = DetrendingType.LIN_DTR;
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/data/"+detrending.name()+"/hourly")
+                .param("pageIndex", ""+pageIndex)
+                .param("pageSize", ""+pageSize)
+                .param("sort", "ID")
+                .param("direction", "desc")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(mockAuthentication);
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
+        
+        TraceSet wrapper = mapper.readValue(resp.getResponse().getContentAsString(), TraceSet.class);
+        assertNotNull(wrapper);
+        List<Trace> data = wrapper.traces;
+        assertNotNull(data);
+        //assertEquals(pageSize, data.size());
+        assertFalse(data.get(0).data.isEmpty());
+        //
+        //System.out.println(data.get(0).label);
+        //System.out.println(data.get(0).traceNr);
+        //System.out.println(data.get(0).dataId);
+        //assertTrue(data.get(0).label.startsWith("51.["));
+        assertEquals(12, data.get(0).dataId);
+        assertEquals(11, data.get(1).dataId);
         
         
     }    

@@ -17,6 +17,8 @@ import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortParams;
+import ed.biodare2.backend.features.tsdata.sorting.TSSorter;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetType;
 import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
@@ -35,6 +37,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +58,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
     final TSDataExporter dataExporter;
     final PPAJC2Handler ppaHandler;
     final RhythmicityHandler rhythmicityHandler;
+    final TSSorter sorter;
     
     public static final String TSAssetName = "ts_data_file_1";
 
@@ -64,7 +69,8 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
             PPAJC2Handler ppaHandler,
             RhythmicityHandler rhythmicityHandler,
             FileAssetRep fileAssets, 
-            AssetsParamRep assetsParams
+            AssetsParamRep assetsParams,
+            TSSorter sorter
             ) {
         this.experiments = experiments;
         this.importHandler = importHandler;
@@ -74,6 +80,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         this.dataHandler = dataHandler;
         this.ppaHandler = ppaHandler;
         this.rhythmicityHandler = rhythmicityHandler;
+        this.sorter = sorter;
     }
     
     public Optional<TimeSeriesMetrics> getTSDataMetrics(AssayPack exp) {
@@ -102,8 +109,15 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                 });
     }
     
-    public Optional<TraceSet> getHourlyTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
+    public Optional<TraceSet> getHourlyTSData(AssayPack exp,DetrendingType detrending, Page page, TSSortParams sorting) throws ServerSideException {
         
+        
+        List<Long> sortedIds = sorter.sortedTSIds(exp, sorting);
+        Optional<List<DataTrace>> dataSet = dataHandler.getHourlyDataSet(exp, detrending);
+        
+        return dataSet.map( set -> sortedDataPage(set, sortedIds, page, sorting));
+        
+        /*
         final int toSkip = page.pageIndex*page.pageSize;
         return dataHandler.getHourlyDataSet(exp, detrending)
                 .map( ds -> {
@@ -121,7 +135,33 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                     
                     return set;
                 });
-    }    
+        */
+    }   
+    
+    protected TraceSet sortedDataPage(List<DataTrace> data, 
+            List<Long> sortedIds, Page page, TSSortParams sorting) {
+        
+        final int toSkip = page.pageIndex*page.pageSize;
+        final Map<Long, DataTrace> idToTrace = data
+                            .parallelStream()
+                            .collect(Collectors.toConcurrentMap( d -> d.dataId, Function.identity()));
+            
+        List<Trace> traces  = sortedIds.stream()
+            .skip(toSkip)
+            .limit(page.pageSize)
+            .map( id -> idToTrace.get(id))
+            //.filter( d -> d != null)
+            .map(d -> toUITrace(d, false))
+            .collect(Collectors.toList());
+
+        TraceSet set = new TraceSet();
+        set.totalTraces = data.size();
+        set.traces = traces;
+        set.currentPage = page;
+        set.currentPage.length = data.size();
+        set.sorting = sorting;
+        return set;        
+    }
     
     protected Trace toUITrace(DataTrace data, boolean fullLabel) {
         Trace trace = new Trace();
@@ -152,6 +192,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         
         ppaHandler.clearPPA(exp);
         rhythmicityHandler.clear(exp);
+        sorter.clear(exp);
         
         registerDataImport(exp, true, user);
         
