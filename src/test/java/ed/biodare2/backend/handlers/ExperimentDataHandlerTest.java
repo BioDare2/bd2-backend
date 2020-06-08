@@ -118,7 +118,7 @@ public class ExperimentDataHandlerTest {
         
         experiments = MockReps.mockHub();
         
-        sorter = new TSSorter(dataHandler); //mock(TSSorter.class);
+        sorter = new TSSorter(dataHandler,ppaHandler); //mock(TSSorter.class);
         
         //handler = new ExperimentHandler(boundles,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
         handler = new ExperimentDataHandler(

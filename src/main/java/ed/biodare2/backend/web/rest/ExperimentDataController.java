@@ -211,8 +211,9 @@ public class ExperimentDataController extends ExperimentController {
             log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
-            log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
+            log.error("Cannot get timeseries1 {} {} {}",expId,detrending,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
+            //throw new RuntimeException(e.getMessage());
         } 
         
     }      
