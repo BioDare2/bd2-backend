@@ -88,8 +88,16 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
         return dataHandler.getMetrics(exp);
     }    
     
-    public Optional<TraceSet> getTSData(AssayPack exp,DetrendingType detrending, Page page) throws ServerSideException {
+    public Optional<TraceSet> getTSData(AssayPack exp,DetrendingType detrending, Page page,TSSortParams sorting) throws ServerSideException {
         
+        
+        
+        List<Long> sortedIds = sorter.sortedTSIds(exp, sorting);
+        Optional<List<DataTrace>> dataSet = dataHandler.getDataSet(exp, detrending);
+        
+        return dataSet.map( set -> sortedDataPage(set, sortedIds, page, sorting));
+        
+        /*
         final int toSkip = page.pageIndex*page.pageSize;
         return dataHandler.getDataSet(exp, detrending)
                 .map( ds -> {
@@ -107,6 +115,7 @@ public class ExperimentDataHandler extends BaseExperimentHandler {
                     
                     return set;
                 });
+        */
     }
     
     public Optional<TraceSet> getHourlyTSData(AssayPack exp,DetrendingType detrending, Page page, TSSortParams sorting) throws ServerSideException {

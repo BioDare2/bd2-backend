@@ -19,6 +19,7 @@ public enum TSSortOption {
     PHASE,
     AMP,
     ERR,
+    R_TAU,
     R_PVALUE,
     R_PEAK,
     R_PERIOD,

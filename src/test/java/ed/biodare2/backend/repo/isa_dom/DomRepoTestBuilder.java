@@ -351,15 +351,21 @@ public class DomRepoTestBuilder {
         results.state = State.SUCCESS;
         
         for (long id = idS;id <= idE; id++) {
-            BD2eJTKRes entry = new BD2eJTKRes(0.8, 0.001, new AsymCosine(24, 1, 13));
-            entry.empP = 0.01;
-            TSResult<BD2eJTKRes> res = new TSResult<>(id, entry);
+            TSResult<BD2eJTKRes> res = makeBD2EJTKResult(id, 0.8, 0.001, 24,1);
+            res.result.empP = 0.01;
             results.results.add(res);
         }
         
         return results;
                
     }    
+    
+    public static TSResult<BD2eJTKRes> makeBD2EJTKResult(long id, double tau, double p, double period, double peak) {
+            BD2eJTKRes entry = new BD2eJTKRes(tau, p, new AsymCosine(period, peak, 13));
+            entry.empP = p;
+            TSResult<BD2eJTKRes> res = new TSResult<>(id, entry);        
+            return res;
+    }
     
     //public static JobResults<TSResult<PPAResult>> makeBD2PPAResults(UUID jobId, long expId) {
     public static PPAJobResults makeBD2PPAResults(UUID jobId, long expId) {

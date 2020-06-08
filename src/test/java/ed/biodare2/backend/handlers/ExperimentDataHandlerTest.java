@@ -118,7 +118,7 @@ public class ExperimentDataHandlerTest {
         
         experiments = MockReps.mockHub();
         
-        sorter = new TSSorter(dataHandler,ppaHandler); //mock(TSSorter.class);
+        sorter = new TSSorter(dataHandler,ppaHandler, rhythmicityHandler); //mock(TSSorter.class);
         
         //handler = new ExperimentHandler(boundles,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
         handler = new ExperimentDataHandler(
@@ -248,8 +248,8 @@ public class ExperimentDataHandlerTest {
         when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
         
         Page page = new Page(3,30);
-        
-        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
+        TSSortParams sorting = new TSSortParams(TSSortOption.ID, true, null);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page,sorting);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();
@@ -300,8 +300,8 @@ public class ExperimentDataHandlerTest {
         when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
         
         Page page = new Page(4,30);
-        
-        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
+        TSSortParams sorting = new TSSortParams(TSSortOption.ID, true, null);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page,sorting);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();

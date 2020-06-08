@@ -74,6 +74,7 @@ public class TSSortParams {
             case ERR: jobId = parseUUID(ppaJobId); break;
             
             case R_PVALUE:
+            case R_TAU:    
             case R_PEAK:
             case R_PERIOD: jobId = parseUUID(rhythmJobId); break;
             

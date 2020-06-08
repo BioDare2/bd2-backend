@@ -5,11 +5,15 @@
  */
 package ed.biodare2.backend.features.tsdata.sorting;
 
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import static ed.biodare2.backend.features.tsdata.sorting.TSSortOption.*;
 import ed.biodare2.backend.features.tsdata.sorting.TSSorter.InvalidPPAAsLastComparator;
 import ed.biodare2.backend.features.tsdata.sorting.TSSorter.PPAStatusComparator;
+import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResult;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -41,6 +45,7 @@ public class TSSorterTest {
     TSSorter sorter;
     TSDataHandler dataHandler;
     PPAJC2Handler ppaHandler;
+    RhythmicityHandler rhythmicityHandler;
     
     AssayPack experiment;
     
@@ -49,7 +54,8 @@ public class TSSorterTest {
         
         dataHandler = mock(TSDataHandler.class);
         ppaHandler = mock(PPAJC2Handler.class);
-        sorter = new TSSorter(dataHandler, ppaHandler);
+        rhythmicityHandler = mock(RhythmicityHandler.class);
+        sorter = new TSSorter(dataHandler, ppaHandler, rhythmicityHandler);
         
         experiment = mock(AssayPack.class);
         when(experiment.getId()).thenReturn(5670L);
@@ -226,7 +232,7 @@ public class TSSorterTest {
     }     
     
     @Test
-    public void createsCorrectComparator() {
+    public void createsPPAComparator() {
         
         try {
             Comparator<PPASimpleResultEntry> c1;
@@ -237,9 +243,30 @@ public class TSSorterTest {
         for (TSSortOption sort: List.of(PERIOD, PHASE, AMP, ERR)) {
             Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(sort, true);
             assertNotNull(c1);
-        }        
+        }    
+        
+   
         
     }
+    
+    @Test
+    public void createRhythmComparator() {
+        
+        try {
+            Comparator<PPASimpleResultEntry> c1;
+            c1 = sorter.ppaComparator(NR, true);
+            fail("Exception expected");
+        } catch (IllegalArgumentException e) {}
+        
+ 
+        // R_PVALUE not implemented as too tricky to choose which and they ar related to tau
+        for (TSSortOption sort: List.of(R_PERIOD, R_PEAK, R_TAU)) {
+            Comparator<TSResult<BD2eJTKRes>> c1 = sorter.rhythmComparator(sort, true);
+            assertNotNull(c1);
+        }         
+        
+    }
+    
 
 
     @Test
@@ -403,6 +430,81 @@ public class TSSorterTest {
         assertTrue(c1.compare(o1, o2) < 0);
         assertTrue(c1.compare(o3, o2) == 0);
         assertTrue(c1.compare(o4, o2) > 0);
+        
+    }    
+    
+    @Test
+    public void byRPeriodSortsByPeriodPhaseAndTau() {
+        
+        TSResult<BD2eJTKRes> o1 = makeBD2EJTKResult(1, 0.5, 0.01, 24, 3);
+        TSResult<BD2eJTKRes> o2 = makeBD2EJTKResult(2, 0.5, 0.01, 20, 3);
+        TSResult<BD2eJTKRes> o3 = makeBD2EJTKResult(3, 0.5, 0.01, 20, 1);
+        TSResult<BD2eJTKRes> o4 = makeBD2EJTKResult(4, 0.9, 0.01, 20, 3);
+        
+        Comparator<TSResult<BD2eJTKRes>> c1 = sorter.rhythmComparator(R_PERIOD, true);
+        assertTrue(c1.compare(o1, o2) > 0);
+        assertTrue(c1.compare(o3, o2) < 0);
+        assertTrue(c1.compare(o4, o2) < 0);
+    }
+    
+    @Test
+    public void byRPeakSortsByPeakTauAndPeriod() {
+        
+        TSResult<BD2eJTKRes> o1 = makeBD2EJTKResult(1, 0.5, 0.01, 20, 3);
+        TSResult<BD2eJTKRes> o2 = makeBD2EJTKResult(2, 0.5, 0.01, 20, 1);
+        TSResult<BD2eJTKRes> o3 = makeBD2EJTKResult(3, 0.5, 0.01, 24, 1);
+        TSResult<BD2eJTKRes> o4 = makeBD2EJTKResult(4, 0.9, 0.01, 20, 1);
+        
+        Comparator<TSResult<BD2eJTKRes>> c1 = sorter.rhythmComparator(R_PEAK, true);
+        assertTrue(c1.compare(o1, o2) > 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o4, o2) < 0);
+    }    
+    
+    @Test
+    public void byRTauSortsByTauAndPeak() {
+        
+        TSResult<BD2eJTKRes> o1 = makeBD2EJTKResult(1, 0.4, 0.01, 21, 1);
+        TSResult<BD2eJTKRes> o2 = makeBD2EJTKResult(2, 0.5, 0.01, 22, 1);
+        TSResult<BD2eJTKRes> o3 = makeBD2EJTKResult(3, 0.5, 0.01, 23, 2);
+        TSResult<BD2eJTKRes> o4 = makeBD2EJTKResult(4, 0.5, 0.01, 24, 1);
+        
+        Comparator<TSResult<BD2eJTKRes>> c1 = sorter.rhythmComparator(R_TAU, true);
+        assertTrue(c1.compare(o1, o2) > 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o4, o2) == 0);
+    }  
+    
+    @Test
+    public void byRPeriodAppliesRounding() {
+        
+        TSResult<BD2eJTKRes> o1 = makeBD2EJTKResult(1, 0.5, 0.01, 24.2, 3.5);
+        TSResult<BD2eJTKRes> o2 = makeBD2EJTKResult(2, 0.5, 0.01, 24, 3.6);
+        TSResult<BD2eJTKRes> o3 = makeBD2EJTKResult(3, 0.509, 0.01, 24.6, 1);
+        TSResult<BD2eJTKRes> o4 = makeBD2EJTKResult(4, 0.51, 0.01, 24.7, 1);
+        
+        Comparator<TSResult<BD2eJTKRes>> c1 = sorter.rhythmComparator(R_PERIOD, true);
+        assertTrue(c1.compare(o1, o2) == 0);
+        assertTrue(c1.compare(o3, o4) == 0);
+    }    
+    
+    @Test
+    public void rhythmSortResults() {
+        
+        TSResult<BD2eJTKRes> o1 = makeBD2EJTKResult(1, 0.49, 0.01, 24, 3);
+        TSResult<BD2eJTKRes> o4 = makeBD2EJTKResult(2, 0.9, 0.01, 20, 3);
+        TSResult<BD2eJTKRes> o2 = makeBD2EJTKResult(3, 0.5, 0.01, 22.4, 3);
+        TSResult<BD2eJTKRes> o3 = makeBD2EJTKResult(4, 0.5, 0.01, 22.5, 1);
+        
+        TSSortParams sorting = new TSSortParams(TSSortOption.R_PERIOD, true, null);
+        List<Long> sorted = sorter.rhythmSort(List.of(o1,o2,o3,o4), sorting);
+        
+        assertEquals(List.of(2L,4L,3L,1L), sorted);
+        
+        sorting = new TSSortParams(TSSortOption.R_PEAK, true, null);
+        sorted = sorter.rhythmSort(List.of(o1,o2,o3,o4), sorting);
+        
+        assertEquals(List.of(4L,2L,3L,1L), sorted);
         
     }    
     

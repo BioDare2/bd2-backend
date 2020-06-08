@@ -217,14 +217,14 @@ public class RhythmicityHandler {
         return !job.jobStatus.state.equals(State.SUCCESS);
     }
 
-    Map<Long, DataTrace> getOrgData(AssayPack exp, RhythmicityJobSummary job) throws ArgumentException {
+    Map<Long, DataTrace> getOrgData(AssayPack exp, RhythmicityJobSummary job) {
         
         String dataSetType = job.parameters.get(job.DATA_SET_TYPE);
         DetrendingType detrendig = DetrendingType.valueOf(dataSetType);
 
 
         Optional<List<DataTrace>> dataSet = dataHandler.getDataSet(exp, detrendig);
-        if (!dataSet.isPresent()) throw new ArgumentException("Missing data set in the experiment "+exp.getId());            
+        if (!dataSet.isPresent()) throw new NotFoundException("Missing data set in the experiment "+exp.getId());            
 
         return dataSet.get().stream().collect(Collectors.toMap( dt -> dt.dataId, dt -> dt));        
     }
@@ -254,7 +254,7 @@ public class RhythmicityHandler {
         return summary;    
     }
     
-    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(AssayPack exp, UUID jobId) throws ArgumentException {
+    public JobResults<TSResult<BD2eJTKRes>> getRhythmicityResults(AssayPack exp, UUID jobId) {
         RhythmicityJobSummary job = tryToFindJobSummary(exp, jobId);
         
         Map<Long, DataTrace> orgData = getOrgData(exp, job);
@@ -340,15 +340,15 @@ public class RhythmicityHandler {
         return rhythmicityRep.saveJobDetails(job);
     }
 
-    void addLabels(List<TSResult<BD2eJTKRes>> results, Map<Long, DataTrace> orgData) throws ArgumentException {
+    void addLabels(List<TSResult<BD2eJTKRes>> results, Map<Long, DataTrace> orgData) {
         
         if (results.size() < orgData.size())
-            throw new ArgumentException("Got less results: "+results.size()+" than original data: "+orgData.size());
+            throw new IllegalStateException("Got less results: "+results.size()+" than original data: "+orgData.size());
         
         for (TSResult<BD2eJTKRes> result : results) {
             
             if (!orgData.containsKey(result.id))
-                throw new ArgumentException("Missing data trace of id "+result.id);
+                throw new IllegalStateException("Missing data trace of id "+result.id);
     
             DataTrace trace = orgData.get(result.id);
             String label = labelTrace(trace);

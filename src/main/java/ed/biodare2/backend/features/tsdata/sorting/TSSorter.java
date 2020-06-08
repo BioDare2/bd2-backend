@@ -5,7 +5,11 @@
  */
 package ed.biodare2.backend.features.tsdata.sorting;
 
+import ed.biodare.jobcentre2.dom.JobResults;
+import ed.biodare.jobcentre2.dom.TSResult;
+import ed.biodare.rhythm.ejtk.BD2eJTKRes;
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
+import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleResults;
@@ -37,12 +41,14 @@ public class TSSorter {
     
     final TSDataHandler dataHandler;
     final PPAJC2Handler ppaHandler;
+    final RhythmicityHandler rhythmicityHandler;
     long lastCleared;
     
     @Autowired
-    public TSSorter(TSDataHandler dataHandler, PPAJC2Handler ppaHandler) {
+    public TSSorter(TSDataHandler dataHandler, PPAJC2Handler ppaHandler, RhythmicityHandler rhythmicityHandler) {
         this.dataHandler = dataHandler;
         this.ppaHandler = ppaHandler;
+        this.rhythmicityHandler = rhythmicityHandler;
     }
     
     @CacheEvict(allEntries=true)
@@ -75,6 +81,11 @@ public class TSSorter {
             case PHASE:
             case AMP:
             case ERR: return ppaSort(exp, data, sorting);
+            
+            case R_PERIOD:
+            case R_PEAK:
+            case R_TAU:
+            case R_PVALUE: return rhythmSort(exp, data, sorting);
             default: throw new IllegalArgumentException("Unsupported sorting: "+sorting.sort);
         }
     }
@@ -105,6 +116,27 @@ public class TSSorter {
                     .collect(Collectors.toList());
     }    
     
+    protected List<Long> rhythmSort(AssayPack exp, List<DataTrace> data, TSSortParams sorting) {
+        if (sorting.jobId == null) throw new IllegalArgumentException("Missing job id");
+        
+        JobResults<TSResult<BD2eJTKRes>> results = rhythmicityHandler.getRhythmicityResults(exp, sorting.jobId);
+        
+        return  rhythmSort(results.results, sorting);
+    }
+    
+    protected List<Long> rhythmSort(List<TSResult<BD2eJTKRes>> results, TSSortParams sorting) {
+        
+        return  results.stream()
+                    .sorted(rhythmComparator(sorting.sort, sorting.ascending))
+                    /*.peek( r -> {
+                        System.out.println(r.period+"\t"+r.phaseToZero.get(PhaseType.ByFit)+"\t"+r.ERR+"\t"+roundToDecy(r.ERR));                    
+                    })*/
+                    .map( r -> r.id)
+                    .collect(Collectors.toList());
+    }    
+    
+   
+    
     protected Comparator<PPASimpleResultEntry> ppaComparator(TSSortOption sort, boolean ascending) {
         
         final Comparator<PPASimpleResultEntry> status = new PPAStatusComparator();
@@ -125,6 +157,27 @@ public class TSSorter {
         return comp;
     }
     
+    protected Comparator<TSResult<BD2eJTKRes>> rhythmComparator(TSSortOption sort, boolean ascending) {
+        
+        // R_PVALUE not implemented as messy to choose between empP and P and
+        // they antiproporcional to tau
+        final Comparator<TSResult<BD2eJTKRes>> period = Comparator.comparing(r -> roundToHalf(r.result.pattern.period));
+        final Comparator<TSResult<BD2eJTKRes>> peak = Comparator.comparing(r -> roundToHalf(r.result.pattern.peak));
+        final Comparator<TSResult<BD2eJTKRes>> tau = Comparator
+                                                        .comparing( (TSResult<BD2eJTKRes> r) -> roundToCenty(r.result.tau))
+                                                        .reversed();
+                
+        Comparator<TSResult<BD2eJTKRes>> comp;
+        switch (sort) {
+            case R_PERIOD: comp = period.thenComparing(peak).thenComparing(tau); break;
+            case R_PEAK: comp = peak.thenComparing(tau).thenComparing(period); break;
+            case R_TAU: comp = tau.thenComparing(peak); break;
+            default: throw new IllegalArgumentException("Unsupported rhythm sort by: "+sort);
+        }
+        if (!ascending) comp = comp.reversed();
+        return comp;
+    }     
+    
     final protected double roundToHalf(double val) {
         double v = Math.floor(val);
         double r = val - v;
@@ -137,6 +190,10 @@ public class TSSorter {
         return Math.round(val*10)/10.0;        
     }
     
+    final protected double roundToCenty(double val) {
+        return Math.round(val*100)/100.0;        
+    }    
+    
     final protected double smartRound(double val) {
         if (Math.abs(val) >= 30)
             return Math.round(val);
@@ -145,7 +202,7 @@ public class TSSorter {
         if (Math.abs(val) >= 0.5)
             return roundToDecy(val);        
         if (Math.abs(val) >= 0.05)
-            return Math.round(val*100)/100.0;
+            return roundToCenty(val);
         return val;
     }
     
@@ -165,6 +222,7 @@ public class TSSorter {
         }
         
     }
+    
     
     protected static class InvalidPPAAsLastComparator implements Comparator<PPASimpleResultEntry> {
 
