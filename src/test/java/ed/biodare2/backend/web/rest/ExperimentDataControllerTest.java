@@ -520,7 +520,8 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         assertNotNull(data);
         assertEquals(DEF_PAGE_SIZE, data.size());
         assertFalse(data.get(0).data.isEmpty());
-        assertTrue(data.get(0).label.startsWith("1.["));        
+        // assertTrue(data.get(0).label.startsWith("1.["));        
+        assertEquals(1, data.get(0).traceNr);        
         
     }
     
@@ -562,9 +563,9 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         assertNotNull(data);
         assertEquals(pageSize, data.size());
         assertFalse(data.get(0).data.isEmpty());
-        System.out.println(data.get(0).label);
-        assertTrue(data.get(0).label.startsWith("51.["));
-        
+        // System.out.println(data.get(0).label);
+        // assertTrue(data.get(0).label.startsWith("51.["));
+        assertEquals(51,data.get(0).traceNr);
         
     }    
     
