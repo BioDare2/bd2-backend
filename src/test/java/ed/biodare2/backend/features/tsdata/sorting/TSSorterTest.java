@@ -7,12 +7,16 @@ package ed.biodare2.backend.features.tsdata.sorting;
 
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import static ed.biodare2.backend.features.tsdata.sorting.TSSortOption.*;
 import ed.biodare2.backend.features.tsdata.sorting.TSSorter.InvalidPPAAsLastComparator;
+import ed.biodare2.backend.features.tsdata.sorting.TSSorter.PPAStatusComparator;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleResultEntry;
+import ed.biodare2.backend.repo.isa_dom.ppa_jc2.ValuesByPhase;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
+import ed.robust.dom.tsprocessing.PhaseType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -148,8 +152,9 @@ public class TSSorterTest {
         assertTrue(c1.compare(o3, o2) == 0);
     }
     
+    
     @Test
-    public void createsCorrectComparator() {
+    public void ppaStatusComparatorWorks() {
         
         PPASimpleResultEntry o1 = new PPASimpleResultEntry();
         o1.period = 24;
@@ -158,37 +163,248 @@ public class TSSorterTest {
         PPASimpleResultEntry o2 = new PPASimpleResultEntry();
         o2.period = 20;
         o2.ERR = 0.6;
-        
+                
         PPASimpleResultEntry o3 = new PPASimpleResultEntry();
         o3.period = 20;
         o3.ERR = 0.6;
         
-        Comparator<PPASimpleResultEntry> c1;
+        
+        PPAStatusComparator c1 = new PPAStatusComparator();
+        
+        assertTrue(c1.compare(o1, o2) == 0);
+        assertTrue(c1.compare(o2, o3) == 0);
+        
+        o2.failed = true;
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o2, o3) > 0);
+        
+        o1.failed = true;
+        o2.failed = true;
+        assertTrue(c1.compare(o1, o2) == 0);
+        assertTrue(c1.compare(o2, o3) > 0);
+        
+        o1.failed = true;
+        o2.ignored = true;
+        o2.failed = false;
+        assertTrue(c1.compare(o1, o2) > 0);
+        assertTrue(c1.compare(o2, o3) > 0);
+
+        o1.failed = false;
+        o2.ignored = true;
+        o2.failed = false;
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o2, o3) > 0);
+        
+        o3.ignored = true;
+        assertTrue(c1.compare(o2, o3) == 0);
+        
+    }
+    
+    @Test
+    public void roundToDecy() {
+        
+        assertEquals(11.2, sorter.roundToDecy(11.19),1E-6);
+        assertEquals(-1.0, sorter.roundToDecy(-.96),1E-6);
+    }
+    
+    @Test
+    public void roundToHalf() {
+        
+        assertEquals(11.0, sorter.roundToHalf(11.19),1E-6);
+        assertEquals(-1.5, sorter.roundToHalf(-1.35),1E-6);
+        assertEquals(2.0, sorter.roundToHalf(1.79),1E-6);
+    }    
+    
+    @Test
+    public void smartRound() {
+        
+        assertEquals(41.0, sorter.smartRound(41.2678),1E-6);
+        assertEquals(10.5, sorter.smartRound(10.3678),1E-6);
+        assertEquals(-1.4, sorter.smartRound(-1.3678),1E-6);
+        assertEquals(0.42, sorter.smartRound(0.4178),1E-6);
+        assertEquals(0.03678, sorter.smartRound(0.03678),1E-6);
+    }     
+    
+    @Test
+    public void createsCorrectComparator() {
         
         try {
-            c1 = sorter.ppaComparator(TSSortOption.NR, true);
+            Comparator<PPASimpleResultEntry> c1;
+            c1 = sorter.ppaComparator(NR, true);
             fail("Exception expected");
         } catch (IllegalArgumentException e) {}
         
-        c1 = sorter.ppaComparator(TSSortOption.PERIOD, true);
-        assertTrue(c1.compare(o1, o2) > 0);
-        assertTrue(c1.compare(o3, o2) == 0);
-        
-        c1 = sorter.ppaComparator(TSSortOption.PERIOD, false);
-        assertTrue(c1.compare(o1, o2) < 0);
-        assertTrue(c1.compare(o3, o2) == 0);
-
-        c1 = sorter.ppaComparator(TSSortOption.ERR, true);
-        assertTrue(c1.compare(o1, o2) < 0);
-        assertTrue(c1.compare(o3, o2) == 0);
-        
-        o2.ignored = true;
-        c1 = sorter.ppaComparator(TSSortOption.PERIOD, true);
-        assertTrue(c1.compare(o1, o2) < 0);
-        assertTrue(c1.compare(o3, o2) < 0);
-        
+        for (TSSortOption sort: List.of(PERIOD, PHASE, AMP, ERR)) {
+            Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(sort, true);
+            assertNotNull(c1);
+        }        
         
     }
+
+
+    @Test
+    public void byPeriodComparatorSortsByPeriodPhaseError() {
+        
+        PPASimpleResultEntry o1 = new PPASimpleResultEntry();
+        o1.period = 24;
+        o1.ERR = 0.5;
+        o1.phaseToZero = new ValuesByPhase<>();
+        o1.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o2 = new PPASimpleResultEntry();
+        o2.period = 20;
+        o2.ERR = 0.6;
+        o2.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o3 = new PPASimpleResultEntry();
+        o3.period = 20;
+        o3.ERR = 0.6;
+        o3.phaseToZero.put(PhaseType.ByFit, 3.0);
+        
+        PPASimpleResultEntry o4 = new PPASimpleResultEntry();
+        o4.period = 20;
+        o4.ERR = 0.7;
+        o4.phaseToZero.put(PhaseType.ByFit, 1.0);        
+        
+        Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(TSSortOption.PERIOD, true);
+        
+        assertTrue(c1.compare(o1, o2) > 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o4, o2) > 0);
+        
+        c1 = sorter.ppaComparator(TSSortOption.PERIOD, false);
+        
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o3, o2) < 0);
+        assertTrue(c1.compare(o4, o2) < 0);
+    }
+    
+    @Test
+    public void byPeriodComparatorAppliesRounding() {
+        
+        PPASimpleResultEntry o1 = new PPASimpleResultEntry();
+        o1.period = 24.3;
+        o1.ERR = 0.5;
+        o1.phaseToZero = new ValuesByPhase<>();
+        o1.phaseToZero.put(PhaseType.ByFit, 1.1);
+        
+        PPASimpleResultEntry o2 = new PPASimpleResultEntry();
+        o2.period = 24.6;
+        o2.ERR = 0.53;
+        o2.phaseToZero.put(PhaseType.ByFit, 0.9);
+        
+        PPASimpleResultEntry o3 = new PPASimpleResultEntry();
+        o3.period = 24.8;
+        o3.ERR = 0.69;
+        o3.phaseToZero.put(PhaseType.ByFit, 3.7);
+        
+        PPASimpleResultEntry o4 = new PPASimpleResultEntry();
+        o4.period = 25;
+        o4.ERR = 0.71;
+        o4.phaseToZero.put(PhaseType.ByFit, 3.4);        
+        
+        Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(TSSortOption.PERIOD, true);
+        
+        assertTrue(c1.compare(o1, o2) == 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o4, o3) == 0);
+        
+
+    }    
+    
+    @Test
+    public void byPeriodComparatorSortsFailedLast() {
+        
+        PPASimpleResultEntry o1 = new PPASimpleResultEntry();
+        o1.period = 20;
+        o1.ERR = 0.6;
+        o1.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o2 = new PPASimpleResultEntry();
+        o2.period = 20;
+        o2.ERR = 0.6;
+        o2.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o3 = new PPASimpleResultEntry();
+        o3.period = 20;
+        o3.ERR = 0.6;
+        o3.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(PERIOD, true);
+        
+        assertTrue(c1.compare(o1, o2) == 0);
+        assertTrue(c1.compare(o3, o2) == 0);
+
+        o2.ignored = true;
+        o3.failed = true;
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o3, o1) > 0);
+    }   
+    
+    @Test
+    public void byPhaseComparatorSortsByPhasePeriodError() {
+        
+        PPASimpleResultEntry o1 = new PPASimpleResultEntry();
+        o1.period = 24;
+        o1.ERR = 0.5;
+        o1.phaseToZero = new ValuesByPhase<>();
+        o1.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o2 = new PPASimpleResultEntry();
+        o2.period = 20;
+        o2.ERR = 0.6;
+        o2.phaseToZero.put(PhaseType.ByFit, 3.0);
+        
+        PPASimpleResultEntry o3 = new PPASimpleResultEntry();
+        o3.period = 24;
+        o3.ERR = 0.6;
+        o3.phaseToZero.put(PhaseType.ByFit, 3.0);
+        
+        PPASimpleResultEntry o4 = new PPASimpleResultEntry();
+        o4.period = 20;
+        o4.ERR = 0.2;
+        o4.phaseToZero.put(PhaseType.ByFit, 3.0);        
+        
+        Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(PHASE, true);
+        
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o3, o2) > 0);
+        assertTrue(c1.compare(o4, o2) < 0);
+        
+    }    
+    
+    @Test
+    public void byErrorComparatorSortsByErrorPhase() {
+        
+        PPASimpleResultEntry o1 = new PPASimpleResultEntry();
+        o1.period = 24;
+        o1.ERR = 0.2;
+        o1.phaseToZero = new ValuesByPhase<>();
+        o1.phaseToZero.put(PhaseType.ByFit, 1.0);
+        
+        PPASimpleResultEntry o2 = new PPASimpleResultEntry();
+        o2.period = 20;
+        o2.ERR = 0.6;
+        o2.phaseToZero.put(PhaseType.ByFit, 3.0);
+        
+        PPASimpleResultEntry o3 = new PPASimpleResultEntry();
+        o3.period = 24;
+        o3.ERR = 0.6;
+        o3.phaseToZero.put(PhaseType.ByFit, 3.0);
+        
+        PPASimpleResultEntry o4 = new PPASimpleResultEntry();
+        o4.period = 20;
+        o4.ERR = 0.6;
+        o4.phaseToZero.put(PhaseType.ByFit, 3.6);        
+        
+        Comparator<PPASimpleResultEntry> c1 = sorter.ppaComparator(ERR, true);
+        
+        assertTrue(c1.compare(o1, o2) < 0);
+        assertTrue(c1.compare(o3, o2) == 0);
+        assertTrue(c1.compare(o4, o2) > 0);
+        
+    }    
     
     @Test
     public void ppaSortsResults() {

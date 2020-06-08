@@ -98,25 +98,73 @@ public class TSSorter {
         
         return  results.stream()
                     .sorted(ppaComparator(sorting.sort, sorting.ascending))
+                    /*.peek( r -> {
+                        System.out.println(r.period+"\t"+r.phaseToZero.get(PhaseType.ByFit)+"\t"+r.ERR+"\t"+roundToDecy(r.ERR));                    
+                    })*/
                     .map( r -> r.dataId)
                     .collect(Collectors.toList());
     }    
     
     protected Comparator<PPASimpleResultEntry> ppaComparator(TSSortOption sort, boolean ascending) {
         
+        final Comparator<PPASimpleResultEntry> status = new PPAStatusComparator();
+        final Comparator<PPASimpleResultEntry> period = Comparator.comparing(r -> roundToHalf(r.period));
+        final Comparator<PPASimpleResultEntry> phase = Comparator.comparing(r -> roundToHalf(r.phaseToZero.get(PhaseType.ByFit)));
+        final Comparator<PPASimpleResultEntry> amp = Comparator.comparing(r -> smartRound(r.amplitude.get(PhaseType.ByFit)));
+        final Comparator<PPASimpleResultEntry> err = Comparator.comparing(r -> roundToDecy(r.ERR));
+                
         Comparator<PPASimpleResultEntry> comp;
         switch (sort) {
-            case PERIOD: comp = new InvalidPPAAsLastComparator( r -> r.period); break;
-            case PHASE: comp = new InvalidPPAAsLastComparator( r -> r.phaseToZero.get(PhaseType.ByFit)); break;
-            case AMP: comp = new InvalidPPAAsLastComparator( r -> r.amplitude.get(PhaseType.ByFit)); break;
-            case ERR: comp = new InvalidPPAAsLastComparator( r -> r.ERR); break;
+            case PERIOD: comp = status.thenComparing(period).thenComparing(phase).thenComparing(err); break;
+            case PHASE: comp = status.thenComparing(phase).thenComparing(period).thenComparing(err); break;
+            case AMP: comp = status.thenComparing(amp).thenComparing(phase).thenComparing(err); break;
+            case ERR: comp = status.thenComparing(err).thenComparing(phase); break;
             default: throw new IllegalArgumentException("Unsupported ppa sort by: "+sort);
         }
         if (!ascending) comp = comp.reversed();
         return comp;
     }
     
+    final protected double roundToHalf(double val) {
+        double v = Math.floor(val);
+        double r = val - v;
+        if (r >= 0.25 && r< 0.75) v+=0.5;
+        else if (r >=0.75) v+=1;
+        return v;
+    }
+    
+    final protected double roundToDecy(double val) {
+        return Math.round(val*10)/10.0;        
+    }
+    
+    final protected double smartRound(double val) {
+        if (Math.abs(val) >= 30)
+            return Math.round(val);
+        if (Math.abs(val) >= 10)
+            return roundToHalf(val);
+        if (Math.abs(val) >= 0.5)
+            return roundToDecy(val);        
+        if (Math.abs(val) >= 0.05)
+            return Math.round(val*100)/100.0;
+        return val;
+    }
+    
+    protected static class PPAStatusComparator implements Comparator<PPASimpleResultEntry> {
 
+
+        @Override
+        public int compare(PPASimpleResultEntry o1, PPASimpleResultEntry o2) {
+            
+            if (o1.failed) return o2.failed ? 0 : 1; 
+            if (o2.failed) return -1;
+            
+            if (o1.ignored) return o2.ignored ? 0 : 1;
+            if (o2.ignored) return -1;
+            
+            return 0;
+        }
+        
+    }
     
     protected static class InvalidPPAAsLastComparator implements Comparator<PPASimpleResultEntry> {
 
