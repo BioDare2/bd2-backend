@@ -7,6 +7,8 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.dataimport.ImportException;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortOption;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortParams;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.handlers.ExperimentHandler;
@@ -154,6 +156,10 @@ public class ExperimentDataController extends ExperimentController {
     public TraceSet getTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
+            @RequestParam(name="sort", defaultValue = "ID") TSSortOption sort,
+            @RequestParam(name="direction", required = false) String direction,            
+            @RequestParam(name="ppaJobId", required = false) String ppaJobId,            
+            @RequestParam(name="rhythmJobId", required = false) String rhythmJobId,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get TimeSeries; exp:{} {}; {}",expId,detrending,user);
         
@@ -163,7 +169,8 @@ public class ExperimentDataController extends ExperimentController {
         
         try {
             Page page = new Page(pageIndex, pageSize);
-            TraceSet resp = dataHandler.getTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
+            TSSortParams sorting = TSSortParams.parse(sort, direction, ppaJobId, rhythmJobId);
+            TraceSet resp = dataHandler.getTSData(exp,detrending,page,sorting).orElseThrow(()-> new NotFoundException("DataSet not found"));
             tracker.dataView(exp,detrending,user);
             return resp;
             
@@ -184,6 +191,10 @@ public class ExperimentDataController extends ExperimentController {
     public TraceSet getHourlyTSData(@PathVariable long expId, @PathVariable DetrendingType detrending, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "100") int pageSize,
+            @RequestParam(name="sort", defaultValue = "ID") TSSortOption sort,
+            @RequestParam(name="direction", required = false) String direction,            
+            @RequestParam(name="ppaJobId", required = false) String ppaJobId,            
+            @RequestParam(name="rhythmJobId", required = false) String rhythmJobId,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get hourly TimeSeries; exp:{} {}; {}",expId,detrending,user);
         
@@ -193,7 +204,8 @@ public class ExperimentDataController extends ExperimentController {
         
         try {
             Page page = new Page(pageIndex, pageSize);
-            TraceSet resp = dataHandler.getHourlyTSData(exp,detrending,page).orElseThrow(()-> new NotFoundException("DataSet not found"));
+            TSSortParams sorting = TSSortParams.parse(sort, direction, ppaJobId, rhythmJobId);
+            TraceSet resp = dataHandler.getHourlyTSData(exp,detrending,page,sorting).orElseThrow(()-> new NotFoundException("DataSet not found"));
             tracker.dataView(exp,detrending,user);
             return resp;
             
@@ -204,8 +216,9 @@ public class ExperimentDataController extends ExperimentController {
             log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
             throw e;
         } catch (Exception e) {
-            log.error("Cannot get timeseries {} {} {}",expId,detrending,e.getMessage(),e);
+            log.error("Cannot get timeseries1 {} {} {}",expId,detrending,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
+            //throw new RuntimeException(e.getMessage());
         } 
         
     }      

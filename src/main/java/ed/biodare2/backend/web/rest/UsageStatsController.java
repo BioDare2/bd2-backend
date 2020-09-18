@@ -5,6 +5,8 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare2.backend.features.tsdata.sorting.TSSortOption;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortParams;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
@@ -129,7 +131,7 @@ public class UsageStatsController extends BioDare2Rest {
         Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page)
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page, new TSSortParams(TSSortOption.NONE, true, null))
                     .map( ds -> ds.traces)
                     .orElse(Collections.emptyList()).size();
         }
@@ -154,7 +156,7 @@ public class UsageStatsController extends BioDare2Rest {
         Page page = new Page(0,Integer.MAX_VALUE);        
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
             
-            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page)
+            tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page,new TSSortParams(TSSortOption.NONE, true, null))
                     .map( ds -> ds.traces)
                     .orElse(Collections.emptyList()).size();
         }

@@ -19,6 +19,9 @@ import ed.biodare2.backend.repo.dao.FileAssetRep;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataExporter;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortOption;
+import ed.biodare2.backend.features.tsdata.sorting.TSSortParams;
+import ed.biodare2.backend.features.tsdata.sorting.TSSorter;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
@@ -72,6 +75,7 @@ public class ExperimentDataHandlerTest {
     AssetsParamRep assetsParams;
     PPAJC2Handler ppaHandler;
     RhythmicityHandler rhythmicityHandler;
+    TSSorter sorter;
     UserAccount user;
     
     ExperimentalAssay testExp;
@@ -114,6 +118,8 @@ public class ExperimentDataHandlerTest {
         
         experiments = MockReps.mockHub();
         
+        sorter = new TSSorter(dataHandler,ppaHandler, rhythmicityHandler); //mock(TSSorter.class);
+        
         //handler = new ExperimentHandler(boundles,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
         handler = new ExperimentDataHandler(
                 experiments,
@@ -121,7 +127,8 @@ public class ExperimentDataHandlerTest {
                 ppaHandler,
                 rhythmicityHandler,
                 fileAssets,
-                assetsParams
+                assetsParams,
+                sorter
         );
     }    
 
@@ -156,6 +163,7 @@ public class ExperimentDataHandlerTest {
         verify(dataHandler).handleNewData(eq(boundle), eq(dataBoundle));
         verify(ppaHandler).clearPPA(eq(boundle));
         verify(rhythmicityHandler).clear(eq(boundle));
+        //verify(sorter).clear(eq(boundle));
         verify(experiments).save(eq(boundle));
         
         assertEquals(1,res);
@@ -240,8 +248,8 @@ public class ExperimentDataHandlerTest {
         when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
         
         Page page = new Page(3,30);
-        
-        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
+        TSSortParams sorting = new TSSortParams(TSSortOption.ID, true, null);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page,sorting);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();
@@ -262,10 +270,13 @@ public class ExperimentDataHandlerTest {
         AssayPack expPack = testBoundle;        
         DetrendingType detrending = DetrendingType.LIN_DTR;
         when(dataHandler.getHourlyDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
+        //this one for sorter
+        when(dataHandler.getDataSet(eq(expPack), any())).thenReturn(Optional.of(data));
         
         Page page = new Page(3,30);
+        TSSortParams sorting = new TSSortParams(TSSortOption.ID, true, null);
         
-        Optional<TraceSet> oDataset = handler.getHourlyTSData(expPack, detrending, page);
+        Optional<TraceSet> oDataset = handler.getHourlyTSData(expPack, detrending, page, sorting);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();
@@ -289,8 +300,8 @@ public class ExperimentDataHandlerTest {
         when(dataHandler.getDataSet(eq(expPack), eq(detrending))).thenReturn(Optional.of(data));
         
         Page page = new Page(4,30);
-        
-        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page);
+        TSSortParams sorting = new TSSortParams(TSSortOption.ID, true, null);
+        Optional<TraceSet> oDataset = handler.getTSData(expPack, detrending, page,sorting);
         assertTrue(oDataset.isPresent());
         
         TraceSet dataset = oDataset.get();
