@@ -335,13 +335,16 @@ public class SecurityWiringIntTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         
         response = template.getForEntity(baseURL() + "/user", String.class);
-        //assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 
-        Map<String,String> obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
+        //System.out.println(response.toString());
+        
+        // this testing stopped working with SB.2.6 as there is no body just forbidegen
+        //Map<String,String> obj = mapper.readValue(response.getBody(), new TypeReference<Map<String,String>>() { });
+        //priort to 2.6
+        //assertEquals("Forbidden",obj.get("error"));
         //assertEquals("Bad credentials",obj.get("message"));
         //System.out.println(obj.toString());
-        assertEquals("Forbidden",obj.get("error"));
         //assertEquals("Unauthorized",obj.get("message"));
     }      
     
