@@ -196,6 +196,13 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+                <!-- Had to be added so the old test will run after upgrading to SB2.6 from 2.3 -->
+                <dependency>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                    <scope>test</scope>
+                </dependency>
+                
                 
                 <!-- for restTemplate with handling options on request -->
                 <dependency>
