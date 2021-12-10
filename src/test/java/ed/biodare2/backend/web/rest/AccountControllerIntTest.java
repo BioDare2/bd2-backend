@@ -21,7 +21,7 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+//import org.mockito.Matchers;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -280,7 +280,7 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
     @Test
     public void updateUpdatesTheAccount() throws Exception {
         
-        when(captcha.verify(Matchers.anyString())).thenReturn(true);
+        when(captcha.verify(anyString())).thenReturn(true);
                 
         String orgPass = currentUser.getPassword();        
         
@@ -328,7 +328,7 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
         currentUser = fixtures.user2;
         mockAuthentication = authenticate(currentUser);
         
-        when(captcha.verify(Matchers.anyString())).thenReturn(true);
+        when(captcha.verify(anyString())).thenReturn(true);
                 
         String orgEmail = currentUser.getEmail();
         String orgFName = currentUser.getFirstName();

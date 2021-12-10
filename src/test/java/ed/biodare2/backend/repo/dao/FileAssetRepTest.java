@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.*;
 
 /**
  *
@@ -128,7 +129,7 @@ public class FileAssetRepTest {
         upload.contentType = "text";
         upload.originalFileName = "file2.txt";
         
-        when(uploads.get(eq(fileId), anyObject())).thenReturn(upFile);
+        when(uploads.get(eq(fileId), any())).thenReturn(upFile);
         when(uploads.getInfo(eq(fileId))).thenReturn(upload);
         
         AssayPack exp = new MockExperimentPack(2);
@@ -165,7 +166,7 @@ public class FileAssetRepTest {
         upload.originalFileName = "file3.txt";
         String assetName = upload.originalFileName;
         
-        when(uploads.get(eq(fileId), anyObject())).thenReturn(upFile);
+        when(uploads.get(eq(fileId), any())).thenReturn(upFile);
         when(uploads.getInfo(eq(fileId))).thenReturn(upload);
         
         AssayPack exp = new MockExperimentPack(2);
@@ -204,7 +205,7 @@ public class FileAssetRepTest {
         upload1.contentType = "text";
         upload1.originalFileName = "f1.txt";
         
-        when(uploads.get(eq(fileId1), anyObject())).thenReturn(upFile1);
+        when(uploads.get(eq(fileId1), any())).thenReturn(upFile1);
         when(uploads.getInfo(eq(fileId1))).thenReturn(upload1);
         
         Path upFile2 = upDir.resolve("file2.txt");
@@ -216,7 +217,7 @@ public class FileAssetRepTest {
         upload2.contentType = "text";
         upload2.originalFileName = "f2.txt";
         
-        when(uploads.get(eq(fileId2), anyObject())).thenReturn(upFile2);
+        when(uploads.get(eq(fileId2), any())).thenReturn(upFile2);
         when(uploads.getInfo(eq(fileId2))).thenReturn(upload2);        
         
         List<UploadFileInfo> files = Arrays.asList(upload1,upload2);
@@ -266,7 +267,7 @@ public class FileAssetRepTest {
         upload.originalFileName = "file3.txt";
         String assetName = upload.originalFileName;
 
-        when(uploads.get(eq(fileId), anyObject())).thenReturn(upFile);
+        when(uploads.get(eq(fileId), any())).thenReturn(upFile);
         when(uploads.getInfo(eq(fileId))).thenReturn(upload);
         
         AssayPack exp = new MockExperimentPack(1);
