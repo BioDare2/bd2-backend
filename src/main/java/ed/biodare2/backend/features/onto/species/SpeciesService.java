@@ -39,7 +39,7 @@ public class SpeciesService {
         this.configFile = Paths.get(configPath);
     
         if (!Files.isRegularFile(configFile))
-            throw new IllegalArgumentException("Cannot access species definition file: "+configFile);
+            throw new IllegalArgumentException("Cannot access species definition file: "+configFile.toAbsolutePath());
         
         log.info("Species service created");
         

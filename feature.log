@@ -1,3 +1,5 @@
+2.14.0.2120
+            bumped to sb 2.6.6 cause of spring4shell RCE bug
 2.13.0.2120
             log4j crutial vulnaribitlity
             bumpled to sb 2.6.1 (needs changes to tests)
