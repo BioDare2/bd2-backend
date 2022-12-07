@@ -123,6 +123,10 @@ public class UsersHandler {
         setSubscription(user);
         rdmSocialHandler.createUserAspect(user);
         
+        //autoactivation
+        user.setLocked(false);
+        user.setActivationDate(LocalDate.now());        
+        
         return users.save(user);
     }
     

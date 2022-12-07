@@ -1,5 +1,5 @@
-2.16.0.2120
-
+2.16.0.2121
+            autoactivation of accounts without email, captcha always required for registration
             to sb 2.7.6
 2.14.0.2120
             bumped to sb 2.6.6 cause of spring4shell RCE bug

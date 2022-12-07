@@ -129,7 +129,8 @@ public class AccountController extends BioDare2Rest {
     protected void verifyCaptcha(String email,String captchaResponse) {
         if (captchaResponse.isEmpty()) {
             if (email.endsWith(".cn") || email.endsWith(".tw")) {
-                log.warn("Skipping captcha for: {}",email);
+                //log.warn("Skipping captcha for: {}",email);
+                throw new HandlingException("Captcha not available in China, email biodare@ed.ac.uk");
             } else  {
                 throw new HandlingException("Missing captcha");
             }
@@ -157,8 +158,8 @@ public class AccountController extends BioDare2Rest {
             tracker.userNew(account,user);
             log.info("Registered account: "+account.getLogin());
             
-            usersHandler.sendActivationEmail(account);
-            log.info("Sent activation email");
+            //usersHandler.sendActivationEmail(account);
+            //log.info("Sent activation email");
             
             return account2UserMap(account);
         } catch(WebMappedException e) {
