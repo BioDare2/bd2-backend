@@ -65,20 +65,28 @@ public class Mailer {
     
     protected Session makeSession(EnvironmentVariables env) {
 
-        String host = Objects.requireNonNull(env.mailHost);
-        String userName = Objects.requireNonNull(env.mailUser);
-        String password = Objects.requireNonNull(env.mailPassword);
-
+        String host = env.mailHost;
+        if (host == null || host.isBlank()) throw new IllegalArgumentException("mail.host cannot be empty");
+        
+        String userName = env.mailUser;
+        if (userName == null || userName.isBlank()) throw new IllegalArgumentException("mail.username cannot be empty");
+                
         Properties prop = new Properties();
         prop.put("mail.smtp.host",host);
         prop.put("mail.from",FROM);
-        prop.put("mail.user", userName);
-        prop.put("mail.smtp.auth",true);
-        prop.put("mail.smtp.starttls.enable",true);
 
-        Authenticator authenticator = new SimpleMailAuthenticator(userName, password);
-
-        return Session.getInstance(prop, authenticator);
+        prop.put("mail.user", userName);            
+        
+        if (env.mailAuth) {
+            String password = env.mailPassword;
+            if (password == null || password.isBlank()) throw new IllegalArgumentException("if mail.auth enabled mail.password cannot be empty");
+            prop.put("mail.smtp.auth",true);
+            prop.put("mail.smtp.starttls.enable",true);
+            Authenticator authenticator = new SimpleMailAuthenticator(userName, password);
+            return Session.getInstance(prop, authenticator);
+        }
+        
+        return Session.getInstance(prop);
     }
         
     static class SimpleMailAuthenticator extends Authenticator {

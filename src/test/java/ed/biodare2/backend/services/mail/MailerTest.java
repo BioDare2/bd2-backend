@@ -5,7 +5,9 @@
  */
 package ed.biodare2.backend.services.mail;
 
+import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.SimpleRepoTestConfig;
+import javax.mail.Session;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -46,7 +48,46 @@ public class MailerTest {
     }
     
   
+    @Test
+    public void makesSessionWithAuthParams() {
+        
+        EnvironmentVariables env = new EnvironmentVariables("","http://localhost:9000","","",
+                true,
+        "smtp.localhost",
+        "test-user",
+        "password");
+        
+        Session session = instance.makeSession(env);
+        assertNotNull(session);
+    }
     
+    @Test
+    public void failsSessionWithAuthWithoutPassword() {
+        
+        EnvironmentVariables env = new EnvironmentVariables("","http://localhost:9000","","",
+                true,
+        "localhost",
+        "test-user",
+        null);
+        
+        try {
+            Session session = instance.makeSession(env);
+            assertNotNull(session);
+        } catch (IllegalArgumentException e) {            
+        }
+    }    
     
+    @Test
+    public void makesSessionWithoutAuth() {
+        
+        EnvironmentVariables env = new EnvironmentVariables("","http://localhost:9000","","",
+                false,
+        "localhost",
+        "biodare",
+        null);
+        
+        Session session = instance.makeSession(env);
+        assertNotNull(session);
+    }    
     
 }

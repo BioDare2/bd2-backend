@@ -63,5 +63,6 @@ public class EnvironmentVariablesTest {
         assertNotNull(instance.mailHost);
         assertNotNull(instance.mailUser);
         assertNotNull(instance.mailPassword);
+        assertTrue(instance.mailAuth);
     }     
 }

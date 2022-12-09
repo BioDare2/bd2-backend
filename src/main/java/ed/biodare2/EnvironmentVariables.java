@@ -23,6 +23,7 @@ public class EnvironmentVariables {
     final public String recaptchaSiteKey;
     final public String recaptchaSecretKey;
     
+    final public boolean mailAuth;
     final public String mailHost;
     final public String mailUser;
     final public String mailPassword;
@@ -33,6 +34,7 @@ public class EnvironmentVariables {
                                 //String jobcentreURL,
                                 String recaptchaSiteKey,
                                 String recaptchaSecretKey,
+                                boolean mailAuth,
                                 String mailHost,
                                 String mailUser,
                                 String mailPassword
@@ -55,6 +57,7 @@ public class EnvironmentVariables {
         this.mailHost = mailHost;
         this.mailUser = mailUser;
         this.mailPassword = mailPassword;
+        this.mailAuth = mailAuth;
         
     }
     

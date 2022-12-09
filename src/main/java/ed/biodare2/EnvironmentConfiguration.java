@@ -40,15 +40,16 @@ public class EnvironmentConfiguration {
                                 //@Value("${bd2.jobcentre.wsdl}") String jobcentreURL,
                                 @Value("${bd2.recaptcha.site-key}") String recaptchaSiteKey,
                                 @Value("${bd2.recaptcha.secret-key}") String recaptchaSecretKey,
+                                @Value("${bd2.mail.auth:true}") boolean mailAuth,
                                 @Value("${spring.mail.host}") String mailHost,
-                                @Value("${spring.mail.username}") String mailUser
-                                
+                                @Value("${spring.mail.username:null}") String mailUser
     ) {
         String mailPassword = mailPassword(env);
-        if (mailPassword == null) {
+        
+        /*if (mailPassword == null) {
             throw new BeanInstantiationException(EnvironmentVariables.class, 
                     "Cannot init environment missing email password");
-        }
+        }*/
         
         log.warn("ENV STORAGE {}", storageDirPath);
         
@@ -58,6 +59,7 @@ public class EnvironmentConfiguration {
                 //jobcentreURL, 
                 recaptchaSiteKey, 
                 recaptchaSecretKey,
+                mailAuth,
                 mailHost, 
                 mailUser, 
                 mailPassword);

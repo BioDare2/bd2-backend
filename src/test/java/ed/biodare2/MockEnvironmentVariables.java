@@ -29,7 +29,8 @@ public class MockEnvironmentVariables {
                     backendURL,
                     //jobcentreURL, 
                     recaptchaSiteKey, 
-                    recaptchaSecretKey, 
+                    recaptchaSecretKey,
+                    true,
                     mailHost, 
                     mailUser, 
                     mailPassword);
