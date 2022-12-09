@@ -124,8 +124,8 @@ public class UsersHandler {
         rdmSocialHandler.createUserAspect(user);
         
         //autoactivation
-        user.setLocked(false);
-        user.setActivationDate(LocalDate.now());        
+        //user.setLocked(false);
+        //user.setActivationDate(LocalDate.now());        
         
         return users.save(user);
     }

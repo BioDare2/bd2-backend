@@ -158,8 +158,8 @@ public class AccountController extends BioDare2Rest {
             tracker.userNew(account,user);
             log.info("Registered account: "+account.getLogin());
             
-            //usersHandler.sendActivationEmail(account);
-            //log.info("Sent activation email");
+            usersHandler.sendActivationEmail(account);
+            log.info("Sent activation email");
             
             return account2UserMap(account);
         } catch(WebMappedException e) {
