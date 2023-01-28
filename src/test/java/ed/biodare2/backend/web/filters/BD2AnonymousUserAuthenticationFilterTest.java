@@ -25,6 +25,7 @@ import static org.mockito.Mockito.*;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.SecurityContextRepository;
 /**
  *
  * @author tzielins
@@ -36,11 +37,13 @@ public class BD2AnonymousUserAuthenticationFilterTest {
     
     BD2AnonymousUserAuthenticationFilter instance;
     AuthenticationEventPublisher eventPublisher;
+    SecurityContextRepository securityContextRepository;
     
     @Before
     public void init() {
         eventPublisher = mock(AuthenticationEventPublisher.class);
-        instance = new BD2AnonymousUserAuthenticationFilter(eventPublisher);
+        securityContextRepository = mock(SecurityContextRepository.class);
+        instance = new BD2AnonymousUserAuthenticationFilter(eventPublisher, securityContextRepository);
     }
 
     @Test

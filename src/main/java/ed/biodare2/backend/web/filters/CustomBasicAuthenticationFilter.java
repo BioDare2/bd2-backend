@@ -29,6 +29,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 import org.springframework.security.web.authentication.session.SessionFixationProtectionStrategy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -46,6 +47,7 @@ public class CustomBasicAuthenticationFilter  extends OncePerRequestFilter {
 	private AuthenticationEntryPoint authenticationEntryPoint;
 	private AuthenticationManager authenticationManager;
 	private RememberMeServices rememberMeServices = new NullRememberMeServices();
+        private final SecurityContextRepository securityContextRepository;
 	private boolean ignoreFailure = false;
 	private String credentialsCharset = "UTF-8";
         public boolean DEBUG = LoggerFactory.getLogger(BasicAuthenticationFilter.class).isDebugEnabled();
@@ -57,13 +59,14 @@ public class CustomBasicAuthenticationFilter  extends OncePerRequestFilter {
 	 *
 	 * @param authenticationManager the bean to submit authentication requests to
 	 */
-	public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager) {
+	public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager, SecurityContextRepository securityContextRepository) {
 		Assert.notNull(authenticationManager, "authenticationManager cannot be null");
 		this.authenticationManager = authenticationManager;
 		this.ignoreFailure = false;
                 
                 this.authenticationEntryPoint = new BasicAuthenticationEntryPoint();
                 this.sessionStrategy = new SessionFixationProtectionStrategy();
+                this.securityContextRepository = securityContextRepository;
 	}
 
 	/**
@@ -76,13 +79,14 @@ public class CustomBasicAuthenticationFilter  extends OncePerRequestFilter {
 	 * Typically an instance of {@link BasicAuthenticationEntryPoint}.
 	 */
 	public CustomBasicAuthenticationFilter(AuthenticationManager authenticationManager,
-			AuthenticationEntryPoint authenticationEntryPoint) {
+			AuthenticationEntryPoint authenticationEntryPoint, SecurityContextRepository securityContextRepository) {
 		Assert.notNull(authenticationManager, "authenticationManager cannot be null");
 		Assert.notNull(authenticationEntryPoint,
 				"authenticationEntryPoint cannot be null");
 		this.authenticationManager = authenticationManager;
 		this.authenticationEntryPoint = authenticationEntryPoint;
                 this.sessionStrategy = new SessionFixationProtectionStrategy();
+                this.securityContextRepository = securityContextRepository;
 	}
 
 	// ~ Methods
@@ -139,9 +143,11 @@ public class CustomBasicAuthenticationFilter  extends OncePerRequestFilter {
 
 				SecurityContextHolder.getContext().setAuthentication(authResult);
 
+
 				this.rememberMeServices.loginSuccess(request, response, authResult);
 
                                 sessionStrategy.onAuthentication(authResult, request, response);
+                                securityContextRepository.saveContext(SecurityContextHolder.getContext(), request,response);
                                 
 				onSuccessfulAuthentication(request, response, authResult);
 			} else {

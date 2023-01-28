@@ -25,7 +25,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
@@ -35,6 +35,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -166,8 +170,11 @@ public class WebSecurityConfiguration {
         @Autowired
         AuthenticationEventPublisher eventPublisher;
         
+        //@Autowired
+        SecurityContextRepository securityContextRepository;
+        
         BD2AnonymousUserAuthenticationFilter defaultUserFilter() {
-            return new BD2AnonymousUserAuthenticationFilter(eventPublisher);
+            return new BD2AnonymousUserAuthenticationFilter(eventPublisher, securityContextRepository);
         }  
         
         RefreshUserFilter refreshUserFilter() {
@@ -188,7 +195,10 @@ public class WebSecurityConfiguration {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-
+            securityContextRepository = new DelegatingSecurityContextRepository(
+				new RequestAttributeSecurityContextRepository(),
+				new HttpSessionSecurityContextRepository()
+			);
             http
                 //.headers().frameOptions().sameOrigin().and()    //enable for h2 console
                 .authorizeHttpRequests()
@@ -208,10 +218,15 @@ public class WebSecurityConfiguration {
                          .permitAll()
                     ;
             
-            // that is from ss migration 5.8 prepare 6.0
+            //that is from ss migration 5.8 prepare 6.0
             /*http.securityContext((securityContext) -> securityContext
 			.requireExplicitSave(true)
-		);*/
+		)*/
+            http.securityContext((securityContext) -> securityContext
+			.securityContextRepository(securityContextRepository)
+                        .requireExplicitSave(false)
+            );
+            
             return http.build();
         }
         

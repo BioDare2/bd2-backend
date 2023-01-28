@@ -23,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -32,6 +33,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.GenericFilterBean;
 
 //public class BD2AnonymousUserAuthenticationFilter extends GenericFilterBean implements
@@ -43,14 +45,16 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
         private final static AtomicLong IDS = new AtomicLong(1);
         private final AuthenticationEventPublisher eventPublisher;
         //private final SecurityTracker tracker = new SecurityTracker();
+        private final SecurityContextRepository securityContextRepository;
         
         protected String PREFIX = "ANONYM_";
         boolean SpringDebug = false;
         
-	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher) {
+	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher, SecurityContextRepository securityContextRepository) {
             super("/**","anonymousUser",Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER")));
             this.authorities = Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER"));
             this.eventPublisher = eventPublisher;
+            this.securityContextRepository = securityContextRepository;
             
             logger.debug(this.getClass().getSimpleName()+" created");
             SpringDebug = LoggerFactory.getLogger(GenericFilterBean.class).isDebugEnabled();
@@ -65,7 +69,8 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
 
             BD2AnonymousUserAuthenticationToken authentication = createAuthentication((HttpServletRequest) req);
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);            
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
             
             eventPublisher.publishAuthenticationSuccess(authentication);
             
