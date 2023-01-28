@@ -33,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -131,30 +132,32 @@ public class WebSecurityConfiguration {
         };
     }        
 
-        
+    
+    /*
     @Configuration
     @Order(1)                                                        
-    public static class ServicesBackendWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    public static class ServicesBackendWebSecurityConfiguration {
  
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
             http
-                .antMatcher("/api/services/**")                               
-                .authorizeRequests()
+                .securityMatcher("/api/services/**")                               
+                .authorizeHttpRequests()
                     .anyRequest().hasRole("SERVICE")
                     .and()
                 .anonymous().disable()
                 .csrf().disable()
-                .httpBasic();                    
+                .httpBasic();
+            return http.build();
         }
 
     }
-
+    */
     
     @Configuration
     @Order(2)                                                        
-    public static class UIBackendWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+    public static class UIBackendWebSecurityConfiguration {
 
         
         @Autowired
@@ -182,15 +185,15 @@ public class WebSecurityConfiguration {
             /*return filter;
         }*/
         
-        @Override
-        protected void configure(HttpSecurity http) throws Exception {
+        @Bean
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
 
             http
                 //.headers().frameOptions().sameOrigin().and()    //enable for h2 console
-                .authorizeRequests()
-                    .antMatchers("/", "/home","node_modules").permitAll()
-                    .antMatchers("browser-sync").denyAll()
+                .authorizeHttpRequests()
+                    .requestMatchers("/", "/home","node_modules").permitAll()
+                    .requestMatchers("browser-sync").denyAll()
                     .anyRequest().hasRole("USER")//.authenticated()
                     .and()
                 .anonymous().authenticationFilter(defaultUserFilter()).and()                
@@ -202,7 +205,14 @@ public class WebSecurityConfiguration {
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout().logoutSuccessHandler(new OKLogoutSuccessHandler())
                          .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
-                         .permitAll();
+                         .permitAll()
+                    ;
+            
+            // that is from ss migration 5.8 prepare 6.0
+            /*http.securityContext((securityContext) -> securityContext
+			.requireExplicitSave(true)
+		);*/
+            return http.build();
         }
         
     }

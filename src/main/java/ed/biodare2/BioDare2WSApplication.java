@@ -31,7 +31,7 @@ public class BioDare2WSApplication {
     
     //public static final String BACKEND_SERVICE_USERS = "BackendServiceUsers";
     public static final boolean DEBUG = true;
-    public static final boolean DEBUG_WEB = false;
+    public static final boolean DEBUG_WEB = true;
     
     // where the old BioDare1 ids starts
     static final long BD1LIMIT = 12500000000000L;
