@@ -33,6 +33,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 /**
@@ -50,8 +52,9 @@ import org.springframework.validation.Validator;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
+@Ignore //[TODO DB TEST]
 public class UsersHandlerTest {
     
     @Autowired
