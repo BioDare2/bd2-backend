@@ -37,13 +37,13 @@ public class BD2AnonymousUserAuthenticationFilterTest {
     
     BD2AnonymousUserAuthenticationFilter instance;
     AuthenticationEventPublisher eventPublisher;
-    SecurityContextRepository securityContextRepository;
+    //SecurityContextRepository securityContextRepository;
     
     @Before
     public void init() {
         eventPublisher = mock(AuthenticationEventPublisher.class);
-        securityContextRepository = mock(SecurityContextRepository.class);
-        instance = new BD2AnonymousUserAuthenticationFilter(eventPublisher, securityContextRepository);
+        //securityContextRepository = mock(SecurityContextRepository.class);
+        instance = new BD2AnonymousUserAuthenticationFilter(eventPublisher);
     }
 
     @Test

@@ -72,6 +72,8 @@ public class MonitoringFilter implements Filter {
                     log.debug("RESPONSE FOR {} {}",request.getRequestURI(),response.getStatus());
                     log.debug("CONTENT TYPE {}",response.getContentType());
                     response.getHeaderNames().forEach( header -> log.debug("{}: {}",header,response.getHeader(header)));
+                    
+                  
                     log.debug("RESPONSE END");
                 }
                 

@@ -45,16 +45,15 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
         private final static AtomicLong IDS = new AtomicLong(1);
         private final AuthenticationEventPublisher eventPublisher;
         //private final SecurityTracker tracker = new SecurityTracker();
-        private final SecurityContextRepository securityContextRepository;
+        //private SecurityContextRepository securityContextRepository;
         
         protected String PREFIX = "ANONYM_";
         boolean SpringDebug = false;
         
-	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher, SecurityContextRepository securityContextRepository) {
+	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher) {
             super("/**","anonymousUser",Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER")));
             this.authorities = Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER"));
             this.eventPublisher = eventPublisher;
-            this.securityContextRepository = securityContextRepository;
             
             logger.debug(this.getClass().getSimpleName()+" created");
             SpringDebug = LoggerFactory.getLogger(GenericFilterBean.class).isDebugEnabled();
@@ -70,7 +69,7 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
             BD2AnonymousUserAuthenticationToken authentication = createAuthentication((HttpServletRequest) req);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);            
-            securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
+            //securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
             
             eventPublisher.publishAuthenticationSuccess(authentication);
             

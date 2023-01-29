@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -171,10 +172,10 @@ public class WebSecurityConfiguration {
         AuthenticationEventPublisher eventPublisher;
         
         //@Autowired
-        SecurityContextRepository securityContextRepository;
+        //SecurityContextRepository securityContextRepository;
         
         BD2AnonymousUserAuthenticationFilter defaultUserFilter() {
-            return new BD2AnonymousUserAuthenticationFilter(eventPublisher, securityContextRepository);
+            return new BD2AnonymousUserAuthenticationFilter(eventPublisher);
         }  
         
         RefreshUserFilter refreshUserFilter() {
@@ -195,10 +196,20 @@ public class WebSecurityConfiguration {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-            securityContextRepository = new DelegatingSecurityContextRepository(
+            // that is the spring6 default context repo which here is created explicitrly so
+            // I can pass it to the http.basic filter. 
+            // otherwise it does not save the user to the session and basic login from angular http header does not work
+            // https://github.com/spring-projects/spring-security/issues/12431
+            SecurityContextRepository securityContextRepository = new DelegatingSecurityContextRepository(
 				new RequestAttributeSecurityContextRepository(),
 				new HttpSessionSecurityContextRepository()
 			);
+        
+            http.securityContext((securityContext) -> securityContext
+			.securityContextRepository(securityContextRepository)
+                        .requireExplicitSave(true)
+            );
+            
             http
                 //.headers().frameOptions().sameOrigin().and()    //enable for h2 console
                 .authorizeHttpRequests()
@@ -208,24 +219,25 @@ public class WebSecurityConfiguration {
                     .and()
                 .anonymous().authenticationFilter(defaultUserFilter()).and()                
                 //.addFilterBefore(basicLoginFilter(), AnonymousAuthenticationFilter.class) //disabled now to use spring one, may be necessary for better session handling
-                //.addFilterBefore(defaultUserFilter(), AnonymousAuthenticationFilter.class)                    
-                .sessionManagement().sessionFixation().newSession().and()
+                //.addFilterBefore(defaultUserFilter(), AnonymousAuthenticationFilter.class)  changeSessionId                  
+                //.sessionManagement().sessionFixation().newSession().and() changed as it may be better
+                .sessionManagement().sessionFixation().changeSessionId().and()                    
                 .csrf().disable()
-                .httpBasic().and()
+                // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
+                .httpBasic((basic) -> basic.addObjectPostProcessor(new ObjectPostProcessor<BasicAuthenticationFilter>() {
+                        public BasicAuthenticationFilter postProcess(BasicAuthenticationFilter filter) {
+                            filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+                        return filter;
+                        }
+                }))/*.and()*/
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout().logoutSuccessHandler(new OKLogoutSuccessHandler())
                          .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
                          .permitAll()
                     ;
             
-            //that is from ss migration 5.8 prepare 6.0
-            /*http.securityContext((securityContext) -> securityContext
-			.requireExplicitSave(true)
-		)*/
-            http.securityContext((securityContext) -> securityContext
-			.securityContextRepository(securityContextRepository)
-                        .requireExplicitSave(false)
-            );
+
+
             
             return http.build();
         }
