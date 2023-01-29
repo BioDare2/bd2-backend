@@ -40,7 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 //@DataJpaTest(showSql = false)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureTestEntityManager //need this to get entity manager
 @Import(SimpleRepoTestConfig.class)
 public class SystemCopierTest {

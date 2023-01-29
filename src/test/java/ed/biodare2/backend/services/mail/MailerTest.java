@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class MailerTest {
     

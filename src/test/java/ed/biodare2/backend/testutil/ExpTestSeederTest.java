@@ -37,7 +37,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext //("Need it to prevent some pprimery key confirlicts with entityacl in integration tests")
 @Import(SimpleRepoTestConfig.class)
 public class ExpTestSeederTest {

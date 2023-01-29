@@ -26,8 +26,8 @@ import org.springframework.dao.ConcurrencyFailureException;
  * @author Zielu
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-//@SpringBootTest(classes = {BioDare2TestConfiguration.class},webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+//@SpringBootTest(classes = {BioDare2TestConfiguration.class},webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class LongRecordManagerIntTest {
 
     

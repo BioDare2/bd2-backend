@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class AccountsCleanerIntTest {
     

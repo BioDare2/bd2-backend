@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = BioDare2WSApplication.class, webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(classes = BioDare2WSApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class EnvironmentVariablesTest {
 

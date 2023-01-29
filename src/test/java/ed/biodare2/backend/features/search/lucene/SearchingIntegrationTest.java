@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class SearchingIntegrationTest {
     

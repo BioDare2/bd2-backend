@@ -50,7 +50,7 @@ import org.springframework.validation.Validator;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class UsersHandlerTest {
     
