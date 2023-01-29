@@ -40,7 +40,7 @@ public class XMLUtilTest {
         PPAJobSummary cpy = util.readFromFile(file, PPAJobSummary.class);
         assertNotNull(cpy);
         
-        assertReflectionEquals(org,cpy);
+        // [TODO find reflective eq] assertReflectionEquals(org,cpy);
     }*/
     
     /*@Test
@@ -62,7 +62,7 @@ public class XMLUtilTest {
         assertNotNull(cpy);
         assertEquals(cpy.getTaskResults().get(0).getResult().getPeriod(),24,1E-6);
         
-        //assertReflectionEquals(jRes,cpy);
+        //// [TODO find reflective eq] assertReflectionEquals(jRes,cpy);
         
     }*/
     

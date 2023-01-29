@@ -16,7 +16,7 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+//import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
  *
@@ -50,7 +50,7 @@ public class PPAJobIndResultsTest {
         PPAJobIndResults cpy = mapper.readValue(json, PPAJobIndResults.class); 
         
         assertEquals(org, cpy);
-        //assertReflectionEquals(org,cpy); 
+        //// [TODO find reflective eq] assertReflectionEquals(org,cpy); 
     }    
 
     public static PPAJobIndResults makePPAJobIndResults(UUID id) {

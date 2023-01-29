@@ -43,7 +43,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
+//import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
  * @author tzielins
