@@ -39,7 +39,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author tzielins
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment=WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class RDMAssetsAspectRepCachingTest {
     

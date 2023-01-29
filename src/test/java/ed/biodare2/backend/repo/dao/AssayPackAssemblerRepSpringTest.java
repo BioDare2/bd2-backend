@@ -35,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Zielu
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=WebEnvironment.NONE)
+@SpringBootTest(webEnvironment=WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class AssayPackAssemblerRepSpringTest {
     
