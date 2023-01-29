@@ -7,7 +7,7 @@ package ed.biodare2.backend.services.mail;
 
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.SimpleRepoTestConfig;
-import javax.mail.Session;
+import jakarta.mail.Session;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;

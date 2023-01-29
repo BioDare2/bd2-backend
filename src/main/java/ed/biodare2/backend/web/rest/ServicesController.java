@@ -15,7 +15,7 @@ import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.util.HashMap;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

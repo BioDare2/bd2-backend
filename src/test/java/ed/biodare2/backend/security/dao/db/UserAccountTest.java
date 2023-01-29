@@ -8,10 +8,10 @@ package ed.biodare2.backend.security.dao.db;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.security.dao.UserGroupRep;
 import java.time.LocalDateTime;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
+import jakarta.persistence.TypedQuery;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.runner.RunWith;
@@ -152,7 +152,7 @@ public class UserAccountTest {
             //EM.flush();
             testEM.flush();
             fail("Exception expected");
-        } catch (javax.persistence.PersistenceException e) {};
+        } catch (jakarta.persistence.PersistenceException e) {};
         
         
     }     

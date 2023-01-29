@@ -6,7 +6,7 @@
 package ed.biodare2.backend.security.dao.db;
 
 import ed.biodare2.SimpleRepoTestConfig;
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;

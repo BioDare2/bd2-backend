@@ -15,7 +15,7 @@ import ed.biodare2.backend.web.tracking.SecurityTracker;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

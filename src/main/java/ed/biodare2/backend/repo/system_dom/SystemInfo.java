@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessInfo;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

@@ -9,7 +9,7 @@ import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.web.tracking.FileTracker;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;

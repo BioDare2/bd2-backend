@@ -6,8 +6,8 @@
 package ed.biodare2.backend.features.rdmsocial;
 
 import ed.biodare2.backend.repo.system_dom.EntityType;
-import javax.persistence.Column;
-import javax.validation.constraints.NotNull;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

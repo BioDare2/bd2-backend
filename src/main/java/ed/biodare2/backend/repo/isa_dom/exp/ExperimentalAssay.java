@@ -15,8 +15,8 @@ import ed.biodare2.backend.repo.isa_dom.biodesc.DataCategory;
 import ed.biodare2.backend.repo.isa_dom.contribution.ContributionDesc;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
 import java.io.Serializable;
-import javax.persistence.Id;
-import javax.persistence.Version;
+import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 
 /**
  *

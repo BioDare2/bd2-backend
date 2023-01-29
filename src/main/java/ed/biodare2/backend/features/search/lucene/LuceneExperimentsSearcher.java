@@ -12,7 +12,7 @@ import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.con
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.ListWrapper;
 import java.util.Optional;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;

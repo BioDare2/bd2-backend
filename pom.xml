@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.7</version>
+		<version>3.0.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -24,7 +24,7 @@
             <lucene.version>8.4.1</lucene.version>
             <!-- fixed h2 version as was not working with hibernate. Could not drop tables between tests -->
             <!-- <h2.version>1.4.199</h2.version>-->
-            <spring-security.version>5.8.1</spring-security.version>
+            <!--<spring-security.version>5.8.1</spring-security.version>-->
 	</properties>
 
     <dependencyManagement>

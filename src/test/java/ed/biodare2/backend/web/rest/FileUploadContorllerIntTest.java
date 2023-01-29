@@ -49,7 +49,7 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
         MockMultipartFile upload = new MockMultipartFile("file", "original", "text", new byte[10]);
         
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.fileUpload(serviceRoot+"/one")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot+"/one")
                 .file(upload)
                 .accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
@@ -85,7 +85,7 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
         
         UserAccount user = fixtures.anonymous;
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.fileUpload(serviceRoot+"/one")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot+"/one")
                 .file(upload)
                 .accept(APPLICATION_JSON_UTF8)
                 .with(authenticate(user));

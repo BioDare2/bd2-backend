@@ -8,7 +8,7 @@ package ed.biodare2.backend.web.rest;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;

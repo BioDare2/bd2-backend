@@ -6,7 +6,7 @@
 package ed.biodare2.backend.web.listeners;
 
 import java.io.IOException;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.http.HttpStatus;

@@ -8,7 +8,7 @@ package ed.biodare2.backend.repo.isa_dom.contribution;
 import ed.biodare2.backend.repo.isa_dom.actors.Institution;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  *

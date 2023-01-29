@@ -607,7 +607,7 @@ public class DBSystemInfoRepTest {
             info4 = repository.save(info4);          
             repository.flush();
             fail("Exception expected");
-        } catch (javax.persistence.PersistenceException|DataIntegrityViolationException e) {};
+        } catch (jakarta.persistence.PersistenceException|DataIntegrityViolationException e) {};
         
     }     
     

@@ -5,8 +5,8 @@
  */
 package ed.biodare2;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**

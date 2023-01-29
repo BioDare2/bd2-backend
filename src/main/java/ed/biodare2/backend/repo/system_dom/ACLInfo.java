@@ -7,9 +7,9 @@ package ed.biodare2.backend.repo.system_dom;
 
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.NotBlank;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  *
