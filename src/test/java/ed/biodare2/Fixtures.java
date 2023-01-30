@@ -166,23 +166,6 @@ public class Fixtures {
         acc.setTermsVersion(UsersHandler.currentTermsVersion);
         acc.setRdmAspect(makeRDMAspect());
         
-        System.out.println("PASS:\t"+acc.getPassword());
-        UserBuilder users = User.withDefaultPasswordEncoder();
-	String passEnc = users
-		.username("test")
-		.password("test")
-                .roles("USER").build().getPassword();        
-        
-        passEnc = passEnc.substring("{bcrypt}".length());
-        System.out.println("PASS S:\t"+passEnc);
-        //acc.setPassword(passEnc);
-        
-        if (encoder.matches("test", passEnc)) {
-            System.out.println("Matches system");            
-        } else {
-            System.out.println("Not matches");
-        }
-        System.out.println(encoder.getClass().getName());
         
         fixtures.demoUser =accounts.save(acc);
         

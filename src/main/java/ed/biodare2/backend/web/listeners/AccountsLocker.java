@@ -19,6 +19,7 @@ import org.springframework.security.authentication.event.AuthenticationSuccessEv
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -83,7 +84,9 @@ public class AccountsLocker {
                     u.setFailedAttempts(0);
                     u.setLastLogin(LocalDateTime.now());
                     u.setLastLoginAddress(add);
+                    log.info("SUCCESS login account: "+u.getLogin());
                 });
+
                 
             }
             

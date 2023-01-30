@@ -25,6 +25,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -33,7 +34,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
-@Ignore //[TODO DB TEST]
 public class AccountsLockerTest {
     
 
@@ -68,7 +68,9 @@ public class AccountsLockerTest {
         instance.handleBadCredentials(event);
         
         //em.getTransaction().begin();
-        em.refresh(user);
+        //em.refresh(user); // does not work after updatea
+        em = emf.createEntityManager();
+        user = em.find(UserAccount.class,fixtures.demoUser.getId());
         
         assertEquals(prev+1,user.getFailedAttempts());
         
@@ -93,7 +95,10 @@ public class AccountsLockerTest {
         instance.handleBadCredentials(event);
         
         //em.getTransaction().begin();
-        em.refresh(user);
+        //em.refresh(user);
+        em = emf.createEntityManager();
+        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+        
         assertTrue(user.isLocked());
         
     }   
@@ -116,18 +121,22 @@ public class AccountsLockerTest {
         instance.handleSuccessLogin(event);
         
         //em.getTransaction().begin();
-        em.refresh(user);
+        //em.refresh(user);
+        emf.createEntityManager();
+        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         assertEquals(0,user.getFailedAttempts());
         
     }  
     
     @Test
+    @Transactional
     public void updatesLastLoginOnSuccessfulLogging() {
         
         EntityManager em = emf.createEntityManager();
         UserAccount user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         
         em.getTransaction().begin();
+        user.setFailedAttempts(2);
         user.setLastLogin(LocalDateTime.now().minusDays(1));
         user.setLastLoginAddress("xxx");
         em.getTransaction().commit();
@@ -140,7 +149,10 @@ public class AccountsLockerTest {
         instance.handleSuccessLogin(event);
         
         //em.getTransaction().begin();
-        em.refresh(user);
+        //em.refresh(user); refresh does not work after SB and hibernate upgrade
+
+        em = emf.createEntityManager();
+        em.find(UserAccount.class,fixtures.demoUser1.getId());
         assertEquals(0,user.getFailedAttempts());
         assertEquals(LocalDate.now(),user.getLastLogin().toLocalDate());
         assertEquals("unknown",user.getLastLoginAddress());

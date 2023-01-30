@@ -125,25 +125,14 @@ public class WebSecurityConfiguration {
                 return makeUser(ppaUsername, ppaPasswordEncoded, "SERVICE");
             }
             
-            System.out.println("Searching: "+username);
-            accounts.findAll().forEach( a -> System.out.println("Acc: '"+a.getLogin()+"'\t"+a.getLogin().equals(username)+"\t"+a.getPassword()));
-            try {
-                System.out.println("FBL: "+accounts.findByLogin(username).isPresent());
-            } catch (Exception e) {
-                System.out.println("Find by login failed: "+e.getMessage());
-                e.printStackTrace();
-            }
-            System.out.println("Am I even here");
             
             final UserAccount acc = accounts.findByLogin(username)
                     .map( a -> {
                         a.setAuthorities(roles);
-                        System.out.println("Found with: "+a.getPassword());
                         return a;
                     })
                     .orElseThrow(() -> new UsernameNotFoundException("could not find the user '"+ username + "'"));                            
 
-            System.out.println("Found "+acc.getLogin());
             return acc;
 
         };
@@ -211,10 +200,6 @@ public class WebSecurityConfiguration {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-            System.out.println("SECuRITY");
-            System.out.println(passwordEncoder.getClass().getName());
-            System.out.println(passwordEncoder.encode("demo"));
-            System.out.println(passwordEncoder.matches("demo", "$2a$10$qTEkcdBjfuo03iIiPhHkvenlCoSaW7LrjT1bQdEF7U115.M0ZkwVa"));
             // that is the spring6 default context repo which here is created explicitrly so
             // I can pass it to the http.basic filter. 
             // otherwise it does not save the user to the session and basic login from angular http header does not work

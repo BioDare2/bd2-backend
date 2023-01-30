@@ -54,7 +54,7 @@ import org.springframework.validation.Validator;
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
-@Ignore //[TODO DB TEST]
+//@Ignore //[TODO DB TEST]
 public class UsersHandlerTest {
     
     @Autowired
@@ -758,7 +758,9 @@ public class UsersHandlerTest {
         assertNotNull(resp);
         assertEquals(user.getLogin(),resp.getLogin());
         
-        em.getTransaction().begin();
+        em = emf.createEntityManager();
+        em.getTransaction().begin();        
+        user = em.find(UserAccount.class, fixtures.demoUser1.getId());
         em.refresh(user);
         assertFalse(user.isLocked());
         assertEquals(LocalDate.now(),user.getActivationDate());
