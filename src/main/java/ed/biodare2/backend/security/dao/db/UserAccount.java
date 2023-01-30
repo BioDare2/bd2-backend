@@ -148,38 +148,39 @@ public class UserAccount implements Serializable, BioDare2User {
     
     transient List<GrantedAuthority> authorities = new ArrayList<>();
     
+    // this mapping had to be LAZY after SB3 upgrade with Hibernate 6.0 or I was getting errors on findByLogin
     @ManyToOne(targetEntity = UserAccount.class,cascade = CascadeType.REFRESH,fetch = FetchType.LAZY)
     //@NotNull //was trigerring validation exception if set on itself
     @JoinTable(name="USERACCOUNT_SUPERVISOR")
     BioDare2User supervisor;
     
     //@ManyToMany(cascade=CascadeType.PERSIST,targetEntity = UserGroup.class)
-    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.EAGER)
     @OrderBy("name ASC")
     @JoinTable(name="USERACCOUNT_GROUP")
     protected Set<BioDare2Group> groups = new HashSet<>();
     
-    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.EAGER)
     @OrderBy("name ASC")
     @JoinTable(name="USERACCOUNT_SYSGROUP")
     protected Set<BioDare2Group> systemGroups = new HashSet<>();    
     
-    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.EAGER)
     @JoinTable(name="USERACCOUNT_DEFREAD")
     @OrderBy("name ASC")
     protected Set<BioDare2Group> defaultToRead = new HashSet<>();
     
-    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.LAZY)
+    @ManyToMany(targetEntity = UserGroup.class,fetch = FetchType.EAGER)
     @JoinTable(name="USERACCOUNT_DEFWRITE")
     @OrderBy("name ASC")
     protected Set<BioDare2Group> defaultToWrite = new HashSet<>();  
     
     //@OneToOne(cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
     //@PrimaryKeyJoinColumn
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     protected AccountSubscription subscription;
     
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL,orphanRemoval = true,fetch = FetchType.EAGER)
     protected RDMUserAspect rdmAspect;
     
     @Transient
