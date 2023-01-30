@@ -14,8 +14,8 @@ import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.io.IOException;
 import java.util.Map;
 import jakarta.annotation.Resource;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -368,8 +368,8 @@ public class SecurityWiringIntTest {
         template = new TestRestTemplate("demo","demo",TestRestTemplate.HttpClientOption.ENABLE_COOKIES);
 
         ResponseEntity<String> response = template.getForEntity(baseURL() + "/services/status", String.class);
-        //assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        //assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 
     }      
     
@@ -377,7 +377,7 @@ public class SecurityWiringIntTest {
     public void authorizationIsRequiredForServices() throws IOException {
         
         ResponseEntity<String> response = template.getForEntity(baseURL() + "/services/status", String.class);
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
 
     }      
     
