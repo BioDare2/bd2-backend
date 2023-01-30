@@ -367,7 +367,7 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         rhythmicityRep.saveJobResults(results);
 
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/export/")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+'/'+exp.getId()+"/rhythmicity/job/"+job1.jobId+"/export")
                 //.accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
 
