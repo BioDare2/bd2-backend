@@ -33,6 +33,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -45,20 +46,29 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
         private final static AtomicLong IDS = new AtomicLong(1);
         private final AuthenticationEventPublisher eventPublisher;
         //private final SecurityTracker tracker = new SecurityTracker();
-        //private SecurityContextRepository securityContextRepository;
+        private SecurityContextRepository securityContextRepository;
         
         protected String PREFIX = "ANONYM_";
         boolean SpringDebug = false;
         
-	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher) {
+	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher, SecurityContextRepository securityContextRepository) {
             super("/**","anonymousUser",Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER")));
             this.authorities = Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER"));
             this.eventPublisher = eventPublisher;
+            this.securityContextRepository = securityContextRepository;
             
             logger.debug(this.getClass().getSimpleName()+" created");
             SpringDebug = LoggerFactory.getLogger(GenericFilterBean.class).isDebugEnabled();
 	}
+        
+	public BD2AnonymousUserAuthenticationFilter(AuthenticationEventPublisher eventPublisher) {
+            this(eventPublisher, new HttpSessionSecurityContextRepository());
+        }
+        
 
+    public void setSecurityContextRepository(SecurityContextRepository securityContextRepository) {
+        this.securityContextRepository = securityContextRepository;
+    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException
@@ -69,7 +79,7 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
             BD2AnonymousUserAuthenticationToken authentication = createAuthentication((HttpServletRequest) req);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);            
-            //securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
             
             eventPublisher.publishAuthenticationSuccess(authentication);
             

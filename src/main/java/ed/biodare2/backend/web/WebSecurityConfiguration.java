@@ -178,8 +178,8 @@ public class WebSecurityConfiguration {
         //@Autowired
         //SecurityContextRepository securityContextRepository;
         
-        BD2AnonymousUserAuthenticationFilter defaultUserFilter() {
-            return new BD2AnonymousUserAuthenticationFilter(eventPublisher);
+        BD2AnonymousUserAuthenticationFilter defaultUserFilter(SecurityContextRepository securityContextRepository) {
+            return new BD2AnonymousUserAuthenticationFilter(eventPublisher, securityContextRepository);
         }  
         
         RefreshUserFilter refreshUserFilter() {
@@ -223,7 +223,7 @@ public class WebSecurityConfiguration {
                     .requestMatchers("/api/services/**").hasRole("SERVICE")
                     .anyRequest().hasRole("USER")//.authenticated()
                     .and()
-                .anonymous().authenticationFilter(defaultUserFilter()).and()                
+                .anonymous().authenticationFilter(defaultUserFilter(securityContextRepository)).and()                
                 //.addFilterBefore(basicLoginFilter(), AnonymousAuthenticationFilter.class) //disabled now to use spring one, may be necessary for better session handling
                 //.addFilterBefore(defaultUserFilter(), AnonymousAuthenticationFilter.class)  changeSessionId                  
                 //.sessionManagement().sessionFixation().newSession().and() changed as it may be better
