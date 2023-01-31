@@ -27,7 +27,7 @@ public class MonitoringFilter implements Filter {
     
     final Logger log = LoggerFactory.getLogger(this.getClass());
     
-    boolean DEBUG = true;
+    boolean DEBUG = false;
     boolean DEBUG_HEADERS = true;
     boolean DEBUG_COOKIES = true;
     boolean DEBUG_RESPONSE = true;
