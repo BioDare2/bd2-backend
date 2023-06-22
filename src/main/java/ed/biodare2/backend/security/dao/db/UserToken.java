@@ -14,6 +14,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -34,7 +35,7 @@ public class UserToken implements Serializable {
     @Id
     String token;
     
-    @OneToOne(targetEntity = UserAccount.class)
+    @ManyToOne(targetEntity = UserAccount.class)
     @NotNull
     BioDare2User user;
     
