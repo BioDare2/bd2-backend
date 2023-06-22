@@ -122,14 +122,14 @@ public class AccountsLockerTest {
         
         //em.getTransaction().begin();
         //em.refresh(user);
-        emf.createEntityManager();
+        em = emf.createEntityManager();
         user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         assertEquals(0,user.getFailedAttempts());
         
     }  
     
     @Test
-    @Transactional
+    //@Transactional
     public void updatesLastLoginOnSuccessfulLogging() {
         
         EntityManager em = emf.createEntityManager();
@@ -152,7 +152,7 @@ public class AccountsLockerTest {
         //em.refresh(user); refresh does not work after SB and hibernate upgrade
 
         em = emf.createEntityManager();
-        em.find(UserAccount.class,fixtures.demoUser1.getId());
+        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         assertEquals(0,user.getFailedAttempts());
         assertEquals(LocalDate.now(),user.getLastLogin().toLocalDate());
         assertEquals("unknown",user.getLastLoginAddress());

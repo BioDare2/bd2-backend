@@ -759,12 +759,13 @@ public class UsersHandlerTest {
         assertEquals(user.getLogin(),resp.getLogin());
         
         em = emf.createEntityManager();
-        em.getTransaction().begin();        
+        //em.getTransaction().begin();        
         user = em.find(UserAccount.class, fixtures.demoUser1.getId());
-        em.refresh(user);
+        //em.refresh(user);
         assertFalse(user.isLocked());
         assertEquals(LocalDate.now(),user.getActivationDate());
-        em.getTransaction().rollback();
+        //em.getTransaction().rollback();
+        
     }
     
     @Test
