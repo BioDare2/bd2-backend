@@ -238,7 +238,7 @@ public class ExperimentDataController extends ExperimentController {
             // display properties are not implemented
             data = dataHandler.exportData(exp,detrending,displayProperties);
 
-            String contentType = "text/comma-separated-values";
+            String contentType = "text/csv";
             String fileName = expId+"."+detrending.name()+".data.csv";
             sendFile(data,fileName,contentType,false,response);
             

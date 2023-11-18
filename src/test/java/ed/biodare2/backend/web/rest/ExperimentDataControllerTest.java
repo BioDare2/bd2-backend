@@ -694,7 +694,7 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
 
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith("text/comma-separated-values"))
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith("text/csv"))
                 .andReturn();
 
         assertNotNull(resp);
