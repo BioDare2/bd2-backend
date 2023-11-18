@@ -215,6 +215,39 @@ public class WebSecurityConfiguration {
             );
             
             http
+                .authorizeHttpRequests((authorizeHttpRequests) ->
+                    authorizeHttpRequests
+                    .requestMatchers("/", "/home","node_modules").permitAll()
+                    .requestMatchers("browser-sync").denyAll()
+                    .requestMatchers("/api/services/**").hasRole("SERVICE")
+                    .anyRequest().hasRole("USER")//.authenticated()
+                )
+                .anonymous((anonymous) ->
+                                anonymous.authenticationFilter(defaultUserFilter(securityContextRepository))
+                )
+                .sessionManagement((sessionManagement) ->
+                                sessionManagement.sessionFixation().changeSessionId()
+                )                    
+                .csrf((csrf) -> csrf.disable())
+                // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
+                .httpBasic((basic) -> basic.addObjectPostProcessor(
+                        new ObjectPostProcessor<BasicAuthenticationFilter>() {
+                            public BasicAuthenticationFilter postProcess(BasicAuthenticationFilter filter) {
+                                filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
+                            return filter;
+                            }
+                        })
+                )
+                .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
+                .logout((logout) ->
+                            logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
+                            .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
+                            .permitAll()
+                        
+                );
+            
+            /* old configuration bean based not lamdas, refactored above with SB3.1.5
+            http
                 //.anonymous().disable()                    
                 //.headers().frameOptions().sameOrigin().and()    //enable for h2 console
                 .authorizeHttpRequests()
@@ -235,12 +268,12 @@ public class WebSecurityConfiguration {
                             filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
                         return filter;
                         }
-                }))/*.and()*/
+                }))
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout().logoutSuccessHandler(new OKLogoutSuccessHandler())
-                         .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
-                         .permitAll()
-                    ;
+                */ //continuing comment acuse of /** patern        .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
+                //         .permitAll()
+                //    ;
             
 
 
