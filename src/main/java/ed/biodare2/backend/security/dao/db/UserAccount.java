@@ -53,7 +53,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Entity
 @Table(indexes = {
     @Index(name="UserAccount_loginIX",columnList="login", unique = true),
-    @Index(name="UserAccount_initialEmailIX",columnList="initialemail", unique = false),
+    @Index(name="UserAccount_initialEmailIX",columnList="initialEmail", unique = false),
     @Index(name="UserAccount_emailIX",columnList="email", unique = false)
 })
 public class UserAccount implements Serializable, BioDare2User {
