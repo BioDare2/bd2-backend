@@ -53,13 +53,15 @@ public class WebSecurityConfiguration {
     
     // CORS
     @Bean
-    FilterRegistrationBean corsFilter(Environment env) {
+    FilterRegistrationBean customCorsFilter(Environment env) {
         FilterRegistrationBean reg = new FilterRegistrationBean(
                 new CORSFilter(env)
         );
         reg.setOrder(-100);
         return reg;
     }
+    
+   
     
     @Bean
     FilterRegistrationBean monitoringFilter() {
