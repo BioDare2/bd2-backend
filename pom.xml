@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
-	<version>3.3.0.2180</version>
+	<version>3.3.0.2181</version>
 	<name>BioDare2-REST-Trunk</name>
 	<description>BioDare2 backend service</description>
 	<parent>
