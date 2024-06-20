@@ -38,6 +38,7 @@ public class ServiceLevelResolver {
         
         switch (subscription.kind) {
             case FREE: return FULL_GRATIS;
+            case FREE_NO_PUBLISH: return FULL_GRATIS;
             case FULL_WELCOME: return FULL_GRATIS;
             case FULL_INDIVIDUAL:
             case FULL_INHERITED:

@@ -45,14 +45,16 @@ public class ServiceLevelResolverTest {
                 FULL_WELCOME,
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
-                FULL_INHERITED);
+                FULL_INHERITED,
+                FREE_NO_PUBLISH);
         
         List<ServiceLevel> exps = Arrays.asList(
                 FULL_GRATIS,
                 FULL_GRATIS,
                 FULL_SUBSCRIBED,
                 FULL_SUBSCRIBED,
-                FULL_SUBSCRIBED);
+                FULL_SUBSCRIBED,
+                FULL_GRATIS);
         
         for (int i = 0;i<types.size();i++) {
             subscription.kind = types.get(i);
@@ -117,6 +119,7 @@ public class ServiceLevelResolverTest {
         f.serviceLevel = FULL_GRATIS;
         instance.setServiceForOpen(f);
         assertEquals(FULL_FOR_OPEN, f.serviceLevel);
+        
     }
     
 }

@@ -18,5 +18,5 @@ public enum ServiceLevel {
     FULL_GRATIS,
     FULL_PURCHASED,
     FULL_SUBSCRIBED,
-    FULL_FOR_OPEN;
+    FULL_FOR_OPEN
 }
