@@ -193,6 +193,40 @@ public class UsersHandlerTest {
     }
     
     @Test
+    public void registerThrowsExceptionOnBioDareLikeLogins() throws UsersHandler.AccountHandlingException
+    {
+        Map<String,String> details = new HashMap<>();
+        details.put("login","biodare");
+        details.put("email","some@eMailX.edu.cn");
+        details.put("password", " don't trim me");
+        details.put("firstName"," TomeK");
+        details.put("lastName"," ZedW'S");
+        details.put("institution","Inst"); 
+        details.put("terms","true");
+        
+        try {
+            handler.register(details);
+            fail("Exception expected");
+        } catch (UsersHandler.AccountHandlingException e) {}; 
+        
+        details.put("login","biodare2");
+        try {
+            handler.register(details);
+            fail("Exception expected");
+        } catch (UsersHandler.AccountHandlingException e) {}; 
+
+        details.put("login","biodare_x");
+        try {
+            handler.register(details);
+            fail("Exception expected");
+        } catch (UsersHandler.AccountHandlingException e) {}; 
+
+        details.put("login","shouldPass");
+        handler.register(details);
+        
+    }
+    
+    @Test
     public void updateUpdatesTheUserIgnoringPassword() throws UsersHandler.AccountHandlingException {
         
         BioDare2User user = fixtures.demoUser1;

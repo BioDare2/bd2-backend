@@ -232,6 +232,7 @@ public class UsersHandler {
         validateUser(user);
         checkPassword(user.getPassword());
         checkAcademicEmail(user.getInitialEmail());
+        checkNonBioDareLogin(user.getLogin());
         checkUniqueLogin(user.getLogin());
         checkUniqueEmail(user.getEmail(),user.getLogin());
         checkUniqueInitialEmail(user.getInitialEmail());
@@ -254,11 +255,16 @@ public class UsersHandler {
         
     }
 
-
     protected void checkUniqueLogin(String login) throws AccountHandlingException {
         
         if (users.findByLogin(login).isPresent())
             throw new AccountHandlingException("Duplicated login: "+login);
+    }
+
+    protected void checkNonBioDareLogin(String login) throws AccountHandlingException {
+        
+        if (login.startsWith("biodare"))
+            throw new AccountHandlingException("login cannot start with biodare");
     }
 
     protected void checkUniqueEmail(String email,String login) throws AccountHandlingException {
