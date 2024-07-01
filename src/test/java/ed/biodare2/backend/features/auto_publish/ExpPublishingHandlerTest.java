@@ -41,9 +41,9 @@ import static org.mockito.Mockito.*;
  *
  * @author tzielins
  */
-public class AutomaticPublisherTest {
+public class ExpPublishingHandlerTest {
     
-    AutomaticPublisher handler;
+    ExpPublishingHandler handler;
     
     ExperimentalAssay testExp;
     MockReps.ExperimentPackTestImp testBoundle;
@@ -53,7 +53,7 @@ public class AutomaticPublisherTest {
     UserAccountRep users;
     
     
-    public AutomaticPublisherTest() {
+    public ExpPublishingHandlerTest() {
     }
     
     @BeforeClass
@@ -101,7 +101,7 @@ public class AutomaticPublisherTest {
         
         
         //handler = new ExperimentHandler(experiments,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
-        handler = new AutomaticPublisher(experimentHandler, users);
+        handler = new ExpPublishingHandler(experimentHandler, users);
     }
     
     @After
@@ -216,11 +216,11 @@ public class AutomaticPublisherTest {
         exp.getAssay().generalDesc.comments = null;
 
         handler.addPublishingComment(exp);      
-        assertEquals("Automatically published by BioDare2 on "+LocalDate.now(),exp.getAssay().generalDesc.comments);
+        assertEquals("Automatically published by BioDare2 system on "+LocalDate.now(),exp.getAssay().generalDesc.comments);
         
         exp.getAssay().generalDesc.comments = "Text";
         handler.addPublishingComment(exp);      
-        assertEquals("Text\n     Automatically published by BioDare2 on "+LocalDate.now(),exp.getAssay().generalDesc.comments);
+        assertEquals("Text\n     Automatically published by BioDare2 system on "+LocalDate.now(),exp.getAssay().generalDesc.comments);
         
     }
     

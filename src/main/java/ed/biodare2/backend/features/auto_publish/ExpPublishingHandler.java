@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
  * @author tzielins
  */
 @Service
-public class AutomaticPublisher {
+public class ExpPublishingHandler {
     
     final ExperimentHandler experimentHandler;    
     final UserAccountRep users;    
 
-    public AutomaticPublisher(ExperimentHandler experimentHandler, UserAccountRep users) {
+    public ExpPublishingHandler(ExperimentHandler experimentHandler, UserAccountRep users) {
         this.experimentHandler = experimentHandler;
         this.users = users;
     }
@@ -85,7 +85,7 @@ public class AutomaticPublisher {
         
         String comments = exp.getAssay().generalDesc.comments;
         
-        String message = "Automatically published by BioDare2 on "+LocalDate.now().toString();
+        String message = "Automatically published by BioDare2 system on "+LocalDate.now().toString();
         
         if (comments == null) {
             comments = message;
