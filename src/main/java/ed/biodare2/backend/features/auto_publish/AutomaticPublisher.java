@@ -9,9 +9,12 @@ import ed.biodare2.backend.handlers.ExperimentHandler;
 import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.db.EntityACL;
+import ed.biodare2.backend.web.rest.HandlingException;
 import java.time.LocalDate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -20,7 +23,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class AutomaticPublisher {
     
-    ExperimentHandler experimentHandler;
+    final ExperimentHandler experimentHandler;    
+    final UserAccountRep users;    
+
+    public AutomaticPublisher(ExperimentHandler experimentHandler, UserAccountRep users) {
+        this.experimentHandler = experimentHandler;
+        this.users = users;
+    }
+    
+    
     
     boolean isSuitableForPublishing(AssayPack exp) {
         
@@ -44,6 +55,7 @@ public class AutomaticPublisher {
         return user.getSubscription().getKind().equals(SubscriptionType.FREE_NO_PUBLISH);
     }
     
+    @Transactional
     public boolean attemptAutoPublishing(AssayPack exp, LocalDate cutoff) {
         
         if (!isSuitableForPublishing(exp, cutoff)) return false;
@@ -63,7 +75,10 @@ public class AutomaticPublisher {
     }
 
     BioDare2User getSystemUser() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        return users.findByLogin("system").orElseThrow(() -> {
+            return new HandlingException("Account: 'system' not found, cannot publish");
+        });
     }
 
     void addPublishingComment(AssayPack exp) {

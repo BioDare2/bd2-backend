@@ -7,27 +7,35 @@ package ed.biodare2.backend.features.auto_publish;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import static ed.biodare2.backend.features.subscriptions.SubscriptionType.*;
+import ed.biodare2.backend.handlers.ExperimentHandler;
+import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
+import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.db.EntityACL;
+import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -41,6 +49,9 @@ public class AutomaticPublisherTest {
     MockReps.ExperimentPackTestImp testBoundle;
     Fixtures fixtures;
     BioDare2User user;
+    ExperimentHandler experimentHandler;
+    UserAccountRep users;
+    
     
     public AutomaticPublisherTest() {
     }
@@ -82,10 +93,15 @@ public class AutomaticPublisherTest {
         testBoundle.systemInfo = info;
         testBoundle.dbSystemInfo = dbSystemInfo;        
         
-
+        experimentHandler = mock(ExperimentHandler.class);
+        
+        users = mock(UserAccountRep.class);
+        UserAccount system = fixtures.systemUser;
+        when(users.findByLogin(eq("system"))).thenReturn(Optional.of(system));
+        
         
         //handler = new ExperimentHandler(experiments,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
-        handler = new AutomaticPublisher();
+        handler = new AutomaticPublisher(experimentHandler, users);
     }
     
     @After
@@ -208,6 +224,29 @@ public class AutomaticPublisherTest {
         
     }
     
+    @Test
+    public void getsSystemUser() {
+        
+        
+        BioDare2User user = handler.getSystemUser();
+        assertEquals("system", user.getLogin());
+    }
+    
+    @Test
+    public void attemptAutoPublishingUsesHandlerForPublishing() {
+
+        LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
+        
+        AssayPack exp = testBoundle;
+        exp.getAssay().provenance.created = LocalDateTime.now();     
+        assertFalse(handler.attemptAutoPublishing(exp, cutOff));
+        verify(experimentHandler, never()).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
+
+        exp.getAssay().provenance.created = LocalDateTime.now().minusDays(5);     
+        assertTrue(handler.attemptAutoPublishing(exp, cutOff));
+        verify(experimentHandler).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
+        
+    }
     
     
 }
