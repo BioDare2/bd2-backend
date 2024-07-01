@@ -12,6 +12,10 @@ import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.makeSearchInfo;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -700,4 +704,60 @@ public class DBSystemInfoRepTest {
         assertEquals(135,last);
     }    
     
+    
+    @Test
+    @Transactional
+    public void canfindParentIdsBeforeCutoffAndOpenStatus() {
+        
+
+        info.getAcl().setPublic(true);
+        info = repository.save(info);
+        assertNotNull(info);
+        
+        
+        DBSystemInfo info2 = new DBSystemInfo();
+        info2.setParentId(13);
+        info2.setEntityType(EntityType.EXP_ASSAY);
+        info2.setAcl(new EntityACL());
+        info2.getAcl().setPublic(false);        
+        
+        info2 = repository.save(info2);    
+        
+        // differnt entity
+        DBSystemInfo info3 = new DBSystemInfo();
+        info3.setParentId(14);
+        info3.setEntityType(EntityType.INVESTIGATION);
+        info3.setAcl(new EntityACL());        
+        info3.getAcl().setPublic(false);
+        
+        info3 = repository.save(info3);   
+
+        DBSystemInfo info4 = new DBSystemInfo();
+        info4.setParentId(15);
+        info4.setEntityType(EntityType.EXP_ASSAY);
+        info4.setAcl(new EntityACL());
+        
+        info4.getAcl().setPublic(false);
+        info4 = repository.save(info4);   
+        
+        LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
+        boolean isPublic = false;
+        EntityType ent = EntityType.EXP_ASSAY;
+        
+        
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        
+        cutoff = LocalDateTime.now().plusDays(1);       
+        assertEquals(2, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        
+        isPublic = true;
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        
+        isPublic = false;
+        ent = EntityType.INVESTIGATION;
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        
+        isPublic = true;
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+    }
 }

@@ -9,6 +9,8 @@ import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.repo.system_dom.EntityType;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -54,5 +56,7 @@ public interface DBSystemInfoRep extends JpaRepository<DBSystemInfo, Long> {
     
     Stream<DBSystemInfo> findByAclOwner(UserAccount owner);
 
+    @Query("SELECT dbinfo.parentId FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = :isOpen AND dbinfo.creationDate < :cutoff")  
+    Stream<Long> findParentIdsBeforeCutoffAndOpenStatus(@Param("entityType") EntityType entityType, @Param("cutoff") LocalDateTime cutoff, @Param("isOpen") boolean isOpen);
     
 }
