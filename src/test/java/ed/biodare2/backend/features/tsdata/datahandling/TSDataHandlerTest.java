@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
@@ -390,6 +391,7 @@ public class TSDataHandlerTest {
     }
     
     @Test
+    @Ignore("Allways false as it seems to cause memory leak")
     public void shouldPreCalculateBinnedIsFalseForSparcedData() {
         
         TimeSeries serie = new TimeSeries();
@@ -419,6 +421,7 @@ public class TSDataHandlerTest {
     }
     
     @Test
+    @Ignore("Allways false as it seems to cause memory leak")    
     public void shouldPreCalculateBinnedIsFalseForGenerallySparcedData() {
         
         TimeSeries serie = new TimeSeries();
