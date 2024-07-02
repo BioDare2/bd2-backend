@@ -61,6 +61,7 @@ public class AutomaticPublisher {
         log.info("AutomaticPublisher created with config "+configFile.toAbsolutePath());
         
     }
+    
 
     @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)  
     @Transactional
@@ -74,7 +75,7 @@ public class AutomaticPublisher {
         
         
         
-        List<Long> expIds = getPublishingCandidates(cutoff.get().plusYears(5), batchSize);
+        List<Long> expIds = getPublishingCandidates(cutoff.get(), batchSize);
         log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get()+". batchSize:"+batchSize);
 
         int ignored = 0;
@@ -130,6 +131,14 @@ public class AutomaticPublisher {
         return dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY, cutoff.atStartOfDay(), false, EXCLUDED_SUBSCRIPTIONS, Limit.of(limit));
     }
 
+    /*
+    The batch size is dinamic to prevent situation where all the hits within batchsize from DB query are being ignored
+    and hence they will end up again in the results at the next call.
+    It should not happen with the current code, but, it may in future development if the candidates search criteria and 
+    candidates  suitability criteria diverge.
+    In the local instance, the in memorry db sets created to the current date while the provenance data is the original one, which means
+    no experiment are returned unless the cutoff is in the future.
+    */
     void updateBatchSize(int ignored) {
         
         //reduce the bathSize if there are no ignored
