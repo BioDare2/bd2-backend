@@ -5,6 +5,7 @@
 package ed.biodare2.backend.features.auto_publish;
 
 import ed.biodare2.Fixtures;
+import static ed.biodare2.backend.features.auto_publish.AutomaticPublisher.CUTOFF_PREFIX;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
@@ -36,6 +37,7 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
 import org.springframework.data.domain.Limit;
+import static ed.biodare2.backend.features.auto_publish.AutomaticPublisher.EXCLUDED_SUBSCRIPTIONS;
 
 /**
  *
@@ -87,7 +89,7 @@ public class AutomaticPublisherTest {
     @Test
     public void readsCutoffDateFromFile() throws IOException {
 
-        Optional<LocalDate> cutoff = handler.getCutoffDate(configFile);
+        Optional<LocalDate> cutoff = handler.getCutoffDate(configFile.getParent().resolve("missing.txt"));
         assertFalse(cutoff.isPresent());
         
         String confText = "PUBLISH_BEFORE: "+LocalDate.now();
@@ -98,8 +100,12 @@ public class AutomaticPublisherTest {
         
         confText = "2024-03-05";
         Files.write(configFile, List.of(confText));
-        cutoff = handler.getCutoffDate(configFile);
-        assertFalse(cutoff.isPresent());
+        try {
+            cutoff = handler.getCutoffDate(configFile);
+            fail("Exception expected");
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().startsWith("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "));
+        }
         
     }
     
@@ -107,8 +113,8 @@ public class AutomaticPublisherTest {
     public void getsExpIdsFromTheRepository() {
         
         LocalDateTime cutoff = LocalDate.now().minusDays(2).atStartOfDay();
-        Stream<Long> ids = Stream.of(3L, 5L);
-        when(dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY,cutoff,false,Limit.of(10))).thenReturn(ids);
+        List<Long> ids = List.of(3L, 5L);
+        when(dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY,cutoff,false,EXCLUDED_SUBSCRIPTIONS, Limit.of(10))).thenReturn(ids);
         
         List<Long> res = handler.getPublishingCandidates(cutoff.toLocalDate(), 10);
         assertEquals(List.of(3L, 5L), res);

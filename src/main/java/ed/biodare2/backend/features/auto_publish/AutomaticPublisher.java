@@ -4,6 +4,7 @@
  */
 package ed.biodare2.backend.features.auto_publish;
 
+import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Limit;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -33,6 +35,8 @@ public class AutomaticPublisher {
 
     final static String CUTOFF_PREFIX = "PUBLISH_BEFORE";
     final static int BATCH_SIZE = 100;
+    final static List<SubscriptionType> EXCLUDED_SUBSCRIPTIONS = List.of(SubscriptionType.FREE_NO_PUBLISH);
+    
     
     final Logger log = LoggerFactory.getLogger(this.getClass());    
     final Path configFile;
@@ -42,7 +46,7 @@ public class AutomaticPublisher {
     final ExperimentPackHub experiments;
     
     @Autowired
-    public AutomaticPublisher(@Value("${bd2.autopublish.file:cutoff_date.txt}") String configPath, 
+    public AutomaticPublisher(@Value("${bd2.autopublish.file:autopublish_cutoff_date.txt}") String configPath, 
             DBSystemInfoRep dbSystemInfos, 
             ExperimentPackHub experiments, 
             ExpPublishingHandler handler) {
@@ -52,11 +56,12 @@ public class AutomaticPublisher {
         this.experiments = experiments;
         this.pubHandler = handler;
         
-        log.info("AutomaticPublisher created with config "+configFile);
+        log.info("AutomaticPublisher created with config "+configFile.toAbsolutePath());
         
     }
 
-    @Scheduled(fixedRate = 1000*60*60, initialDelay = 1000*60)    
+    @Scheduled(fixedRate = 1000*2, initialDelay = 1000*2)  
+    @Transactional
     public void trigerAutoPublishing() throws IOException {
 
         Optional<LocalDate> cutoff = getCutoffDate(this.configFile);
@@ -66,7 +71,7 @@ public class AutomaticPublisher {
         }
         
         
-        List<Long> expIds = getPublishingCandidates(cutoff.get(), BATCH_SIZE);
+        List<Long> expIds = getPublishingCandidates(cutoff.get().plusYears(5), BATCH_SIZE);
         log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get());
         
         for (Long expId: expIds) {
@@ -86,9 +91,9 @@ public class AutomaticPublisher {
             }
             
             if (pubHandler.attemptAutoPublishing(pack.get(), cutoff)) {
-                log.warn("Automatically published exp: "+pack.get().getId()+" from: "+pack.get().getAssay().provenance.created.toLocalDate());
+                log.warn("Automatically published exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+pack.get().getAssay().provenance.created.toLocalDate());
             } else {
-                log.info("Ignored publishing of exp: "+pack.get().getId()+" from: "+pack.get().getAssay().provenance.created.toLocalDate()+" cutoff: "+cutoff);
+                log.info("Ignored publishing of exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+" cutoff: "+cutoff);
             }
     }    
 
@@ -98,14 +103,14 @@ public class AutomaticPublisher {
         
         String configText = Files.readString(configFile);
         if (!configText.startsWith(CUTOFF_PREFIX))
-            return Optional.empty();
+            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
 
         if (!configText.contains(":"))
-            return Optional.empty();
+            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
         
         String[] parts = configText.split(":");
         if (parts.length != 2)
-            return Optional.empty();
+            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
         
         String date = parts[1].trim();
         return Optional.of(LocalDate.parse(date));
@@ -114,8 +119,7 @@ public class AutomaticPublisher {
     List<Long> getPublishingCandidates(LocalDate cutoff, int limit) {
         
         
-        return dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY, cutoff.atStartOfDay(), false, Limit.of(limit))
-                .toList();
+        return dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY, cutoff.atStartOfDay(), false, EXCLUDED_SUBSCRIPTIONS, Limit.of(limit));
     }
 
 

@@ -7,6 +7,7 @@ package ed.biodare2.backend.repo.db.dao;
 
 import ed.biodare2.Fixtures;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
@@ -95,7 +96,7 @@ public class DBSystemInfoRepTest {
         
     }
     
-    @Ignore
+    @Ignore("This method was removed from the repo")
     @Test
     //@Transactional
     public void canFindByOwner() {
@@ -141,7 +142,7 @@ public class DBSystemInfoRepTest {
         */
     }    
     
-    @Ignore
+    @Ignore("This method was removed from the repo")
     @Test
     //@Transactional
     public void canFindByOwnerLogin() {
@@ -720,7 +721,8 @@ public class DBSystemInfoRepTest {
         info2.setParentId(13);
         info2.setEntityType(EntityType.EXP_ASSAY);
         info2.setAcl(new EntityACL());
-        info2.getAcl().setPublic(false);        
+        info2.getAcl().setPublic(false);    
+        info2.getAcl().setOwner(fixtures.user1);
         
         info2 = repository.save(info2);    
         
@@ -730,6 +732,7 @@ public class DBSystemInfoRepTest {
         info3.setEntityType(EntityType.INVESTIGATION);
         info3.setAcl(new EntityACL());        
         info3.getAcl().setPublic(false);
+        info3.getAcl().setOwner(fixtures.user1);
         
         info3 = repository.save(info3);   
 
@@ -737,6 +740,7 @@ public class DBSystemInfoRepTest {
         info4.setParentId(15);
         info4.setEntityType(EntityType.EXP_ASSAY);
         info4.setAcl(new EntityACL());
+        info4.getAcl().setOwner(fixtures.user1);
         
         info4.getAcl().setPublic(false);
         info4 = repository.save(info4);   
@@ -744,25 +748,28 @@ public class DBSystemInfoRepTest {
         LocalDateTime cutoff = LocalDateTime.now().minusDays(1);
         boolean isPublic = false;
         EntityType ent = EntityType.EXP_ASSAY;
+        List<SubscriptionType> subscriptions = List.of(SubscriptionType.FREE_NO_PUBLISH);
         
         
-        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
-        
-        cutoff = LocalDateTime.now().plusDays(1);       
-        assertEquals(2, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(100)).size());
         
         cutoff = LocalDateTime.now().plusDays(1);       
-        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(1)).count());
+        assertEquals(2, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(100)).size());
+        // standard subscriptio excluded
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,List.of(SubscriptionType.FREE),Limit.of(100)).size());
+        
+        cutoff = LocalDateTime.now().plusDays(1);       
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(1)).size());
         
         
         isPublic = true;
-        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(100)).size());
         
         isPublic = false;
         ent = EntityType.INVESTIGATION;
-        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(100)).size());
         
         isPublic = true;
-        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(ent,cutoff,isPublic,subscriptions,Limit.of(100)).size());
     }
 }

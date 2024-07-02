@@ -130,7 +130,7 @@ public class DBFixer {
         
         UserAccount sys;        
         sys = new UserAccount();
-        sys.setLogin("system1");
+        sys.setLogin("system");
         sys.setFirstName("System");
         sys.setLastName("User");
         sys.setEmail("biodare@ed.ac.uk");
@@ -212,7 +212,7 @@ public class DBFixer {
         acc.setSupervisor(demoPI);
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
-        acc.setSubscription(makeSubsription(SubscriptionType.FREE));
+        acc.setSubscription(makeSubsription(SubscriptionType.FREE_NO_PUBLISH));
         acc.setTermsVersion(UsersHandler.currentTermsVersion);
         rdmSocialHandler.createUserAspect(acc);
        {

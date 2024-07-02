@@ -88,13 +88,17 @@ public class DBSystemInfo implements Serializable {
     public long getParentId() {
         return parentId;
     }
-
+    
     public void setParentId(long parentId) {
         this.parentId = parentId;
     }
 
     public EntityType getEntityType() {
         return entityType;
+    }
+    
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
     public void setEntityType(EntityType entityType) {
