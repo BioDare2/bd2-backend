@@ -15,6 +15,7 @@ import ed.biodare2.backend.features.rdmsocial.RDMUserAspect;
 import ed.biodare2.backend.features.subscriptions.AccountSubscription;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -51,7 +52,7 @@ public class Fixtures {
     
     //public List<UserGroup> toSaveGroups = new ArrayList<>();
     
-    static AtomicLong ids = new AtomicLong(1);
+    static AtomicLong ids = new AtomicLong(LocalDateTime.now().getNano());
     
     public static Fixtures build() {
         UserAccountRep accounts = mock(UserAccountRep.class);
@@ -87,7 +88,7 @@ public class Fixtures {
     public static Fixtures build(UserAccountRep accounts,UserGroupRep groups,PasswordEncoder encoder) {
         
         final Logger log = LoggerFactory.getLogger(Fixtures.class);        
-        log.warn("\n\nBuilding fixtures, encoder: "+encoder.getClass().getName());
+        log.warn("\n\nBuilding fixtures, id start: "+ids.get()+" encoder: "+encoder.getClass().getName());
         Fixtures fixtures = new Fixtures();
         
         UserGroup group;
