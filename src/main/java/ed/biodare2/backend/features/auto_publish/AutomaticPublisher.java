@@ -96,7 +96,7 @@ public class AutomaticPublisher {
     
     void logNoPublishUsers() {
         List<String> noPublishUsers = getNoPublishUsersLogins();
-        log.info("The following users have disabled autopublishing:\n"+noPublishUsers.stream().collect(Collectors.joining(",")));        
+        log.info("The following users have disabled autopublishing: "+noPublishUsers.stream().collect(Collectors.joining(",")));        
     }
     
     boolean doPublishing(Long expId, LocalDate cutoff) {

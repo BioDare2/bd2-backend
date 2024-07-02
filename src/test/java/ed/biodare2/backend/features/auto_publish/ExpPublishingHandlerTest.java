@@ -71,7 +71,7 @@ public class ExpPublishingHandlerTest {
         
         fixtures = Fixtures.build();
         
-        user = fixtures.demoUser;        
+        user = fixtures.user1;        
         testExp = DomRepoTestBuilder.makeExperimentalAssay();
         
         SystemInfo info = SystemDomTestBuilder.makeSystemInfo();
