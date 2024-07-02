@@ -9,6 +9,7 @@ import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class AutomaticPublisher {
     final DBSystemInfoRep dbSystemInfos; 
     final ExpPublishingHandler pubHandler;
     final ExperimentPackHub experiments;
+    final UserAccountRep users;
     
     int batchSize = START_BATCH_SIZE;
     
@@ -51,19 +54,21 @@ public class AutomaticPublisher {
     public AutomaticPublisher(@Value("${bd2.autopublish.file:autopublish_cutoff_date.txt}") String configPath, 
             DBSystemInfoRep dbSystemInfos, 
             ExperimentPackHub experiments, 
-            ExpPublishingHandler handler) {
+            ExpPublishingHandler handler,
+            UserAccountRep users) {
         
         this.configFile = Paths.get(configPath);
         this.dbSystemInfos = dbSystemInfos;
         this.experiments = experiments;
         this.pubHandler = handler;
+        this.users = users;
         
         log.info("AutomaticPublisher created with config "+configFile.toAbsolutePath());
         
     }
     
 
-    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)  
+    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000)   //*60*2s
     @Transactional
     public void trigerAutoPublishing() throws IOException {
 
@@ -73,8 +78,8 @@ public class AutomaticPublisher {
             return;
         }
         
-        
-        
+        logNoPublishUsers();
+                
         List<Long> expIds = getPublishingCandidates(cutoff.get(), batchSize);
         log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get()+". batchSize:"+batchSize);
 
@@ -87,6 +92,11 @@ public class AutomaticPublisher {
         }
         updateBatchSize(ignored);
                 
+    }
+    
+    void logNoPublishUsers() {
+        List<String> noPublishUsers = getNoPublishUsersLogins();
+        log.info("The following users have disabled autopublishing:\n"+noPublishUsers.stream().collect(Collectors.joining(",")));        
     }
     
     boolean doPublishing(Long expId, LocalDate cutoff) {
@@ -153,6 +163,14 @@ public class AutomaticPublisher {
         
         //increase the batchSize
         batchSize = 2*batchSize;
+    }
+
+    List<String> getNoPublishUsersLogins() {
+        
+        return users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)
+             .stream()
+             .map( u -> u.getLogin())
+             .collect(Collectors.toList());
     }
 
 

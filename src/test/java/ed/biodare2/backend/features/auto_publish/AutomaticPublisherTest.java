@@ -38,6 +38,8 @@ import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
 import org.springframework.data.domain.Limit;
 import static ed.biodare2.backend.features.auto_publish.AutomaticPublisher.EXCLUDED_SUBSCRIPTIONS;
+import ed.biodare2.backend.features.subscriptions.SubscriptionType;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 
 /**
  *
@@ -54,6 +56,8 @@ public class AutomaticPublisherTest {
     DBSystemInfoRep dbSystemInfos;
     ExpPublishingHandler pubHandler;
     ExperimentPackHub experiments;
+    UserAccountRep users;
+    Fixtures fixtures;
     
     public AutomaticPublisherTest() {
     }
@@ -70,11 +74,18 @@ public class AutomaticPublisherTest {
     
     @Before
     public void setUp() throws IOException {
+        fixtures = Fixtures.build();
+        
         configFile = testFolder.newFile("cuttoff.txt").toPath();
         dbSystemInfos = mock(DBSystemInfoRep.class);
         experiments = mock(ExperimentPackHub.class);
         pubHandler = mock(ExpPublishingHandler.class);
-        handler = new AutomaticPublisher(configFile.toString(), dbSystemInfos, experiments, pubHandler);
+        users = mock(UserAccountRep.class);
+        when(users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)).thenReturn(List.of());
+        
+        handler = new AutomaticPublisher(configFile.toString(), dbSystemInfos, experiments, pubHandler, users);
+        
+        
     }
     
     @After
@@ -124,7 +135,7 @@ public class AutomaticPublisherTest {
     @Test
     public void doPublishingFindsExperimentAndCallPublisher() {
         
-        Fixtures fixtures = Fixtures.build();        
+                
         UserAccount user = fixtures.demoUser;         
         ExperimentalAssay testExp = DomRepoTestBuilder.makeExperimentalAssay();
         
@@ -189,5 +200,14 @@ public class AutomaticPublisherTest {
         handler.updateBatchSize(ignored);
         assertEquals(AutomaticPublisher.START_BATCH_SIZE, handler.batchSize);
                 
-    }    
+    } 
+    
+    @Test
+    public void getNoPublishLoginsGetsAccountsWithNoPublishSubscription() 
+    {
+        when(users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)).thenReturn(List.of(fixtures.demoUser));
+        
+        List<String> res = handler.getNoPublishUsersLogins();
+        assertEquals(List.of(fixtures.demoUser.getLogin()), res);
+    }
 }

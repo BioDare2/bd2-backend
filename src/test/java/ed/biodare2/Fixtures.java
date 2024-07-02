@@ -71,12 +71,16 @@ public class Fixtures {
     }
     
     public static AccountSubscription makeSubsription() {
+        return makeSubsription(SubscriptionType.FREE);
+    }
+    
+    public static AccountSubscription makeSubsription(SubscriptionType kind) {
      AccountSubscription sub = new AccountSubscription();
-     sub.setKind(SubscriptionType.FREE);
+     sub.setKind(kind);
      sub.setStartDate(LocalDate.now());
      sub.setRenewDate(LocalDate.now().plusYears(1));
      return sub;
-    }
+    }    
     
     public static RDMUserAspect makeRDMAspect() {
         RDMUserAspect aspect = new RDMUserAspect();
@@ -163,7 +167,7 @@ public class Fixtures {
         acc.setSupervisor(fixtures.demoBoss);
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
-        acc.setSubscription(makeSubsription());
+        acc.setSubscription(makeSubsription(SubscriptionType.FREE_NO_PUBLISH));
         acc.setTermsVersion(UsersHandler.currentTermsVersion);
         acc.setRdmAspect(makeRDMAspect());
         

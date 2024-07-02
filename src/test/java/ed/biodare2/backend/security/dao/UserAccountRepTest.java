@@ -7,6 +7,7 @@ package ed.biodare2.backend.security.dao;
 
 import ed.biodare2.Fixtures;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.time.LocalDate;
 import java.util.List;
@@ -165,7 +166,19 @@ public class UserAccountRepTest {
         assertSame(acc1,repository.findByLoginOrEmailOrInitialEmail("X", "X", id).get(0));
     }
     
-    
+    @Test
+    public void findBySubscriptionKind() {
+        
+        SubscriptionType subscription = SubscriptionType.FREE;
+        
+        List<UserAccount> res = repository.findBySubscriptionKind(subscription);
+        assertTrue(res.size() > 1);
+        
+        subscription = SubscriptionType.FREE_NO_PUBLISH;
+        res = repository.findBySubscriptionKind(subscription);
+        //demo user
+        assertEquals(1, res.size());        
+    }    
     /*
     public static void initAccounts(UserAccountRep repository,List<UserAccount> created) {
         

@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.security.dao;
 
+import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.util.List;
@@ -26,4 +27,6 @@ public interface UserAccountRep extends JpaRepository<UserAccount, Long> {
     List<UserAccount> findByActivationDateIsNull();
 
     List<UserAccount> findByLoginOrEmailOrInitialEmail(String identifier, String identifier0, String identifier1);
+    
+    List<UserAccount> findBySubscriptionKind(SubscriptionType subscription);
 }
