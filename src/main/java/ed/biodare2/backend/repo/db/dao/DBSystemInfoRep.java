@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -57,6 +58,6 @@ public interface DBSystemInfoRep extends JpaRepository<DBSystemInfo, Long> {
     Stream<DBSystemInfo> findByAclOwner(UserAccount owner);
 
     @Query("SELECT dbinfo.parentId FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = :isOpen AND dbinfo.creationDate < :cutoff")  
-    Stream<Long> findParentIdsBeforeCutoffAndOpenStatus(@Param("entityType") EntityType entityType, @Param("cutoff") LocalDateTime cutoff, @Param("isOpen") boolean isOpen);
+    Stream<Long> findParentIdsBeforeCutoffAndOpenStatus(@Param("entityType") EntityType entityType, @Param("cutoff") LocalDateTime cutoff, @Param("isOpen") boolean isOpen,  Limit limit);
     
 }

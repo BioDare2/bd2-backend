@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -745,19 +746,23 @@ public class DBSystemInfoRepTest {
         EntityType ent = EntityType.EXP_ASSAY;
         
         
-        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
         
         cutoff = LocalDateTime.now().plusDays(1);       
-        assertEquals(2, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        assertEquals(2, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
+        
+        cutoff = LocalDateTime.now().plusDays(1);       
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(1)).count());
+        
         
         isPublic = true;
-        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
         
         isPublic = false;
         ent = EntityType.INVESTIGATION;
-        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        assertEquals(1, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
         
         isPublic = true;
-        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic).count());
+        assertEquals(0, repository.findParentIdsBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).count());
     }
 }
