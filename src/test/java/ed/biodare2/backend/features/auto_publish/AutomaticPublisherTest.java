@@ -161,4 +161,33 @@ public class AutomaticPublisherTest {
         verify(pubHandler).attemptAutoPublishing(testBoundle, cutoff);
     }
     
+    @Test
+    public void updateBatchSizeIncreasesIfMoreThanHalfAreIgnored() {
+    
+        handler.batchSize = 6;
+        int ignored = 2;
+        
+        handler.updateBatchSize(ignored);
+        assertEquals(6, handler.batchSize);
+        
+        ignored = 4;
+        handler.updateBatchSize(ignored);
+        assertEquals(12, handler.batchSize);
+                
+    }
+    
+    @Test
+    public void updateBatchSizeReducesToStartSizeIfLittleIgnored() {
+    
+        handler.batchSize = 12;
+        int ignored = 3;
+        
+        handler.updateBatchSize(ignored);
+        assertEquals(12, handler.batchSize);
+        
+        ignored = 1;
+        handler.updateBatchSize(ignored);
+        assertEquals(AutomaticPublisher.START_BATCH_SIZE, handler.batchSize);
+                
+    }    
 }

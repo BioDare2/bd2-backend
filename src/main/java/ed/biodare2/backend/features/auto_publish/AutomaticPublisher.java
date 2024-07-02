@@ -34,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AutomaticPublisher {
 
     final static String CUTOFF_PREFIX = "PUBLISH_BEFORE";
-    final static int BATCH_SIZE = 100;
+    final static int START_BATCH_SIZE = 4;
     final static List<SubscriptionType> EXCLUDED_SUBSCRIPTIONS = List.of(SubscriptionType.FREE_NO_PUBLISH);
     
     
@@ -44,6 +44,8 @@ public class AutomaticPublisher {
     final DBSystemInfoRep dbSystemInfos; 
     final ExpPublishingHandler pubHandler;
     final ExperimentPackHub experiments;
+    
+    int batchSize = START_BATCH_SIZE;
     
     @Autowired
     public AutomaticPublisher(@Value("${bd2.autopublish.file:autopublish_cutoff_date.txt}") String configPath, 
@@ -60,7 +62,7 @@ public class AutomaticPublisher {
         
     }
 
-    @Scheduled(fixedRate = 1000*2, initialDelay = 1000*2)  
+    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)  
     @Transactional
     public void trigerAutoPublishing() throws IOException {
 
@@ -71,29 +73,35 @@ public class AutomaticPublisher {
         }
         
         
-        List<Long> expIds = getPublishingCandidates(cutoff.get().plusYears(5), BATCH_SIZE);
-        log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get());
         
+        List<Long> expIds = getPublishingCandidates(cutoff.get().plusYears(5), batchSize);
+        log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get()+". batchSize:"+batchSize);
+
+        int ignored = 0;
         for (Long expId: expIds) {
             
-            doPublishing(expId,cutoff.get());
-            
+            if (!doPublishing(expId,cutoff.get())) {
+                ignored++;
+            }                            
         }
+        updateBatchSize(ignored);
                 
     }
     
-    void doPublishing(Long expId, LocalDate cutoff) {
+    boolean doPublishing(Long expId, LocalDate cutoff) {
         
             Optional<AssayPack> pack = experiments.findOne(expId);
             if (pack.isEmpty()) {
                 log.warn("Cannot publish "+expId+", experiment not found");
-                return;
+                return false;
             }
             
             if (pubHandler.attemptAutoPublishing(pack.get(), cutoff)) {
                 log.warn("Automatically published exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+pack.get().getAssay().provenance.created.toLocalDate());
+                return true;
             } else {
-                log.info("Ignored publishing of exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+" cutoff: "+cutoff);
+                log.debug("Ignored publishing of exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+" cutoff: "+cutoff);
+                return false;
             }
     }    
 
@@ -120,6 +128,22 @@ public class AutomaticPublisher {
         
         
         return dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY, cutoff.atStartOfDay(), false, EXCLUDED_SUBSCRIPTIONS, Limit.of(limit));
+    }
+
+    void updateBatchSize(int ignored) {
+        
+        //reduce the bathSize if there are no ignored
+        if (ignored < 2 && batchSize > START_BATCH_SIZE) {
+            
+            batchSize = START_BATCH_SIZE;
+            return;
+        }
+        
+        if (ignored < (batchSize / 2))
+            return;
+        
+        //increase the batchSize
+        batchSize = 2*batchSize;
     }
 
 
