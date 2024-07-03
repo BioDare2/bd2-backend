@@ -67,7 +67,7 @@ public class AutomaticPublisher {
     }
     
 
-    @Scheduled(fixedRate = 1000*2*60*60, initialDelay = 1000*60*2)   //  
+    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)   //  
     @Transactional
     public void trigerAutoPublishing() throws IOException {
 
