@@ -33,27 +33,24 @@ public class ExpPublishingHandler {
     
     
     
-    boolean isSuitableForPublishing(AssayPack exp) {
+    /*boolean isSuitableForPublishing(AssayPack exp) {
         
         final EntityACL acl = exp.getACL();        
         if (isNoPublishUser(acl.getCreator())) return false;
         if (isNoPublishUser(acl.getOwner())) return false;
         return true;
-    }
+    }*/
     
     boolean isSuitableForPublishing(AssayPack exp, LocalDate cutOff) {
-        
-        if (exp.getAssay().provenance.created.toLocalDate().isBefore(cutOff))
-            return isSuitableForPublishing(exp);
 
-        return false;
+        return exp.getDbSystemInfo().getEmbargoDate().isBefore(cutOff); 
     }
     
-    
+    /*
     boolean isNoPublishUser(BioDare2User user) {
                 
         return user.getSubscription().getKind().equals(SubscriptionType.FREE_NO_PUBLISH);
-    }
+    }*/
     
     @Transactional
     public boolean attemptAutoPublishing(AssayPack exp, LocalDate cutoff) {

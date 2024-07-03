@@ -37,7 +37,6 @@ import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
 import org.springframework.data.domain.Limit;
-import static ed.biodare2.backend.features.auto_publish.AutomaticPublisher.EXCLUDED_SUBSCRIPTIONS;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 
@@ -81,7 +80,7 @@ public class AutomaticPublisherTest {
         experiments = mock(ExperimentPackHub.class);
         pubHandler = mock(ExpPublishingHandler.class);
         users = mock(UserAccountRep.class);
-        when(users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)).thenReturn(List.of());
+        when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)).thenReturn(List.of());
         
         handler = new AutomaticPublisher(configFile.toString(), dbSystemInfos, experiments, pubHandler, users);
         
@@ -123,11 +122,11 @@ public class AutomaticPublisherTest {
     @Test
     public void getsExpIdsFromTheRepository() {
         
-        LocalDateTime cutoff = LocalDate.now().minusDays(2).atStartOfDay();
+        LocalDate cutoff = LocalDate.now().minusDays(2);
         List<Long> ids = List.of(3L, 5L);
-        when(dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY,cutoff,false,EXCLUDED_SUBSCRIPTIONS, Limit.of(10))).thenReturn(ids);
+        when(dbSystemInfos.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY,cutoff,false,Limit.of(10))).thenReturn(ids);
         
-        List<Long> res = handler.getPublishingCandidates(cutoff.toLocalDate(), 10);
+        List<Long> res = handler.getPublishingCandidates(cutoff, 10);
         assertEquals(List.of(3L, 5L), res);
         
     }
@@ -203,11 +202,11 @@ public class AutomaticPublisherTest {
     } 
     
     @Test
-    public void getNoPublishLoginsGetsAccountsWithNoPublishSubscription() 
+    public void getEmbargoUsers() 
     {
-        when(users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)).thenReturn(List.of(fixtures.demoUser));
+        when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)).thenReturn(List.of(fixtures.demoUser));
         
-        List<String> res = handler.getNoPublishUsersLogins();
+        List<String> res = handler.getEmbargoUsers();
         assertEquals(List.of(fixtures.demoUser.getLogin()), res);
     }
 }

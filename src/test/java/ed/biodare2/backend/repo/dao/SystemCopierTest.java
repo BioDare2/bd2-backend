@@ -20,6 +20,7 @@ import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import java.time.LocalDate;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -146,6 +147,7 @@ public class SystemCopierTest {
         org.getAcl().setCreator(user);
         org.getAcl().setOwner(user);
         org.getAcl().setSuperOwner(user);
+        org.setEmbargoDate(LocalDate.now().plusDays(5));
         
         System.out.println("\n\nBefore insert");
         EM.persist(org);

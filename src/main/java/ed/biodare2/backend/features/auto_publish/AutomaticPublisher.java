@@ -37,7 +37,6 @@ public class AutomaticPublisher {
 
     final static String CUTOFF_PREFIX = "PUBLISH_BEFORE";
     final static int START_BATCH_SIZE = 4;
-    final static List<SubscriptionType> EXCLUDED_SUBSCRIPTIONS = List.of(SubscriptionType.FREE_NO_PUBLISH);
     
     
     final Logger log = LoggerFactory.getLogger(this.getClass());    
@@ -78,7 +77,7 @@ public class AutomaticPublisher {
             return;
         }
         
-        logNoPublishUsers();
+        logEmbargoUsers();
                 
         List<Long> expIds = getPublishingCandidates(cutoff.get(), batchSize);
         log.info("Autopublishing "+expIds.size()+" candidates with cutoff "+cutoff.get()+". batchSize:"+batchSize);
@@ -94,9 +93,9 @@ public class AutomaticPublisher {
                 
     }
     
-    void logNoPublishUsers() {
-        List<String> noPublishUsers = getNoPublishUsersLogins();
-        log.info("The following users have disabled autopublishing: "+noPublishUsers.stream().collect(Collectors.joining(",")));        
+    void logEmbargoUsers() {
+        List<String> noPublishUsers = getEmbargoUsers();
+        log.info("The following users have longer embargo: "+noPublishUsers.stream().collect(Collectors.joining(",")));        
     }
     
     boolean doPublishing(Long expId, LocalDate cutoff) {
@@ -138,7 +137,7 @@ public class AutomaticPublisher {
     List<Long> getPublishingCandidates(LocalDate cutoff, int limit) {
         
         
-        return dbSystemInfos.findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(EntityType.EXP_ASSAY, cutoff.atStartOfDay(), false, EXCLUDED_SUBSCRIPTIONS, Limit.of(limit));
+        return dbSystemInfos.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY, cutoff, false, Limit.of(limit));
     }
 
     /*
@@ -165,9 +164,9 @@ public class AutomaticPublisher {
         batchSize = 2*batchSize;
     }
 
-    List<String> getNoPublishUsersLogins() {
+    List<String> getEmbargoUsers() {
         
-        return users.findBySubscriptionKind(SubscriptionType.FREE_NO_PUBLISH)
+        return users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)
              .stream()
              .map( u -> u.getLogin())
              .collect(Collectors.toList());

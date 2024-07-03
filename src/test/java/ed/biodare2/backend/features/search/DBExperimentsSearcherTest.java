@@ -12,6 +12,7 @@ import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.security.dao.db.EntityACL;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -110,6 +111,8 @@ public class DBExperimentsSearcherTest {
         info.getAcl().setSuperOwner(fixtures.demoBoss);
         info.getAcl().setPublic(false);
         info.getAcl().addCanWrite(fixtures.otherGroup);
+        
+        info.setEmbargoDate(LocalDate.now().plusDays(5));
         
         info.setSearchInfo(new SearchInfo());
         info.getSearchInfo().setName(name);

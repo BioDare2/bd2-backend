@@ -31,6 +31,7 @@ import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.features.subscriptions.AccountSubscription;
+import ed.biodare2.backend.features.subscriptions.ServiceLevelResolver;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
@@ -212,7 +213,7 @@ public class DBFixer {
         acc.setSupervisor(demoPI);
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
-        acc.setSubscription(makeSubsription(SubscriptionType.FREE_NO_PUBLISH));
+        acc.setSubscription(makeSubsription(SubscriptionType.EMBARGO_10));
         acc.setTermsVersion(UsersHandler.currentTermsVersion);
         rdmSocialHandler.createUserAspect(acc);
        {
@@ -295,6 +296,11 @@ public class DBFixer {
         db.setParentId(info.parentId);
         db.setEntityType(info.entityType);
         db.setAcl(toACL(info.security));
+        if (info.featuresAvailability.embargoDate == null) {
+            info.featuresAvailability.embargoDate = info.provenance.creation.dateTime.toLocalDate().plusYears(FeaturesAvailability.DEFAULT_EMBARGO);
+        }
+        db.setEmbargoDate(info.featuresAvailability.embargoDate);
+        
         // db.setSearchInfo(new SearchInfo());
         return db;
         } catch (IllegalArgumentException e) {

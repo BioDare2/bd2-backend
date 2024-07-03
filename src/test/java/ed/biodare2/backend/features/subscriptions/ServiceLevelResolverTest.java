@@ -46,7 +46,8 @@ public class ServiceLevelResolverTest {
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
                 FULL_INHERITED,
-                FREE_NO_PUBLISH);
+                EMBARGO_10,
+                EMBARGO_20);
         
         List<ServiceLevel> exps = Arrays.asList(
                 FULL_GRATIS,
@@ -54,6 +55,7 @@ public class ServiceLevelResolverTest {
                 FULL_SUBSCRIBED,
                 FULL_SUBSCRIBED,
                 FULL_SUBSCRIBED,
+                FULL_GRATIS,
                 FULL_GRATIS);
         
         for (int i = 0;i<types.size();i++) {
@@ -64,6 +66,38 @@ public class ServiceLevelResolverTest {
             assertEquals(exp,res);
         }
     }
+    
+    @Test
+    public void correctlyConvertsSubscriptionsToEmbargoDuration() {
+        
+        AccountSubscription subscription = new AccountSubscription();
+        
+        List<SubscriptionType> types = Arrays.asList(    
+                FREE,
+                FULL_WELCOME,
+                FULL_INDIVIDUAL,
+                FULL_GROUP,
+                FULL_INHERITED,
+                EMBARGO_10,
+                EMBARGO_20);
+        
+        List<Integer> exps = Arrays.asList(
+                FeaturesAvailability.DEFAULT_EMBARGO,
+                FeaturesAvailability.DEFAULT_EMBARGO,
+                10,
+                10,
+                10,
+                10,
+                20);
+        
+        for (int i = 0;i<types.size();i++) {
+            subscription.kind = types.get(i);
+            int exp = exps.get(i);
+            
+            int res = instance.subscriptionToEmbargo(subscription);
+            assertEquals(exp,res);
+        }
+    }    
   
     @Test
     public void throwsOnSystemSubscriptionsToServiceLevel() {

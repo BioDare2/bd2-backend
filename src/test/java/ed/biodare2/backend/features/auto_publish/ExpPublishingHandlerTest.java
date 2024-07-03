@@ -81,6 +81,7 @@ public class ExpPublishingHandlerTest {
         DBSystemInfo dbSystemInfo = emptySystemInfo(testExp.getId());
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setAcl(new EntityACL());
+        dbSystemInfo.setEmbargoDate(info.featuresAvailability.embargoDate);
         
         {
             EntityACL acl1 = dbSystemInfo.getAcl();
@@ -110,107 +111,35 @@ public class ExpPublishingHandlerTest {
     public void tearDown() {
     }
 
-    /**
-     */
-    @Test
-    public void notSuitableForPublishingWithCreatorSubscriptionFreeNoPub() {
-        
-        AssayPack exp = testBoundle;
-        exp.getACL().getCreator().getSubscription().setKind(SubscriptionType.FREE_NO_PUBLISH);     
-        assertFalse(handler.isSuitableForPublishing(exp));
-    }
-
-    @Test
-    public void notSuitableForPublishingWithOwnerSubscriptionFreeNoPub() {
-        
-        AssayPack exp = testBoundle;
-        exp.getACL().getOwner().getSubscription().setKind(SubscriptionType.FREE_NO_PUBLISH);     
-        assertFalse(handler.isSuitableForPublishing(exp));
-    }
-
-    @Test
-    public void suitableForPublishingForOtherOwnerCases() {
-        
-        List<SubscriptionType> types = Arrays.asList(    
-                FREE,
-                FULL_WELCOME,
-                FULL_INDIVIDUAL,
-                FULL_GROUP,
-                FULL_INHERITED
-                );
-        
-        for (SubscriptionType type: types) {
-            AssayPack exp = testBoundle;
-            exp.getACL().getOwner().getSubscription().setKind(type);     
-            assertTrue("expected true for "+type,handler.isSuitableForPublishing(exp));            
-        }
-        
-    }
     
-    @Test
-    public void suitableForPublishingForOtherCreatorCases() {
-        
-        List<SubscriptionType> types = Arrays.asList(    
-                FREE,
-                FULL_WELCOME,
-                FULL_INDIVIDUAL,
-                FULL_GROUP,
-                FULL_INHERITED
-                );
-        
-        for (SubscriptionType type: types) {
-            AssayPack exp = testBoundle;
-            exp.getACL().getCreator().getSubscription().setKind(type);     
-            assertTrue("expected true for "+type,handler.isSuitableForPublishing(exp));            
-        }
-        
-    }
+
     
     
 
-    @Test
-    public void testIsNoPublishUser() {
-        assertFalse(handler.isNoPublishUser(user));
-        user.getSubscription().setKind(FREE_NO_PUBLISH);
-        assertTrue(handler.isNoPublishUser(user));        
-    }
+
     
     @Test
-    public void notSuitableForPublishingWithYoungerCreation() {
+    public void notSuitableForPublishingWithYoungerEmbargo() {
         
-        LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
+        LocalDate cutOff = LocalDate.now().minusDays(2);
         AssayPack exp = testBoundle;
-        exp.getAssay().provenance.created = LocalDateTime.now().minusDays(1);     
+        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now());
         assertFalse(handler.isSuitableForPublishing(exp, cutOff));
 
-        exp.getAssay().provenance.created = LocalDateTime.now();     
-        assertFalse(handler.isSuitableForPublishing(exp, cutOff));
         
     }    
     
     @Test
-    public void suitableForPublishingWithOlderCreation() {
+    public void suitableForPublishingWithOlderEmbargos() {
         
-        LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
+        LocalDate cutOff = LocalDate.now().minusDays(2);
         AssayPack exp = testBoundle;
-        exp.getAssay().provenance.created = LocalDateTime.now().minusDays(5);     
+        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now().minusDays(6));
         assertTrue(handler.isSuitableForPublishing(exp, cutOff));
        
     }    
     
-    @Test
-    public void notSuitableForPublishingWithOlderCreationButNoPubSubsciption() {
-        
-        LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
-        AssayPack exp = testBoundle;
-        exp.getAssay().provenance.created = LocalDateTime.now().minusDays(5);     
-        assertTrue(handler.isSuitableForPublishing(exp, cutOff));
-        
-        exp.getACL().getCreator().getSubscription().setKind(SubscriptionType.FREE_NO_PUBLISH);
-        assertFalse(handler.isSuitableForPublishing(exp, cutOff));
-
-        
-    }    
+  
     
     @Test
     public void addsComment() {
@@ -240,11 +169,11 @@ public class ExpPublishingHandlerTest {
         LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
         
         AssayPack exp = testBoundle;
-        exp.getAssay().provenance.created = LocalDateTime.now();     
+        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now());     
         assertFalse(handler.attemptAutoPublishing(exp, cutOff));
         verify(experimentHandler, never()).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
 
-        exp.getAssay().provenance.created = LocalDateTime.now().minusDays(5);     
+        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now().minusDays(5));     
         assertTrue(handler.attemptAutoPublishing(exp, cutOff));
         verify(experimentHandler).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
         

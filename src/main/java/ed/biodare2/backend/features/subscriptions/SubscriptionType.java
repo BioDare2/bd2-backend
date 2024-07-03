@@ -20,7 +20,8 @@ public enum SubscriptionType {
     FULL_INDIVIDUAL,
     FULL_GROUP,
     FULL_INHERITED,
-    FREE_NO_PUBLISH;
+    EMBARGO_10,
+    EMBARGO_20;
 
     private static final long serialVersionUID = 1L;
     

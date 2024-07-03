@@ -12,6 +12,7 @@ import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.dao.AssayPackAssembler.AssayPackImpl;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -196,6 +197,20 @@ public class ExperimentPackHubTest {
         assertEquals(pack.dbSystemInfo.getParentId(),testPack.assay.getId());
         
     }  
+    
+    @Test
+    public void newPackCopiesEmbargoDateToDBSystemInfo() {
+        
+        LocalDate emb = LocalDate.now().plusDays(5);
+        testPack.expId = 1;
+        testPack.systemInfo.featuresAvailability.embargoDate = emb;
+        
+        AssayPackImpl pack = (AssayPackImpl) hub.newPack(testPack.getAssay(), testPack.getSystemInfo(), testPack.getDbSystemInfo().getAcl());
+        assertNotNull(pack);
+        assertEquals(pack.expId,testPack.assay.getId());
+        assertEquals(emb, pack.dbSystemInfo.getEmbargoDate());
+        
+    }    
     
     @Test
     public void newPackAddsSearchInfo() {

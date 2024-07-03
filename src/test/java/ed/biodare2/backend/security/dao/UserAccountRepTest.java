@@ -174,7 +174,7 @@ public class UserAccountRepTest {
         List<UserAccount> res = repository.findBySubscriptionKind(subscription);
         assertTrue(res.size() > 1);
         
-        subscription = SubscriptionType.FREE_NO_PUBLISH;
+        subscription = SubscriptionType.EMBARGO_10;
         res = repository.findBySubscriptionKind(subscription);
         //demo user
         assertEquals(1, res.size());        

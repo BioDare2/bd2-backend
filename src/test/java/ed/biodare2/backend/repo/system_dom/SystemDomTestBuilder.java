@@ -18,6 +18,7 @@ import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.db.dao.db.SearchInfo;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentCharacteristic;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -150,6 +151,7 @@ public class SystemDomTestBuilder {
     public static FeaturesAvailability makeFeaturesAvailability() {
         FeaturesAvailability f = new FeaturesAvailability();
         f.serviceLevel = ServiceLevel.BASIC;
+        f.embargoDate = LocalDate.now().plusYears(3);
         return f;
     }
 

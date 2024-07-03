@@ -58,7 +58,11 @@ public interface DBSystemInfoRep extends JpaRepository<DBSystemInfo, Long> {
     
     Stream<DBSystemInfo> findByAclOwner(UserAccount owner);
 
+    /*
     @Query("SELECT dbinfo.parentId FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = :isOpen AND dbinfo.acl.owner.subscription.kind NOT IN :subscriptions AND dbinfo.creationDate < :cutoff")  
     List<Long> findParentIdsBeforeCutoffAndOpenStatusNotWithSubscription(@Param("entityType") EntityType entityType, @Param("cutoff") LocalDateTime cutoff, @Param("isOpen") boolean isOpen, List<SubscriptionType> subscriptions,  Limit limit);
+    */
     
+    @Query("SELECT dbinfo.parentId FROM DBSystemInfo dbinfo WHERE dbinfo.entityType = :entityType AND dbinfo.acl.isOpen = :isOpen AND dbinfo.embargoDate < :cutoff")  
+    List<Long> findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(@Param("entityType") EntityType entityType, @Param("cutoff") LocalDate cutoff, @Param("isOpen") boolean isOpen, Limit limit);
 }

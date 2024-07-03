@@ -167,7 +167,7 @@ public class Fixtures {
         acc.setSupervisor(fixtures.demoBoss);
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
-        acc.setSubscription(makeSubsription(SubscriptionType.FREE_NO_PUBLISH));
+        acc.setSubscription(makeSubsription(SubscriptionType.EMBARGO_10));
         acc.setTermsVersion(UsersHandler.currentTermsVersion);
         acc.setRdmAspect(makeRDMAspect());
         

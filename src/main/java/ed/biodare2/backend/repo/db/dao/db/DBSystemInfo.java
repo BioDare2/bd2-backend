@@ -22,6 +22,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.TableGenerator;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -80,6 +81,9 @@ public class DBSystemInfo implements Serializable {
     @UpdateTimestamp
     LocalDateTime modificationDate;
     
+    @NotNull
+    LocalDate embargoDate;
+    
     
     public long getInnerId() {
         return id;
@@ -127,6 +131,14 @@ public class DBSystemInfo implements Serializable {
 
     public void setSearchInfo(SearchInfo searchInfo) {
         this.searchInfo = searchInfo;
+    }
+
+    public LocalDate getEmbargoDate() {
+        return embargoDate;
+    }
+
+    public void setEmbargoDate(LocalDate embargoDate) {
+        this.embargoDate = embargoDate;
     }
     
     
