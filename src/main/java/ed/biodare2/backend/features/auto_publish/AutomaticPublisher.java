@@ -36,7 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AutomaticPublisher {
 
     final static String CUTOFF_PREFIX = "PUBLISH_BEFORE";
-    final static int START_BATCH_SIZE = 4;
+    final static int START_BATCH_SIZE = 100;
     
     
     final Logger log = LoggerFactory.getLogger(this.getClass());    
@@ -67,7 +67,7 @@ public class AutomaticPublisher {
     }
     
 
-    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000)   //*60*2s
+    @Scheduled(fixedRate = 1000*2*60*60, initialDelay = 1000*60*2)   //  
     @Transactional
     public void trigerAutoPublishing() throws IOException {
 

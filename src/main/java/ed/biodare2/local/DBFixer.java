@@ -104,6 +104,9 @@ public class DBFixer {
     
     @Autowired
     PPAJC2ResultsHandler jc2ResultsHandler;
+   
+    @Autowired
+    ServiceLevelResolver serviceLevel;
     //@Autowired
     //TSDataHandler dataHandler;
     
@@ -297,7 +300,8 @@ public class DBFixer {
         db.setEntityType(info.entityType);
         db.setAcl(toACL(info.security));
         if (info.featuresAvailability.embargoDate == null) {
-            info.featuresAvailability.embargoDate = info.provenance.creation.dateTime.toLocalDate().plusYears(FeaturesAvailability.DEFAULT_EMBARGO);
+            int years = serviceLevel.subscriptionToEmbargo(db.getAcl().getOwner().getSubscription());
+            info.featuresAvailability.embargoDate = info.provenance.creation.dateTime.toLocalDate().plusYears(years);
         }
         db.setEmbargoDate(info.featuresAvailability.embargoDate);
         

@@ -52,7 +52,7 @@ public class ServiceLevelResolver {
         }
     }
 
-    int subscriptionToEmbargo(AccountSubscription subscription) {
+    public int subscriptionToEmbargo(AccountSubscription subscription) {
         switch (subscription.kind) {
             case FREE, FULL_WELCOME -> {
                 return FeaturesAvailability.DEFAULT_EMBARGO;
