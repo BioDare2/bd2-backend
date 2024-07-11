@@ -12,3 +12,9 @@ SELECT SUBSTRING_INDEX(email, '.', -1) as country, SUBSTRING_INDEX(email, '\@', 
 
 select count(*) FROM biodare2_prod_v3.user_account
 
+getting number of exp per YEAR
+SELECT year(creation_date) AS YEAR, COUNT(*) As NR FROM biodare2_prod_v3.dbsystem_info group by year(creation_date) order by YEAR;
+
+
+getting number of users depositing per year
+SELECT YEAR(creation_date) as year, COUNT(DISTINCT owner_id) FROM biodare2_prod_v3.entityacl group by YEAR(creation_date) order by year;
