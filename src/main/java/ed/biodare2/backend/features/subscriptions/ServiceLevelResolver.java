@@ -25,7 +25,7 @@ public class ServiceLevelResolver {
         
         features.serviceLevel = subscriptionToServiceLevel(user.getSubscription());
         
-        features.embargoDate = LocalDate.now().plusYears(subscriptionToEmbargo(user.getSubscription()));
+        features.releaseDate = LocalDate.now().plusYears(subscriptionToEmbargo(user.getSubscription()));
         ;
         
         return features;
@@ -37,13 +37,15 @@ public class ServiceLevelResolver {
         if (FULL_PURCHASED.equals(features.serviceLevel)) return;
         features.serviceLevel = FULL_FOR_OPEN;
     }
+    
+    
 
     protected ServiceLevel subscriptionToServiceLevel(AccountSubscription subscription) {
         
         switch (subscription.kind) {
             case FREE: return FULL_GRATIS;
+            case EMBARGO_05: return FULL_GRATIS;
             case EMBARGO_10: return FULL_GRATIS;
-            case EMBARGO_20: return FULL_GRATIS;
             case FULL_WELCOME: return FULL_GRATIS;
             case FULL_INDIVIDUAL:
             case FULL_INHERITED:
@@ -57,8 +59,8 @@ public class ServiceLevelResolver {
             case FREE, FULL_WELCOME -> {
                 return FeaturesAvailability.DEFAULT_EMBARGO;
             }
-            case EMBARGO_20 -> {
-                return 20;
+            case EMBARGO_05 -> {
+                return 5;
             }
             case EMBARGO_10, FULL_INDIVIDUAL, FULL_INHERITED, FULL_GROUP -> {
                 return 10;

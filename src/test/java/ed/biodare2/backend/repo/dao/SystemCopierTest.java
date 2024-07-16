@@ -147,7 +147,7 @@ public class SystemCopierTest {
         org.getAcl().setCreator(user);
         org.getAcl().setOwner(user);
         org.getAcl().setSuperOwner(user);
-        org.setEmbargoDate(LocalDate.now().plusDays(5));
+        org.setReleaseDate(LocalDate.now().plusDays(5));
         
         System.out.println("\n\nBefore insert");
         EM.persist(org);

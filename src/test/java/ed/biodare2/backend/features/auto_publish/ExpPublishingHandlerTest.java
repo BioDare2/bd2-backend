@@ -81,7 +81,7 @@ public class ExpPublishingHandlerTest {
         DBSystemInfo dbSystemInfo = emptySystemInfo(testExp.getId());
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setAcl(new EntityACL());
-        dbSystemInfo.setEmbargoDate(info.featuresAvailability.embargoDate);
+        dbSystemInfo.setReleaseDate(info.featuresAvailability.releaseDate);
         
         {
             EntityACL acl1 = dbSystemInfo.getAcl();
@@ -123,7 +123,7 @@ public class ExpPublishingHandlerTest {
         
         LocalDate cutOff = LocalDate.now().minusDays(2);
         AssayPack exp = testBoundle;
-        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now());
+        exp.getDbSystemInfo().setReleaseDate(LocalDate.now());
         assertFalse(handler.isSuitableForPublishing(exp, cutOff));
 
         
@@ -134,7 +134,7 @@ public class ExpPublishingHandlerTest {
         
         LocalDate cutOff = LocalDate.now().minusDays(2);
         AssayPack exp = testBoundle;
-        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now().minusDays(6));
+        exp.getDbSystemInfo().setReleaseDate(LocalDate.now().minusDays(6));
         assertTrue(handler.isSuitableForPublishing(exp, cutOff));
        
     }    
@@ -169,11 +169,11 @@ public class ExpPublishingHandlerTest {
         LocalDate cutOff = LocalDateTime.now().minusDays(2).toLocalDate();
         
         AssayPack exp = testBoundle;
-        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now());     
+        exp.getDbSystemInfo().setReleaseDate(LocalDate.now());     
         assertFalse(handler.attemptAutoPublishing(exp, cutOff));
         verify(experimentHandler, never()).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
 
-        exp.getDbSystemInfo().setEmbargoDate(LocalDate.now().minusDays(5));     
+        exp.getDbSystemInfo().setReleaseDate(LocalDate.now().minusDays(5));     
         assertTrue(handler.attemptAutoPublishing(exp, cutOff));
         verify(experimentHandler).publish(exp, OpenAccessLicence.CC_BY, fixtures.systemUser);
         

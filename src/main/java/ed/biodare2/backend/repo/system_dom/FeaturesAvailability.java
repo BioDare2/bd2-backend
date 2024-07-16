@@ -20,5 +20,5 @@ public class FeaturesAvailability {
     public int modifications = 0;
     
     // it is initialised so it will work with the old jscon records
-    public LocalDate embargoDate;
+    public LocalDate releaseDate;
 }

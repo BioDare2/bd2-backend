@@ -43,7 +43,7 @@ public class ExpPublishingHandler {
     
     boolean isSuitableForPublishing(AssayPack exp, LocalDate cutOff) {
 
-        return exp.getDbSystemInfo().getEmbargoDate().isBefore(cutOff); 
+        return exp.getDbSystemInfo().getReleaseDate().isBefore(cutOff); 
     }
     
     /*

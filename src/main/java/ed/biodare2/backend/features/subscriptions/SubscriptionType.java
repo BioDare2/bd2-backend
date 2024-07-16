@@ -16,12 +16,12 @@ public enum SubscriptionType {
     
     SYSTEM,
     FREE,
+    EMBARGO_05,
+    EMBARGO_10,
     FULL_WELCOME,
     FULL_INDIVIDUAL,
     FULL_GROUP,
-    FULL_INHERITED,
-    EMBARGO_10,
-    EMBARGO_20;
+    FULL_INHERITED;
 
     private static final long serialVersionUID = 1L;
     

@@ -199,16 +199,16 @@ public class ExperimentPackHubTest {
     }  
     
     @Test
-    public void newPackCopiesEmbargoDateToDBSystemInfo() {
+    public void newPackCopiesReleaseDateToDBSystemInfo() {
         
         LocalDate emb = LocalDate.now().plusDays(5);
         testPack.expId = 1;
-        testPack.systemInfo.featuresAvailability.embargoDate = emb;
+        testPack.systemInfo.featuresAvailability.releaseDate = emb;
         
         AssayPackImpl pack = (AssayPackImpl) hub.newPack(testPack.getAssay(), testPack.getSystemInfo(), testPack.getDbSystemInfo().getAcl());
         assertNotNull(pack);
         assertEquals(pack.expId,testPack.assay.getId());
-        assertEquals(emb, pack.dbSystemInfo.getEmbargoDate());
+        assertEquals(emb, pack.dbSystemInfo.getReleaseDate());
         
     }    
     

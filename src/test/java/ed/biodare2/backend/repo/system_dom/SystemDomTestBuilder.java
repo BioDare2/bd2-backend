@@ -151,7 +151,7 @@ public class SystemDomTestBuilder {
     public static FeaturesAvailability makeFeaturesAvailability() {
         FeaturesAvailability f = new FeaturesAvailability();
         f.serviceLevel = ServiceLevel.BASIC;
-        f.embargoDate = LocalDate.now().plusYears(3);
+        f.releaseDate = LocalDate.now().plusYears(3);
         return f;
     }
 

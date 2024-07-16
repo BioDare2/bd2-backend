@@ -108,7 +108,7 @@ public class ExperimentPackHub {
         dbSystemInfo.setEntityType(EntityType.EXP_ASSAY);
         dbSystemInfo.setParentId(experiment.getId());
         dbSystemInfo.setAcl(acl);
-        dbSystemInfo.setEmbargoDate(sysInfo.featuresAvailability.embargoDate);
+        dbSystemInfo.setReleaseDate(sysInfo.featuresAvailability.releaseDate);
         
         SearchInfo search = new SearchInfo();
         dbSystemInfo.setSearchInfo(search);

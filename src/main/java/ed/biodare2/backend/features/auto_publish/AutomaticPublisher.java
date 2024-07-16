@@ -27,6 +27,7 @@ import org.springframework.data.domain.Limit;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.comparator.Comparators;
 
 /**
  *
@@ -137,7 +138,7 @@ public class AutomaticPublisher {
     List<Long> getPublishingCandidates(LocalDate cutoff, int limit) {
         
         
-        return dbSystemInfos.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY, cutoff, false, Limit.of(limit));
+        return dbSystemInfos.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY, cutoff, false, Limit.of(limit));
     }
 
     /*
@@ -166,10 +167,20 @@ public class AutomaticPublisher {
 
     List<String> getEmbargoUsers() {
         
-        return users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)
+        List<String> embargoed = users.findBySubscriptionKind(SubscriptionType.EMBARGO_05)
              .stream()
              .map( u -> u.getLogin())
              .collect(Collectors.toList());
+        
+        embargoed.addAll(
+             users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)
+             .stream()
+             .map( u -> u.getLogin())
+             .collect(Collectors.toList())                
+        );
+        
+        embargoed.sort( (s1, s2) -> s1.compareTo(s2));
+        return embargoed;
     }
 
 

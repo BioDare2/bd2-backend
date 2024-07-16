@@ -22,17 +22,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
@@ -124,7 +121,7 @@ public class AutomaticPublisherTest {
         
         LocalDate cutoff = LocalDate.now().minusDays(2);
         List<Long> ids = List.of(3L, 5L);
-        when(dbSystemInfos.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY,cutoff,false,Limit.of(10))).thenReturn(ids);
+        when(dbSystemInfos.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(EntityType.EXP_ASSAY,cutoff,false,Limit.of(10))).thenReturn(ids);
         
         List<Long> res = handler.getPublishingCandidates(cutoff, 10);
         assertEquals(List.of(3L, 5L), res);
@@ -197,6 +194,11 @@ public class AutomaticPublisherTest {
         
         ignored = 1;
         handler.updateBatchSize(ignored);
+        assertEquals(12, handler.batchSize);
+        
+        ignored = 1;
+        handler.batchSize = AutomaticPublisher.START_BATCH_SIZE+100;
+        handler.updateBatchSize(ignored);        
         assertEquals(AutomaticPublisher.START_BATCH_SIZE, handler.batchSize);
                 
     } 
@@ -205,8 +207,9 @@ public class AutomaticPublisherTest {
     public void getEmbargoUsers() 
     {
         when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)).thenReturn(List.of(fixtures.demoUser));
+        when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_05)).thenReturn(List.of(fixtures.demoBoss));
         
         List<String> res = handler.getEmbargoUsers();
-        assertEquals(List.of(fixtures.demoUser.getLogin()), res);
+        assertEquals(List.of(fixtures.demoUser.getLogin(),fixtures.demoBoss.getLogin()), res);
     }
 }

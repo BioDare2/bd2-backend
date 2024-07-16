@@ -82,7 +82,7 @@ public class DBSystemInfo implements Serializable {
     LocalDateTime modificationDate;
     
     @NotNull
-    LocalDate embargoDate;
+    LocalDate releaseDate;
     
     
     public long getInnerId() {
@@ -133,12 +133,12 @@ public class DBSystemInfo implements Serializable {
         this.searchInfo = searchInfo;
     }
 
-    public LocalDate getEmbargoDate() {
-        return embargoDate;
+    public LocalDate getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setEmbargoDate(LocalDate embargoDate) {
-        this.embargoDate = embargoDate;
+    public void setReleaseDate(LocalDate relDate) {
+        this.releaseDate = relDate;
     }
     
     

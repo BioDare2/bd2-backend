@@ -70,7 +70,7 @@ public class DBSystemInfoRepTest {
         info.getAcl().setSuperOwner(fixtures.demoBoss);
         info.getAcl().setPublic(false);
         info.getAcl().addCanWrite(fixtures.otherGroup);
-        info.setEmbargoDate(LocalDate.now().plusDays(3));
+        info.setReleaseDate(LocalDate.now().plusDays(3));
         
         info.setSearchInfo(makeSearchInfo("Exp "+12, fixtures.user1.getLastName()));
         
@@ -205,7 +205,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -217,7 +217,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         // differnt entity
         info3 = repository.save(info3);   
 
@@ -229,7 +229,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user2);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         // different user
         info4 = repository.save(info4);         
@@ -267,7 +267,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -279,7 +279,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         // differnt entity
         info3 = repository.save(info3);   
 
@@ -291,7 +291,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user2);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         // different user
         info4 = repository.save(info4);         
         
@@ -332,7 +332,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -344,7 +344,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3 = repository.save(info3);   
 
@@ -356,7 +356,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user2);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         // different user
         info4 = repository.save(info4);         
@@ -427,7 +427,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
 
         info2.setSearchInfo(makeSearchInfo("Exp +2", fixtures.user1.getLastName()));
         info2.getSearchInfo().setName("A");
@@ -442,7 +442,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3.setSearchInfo(makeSearchInfo("Exp 3", fixtures.user1.getLastName()));
         info3.getSearchInfo().setName("AB");
@@ -457,7 +457,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user1);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         info4.setSearchInfo(makeSearchInfo("Exp 4", fixtures.user1.getLastName()));
         info4.getSearchInfo().setName("D");
@@ -507,7 +507,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -520,7 +520,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3 = repository.save(info3);           
         
@@ -546,7 +546,7 @@ public class DBSystemInfoRepTest {
         info2.setAcl(new EntityACL());
         
         info2.getAcl().setOwner(fixtures.demoUser);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         info2 = repository.saveAndFlush(info2);
         
         DBSystemInfo info3 = new DBSystemInfo();
@@ -554,7 +554,7 @@ public class DBSystemInfoRepTest {
         info3.setEntityType(EntityType.INVESTIGATION);
         info3.setAcl(new EntityACL());        
         info3.getAcl().setOwner(fixtures.demoUser);       
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         info3 = repository.saveAndFlush(info3);
         
         DBSystemInfo info4 = new DBSystemInfo();
@@ -562,7 +562,7 @@ public class DBSystemInfoRepTest {
         info4.setEntityType(EntityType.INVESTIGATION);
         info4.setAcl(new EntityACL());        
         info4.getAcl().setOwner(fixtures.demoUser1);        
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         info4 = repository.saveAndFlush(info4);
         
         List<DBSystemInfo> res = repository.findByAclOwner(fixtures.demoUser)
@@ -593,7 +593,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -605,7 +605,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3 = repository.save(info3);           
         repository.flush();
@@ -618,7 +618,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user1);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         try {
             info4 = repository.save(info4);          
@@ -645,7 +645,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);    
         
@@ -653,7 +653,7 @@ public class DBSystemInfoRepTest {
         info3.setParentId(300);
         info3.setEntityType(EntityType.INVESTIGATION);
         info3.setAcl(new EntityACL());
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
@@ -681,7 +681,7 @@ public class DBSystemInfoRepTest {
         info2.getAcl().setOwner(fixtures.user1);
         info2.getAcl().setSuperOwner(fixtures.demoBoss);
         info2.getAcl().addCanWrite(fixtures.otherGroup);
-        info2.setEmbargoDate(LocalDate.now().plusDays(3));
+        info2.setReleaseDate(LocalDate.now().plusDays(3));
         
         info2 = repository.save(info2);   
         
@@ -693,7 +693,7 @@ public class DBSystemInfoRepTest {
         info4.getAcl().setOwner(fixtures.user1);
         info4.getAcl().setSuperOwner(fixtures.demoBoss);
         info4.getAcl().addCanWrite(fixtures.otherGroup);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         info4 = repository.save(info4);         
         
@@ -705,7 +705,7 @@ public class DBSystemInfoRepTest {
         info3.getAcl().setOwner(fixtures.user1);
         info3.getAcl().setSuperOwner(fixtures.demoBoss);
         info3.getAcl().addCanWrite(fixtures.otherGroup);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3 = repository.save(info3);           
         
@@ -739,7 +739,7 @@ public class DBSystemInfoRepTest {
         info2.setAcl(new EntityACL());
         info2.getAcl().setPublic(false);    
         info2.getAcl().setOwner(fixtures.user1);
-        info2.setEmbargoDate(LocalDate.now().plusDays(10));
+        info2.setReleaseDate(LocalDate.now().plusDays(10));
         
         info2 = repository.save(info2);    
         
@@ -750,7 +750,7 @@ public class DBSystemInfoRepTest {
         info3.setAcl(new EntityACL());        
         info3.getAcl().setPublic(false);
         info3.getAcl().setOwner(fixtures.user1);
-        info3.setEmbargoDate(LocalDate.now().plusDays(3));
+        info3.setReleaseDate(LocalDate.now().plusDays(3));
         
         info3 = repository.save(info3);   
 
@@ -760,7 +760,7 @@ public class DBSystemInfoRepTest {
         info4.setAcl(new EntityACL());
         info4.getAcl().setOwner(fixtures.user1);        
         info4.getAcl().setPublic(false);
-        info4.setEmbargoDate(LocalDate.now().plusDays(3));
+        info4.setReleaseDate(LocalDate.now().plusDays(3));
         
         info4 = repository.save(info4);   
         
@@ -769,22 +769,22 @@ public class DBSystemInfoRepTest {
         EntityType ent = EntityType.EXP_ASSAY;
         
         
-        assertEquals(0, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(0, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
         
         cutoff = LocalDate.now().plusDays(5);       
-        assertEquals(1, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(1, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
         
         isPublic = true;
-        assertEquals(1, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(1, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
         
         isPublic = false;
         cutoff = LocalDate.now().plusDays(15);    
-        assertEquals(2, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(2, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
         
         ent = EntityType.INVESTIGATION;
-        assertEquals(1, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(1, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
         
         ent = EntityType.STUDY;
-        assertEquals(0, repository.findParentIdsWithEmbargoBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
+        assertEquals(0, repository.findParentIdsWithReleaseBeforeCutoffAndOpenStatus(ent,cutoff,isPublic,Limit.of(100)).size());
     }
 }

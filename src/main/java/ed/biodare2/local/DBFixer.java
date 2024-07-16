@@ -299,11 +299,11 @@ public class DBFixer {
         db.setParentId(info.parentId);
         db.setEntityType(info.entityType);
         db.setAcl(toACL(info.security));
-        if (info.featuresAvailability.embargoDate == null) {
+        if (info.featuresAvailability.releaseDate == null) {
             int years = serviceLevel.subscriptionToEmbargo(db.getAcl().getOwner().getSubscription());
-            info.featuresAvailability.embargoDate = info.provenance.creation.dateTime.toLocalDate().plusYears(years);
+            info.featuresAvailability.releaseDate = info.provenance.creation.dateTime.toLocalDate().plusYears(years);
         }
-        db.setEmbargoDate(info.featuresAvailability.embargoDate);
+        db.setReleaseDate(info.featuresAvailability.releaseDate);
         
         // db.setSearchInfo(new SearchInfo());
         return db;

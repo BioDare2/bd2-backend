@@ -112,7 +112,7 @@ public class DBExperimentsSearcherTest {
         info.getAcl().setPublic(false);
         info.getAcl().addCanWrite(fixtures.otherGroup);
         
-        info.setEmbargoDate(LocalDate.now().plusDays(5));
+        info.setReleaseDate(LocalDate.now().plusDays(5));
         
         info.setSearchInfo(new SearchInfo());
         info.getSearchInfo().setName(name);

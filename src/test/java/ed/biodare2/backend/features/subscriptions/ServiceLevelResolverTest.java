@@ -46,8 +46,8 @@ public class ServiceLevelResolverTest {
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
                 FULL_INHERITED,
-                EMBARGO_10,
-                EMBARGO_20);
+                EMBARGO_05,
+                EMBARGO_10);
         
         List<ServiceLevel> exps = Arrays.asList(
                 FULL_GRATIS,
@@ -78,8 +78,8 @@ public class ServiceLevelResolverTest {
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
                 FULL_INHERITED,
-                EMBARGO_10,
-                EMBARGO_20);
+                EMBARGO_05,
+                EMBARGO_10);
         
         List<Integer> exps = Arrays.asList(
                 FeaturesAvailability.DEFAULT_EMBARGO,
@@ -87,8 +87,8 @@ public class ServiceLevelResolverTest {
                 10,
                 10,
                 10,
-                10,
-                20);
+                5,
+                10);
         
         for (int i = 0;i<types.size();i++) {
             subscription.kind = types.get(i);
@@ -98,6 +98,7 @@ public class ServiceLevelResolverTest {
             assertEquals(exp,res);
         }
     }    
+    
   
     @Test
     public void throwsOnSystemSubscriptionsToServiceLevel() {
