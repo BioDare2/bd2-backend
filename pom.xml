@@ -5,13 +5,13 @@
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
         <!-- snapshots work but without snapshot deploy to nexus fails -->
-	<version>3.3.3.2181-SNAPSHOT</version>
+	<version>3.3.3.2182-SNAPSHOT</version>
 	<name>BioDare2-REST</name>
 	<description>BioDare2 backend service</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.0</version>
+		<version>3.3.1</version>
 		<!-- <relativePath/> lookup parent from repository -->
 	</parent>
 
