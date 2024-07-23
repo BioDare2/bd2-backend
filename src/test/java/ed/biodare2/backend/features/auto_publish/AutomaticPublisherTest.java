@@ -207,7 +207,7 @@ public class AutomaticPublisherTest {
     public void getEmbargoUsers() 
     {
         when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_10)).thenReturn(List.of(fixtures.demoUser));
-        when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_05)).thenReturn(List.of(fixtures.demoBoss));
+        when(users.findBySubscriptionKind(SubscriptionType.EMBARGO_06)).thenReturn(List.of(fixtures.demoBoss));
         
         List<String> res = handler.getEmbargoUsers();
         assertEquals(List.of(fixtures.demoUser.getLogin(),fixtures.demoBoss.getLogin()), res);

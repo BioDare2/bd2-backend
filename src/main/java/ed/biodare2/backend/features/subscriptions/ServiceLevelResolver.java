@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.subscriptions;
 
+import static ed.biodare2.backend.features.subscriptions.SubscriptionType.EMBARGO_10;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.repo.system_dom.FeaturesAvailability;
 import ed.biodare2.backend.repo.system_dom.ServiceLevel;
@@ -44,8 +45,9 @@ public class ServiceLevelResolver {
         
         switch (subscription.kind) {
             case FREE: return FULL_GRATIS;
-            case EMBARGO_05: return FULL_GRATIS;
-            case EMBARGO_10: return FULL_GRATIS;
+            case EMBARGO_06:             
+            case EMBARGO_10: 
+            case EMBARGO_20: return FULL_GRATIS;            
             case FULL_WELCOME: return FULL_GRATIS;
             case FULL_INDIVIDUAL:
             case FULL_INHERITED:
@@ -59,8 +61,11 @@ public class ServiceLevelResolver {
             case FREE, FULL_WELCOME -> {
                 return FeaturesAvailability.DEFAULT_EMBARGO;
             }
-            case EMBARGO_05 -> {
-                return 5;
+            case EMBARGO_06 -> {
+                return 6;
+            }
+            case EMBARGO_20 -> {
+                return 20;
             }
             case EMBARGO_10, FULL_INDIVIDUAL, FULL_INHERITED, FULL_GROUP -> {
                 return 10;

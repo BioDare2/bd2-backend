@@ -42,9 +42,9 @@ public class DoPublicity {
     @Autowired
     Mailer instance;
     
-    Path destinationsList = Paths.get("D:\\Temp\\biodare-users.txt");
+    Path destinationsList = Paths.get("D:\\Temp\\biodare2\\biodare-users.txt");
     
-    Path bodyFile = Paths.get("D:\\Temp\\biodare-email-body.txt");
+    Path bodyFile = Paths.get("D:\\Temp\\biodare2\\biodare-email-body.txt");
 
     String subject = "BioDare2 - new service for circadian research";
     
@@ -52,7 +52,7 @@ public class DoPublicity {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void sendPublicityEmails() throws IOException, InterruptedException {
         
         Set<String> destinations = readDestinations(destinationsList);
@@ -67,7 +67,7 @@ public class DoPublicity {
         boolean res = instance.send(self, subject, body);        
         assertTrue(res);
         
-        fail("Commented it out before the real work");
+        //fail("Commented it out before the real work");
         
         for (String to: destinations) {
             
