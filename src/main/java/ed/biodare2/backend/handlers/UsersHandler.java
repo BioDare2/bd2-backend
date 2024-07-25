@@ -48,7 +48,7 @@ public class UsersHandler {
 
     final Logger log = LoggerFactory.getLogger(this.getClass());    
     
-    public static final String currentTermsVersion = "1.0";
+    public static final String CURRENT_TERMS_VERSION = "1.1";
     
     static final int ACTIVATION_VALIDITY = 5;
     static final int RESET_VALIDITY = 1;
@@ -338,7 +338,7 @@ public class UsersHandler {
 
     protected void setSubscription(UserAccount user) {
         
-        user.setTermsVersion(currentTermsVersion);
+        user.setTermsVersion(CURRENT_TERMS_VERSION);
         
         AccountSubscription sub = new AccountSubscription();
         sub.setKind(SubscriptionType.FREE);

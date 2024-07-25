@@ -144,7 +144,7 @@ public class DBFixer {
         sys.setBackendOnly(true);
         sys.setInstitution("BioDare");
         sys.setSubscription(makeSubsription(SubscriptionType.SYSTEM));
-        sys.setTermsVersion(UsersHandler.currentTermsVersion);
+        sys.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(sys);
         
         { // must be a block for lambdas
@@ -164,7 +164,7 @@ public class DBFixer {
         adm.setLocked(true); //casue on the beggining it is not being used
         adm.setInstitution("University of Edinburgh");
         adm.setSubscription(makeSubsription(SubscriptionType.FREE));
-        adm.setTermsVersion(UsersHandler.currentTermsVersion);
+        adm.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(adm);
         
         accounts.findByLogin(adm.getLogin()).orElseGet( () -> accounts.save(adm));
@@ -181,7 +181,7 @@ public class DBFixer {
         acc.setSupervisor(acc);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.FREE));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
         {
             final UserAccount tmp = acc;
@@ -200,7 +200,7 @@ public class DBFixer {
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.FREE));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
         {
             final UserAccount tmp = acc;
@@ -217,7 +217,7 @@ public class DBFixer {
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.EMBARGO_10));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
        {
             final UserAccount tmp = acc;
@@ -234,7 +234,7 @@ public class DBFixer {
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.FREE));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
         {
             final UserAccount tmp = acc;
@@ -251,7 +251,7 @@ public class DBFixer {
         acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.FREE));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
         {
             final UserAccount tmp = acc;
@@ -268,7 +268,7 @@ public class DBFixer {
         //acc.addGroup(demoG);
         acc.setInstitution("University of Edinburgh");
         acc.setSubscription(makeSubsription(SubscriptionType.FREE));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         rdmSocialHandler.createUserAspect(acc);
        {
             final UserAccount tmp = acc;
@@ -412,7 +412,7 @@ public class DBFixer {
                 .forEach(( UserAccount account) -> {
                     
                     if (account.getTermsVersion() == null) {
-                        account.setTermsVersion(UsersHandler.currentTermsVersion);
+                        account.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
                         log.info("Added T&C to "+account.getLogin());
                     }
                     

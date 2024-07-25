@@ -125,7 +125,7 @@ public class Fixtures {
         sys.setInstitution("BioDare");
         sys.setSubscription(makeSubsription());
         sys.getSubscription().setKind(SubscriptionType.SYSTEM);
-        sys.setTermsVersion(UsersHandler.currentTermsVersion);
+        sys.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         sys.setRdmAspect(makeRDMAspect());
         fixtures.systemUser = accounts.save(sys);
         
@@ -139,7 +139,7 @@ public class Fixtures {
         acc.setInstitution("BioDare");
         acc.setAdmin(true);
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         fixtures.admin = accounts.save(acc);
         
@@ -153,7 +153,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.demoBoss = accounts.save(acc);
@@ -168,7 +168,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
         acc.setSubscription(makeSubsription(SubscriptionType.EMBARGO_10));
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         
@@ -184,7 +184,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.demoUser1 = accounts.save(acc);
@@ -199,7 +199,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.demoGroup); 
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.demoUser2 = accounts.save(acc);        
@@ -214,7 +214,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.otherGroup);
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.user1 = accounts.save(acc); 
@@ -229,7 +229,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.addGroup(fixtures.otherGroup);
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.user2 = accounts.save(acc);         
@@ -245,7 +245,7 @@ public class Fixtures {
         acc.setInstitution("University of Edinburgh");
         acc.setAuthorities(Collections.unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS","ROLE_READER","ROLE_USER")));
         acc.setSubscription(makeSubsription());
-        acc.setTermsVersion(UsersHandler.currentTermsVersion);
+        acc.setTermsVersion(UsersHandler.CURRENT_TERMS_VERSION);
         acc.setRdmAspect(makeRDMAspect());
         
         fixtures.anonymous = acc;     
