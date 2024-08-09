@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import org.junit.rules.TemporaryFolder;
 import static org.mockito.Mockito.*;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 
 /**
@@ -62,6 +63,7 @@ public class PublicityControllerTest {
 
 
     @Test
+    //@Ignore("Test ig cause normaly publicity sending is disabled")
     public void testSendPublicity() throws Exception {
 
         BioDare2User currentUser = mock(BioDare2User.class);

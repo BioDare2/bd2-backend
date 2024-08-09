@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Zielu
  */
-@RestController
-@RequestMapping("api/publicity")
+//@RestController
+//@RequestMapping("api/publicity")
 public class PublicityController extends BioDare2Rest {
     
     final Mailer mailer;
@@ -43,9 +43,10 @@ public class PublicityController extends BioDare2Rest {
     }
     
     @RequestMapping(value="send",method = RequestMethod.GET)
-    //public ListWrapper<String> dataStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
     public Map<String, String> sendPublicity(@NotNull @AuthenticationPrincipal BioDare2User currentUser) throws IOException, InterruptedException {
         log.debug("Publicity sender: {}", currentUser);
+        
+        //if (true) throw new IllegalStateException("Publicity sending disabled");
         
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
