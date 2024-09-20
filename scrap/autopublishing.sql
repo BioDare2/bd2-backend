@@ -30,3 +30,8 @@ WHERE di.id > 1 and ea.owner_id IN (1766, 1837, 2564, 2942);
 SELECT * FROM biodare2_prod_v3.dbsystem_info di 
 JOIN biodare2_prod_v3.entityacl ea ON di.acl_id = ea.id 
 where ea.owner_id IN (1766, 1837, 2564, 2942);
+
+UPDATE biodare2_prod_v3.dbsystem_info di
+JOIN biodare2_prod_v3.entityacl as ea ON di.acl_id = ea.id
+SET di.release_date = DATE_ADD(DATE(di.creation_date), INTERVAL 5 YEAR)
+WHERE di.id > 1 and ea.owner_id IN (1003, 2, 3);
