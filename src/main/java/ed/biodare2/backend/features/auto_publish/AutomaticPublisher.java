@@ -167,7 +167,7 @@ public class AutomaticPublisher {
 
     List<String> getEmbargoUsers() {
         
-        List<String> embargoed = users.findBySubscriptionKind(SubscriptionType.EMBARGO_05)
+        List<String> embargoed = users.findBySubscriptionKind(SubscriptionType.EMBARGO_06)
              .stream()
              .map( u -> u.getLogin())
              .collect(Collectors.toList());

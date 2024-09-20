@@ -5,19 +5,19 @@
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
         <!-- snapshots work but without snapshot deploy to nexus fails -->
-	<version>3.3.3.2182-SNAPSHOT</version>
+	<version>3.3.4.2183-SNAPSHOT</version>
 	<name>BioDare2-REST</name>
 	<description>BioDare2 backend service</description>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.1</version>
+		<version>3.3.2</version>
 		<!-- <relativePath/> lookup parent from repository -->
 	</parent>
 
 	<properties>
             <!-- <bd.data.version>1.7.0-SNAPSHOT</bd.data.version> -->
-            <bd.period.version>2.0.0-SNAPSHOT</bd.period.version>
+            <bd.period.version>2.1.0-SNAPSHOT</bd.period.version>
             <jc.version>3.3.2-SNAPSHOT</jc.version>
             <java.version>21</java.version>
             <maven.compiler.source>21</maven.compiler.source>

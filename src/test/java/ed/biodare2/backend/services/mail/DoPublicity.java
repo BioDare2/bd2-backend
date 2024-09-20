@@ -42,9 +42,9 @@ public class DoPublicity {
     @Autowired
     Mailer instance;
     
-    Path destinationsList = Paths.get("D:\\Temp\\biodare-users.txt");
+    Path destinationsList = Paths.get("E:\\Temp\\biodare2\\biodare-users.txt");
     
-    Path bodyFile = Paths.get("D:\\Temp\\biodare-email-body.txt");
+    Path bodyFile = Paths.get("E:\\Temp\\biodare2\\biodare-email-body.txt");
 
     String subject = "BioDare2 - new service for circadian research";
     
@@ -52,7 +52,7 @@ public class DoPublicity {
     }
 
     @Test
-    @Ignore
+    @Ignore("Does no longer work locally with the office auth")
     public void sendPublicityEmails() throws IOException, InterruptedException {
         
         Set<String> destinations = readDestinations(destinationsList);

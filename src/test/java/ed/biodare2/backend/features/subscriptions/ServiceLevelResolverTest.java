@@ -46,8 +46,9 @@ public class ServiceLevelResolverTest {
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
                 FULL_INHERITED,
-                EMBARGO_05,
-                EMBARGO_10);
+                EMBARGO_06,
+                EMBARGO_10,
+                EMBARGO_20);
         
         List<ServiceLevel> exps = Arrays.asList(
                 FULL_GRATIS,
@@ -55,6 +56,7 @@ public class ServiceLevelResolverTest {
                 FULL_SUBSCRIBED,
                 FULL_SUBSCRIBED,
                 FULL_SUBSCRIBED,
+                FULL_GRATIS,
                 FULL_GRATIS,
                 FULL_GRATIS);
         
@@ -78,8 +80,9 @@ public class ServiceLevelResolverTest {
                 FULL_INDIVIDUAL,
                 FULL_GROUP,
                 FULL_INHERITED,
-                EMBARGO_05,
-                EMBARGO_10);
+                EMBARGO_06,
+                EMBARGO_10,
+                EMBARGO_20);
         
         List<Integer> exps = Arrays.asList(
                 FeaturesAvailability.DEFAULT_EMBARGO,
@@ -87,8 +90,9 @@ public class ServiceLevelResolverTest {
                 10,
                 10,
                 10,
-                5,
-                10);
+                6,
+                10,
+                20);
         
         for (int i = 0;i<types.size();i++) {
             subscription.kind = types.get(i);

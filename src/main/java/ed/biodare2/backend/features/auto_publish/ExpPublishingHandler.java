@@ -61,7 +61,7 @@ public class ExpPublishingHandler {
         OpenAccessLicence licence = getDefaultLicence();
         
         addPublishingComment(exp);
-        //experimentHandler.publish(exp, licence, system);
+        experimentHandler.publish(exp, licence, system);
         
         return true;
         

@@ -52,6 +52,7 @@ public class ReCaptchaService {
         //log.debug("Captcha response {}",resp);
         List<String> err = (List)resp.getOrDefault("error-codes", null);
         
+
         /*
         if (err != null) {
             log.error("captcha errors: {}",err);

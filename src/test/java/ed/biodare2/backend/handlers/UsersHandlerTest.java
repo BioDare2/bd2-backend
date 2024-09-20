@@ -141,7 +141,7 @@ public class UsersHandlerTest {
         
         UserAccount u = (UserAccount)res;
         assertNotNull(u.getTermsVersion());
-        assertEquals("1.0",u.getTermsVersion());
+        assertEquals("1.1",u.getTermsVersion());
         
         verify(rdmSocialHandler).createUserAspect(u);
     }   

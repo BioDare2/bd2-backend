@@ -16,8 +16,9 @@ public enum SubscriptionType {
     
     SYSTEM,
     FREE,
-    EMBARGO_05,
+    EMBARGO_06,
     EMBARGO_10,
+    EMBARGO_20,         // for the test account so it's experiment are never published
     FULL_WELCOME,
     FULL_INDIVIDUAL,
     FULL_GROUP,
