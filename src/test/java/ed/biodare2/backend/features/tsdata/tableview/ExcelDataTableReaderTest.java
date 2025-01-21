@@ -124,14 +124,14 @@ public class ExcelDataTableReaderTest {
     public void getsSizesOfLargeFiles() throws Exception {
         
         // System.out.println("Get large");
-        dataFile = Paths.get("E:\\Temp\\long_10000x1200.xlsx"); 
+        dataFile = Paths.get("/home/dthedie/Temp/long_10000x1200.xlsx"); 
         instance = new ExcelDataTableReader(dataFile);
         
         Pair<Integer,Integer> res = instance.rowsColsTableSize();
         Pair<Integer,Integer> exp = new Pair<>(1202,10001);
         assertEquals(exp, res);
         
-        dataFile = Paths.get("E:\\Temp\\long_255x10000.xls");
+        dataFile = Paths.get("/home/dthedie/Temp/long_255x10000.xls");
         instance = new ExcelDataTableReader(dataFile);
         
         res = instance.rowsColsTableSize();

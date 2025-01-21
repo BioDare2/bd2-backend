@@ -357,7 +357,7 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
     @Ignore("Test file not commited")
     public void getTableSliceWorksOnLargeExcel() throws Exception {
 
-        uploaded = upload(Paths.get("E:\\Temp\\long_255x5000.xls"));
+        uploaded = upload(Paths.get("/home/dthedie/Temp/long_255x5000.xls"));
         ImportFormat format = ImportFormat.EXCEL_TABLE;
         
         Slice slice = new Slice();

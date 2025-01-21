@@ -43,7 +43,7 @@ public class MakeLongDataTest {
         List<String> keys = new ArrayList<>(patterns.keySet());
         List<String> selectedKeys = new ArrayList<>();
         
-        Path file = Paths.get("E:/Temp/series_"+series+"x"+timepoints+"x"+minutesUnit+".csv");
+        Path file = Paths.get("/home/dthedie/Temp/series_"+series+"x"+timepoints+"x"+minutesUnit+".csv");
         try (BufferedWriter out = Files.newBufferedWriter(file)) {
             Random r = new Random();
             List<String> row = new ArrayList<>(series+1);
@@ -97,7 +97,7 @@ public class MakeLongDataTest {
         List<String> keys = new ArrayList<>(patterns.keySet());
         double[] levels = {0.5, 0.2, 0.1};
         
-        Path file = Paths.get("E:/Temp/rows_series_"+series+"x"+timepoints+"x"+minutesUnit+".csv");
+        Path file = Paths.get("/home/dthedie/Temp/rows_series_"+series+"x"+timepoints+"x"+minutesUnit+".csv");
         try (BufferedWriter out = Files.newBufferedWriter(file)) {
             Random r = new Random();
             List<String> row = new ArrayList<>(timepoints+1);

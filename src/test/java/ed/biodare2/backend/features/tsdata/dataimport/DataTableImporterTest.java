@@ -595,7 +595,7 @@ public class DataTableImporterTest {
     public void importCSVColDataFromMediumLargeFile() throws Exception {
         
 
-        Path file = Paths.get("E:\\Temp\\long_5000x1200.csv");
+        Path file = Paths.get("/home/dthedie/Temp/long_5000x1200.csv");
         DataTableImportParameters parameters = getCSVTableInColsParameters("long_5000x1200.csv");
         
         DataBundle boundle = instance.importTimeSeries(file, parameters);
