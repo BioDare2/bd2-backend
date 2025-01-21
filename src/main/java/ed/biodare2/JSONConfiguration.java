@@ -28,7 +28,6 @@ public class JSONConfiguration {
     //to provide JSON prefix on rest response and avoid json hijack tricks
     @Bean
     @Profile("!test")
-    @Autowired
     //public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(Jackson2ObjectMapperBuilder builder) {
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter(ObjectMapper mapper) {
 

@@ -49,7 +49,6 @@ public class BioDare2WSApplication {
  
     
     @Bean(name = "LocalValidator")
-    @Autowired
     public Validator localValidatorFactoryBean() {
         Validator val = new LocalValidatorFactoryBean();
         return val;
