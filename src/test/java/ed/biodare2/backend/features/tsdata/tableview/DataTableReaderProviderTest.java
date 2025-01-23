@@ -91,7 +91,7 @@ public class DataTableReaderProviderTest {
     @Ignore("Test file is not committed")
     public void testProvidesExcelReadersForLargeExcells() throws IOException {
         
-        Path file = Paths.get("E:\\Temp\\long_5000x1200.xlsx");
+        Path file = Paths.get("/home/dthedie/Temp/long_5000x1200.xlsx");
         ImportFormat format = ImportFormat.EXCEL_TABLE;
         Path tmp = null;
         try (DataTableReaderProvider provider = new DataTableReaderProvider(file, format)) {

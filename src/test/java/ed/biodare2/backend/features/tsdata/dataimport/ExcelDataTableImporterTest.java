@@ -42,7 +42,7 @@ public class ExcelDataTableImporterTest {
     @Ignore("The test file is not committed")
     public void importExcelColDataFromLargeFile() throws Exception {
         
-        Path file = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
+        Path file = Paths.get("/home/dthedie/Temp/long_10000x1200.xlsx");
         
         DataTableImportParameters parameters = getCSVTableInColsParameters("long_10000x1200.xlsx");
         parameters.importFormat = ImportFormat.EXCEL_TABLE;
@@ -63,7 +63,7 @@ public class ExcelDataTableImporterTest {
     @Ignore("The test file is not committed")
     public void importExcelColDataFromMediumLargeFile() throws Exception {
         
-        Path file = Paths.get("E:\\Temp\\long_5000x1200.xlsx");
+        Path file = Paths.get("/home/dthedie/Temp/long_5000x1200.xlsx");
         
         DataTableImportParameters parameters = getCSVTableInColsParameters("long_5000x1200.xlsx");
         parameters.importFormat = ImportFormat.EXCEL_TABLE;
@@ -84,7 +84,7 @@ public class ExcelDataTableImporterTest {
     @Ignore("The test file is not committed")
     public void importExcelColDataFromMediumLargeXLSFile() throws Exception {
         
-        Path file = Paths.get("E:\\Temp\\long_255x5000.xls");
+        Path file = Paths.get("/home/dthedie/Temp/long_255x5000.xls");
         
         DataTableImportParameters parameters = getCSVTableInColsParameters("long_255x5000.xls");
         parameters.importFormat = ImportFormat.EXCEL_TABLE;

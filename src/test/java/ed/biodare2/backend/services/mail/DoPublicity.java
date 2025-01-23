@@ -42,9 +42,9 @@ public class DoPublicity {
     @Autowired
     Mailer instance;
     
-    Path destinationsList = Paths.get("E:\\Temp\\biodare2\\biodare-users.txt");
+    Path destinationsList = Paths.get("/home/dthedie/Temp/biodare2/biodare-users.txt");
     
-    Path bodyFile = Paths.get("E:\\Temp\\biodare2\\biodare-email-body.txt");
+    Path bodyFile = Paths.get("/home/dthedie/Temp/biodare2/biodare-email-body.txt");
 
     String subject = "BioDare2 - new service for circadian research";
     

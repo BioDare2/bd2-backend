@@ -286,7 +286,7 @@ public class TextDataTableReaderTest {
         int timepoints = 5*24*10;
         int unit = 6; // minutes
         
-        Path file = Paths.get("E:/Temp/long_"+series+"x"+timepoints+".csv");
+        Path file = Paths.get("/home/dthedie/Temp/long_"+series+"x"+timepoints+".csv");
         try (BufferedWriter out = Files.newBufferedWriter(file)) {
             Random r = new Random();
             List<String> row = new ArrayList<>(series+1);

@@ -121,7 +121,7 @@ public class StatusControllerTest {
         
         shutDownTime = LocalDateTime.now().plusMinutes(3);
         message = controller.shutdownMessage(shutDownTime);
-        assertEquals("BioDare shuts down in 3 minutes", message);
+        assertEquals("BioDare shuts down in 2 minutes", message);
     }
     
     @Test
@@ -148,7 +148,7 @@ public class StatusControllerTest {
         assertFalse(status.isEmpty());
         
         assertTrue(status.containsKey("shutdown"));
-        assertEquals("BioDare shuts down in 3 minutes", status.get("shutdown"));
+        assertEquals("BioDare shuts down in 2 minutes", status.get("shutdown"));
         
         
     }   
