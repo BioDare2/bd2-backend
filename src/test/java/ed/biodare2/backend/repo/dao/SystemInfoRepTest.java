@@ -80,17 +80,18 @@ public class SystemInfoRepTest {
         assertEquals(0L,Files.list(expDir).count());
         
         systems.save(info);
-        systems.save(info);
         
         assertEquals(1L,Files.list(expDir).count());
         Path sysDir = expDir.resolve(systems.SYSTEM_DIR);
         assertTrue(Files.isDirectory(sysDir));
-        
-        assertEquals(2L,Files.list(sysDir).count());
-        
+
         String fName = Files.list(sysDir).findFirst().get().getFileName().toString();
         assertTrue(fName.startsWith(""+info.parentId));
         assertTrue(fName.endsWith(systems.SYSTEM_SUFFIX));
+
+        systems.save(info);
+        
+        assertEquals(2L,Files.list(sysDir).count());
         
     } 
     
