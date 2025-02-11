@@ -39,10 +39,11 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+// import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
@@ -80,10 +81,10 @@ public class UsersHandlerTest {
     @Autowired
     EntityManagerFactory emf;
     
-    @MockBean
+    @MockitoBean
     Mailer mailer;
     
-    @MockBean
+    @MockitoBean
     RDMSocialHandler rdmSocialHandler;
     
     public UsersHandlerTest() {
