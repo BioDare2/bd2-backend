@@ -74,7 +74,9 @@ public class UserGroup implements BioDare2Group, Serializable {
 	return id;
     }
 
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 
     @Override
