@@ -254,8 +254,8 @@ public class TextTableTransposerTest {
     // @Test
     public void transposeLongFile() throws Exception {
         
-        Path inFile = Paths.get("E:\\Temp\\long_1000x1200.csv");
-        Path outFile = Paths.get("E:\\Temp\\long_1000x1200.transp.csv");
+        Path inFile = Paths.get("/home/dthedie/Temp/long_1000x1200.csv");
+        Path outFile = Paths.get("/home/dthedie/Temp/long_1000x1200.transp.csv");
         
         instance.transpose(inFile, ",", outFile);
         
@@ -269,7 +269,7 @@ public class TextTableTransposerTest {
             + "tranposer")
     public void transposeExcelLongFile() throws Exception {
         
-        Path inFile = Paths.get("E:\\Temp\\long_10000x1200.xlsx");
+        Path inFile = Paths.get("/home/dthedie/Temp/long_10000x1200.xlsx");
         Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
 
         
@@ -282,7 +282,7 @@ public class TextTableTransposerTest {
     @Ignore("The long test file is not committed")
     public void transposeCSVLongFile() throws Exception {
         
-        Path inFile = Paths.get("E:\\Temp\\long_10000x1200.csv");
+        Path inFile = Paths.get("/home/dthedie/Temp/long_10000x1200.csv");
         Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
 
         

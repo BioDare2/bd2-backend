@@ -29,8 +29,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.boot.test.mock.mockito.*;
+// import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 /**
@@ -46,10 +47,10 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
     
     final String serviceRoot = "/api/account";
     
-    @MockBean
+    @MockitoBean
     ReCaptchaService captcha;
     
-    @MockBean
+    @MockitoBean
     Mailer mailer;
     
     

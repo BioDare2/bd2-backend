@@ -100,7 +100,7 @@ public class ExpTestSeederTest {
     @Test    
     @Ignore("It is only to generate test data for the artefacts")
     public void generateTestDataForPPASeeds() throws Exception {
-        Path file = Paths.get("E:/Temp/ppaTest.csv");
+        Path file = Paths.get("/home/dthedie/Temp/ppaTest.csv");
         
         List<TimeSeries> data = new ArrayList<>();
         List<String> heads = new ArrayList<>();

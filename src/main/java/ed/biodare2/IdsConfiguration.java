@@ -45,7 +45,6 @@ public class IdsConfiguration {
     }    
     
     @Bean(name = DATA_SOURCE_VERSION)
-    @Autowired
     IdGenerator dataSourceVersionProvider(IdGenerators generators) {
         return generators.getGenerator(DATA_SOURCE_VERSION);
     }  
