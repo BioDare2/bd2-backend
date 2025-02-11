@@ -19,8 +19,13 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
+import static org.mockito.ArgumentMatchers.any;
+
 import org.springframework.security.core.authority.AuthorityUtils;
 import static org.mockito.Mockito.*;
+
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.User;
@@ -56,10 +61,28 @@ public class Fixtures {
     
     public static Fixtures build() {
         UserAccountRep accounts = mock(UserAccountRep.class);
-        when(accounts.save((UserAccount)any())).then(returnsFirstArg());  
+                when(accounts.save((UserAccount)any())).thenAnswer(new Answer<UserAccount>() {
+            @Override
+            public UserAccount answer(InvocationOnMock invocation) throws Throwable {
+                UserAccount account = invocation.getArgument(0);
+                if (account.getId() == null) {
+                    account.setId(ids.getAndIncrement());
+                }
+                return account;
+            }
+        });  
         
         UserGroupRep groups = mock(UserGroupRep.class);
-        when(groups.save((UserGroup)any())).then(returnsFirstArg());
+        when(groups.save((UserGroup)any())).thenAnswer(new Answer<UserGroup>() {
+            @Override
+            public UserGroup answer(InvocationOnMock invocation) throws Throwable {
+                UserGroup group = invocation.getArgument(0);
+                if (group.getId() == null) {
+                    group.setId(ids.getAndIncrement());
+                }
+                return group;
+            }
+        });  
         
         return build(accounts,groups);
     }
@@ -99,12 +122,12 @@ public class Fixtures {
         
 
         
-        group = UserGroup.testInstance(ids.incrementAndGet());
+        group = new UserGroup();
         group.setName("demo");
         group.setLongName("Demo Group");
         fixtures.demoGroup = groups.save(group);  
         
-        group = UserGroup.testInstance(ids.incrementAndGet());
+        group = new UserGroup();
         group.setName("group1");
         group.setLongName("Group One");
         fixtures.otherGroup = groups.save(group);        
@@ -113,7 +136,7 @@ public class Fixtures {
         UserAccount acc;
         
         UserAccount sys;        
-        sys = UserAccount.testInstance(ids.incrementAndGet());
+        sys = new UserAccount();
         sys.setLogin("system");
         sys.setFirstName("System");
         sys.setLastName("User");
@@ -129,7 +152,7 @@ public class Fixtures {
         sys.setRdmAspect(makeRDMAspect());
         fixtures.systemUser = accounts.save(sys);
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("admin");
         acc.setFirstName("BioDare");
         acc.setLastName("Admin");
@@ -143,7 +166,7 @@ public class Fixtures {
         acc.setRdmAspect(makeRDMAspect());
         fixtures.admin = accounts.save(acc);
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("demoboss");
         acc.setFirstName("Demo");
         acc.setLastName("Boss");
@@ -158,7 +181,7 @@ public class Fixtures {
         
         fixtures.demoBoss = accounts.save(acc);
 
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("demo");
         acc.setFirstName("Demo");
         acc.setLastName("User");
@@ -174,7 +197,7 @@ public class Fixtures {
         
         fixtures.demoUser =accounts.save(acc);
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("demo1");
         acc.setFirstName("Demo");
         acc.setLastName("User1");
@@ -189,7 +212,7 @@ public class Fixtures {
         
         fixtures.demoUser1 = accounts.save(acc);
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("demo2");
         acc.setFirstName("Demo");
         acc.setLastName("User2");
@@ -204,7 +227,7 @@ public class Fixtures {
         
         fixtures.demoUser2 = accounts.save(acc);        
 
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("user1");
         acc.setPassword(encoder.encode("user1"));
         acc.setFirstName("First");
@@ -219,7 +242,7 @@ public class Fixtures {
         
         fixtures.user1 = accounts.save(acc); 
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("user2");
         acc.setPassword(encoder.encode("user2"));
         acc.setFirstName("Second");
@@ -234,7 +257,7 @@ public class Fixtures {
         
         fixtures.user2 = accounts.save(acc);         
         
-        acc = UserAccount.testInstance(ids.incrementAndGet());
+        acc = new UserAccount();
         acc.setLogin("anonymous_1");
         acc.setFirstName("Anonymous");
         acc.setLastName("User");
