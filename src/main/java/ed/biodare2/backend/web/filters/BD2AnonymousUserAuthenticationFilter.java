@@ -82,11 +82,20 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
             securityContextRepository.saveContext(SecurityContextHolder.getContext(), (HttpServletRequest)req,(HttpServletResponse) res);
             
             eventPublisher.publishAuthenticationSuccess(authentication);
+
+            // Check for X-Forwarded-For header
+            String remote = ((HttpServletRequest) req).getHeader("X-Forwarded-For");
+            if (remote == null || remote.isEmpty()) {
+                remote = req.getRemoteAddr();
+            } else {
+                // X-Forwarded-For can contain multiple IPs, take the first one
+                remote = remote.split(",")[0].trim();
+            }
             
             //tracker.anonymous(authentication,(HttpServletRequest) req);
 
             if (logger.isInfoEnabled()) {
-                logger.info("DefaultUser created: "+authentication.getUser().getLogin()+" for: "+authentication.remote);
+                logger.info("DefaultUser created: "+authentication.getUser().getLogin()+" for: "+ remote);
             }
 
             if (SpringDebug) {
@@ -109,12 +118,19 @@ public class BD2AnonymousUserAuthenticationFilter extends AnonymousAuthenticatio
 
         String userName = PREFIX+IDS.getAndIncrement();
         WebAuthenticationDetails details = new WebAuthenticationDetails(request);
-        String remote = details.getRemoteAddress();
-        //String remote = request.getRemoteAddr();
+        
+        // Check for X-Forwarded-For header
+        String remote = request.getHeader("X-Forwarded-For");
+        if (remote == null || remote.isEmpty()) {
+            remote = details.getRemoteAddress();
+        } else {
+            // X-Forwarded-For can contain multiple IPs, take the first one
+            remote = remote.split(",")[0].trim();
+        }
 
         BioDare2User principal = makeUser(userName,remote,authorities);
 
-        BD2AnonymousUserAuthenticationToken auth = new BD2AnonymousUserAuthenticationToken(principal,details, authorities);
+        BD2AnonymousUserAuthenticationToken auth = new BD2AnonymousUserAuthenticationToken(principal, details, authorities);
 
         //String details = userName+":"+remote;
         //auth.setDetails(details);
