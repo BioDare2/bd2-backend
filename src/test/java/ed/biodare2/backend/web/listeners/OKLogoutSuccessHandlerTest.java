@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ed.biodare2.backend.web.listeners;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.springframework.http.HttpStatus;
@@ -14,6 +10,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  *
@@ -21,7 +20,11 @@ import org.springframework.security.core.Authentication;
  */
 public class OKLogoutSuccessHandlerTest {
     
-    public OKLogoutSuccessHandlerTest() {
+    @Before
+    public void setUp() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestAttributes requestAttributes = new ServletRequestAttributes(request);
+        RequestContextHolder.setRequestAttributes(requestAttributes);
     }
 
     @Test

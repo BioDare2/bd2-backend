@@ -6,12 +6,17 @@
 package ed.biodare2.backend.web.tracking;
 
 import ed.biodare2.backend.security.BioDare2User;
+import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import static ed.biodare2.backend.web.tracking.TargetType.*;
 import static ed.biodare2.backend.web.tracking.ActionType.*;
 import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
@@ -68,10 +73,17 @@ public class SecurityTracker extends AbstractTracker {
     } 
     
     protected final String extractRemote(Authentication auth) {
-        if (auth.getDetails() instanceof WebAuthenticationDetails) {
-            return (( WebAuthenticationDetails)auth.getDetails()).getRemoteAddress();
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        String remoteAddr = request.getHeader("X-Forwarded-For");
+        if (remoteAddr == null || remoteAddr.isEmpty()) {
+            if (auth.getDetails() instanceof WebAuthenticationDetails) {
+                remoteAddr = ((WebAuthenticationDetails) auth.getDetails()).getRemoteAddress();
+            }
+        } else {
+            // X-Forwarded-For can contain multiple IP addresses, take the first one
+            remoteAddr = remoteAddr.split(",")[0].trim();
         }
-        return "";        
+        return remoteAddr;
     }
     
     public void userPasswordReset(BioDare2User account, Authentication auth) {
