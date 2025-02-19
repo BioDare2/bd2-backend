@@ -1,8 +1,7 @@
-package ed.biodare2;
+package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.dto.AnalyticsDataDTO;
 import ed.biodare2.backend.services.analytics.AnalyticsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
