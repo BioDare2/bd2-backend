@@ -2,11 +2,11 @@ package ed.biodare2.backend.dto;
 
 public class AnalyticsDataDTO {
     private String country;
-    private long sessions;
+    private long activeUsers;
 
-    public AnalyticsDataDTO(String country, long sessions) {
+    public AnalyticsDataDTO(String country, long activeUsers) {
         this.country = country;
-        this.sessions = sessions;
+        this.activeUsers = activeUsers;
     }
 
     public String getCountry() {
@@ -17,11 +17,11 @@ public class AnalyticsDataDTO {
         this.country = country;
     }
 
-    public long getSessions() {
-        return sessions;
+    public long getActiveUsers() {
+        return activeUsers;
     }
 
-    public void setSessions(long sessions) {
-        this.sessions = sessions;
+    public void setActiveUsers(long activeUsers) {
+        this.activeUsers = activeUsers;
     }
 }

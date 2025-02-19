@@ -37,7 +37,7 @@ public class AnalyticsService {
         RunReportRequest request = RunReportRequest.newBuilder()
                 .setProperty("properties/" + propertyId)
                 .addDateRanges(DateRange.newBuilder().setStartDate("365daysAgo").setEndDate("today").build())
-                .addMetrics(Metric.newBuilder().setName("sessions").build())
+                .addMetrics(Metric.newBuilder().setName("activeUsers").build())
                 .addDimensions(Dimension.newBuilder().setName("country").build())
                 .build();
 

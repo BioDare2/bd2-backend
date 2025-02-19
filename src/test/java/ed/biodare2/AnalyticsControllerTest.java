@@ -2,6 +2,8 @@ package ed.biodare2;
 
 import ed.biodare2.backend.dto.AnalyticsDataDTO;
 import ed.biodare2.backend.services.analytics.AnalyticsService;
+import ed.biodare2.backend.web.rest.AnalyticsController;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,7 +46,7 @@ public class AnalyticsControllerTest {
         mockMvc.perform(get("/api/analytics/data")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"country\":\"USA\",\"sessions\":1000}]"));
+                .andExpect(content().json("[{\"country\":\"USA\",\"activeUsers\":1000}]"));
     }
 
     @Test

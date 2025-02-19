@@ -59,6 +59,6 @@ public class AnalyticsServiceTest {
         // Verify the result
         assertEquals(1, result.size());
         assertEquals("USA", result.get(0).getCountry());
-        assertEquals(1000, result.get(0).getSessions());
+        assertEquals(1000, result.get(0).getActiveUsers());
     }
 }
