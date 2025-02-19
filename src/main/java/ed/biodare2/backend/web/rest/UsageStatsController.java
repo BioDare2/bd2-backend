@@ -13,6 +13,7 @@ import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.util.Pair;
 import java.util.ArrayList;
@@ -42,16 +43,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsageStatsController extends BioDare2Rest {
     
     final ExperimentalAssayRep expRep;
-    
     final ExperimentPackHub expPacks;
-    
     final ExperimentDataHandler dataHandler;
+    final UserAccountRep accounts;
 
     @Autowired
-    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler) {
+    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler, UserAccountRep accounts) {
         this.expRep = expRep;
         this.expPacks = expPacks;
         this.dataHandler = dataHandler;
+        this.accounts = accounts;
     }
     
     @RequestMapping(value="data",method = RequestMethod.GET)
@@ -62,7 +63,13 @@ public class UsageStatsController extends BioDare2Rest {
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
         
-        Stream<List<String>> entries = getDataEntries(expRep.getExerimentsIds());
+        // Fetch all experiment IDs at once
+        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
+
+        // Process data entries in parallel
+        Stream<List<String>> entries = experimentIds.parallelStream()
+                .map(this::getDataEntry)
+                .filter(lst -> !lst.isEmpty());
         
         Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
         
@@ -99,7 +106,13 @@ public class UsageStatsController extends BioDare2Rest {
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
         
-        Stream<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds());
+        // Fetch all experiment IDs at once
+        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
+
+        // Process species entries in parallel
+        Stream<List<String>> entries = experimentIds.parallelStream()
+                .map(this::getSpeciesEntry)
+                .filter(lst -> !lst.isEmpty());
         
         Map<String, List<List<String>>> speciesGroups = entries.collect(
                 Collectors.groupingByConcurrent( lst -> lst.get(0) ));
@@ -111,7 +124,37 @@ public class UsageStatsController extends BioDare2Rest {
         stats.put("speciesSets",setsStats);
         stats.put("speciesSeries",seriesStats);
         return stats;
-    }   
+    }
+
+    @RequestMapping(value="count", method = RequestMethod.GET)
+    public Map<String, Integer> countStats() {
+        // Fetch all experiment IDs at once
+        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
+
+        // Process data entries in parallel
+        Stream<List<String>> entries = experimentIds.parallelStream()
+                .map(this::getDataEntry)
+                .filter(lst -> !lst.isEmpty());
+
+        Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
+
+        int totalSets = ownerGroups.values().stream()
+                .mapToInt(List::size)
+                .sum();
+    
+        int totalSeries = ownerGroups.values().stream()
+                .flatMap(List::stream)
+                .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+                .sum();
+
+        long totalUsers = accounts.count();
+    
+        Map<String, Integer> count = new HashMap<>();
+        count.put("totalSets", totalSets);
+        count.put("totalSeries", totalSeries);
+        count.put("totalUsers", (int) totalUsers);
+        return count;
+    }
     
     Stream<List<String>> getDataEntries(Stream<Long> ids) {
         
@@ -130,7 +173,6 @@ public class UsageStatsController extends BioDare2Rest {
         int tsCount = 0;
         Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
-            
             tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page, new TSSortParams(TSSortOption.NONE, true, null))
                     .map( ds -> ds.traces)
                     .orElse(Collections.emptyList()).size();
