@@ -141,9 +141,20 @@ public class UsageStatsController extends BioDare2Rest {
         int totalSets = ownerGroups.values().stream()
                 .mapToInt(List::size)
                 .sum();
+
+        int totalPublicSets = ownerGroups.values().stream()
+                .filter( lst -> lst.get(0).get(3).equals("public"))
+                .mapToInt(List::size)
+                .sum();
     
         int totalSeries = ownerGroups.values().stream()
                 .flatMap(List::stream)
+                .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+                .sum();
+
+        int totalPublicSeries = ownerGroups.values().stream()
+                .flatMap(List::stream)
+                .filter( lst -> lst.get(3).equals("public"))
                 .mapToInt(lst -> Integer.parseInt(lst.get(2)))
                 .sum();
 
@@ -151,7 +162,9 @@ public class UsageStatsController extends BioDare2Rest {
     
         Map<String, Integer> count = new HashMap<>();
         count.put("totalSets", totalSets);
+        count.put("totalPublicSets", totalPublicSets);
         count.put("totalSeries", totalSeries);
+        count.put("totalPublicSeries", totalPublicSeries);
         count.put("totalUsers", (int) totalUsers);
         return count;
     }
@@ -170,6 +183,7 @@ public class UsageStatsController extends BioDare2Rest {
         AssayPack expPack = opt.get();
         String year = ""+expPack.getSystemInfo().provenance.creation.dateTime.getYear();
         String owner = expPack.getSystemInfo().security.owner;
+        String isPublic = expPack.getSystemInfo().security.isPublic ? "public" : "private";
         int tsCount = 0;
         Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
@@ -178,7 +192,7 @@ public class UsageStatsController extends BioDare2Rest {
                     .orElse(Collections.emptyList()).size();
         }
         
-        return Arrays.asList(owner,year,""+tsCount);
+        return Arrays.asList(owner, year, "" + tsCount, isPublic);
     }
     
     Stream<List<String>> getSpeciesEntries(Stream<Long> ids) {
@@ -249,5 +263,4 @@ public class UsageStatsController extends BioDare2Rest {
                 
         
     }
-    
 }
