@@ -5,7 +5,7 @@
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
         <!-- snapshots work but without snapshot deploy to nexus fails -->
-	<version>3.4.1.2190-SNAPSHOT</version>
+	<version>3.4.1.2191-SNAPSHOT</version>
 	<name>BioDare2-REST</name>
 	<description>BioDare2 backend service</description>
 	<parent>

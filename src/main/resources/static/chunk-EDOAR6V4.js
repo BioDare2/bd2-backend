@@ -1,0 +1,1 @@
+var a={production:!0,test_add:"I am prod",backendUrl:"https://biodare2.ed.ac.uk/api",captchaSiteKey:"6LcGawkUAAAAAETl3WPTEVdLBTFY5yFlQDcd2SgJ",googleAnalyticsApiKey:"AIzaSyDF_971Jkn9spiaqFc5xc3fAXjDN6qimdU"};export{a};
