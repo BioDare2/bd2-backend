@@ -16,6 +16,10 @@ import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.util.Pair;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,12 +31,21 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -41,18 +54,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/usage")
 public class UsageStatsController extends BioDare2Rest {
+
+    private static final Logger log = LoggerFactory.getLogger(UsageStatsController.class);
     
     final ExperimentalAssayRep expRep;
     final ExperimentPackHub expPacks;
     final ExperimentDataHandler dataHandler;
     final UserAccountRep accounts;
+    final ObjectMapper objectMapper;
+    @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile;
+    final Path jsonFilePath;
 
-    @Autowired
-    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler, UserAccountRep accounts) {
+    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler, UserAccountRep accounts,
+                         @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile) {
         this.expRep = expRep;
         this.expPacks = expPacks;
         this.dataHandler = dataHandler;
         this.accounts = accounts;
+        this.objectMapper = new ObjectMapper();
+        log.debug("jsonFile value: {}", jsonFile);
+        this.jsonFilePath = Paths.get(jsonFile);
     }
     
     @RequestMapping(value="data",method = RequestMethod.GET)
@@ -63,14 +84,8 @@ public class UsageStatsController extends BioDare2Rest {
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
         
-        // Fetch all experiment IDs at once
-        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
+        Stream<List<String>> entries = getDataEntries(expRep.getExerimentsIds());
 
-        // Process data entries in parallel
-        Stream<List<String>> entries = experimentIds.parallelStream()
-                .map(this::getDataEntry)
-                .filter(lst -> !lst.isEmpty());
-        
         Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
         
         Map<Pair<String,String>, Integer> setsStats = countSets(ownerGroups); 
@@ -106,13 +121,7 @@ public class UsageStatsController extends BioDare2Rest {
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
         
-        // Fetch all experiment IDs at once
-        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
-
-        // Process species entries in parallel
-        Stream<List<String>> entries = experimentIds.parallelStream()
-                .map(this::getSpeciesEntry)
-                .filter(lst -> !lst.isEmpty());
+        Stream<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds());
         
         Map<String, List<List<String>>> speciesGroups = entries.collect(
                 Collectors.groupingByConcurrent( lst -> lst.get(0) ));
@@ -128,46 +137,41 @@ public class UsageStatsController extends BioDare2Rest {
 
     @RequestMapping(value="count", method = RequestMethod.GET)
     public Map<String, Integer> countStats() {
-        // Fetch all experiment IDs at once
-        List<Long> experimentIds = expRep.getExerimentsIds().collect(Collectors.toList());
 
-        // Process data entries in parallel
-        Stream<List<String>> entries = experimentIds.parallelStream()
-                .map(this::getDataEntry)
-                .filter(lst -> !lst.isEmpty());
+        List<List<String>> entries = getDataEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
 
-        Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
+        int totalSets = (int) entries.size();
 
-        int totalSets = ownerGroups.values().stream()
-                .mapToInt(List::size)
-                .sum();
-
-        int totalPublicSets = ownerGroups.values().stream()
-                .filter( lst -> lst.get(0).get(3).equals("public"))
-                .mapToInt(List::size)
-                .sum();
-    
-        int totalSeries = ownerGroups.values().stream()
-                .flatMap(List::stream)
-                .mapToInt(lst -> Integer.parseInt(lst.get(2)))
-                .sum();
-
-        int totalPublicSeries = ownerGroups.values().stream()
-                .flatMap(List::stream)
+        long totalPublicSets = entries.stream()
                 .filter( lst -> lst.get(3).equals("public"))
-                .mapToInt(lst -> Integer.parseInt(lst.get(2)))
-                .sum();
+                .count();
+    
+        int totalSeries = entries.stream()
+        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+        .sum();
+
+        int totalPublicSeries = entries.stream()
+        .filter(lst -> lst.get(3).equals("public"))
+        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+        .sum();
 
         long totalUsers = accounts.count();
     
         Map<String, Integer> count = new HashMap<>();
         count.put("totalSets", totalSets);
-        count.put("totalPublicSets", totalPublicSets);
+        count.put("totalPublicSets", (int) totalPublicSets);
         count.put("totalSeries", totalSeries);
         count.put("totalPublicSeries", totalPublicSeries);
         count.put("totalUsers", (int) totalUsers);
         return count;
     }
+
+    @RequestMapping(value="get_count", method=RequestMethod.GET)
+    public Map<String, Integer> getUsageStats() throws IOException {
+        byte[] jsonData = Files.readAllBytes(jsonFilePath);
+        return objectMapper.readValue(jsonData, new TypeReference<Map<String, Integer>>(){});
+    }
+    
     
     Stream<List<String>> getDataEntries(Stream<Long> ids) {
         

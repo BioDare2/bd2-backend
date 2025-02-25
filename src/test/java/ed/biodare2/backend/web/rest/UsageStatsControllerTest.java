@@ -123,6 +123,31 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         assertEquals(5, result.size());
     }
 
+    @Test
+    public void getUsageStatsReturnsCorrectData() throws Exception {
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot + "/get_count")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(fixtures.demoUser));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+
+        Map<String, Integer> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Integer>>() {});
+        
+        assertNotNull(result);
+        assertEquals(5, result.size());
+        assertTrue(result.containsKey("totalSets"));
+        assertTrue(result.containsKey("totalPublicSets"));
+        assertTrue(result.containsKey("totalSeries"));
+        assertTrue(result.containsKey("totalPublicSeries"));
+        assertTrue(result.containsKey("totalUsers"));
+    }
+    
     //Simple unit tests
 
     @Test
@@ -249,6 +274,4 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         Map<Pair<String,String>, Integer> res = usageStats.countSeries(groups);
         assertEquals(exp, res);
     }
-
-
 }

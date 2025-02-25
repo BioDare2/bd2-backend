@@ -20,19 +20,20 @@ public class UsageStatsScheduler {
     final Path outputFile;
     final UsageStatsController usageStatsController;
     final ObjectMapper objectMapper;
+    @Value("${bd2.usagestats.file:usage_stats.json}") String outputPath;
 
-    public UsageStatsScheduler(@Value("${bd2.usagestats.file:usage_stats.json}") String outputPath,
-                               UsageStatsController usageStatsController,
-                               ObjectMapper objectMapper) {
+    public UsageStatsScheduler(UsageStatsController usageStatsController,
+                               ObjectMapper objectMapper,
+                               @Value("${bd2.usagestats.file:usage_stats.json}") String outputPath) {
+        log.debug("jsonFile value: {}", outputPath);
         this.outputFile = Paths.get(outputPath);
         this.usageStatsController = usageStatsController;
         this.objectMapper = objectMapper;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24, initialDelay = 1000 * 20)  // every 24 hours after 1 minute (1000*60*1)
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 24, initialDelay = 1000 * 10)  // every 24 hours after 10 seconds
     @Transactional
     public void generateUsageStats() throws IOException {
-        log.info("Starting usage stats generation");
         Map<String, Integer> stats = usageStatsController.countStats();
         log.info("Usage stats generated: {}", stats);
         objectMapper.writeValue(outputFile.toFile(), stats);
