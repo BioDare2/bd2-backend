@@ -36,7 +36,7 @@ public class SimpleRepoTestConfig {
         public Fixtures fixtures(UserAccountRep accountsR,UserGroupRep groups,PasswordEncoder passwordEncoder) {
             return Fixtures.build(accountsR,groups,passwordEncoder);
         }
-        
+
         //@MockBean
         //DBFixer fixer;    
 

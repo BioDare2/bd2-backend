@@ -13,8 +13,13 @@ import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.util.Pair;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,12 +31,21 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import jakarta.annotation.PostConstruct;
 import jakarta.validation.constraints.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -40,18 +54,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/usage")
 public class UsageStatsController extends BioDare2Rest {
+
+    private static final Logger log = LoggerFactory.getLogger(UsageStatsController.class);
     
     final ExperimentalAssayRep expRep;
-    
     final ExperimentPackHub expPacks;
-    
     final ExperimentDataHandler dataHandler;
+    final UserAccountRep accounts;
+    final ObjectMapper objectMapper;
+    @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile;
+    final Path jsonFilePath;
 
-    @Autowired
-    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler) {
+    UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler, UserAccountRep accounts,
+                         @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile) {
         this.expRep = expRep;
         this.expPacks = expPacks;
         this.dataHandler = dataHandler;
+        this.accounts = accounts;
+        this.objectMapper = new ObjectMapper();
+        log.debug("jsonFile value: {}", jsonFile);
+        this.jsonFilePath = Paths.get(jsonFile);
     }
     
     @RequestMapping(value="data",method = RequestMethod.GET)
@@ -63,7 +85,7 @@ public class UsageStatsController extends BioDare2Rest {
             throw new InsufficientRightsException("Only demo and test users can call it");
         
         Stream<List<String>> entries = getDataEntries(expRep.getExerimentsIds());
-        
+
         Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
         
         Map<Pair<String,String>, Integer> setsStats = countSets(ownerGroups); 
@@ -111,7 +133,45 @@ public class UsageStatsController extends BioDare2Rest {
         stats.put("speciesSets",setsStats);
         stats.put("speciesSeries",seriesStats);
         return stats;
-    }   
+    }
+
+    @RequestMapping(value="count", method = RequestMethod.GET)
+    public Map<String, Integer> countStats() {
+
+        List<List<String>> entries = getDataEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
+
+        int totalSets = (int) entries.size();
+
+        long totalPublicSets = entries.stream()
+                .filter( lst -> lst.get(3).equals("public"))
+                .count();
+    
+        int totalSeries = entries.stream()
+        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+        .sum();
+
+        int totalPublicSeries = entries.stream()
+        .filter(lst -> lst.get(3).equals("public"))
+        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
+        .sum();
+
+        long totalUsers = accounts.count();
+    
+        Map<String, Integer> count = new HashMap<>();
+        count.put("totalSets", totalSets);
+        count.put("totalPublicSets", (int) totalPublicSets);
+        count.put("totalSeries", totalSeries);
+        count.put("totalPublicSeries", totalPublicSeries);
+        count.put("totalUsers", (int) totalUsers);
+        return count;
+    }
+
+    @RequestMapping(value="get_count", method=RequestMethod.GET)
+    public Map<String, Integer> getUsageStats() throws IOException {
+        byte[] jsonData = Files.readAllBytes(jsonFilePath);
+        return objectMapper.readValue(jsonData, new TypeReference<Map<String, Integer>>(){});
+    }
+    
     
     Stream<List<String>> getDataEntries(Stream<Long> ids) {
         
@@ -127,16 +187,16 @@ public class UsageStatsController extends BioDare2Rest {
         AssayPack expPack = opt.get();
         String year = ""+expPack.getSystemInfo().provenance.creation.dateTime.getYear();
         String owner = expPack.getSystemInfo().security.owner;
+        String isPublic = expPack.getSystemInfo().security.isPublic ? "public" : "private";
         int tsCount = 0;
         Page page = new Page(0,Integer.MAX_VALUE);
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
-            
             tsCount = dataHandler.getTSData(expPack, DetrendingType.LIN_DTR, page, new TSSortParams(TSSortOption.NONE, true, null))
                     .map( ds -> ds.traces)
                     .orElse(Collections.emptyList()).size();
         }
         
-        return Arrays.asList(owner,year,""+tsCount);
+        return Arrays.asList(owner, year, "" + tsCount, isPublic);
     }
     
     Stream<List<String>> getSpeciesEntries(Stream<Long> ids) {
@@ -207,5 +267,4 @@ public class UsageStatsController extends BioDare2Rest {
                 
         
     }
-    
 }

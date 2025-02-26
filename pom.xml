@@ -5,7 +5,7 @@
 	<groupId>ed.synthsys.biodare2</groupId>
 	<artifactId>biodare2-backend-rest</artifactId>
         <!-- snapshots work but without snapshot deploy to nexus fails -->
-	<version>3.4.1.2190-SNAPSHOT</version>
+	<version>3.4.1.2191-SNAPSHOT</version>
 	<name>BioDare2-REST</name>
 	<description>BioDare2 backend service</description>
 	<parent>
@@ -41,7 +41,7 @@
                     <scope>import</scope>
             </dependency>
             -->
-            
+
             <dependency>
                     <groupId>ed.biodare.period</groupId>
                     <artifactId>methods-bom</artifactId>
@@ -66,7 +66,41 @@
               <artifactId>log4j-api</artifactId>
               <version>2.16.0</version>
             </dependency>     -->
-                
+
+        <!-- Google API Client Library -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+
+        <!-- Google API Client Gson Library -->
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client-gson</artifactId>
+            <version>1.33.0</version>
+        </dependency>
+
+        <!-- Google OAuth Client Library -->
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client</artifactId>
+            <version>1.37.0</version>
+        </dependency>
+
+        <!-- Google Analytics Data API (GA4) -->
+        <dependency>
+            <groupId>com.google.analytics</groupId>
+            <artifactId>google-analytics-data</artifactId>
+            <version>0.68.0</version>
+        </dependency>
+
+        <!-- Google Auth Library -->
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>1.31.0</version>
+        </dependency>     
                                           
                 <!-- to be run when upgrading spring -->                               
                 <dependency>

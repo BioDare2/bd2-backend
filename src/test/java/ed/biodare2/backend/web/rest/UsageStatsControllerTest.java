@@ -38,9 +38,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import({SimpleRepoTestConfig.class})
 public class UsageStatsControllerTest extends ExperimentBaseIntTest {
-    
 
-    
     final String serviceRoot = "/api/usage";
     
     @Autowired
@@ -92,12 +90,65 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         wrapper.forEach( (k, stats) -> {
             stats.forEach( (y, stat) -> System.out.println(k+","+y+","+stat));
         });
-
-        
-        
     }
-    //Simple unit tests
+
+    @Test
+    public void countStatsReturnsRowsOfCVS() throws Exception {
+        
+        AssayPack pack1 = insertExperiment();
+        ExperimentalAssay exp1 = pack1.getAssay();        
+        
+        int series = insertData(pack1);
+
+        AssayPack pack2 = insertExperiment();
+        ExperimentalAssay exp2 = pack2.getAssay();        
+        
+        series += insertData(pack2);
+        
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/count")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(fixtures.demoUser));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+        
+        Map<String, Integer> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Integer>>() {});
+        
+        assertNotNull(result);
+        assertEquals(5, result.size());
+    }
+
+    @Test
+    public void getUsageStatsReturnsCorrectData() throws Exception {
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot + "/get_count")
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8)
+                .with(authenticate(fixtures.demoUser));
+
+        MvcResult resp = mockMvc.perform(builder)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+                .andReturn();
+
+        assertNotNull(resp);
+
+        Map<String, Integer> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Integer>>() {});
+        
+        assertNotNull(result);
+        assertEquals(5, result.size());
+        assertTrue(result.containsKey("totalSets"));
+        assertTrue(result.containsKey("totalPublicSets"));
+        assertTrue(result.containsKey("totalSeries"));
+        assertTrue(result.containsKey("totalPublicSeries"));
+        assertTrue(result.containsKey("totalUsers"));
+    }
     
+    //Simple unit tests
 
     @Test
     public void speciesStatsReturnsMapsOfStats() throws Exception {
@@ -126,7 +177,6 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         
         //System.out.println("species JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         Map<String, Map<String, Integer>> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Map<String, Integer>>>() { });
         assertNotNull(wrapper);
         assertEquals(2, wrapper.size());
@@ -139,9 +189,6 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         wrapper.forEach( (k, stats) -> {
             stats.forEach( (y, stat) -> System.out.println(k+","+y+","+stat));
         });
-
-        
-        
     }
     
     @Test
@@ -152,9 +199,10 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         
         String owner = pack.getSystemInfo().security.owner;
         int series = insertData(pack);
+        String isPublic = "private";
 
         List<String> entry = usageStats.getDataEntry(pack.getId());
-        assertEquals(Arrays.asList(owner,""+LocalDate.now().getYear(),""+series), entry);
+        assertEquals(Arrays.asList(owner,""+LocalDate.now().getYear(),""+series,isPublic), entry);
 
     }
     
@@ -189,7 +237,6 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
     @Test
     public void countSetsCountsEntries() {
         
-        
         Map<Pair<String,String>, List<List<String>>> groups = new HashMap<>();
         groups.put(new Pair<>("u1","2017"), Arrays.asList(Arrays.asList("u1","2017","0")));
         groups.put(new Pair<>("u1","2018"), Arrays.asList(Arrays.asList("u1","2018","1")));
@@ -206,12 +253,10 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         
         Map<Pair<String,String>, Integer> res = usageStats.countSets(groups);
         assertEquals(exp, res);
-        
     }
 
     @Test
     public void countSeriesSumSeries() {
-        
         
         Map<Pair<String,String>, List<List<String>>> groups = new HashMap<>();
         groups.put(new Pair<>("u1","2017"), Arrays.asList(Arrays.asList("u1","2017","0")));
@@ -228,7 +273,5 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         
         Map<Pair<String,String>, Integer> res = usageStats.countSeries(groups);
         assertEquals(exp, res);
-        
     }
-
 }

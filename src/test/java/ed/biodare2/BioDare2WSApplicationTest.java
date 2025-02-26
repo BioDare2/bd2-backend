@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(SimpleRepoTestConfig.class)
+@Import({SimpleRepoTestConfig.class, TestConfig.class})
 public class BioDare2WSApplicationTest {
 
     
