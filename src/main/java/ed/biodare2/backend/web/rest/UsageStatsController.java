@@ -5,6 +5,9 @@
  */
 package ed.biodare2.backend.web.rest;
 
+import ed.biodare2.backend.dto.AnalyticsDataDTO;
+import ed.biodare2.backend.dto.UsageStatsDTO;
+import ed.biodare2.backend.services.analytics.AnalyticsService;
 import ed.biodare2.backend.features.tsdata.sorting.TSSortOption;
 import ed.biodare2.backend.features.tsdata.sorting.TSSortParams;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
@@ -64,9 +67,10 @@ public class UsageStatsController extends BioDare2Rest {
     final ObjectMapper objectMapper;
     @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile;
     final Path jsonFilePath;
+    final AnalyticsService analyticsService;
 
     UsageStatsController(ExperimentalAssayRep expRep, ExperimentPackHub expPacks, ExperimentDataHandler dataHandler, UserAccountRep accounts,
-                         @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile) {
+                         @Value("${bd2.usagestats.file:usage_stats.json}") String jsonFile, AnalyticsService analyticsService) {
         this.expRep = expRep;
         this.expPacks = expPacks;
         this.dataHandler = dataHandler;
@@ -74,45 +78,53 @@ public class UsageStatsController extends BioDare2Rest {
         this.objectMapper = new ObjectMapper();
         log.debug("jsonFile value: {}", jsonFile);
         this.jsonFilePath = Paths.get(jsonFile);
+        this.analyticsService = analyticsService;
     }
     
-    @RequestMapping(value="data",method = RequestMethod.GET)
-    //public ListWrapper<String> dataStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
-    public Map<String, Map<String, Integer>> dataStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
-        log.debug("dataStats: {}", currentUser);
-        
-        if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
-            throw new InsufficientRightsException("Only demo and test users can call it");
-        
-        Stream<List<String>> entries = getDataEntries(expRep.getExerimentsIds());
-
-        Map<Pair<String,String>, List<List<String>>> ownerGroups = group(entries);
-        
-        Map<Pair<String,String>, Integer> setsStats = countSets(ownerGroups); 
-        Map<Pair<String,String>, Integer> seriesStats = countSeries(ownerGroups); 
-        
+    public List<UsageStatsDTO> get_stats_by_year() {
+        List<List<String>> entries = getDataEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
+    
+        Map<Pair<String, String>, List<List<String>>> ownerGroups = group(entries.stream());
+    
+        Map<Pair<String, String>, Integer> setsStats = countSets(ownerGroups);
+        Map<Pair<String, String>, Integer> seriesStats = countSeries(ownerGroups);
+    
         Map<String, Integer> totalSets = totalByYear(setsStats);
         Map<String, Integer> totalSeries = totalByYear(seriesStats);
+    
+        // Calculate public sets and series by year
+        Map<String, Integer> publicSetsByYear = entries.stream()
+                .filter(lst -> lst.get(3).equals("public"))
+                .collect(Collectors.groupingBy(lst -> lst.get(1), Collectors.summingInt(lst -> 1)));
+    
+        Map<String, Integer> publicSeriesByYear = entries.stream()
+                .filter(lst -> lst.get(3).equals("public"))
+                .collect(Collectors.groupingBy(lst -> lst.get(1), Collectors.summingInt(lst -> Integer.parseInt(lst.get(2)))));
+    
+        // Calculate users by year
+        Map<String, Long> usersByYear = accounts.findAll().stream()
+                .collect(Collectors.groupingBy(user -> String.valueOf(user.getCreationDate().getYear()), Collectors.counting()));
         
-        /*List<String> rows = new ArrayList<>();
-        rows.add("SETS");
-        rows.addAll(setsStats.entrySet().parallelStream()
-                .sorted(Comparator.comparing(e -> e.getKey().getRight()))
-                .map( e -> ""+e.getKey().getLeft()+","+e.getKey().getRight()+","+e.getValue())
-                .collect(Collectors.toList()));
-        rows.add("SERIES");
-        rows.addAll(seriesStats.entrySet().parallelStream()
-                .sorted(Comparator.comparing(e -> e.getKey().getRight()))
-                .map( e -> ""+e.getKey().getLeft()+","+e.getKey().getRight()+","+e.getValue())
-                .collect(Collectors.toList()));
-        
-        return new ListWrapper<>(rows);
-        */
-        Map<String, Map<String, Integer>> stats = new HashMap<>();
-        stats.put("totalSets",totalSets);
-        stats.put("totalSeries",totalSeries);
+        // Determine the earliest year and the current year
+        int currentYear = java.time.Year.now().getValue();
+        int earliestYear = totalSets.keySet().stream()
+                .mapToInt(Integer::parseInt)
+                .min()
+                .orElse(currentYear);
+
+        List<UsageStatsDTO> stats = new ArrayList<>();
+        for (int year = earliestYear; year <= currentYear; year++) {
+            String yearStr = String.valueOf(year);
+            long sets = totalSets.getOrDefault(yearStr, 0);
+            long series = totalSeries.getOrDefault(yearStr, 0);
+            long publicSets = publicSetsByYear.getOrDefault(yearStr, 0);
+            long publicSeries = publicSeriesByYear.getOrDefault(yearStr, 0);
+            long users = usersByYear.getOrDefault(yearStr, 0L);
+            stats.add(new UsageStatsDTO(year, sets, series, publicSets, publicSeries, users));
+        }
+    
         return stats;
-    }   
+    }
 
     @RequestMapping(value="species",method = RequestMethod.GET)
     public Map<String, Map<String, Integer>> speciesStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
@@ -135,7 +147,6 @@ public class UsageStatsController extends BioDare2Rest {
         return stats;
     }
 
-    @RequestMapping(value="count", method = RequestMethod.GET)
     public Map<String, Integer> countStats() {
 
         List<List<String>> entries = getDataEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
@@ -166,10 +177,14 @@ public class UsageStatsController extends BioDare2Rest {
         return count;
     }
 
-    @RequestMapping(value="get_count", method=RequestMethod.GET)
-    public Map<String, Integer> getUsageStats() throws IOException {
+    public List<AnalyticsDataDTO> getAnalyticsData() throws IOException {
+        return analyticsService.getAnalyticsData();
+    }
+
+    @RequestMapping(value="get_usage_stats", method=RequestMethod.GET)
+    public Map<String, List<?>> getUsageStats() throws IOException {
         byte[] jsonData = Files.readAllBytes(jsonFilePath);
-        return objectMapper.readValue(jsonData, new TypeReference<Map<String, Integer>>(){});
+        return objectMapper.readValue(jsonData, new TypeReference<Map<String, List<?>>>(){});
     }
     
     

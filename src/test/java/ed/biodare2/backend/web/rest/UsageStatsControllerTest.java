@@ -46,86 +46,10 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
     
     public UsageStatsControllerTest() {
     }
-    
-    @Test
-    public void dataStatsReturnsRowsOfCVS() throws Exception {
-        
-        AssayPack pack1 = insertExperiment();
-        ExperimentalAssay exp1 = pack1.getAssay();        
-        
-        int series = insertData(pack1);
-
-        AssayPack pack2 = insertExperiment();
-        ExperimentalAssay exp2 = pack2.getAssay();        
-        
-        series += insertData(pack2);
-        
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/data")
-                .contentType(APPLICATION_JSON_UTF8)
-                .accept(APPLICATION_JSON_UTF8)
-                .with(authenticate(fixtures.demoUser));
-
-        MvcResult resp = mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
-                .andReturn();
-
-        assertNotNull(resp);
-        
-        //System.out.println("getTSData JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
-        
-        /*
-        ListWrapper<String> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<String>>() { });
-        assertNotNull(wrapper);
-        List<String> data = wrapper.data;
-        assertNotNull(data);
-        //data.forEach(System.out::println);
-        assertEquals(4, data.size());        
-        assertEquals("user,"+LocalDate.now().getYear()+","+series,data.get(3));*/
-        
-        Map<String, Map<String, Integer>> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Map<String, Integer>>>() { });
-        assertNotNull(wrapper);
-        assertEquals(2, wrapper.size());
-        
-        wrapper.forEach( (k, stats) -> {
-            stats.forEach( (y, stat) -> System.out.println(k+","+y+","+stat));
-        });
-    }
-
-    @Test
-    public void countStatsReturnsRowsOfCVS() throws Exception {
-        
-        AssayPack pack1 = insertExperiment();
-        ExperimentalAssay exp1 = pack1.getAssay();        
-        
-        int series = insertData(pack1);
-
-        AssayPack pack2 = insertExperiment();
-        ExperimentalAssay exp2 = pack2.getAssay();        
-        
-        series += insertData(pack2);
-        
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/count")
-                .contentType(APPLICATION_JSON_UTF8)
-                .accept(APPLICATION_JSON_UTF8)
-                .with(authenticate(fixtures.demoUser));
-
-        MvcResult resp = mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
-                .andReturn();
-
-        assertNotNull(resp);
-        
-        Map<String, Integer> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Integer>>() {});
-        
-        assertNotNull(result);
-        assertEquals(5, result.size());
-    }
 
     @Test
     public void getUsageStatsReturnsCorrectData() throws Exception {
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot + "/get_count")
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot + "/get_usage_stats")
                 .contentType(APPLICATION_JSON_UTF8)
                 .accept(APPLICATION_JSON_UTF8)
                 .with(authenticate(fixtures.demoUser));
@@ -137,15 +61,11 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
 
         assertNotNull(resp);
 
-        Map<String, Integer> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Integer>>() {});
+        Map<String, List<?>> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, List<?>>>() {});
         
         assertNotNull(result);
-        assertEquals(5, result.size());
-        assertTrue(result.containsKey("totalSets"));
-        assertTrue(result.containsKey("totalPublicSets"));
-        assertTrue(result.containsKey("totalSeries"));
-        assertTrue(result.containsKey("totalPublicSeries"));
-        assertTrue(result.containsKey("totalUsers"));
+        assertTrue(result.containsKey("analytics"));
+        assertTrue(result.containsKey("year_stats"));
     }
     
     //Simple unit tests

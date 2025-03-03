@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +32,7 @@ public class AnalyticsService {
         this.analyticsDataClient = analyticsDataClient;
     }
 
-    public List<AnalyticsDataDTO> getAnalyticsData() throws GeneralSecurityException, IOException {
+    public List<AnalyticsDataDTO> getAnalyticsData() throws IOException {
         RunReportRequest request = RunReportRequest.newBuilder()
                 .setProperty("properties/" + propertyId)
                 .addDateRanges(DateRange.newBuilder().setStartDate("365daysAgo").setEndDate("today").build())
@@ -46,7 +45,7 @@ public class AnalyticsService {
         return response.getRowsList().stream()
                 .map(row -> new AnalyticsDataDTO(
                         row.getDimensionValues(0).getValue(),
-                        Long.parseLong(row.getMetricValues(0).getValue())
+                        Integer.parseInt(row.getMetricValues(0).getValue())
                 ))
                 .collect(Collectors.toList());
     }
