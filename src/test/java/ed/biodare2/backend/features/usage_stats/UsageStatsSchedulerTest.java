@@ -2,6 +2,7 @@ package ed.biodare2.backend.features.usage_stats;
 
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.dto.AnalyticsDataDTO;
+import ed.biodare2.backend.dto.SpeciesStatsDTO;
 import ed.biodare2.backend.dto.UsageStatsDTO;
 import ed.biodare2.backend.web.rest.UsageStatsController;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,13 +54,18 @@ public class UsageStatsSchedulerTest {
         List<UsageStatsDTO> usageStats = new ArrayList<>();
         usageStats.add(new UsageStatsDTO(2023, 100, 200, 50, 100, 1000));
 
+        List<SpeciesStatsDTO> speciesStats = new ArrayList<>();
+        speciesStats.add(new SpeciesStatsDTO("Arabidopsis thaliana", 100, 50, 200, 100));
+
         when(usageStatsController.getAnalyticsData()).thenReturn(analyticsData);
         when(usageStatsController.get_stats_by_year()).thenReturn(usageStats);
+        when(usageStatsController.get_stats_by_species()).thenReturn(speciesStats);
 
         usageStatsScheduler.generateUsageStats();
 
         verify(usageStatsController, times(1)).getAnalyticsData();
         verify(usageStatsController, times(1)).get_stats_by_year();
+        verify(usageStatsController, times(1)).get_stats_by_species();
         
         assertTrue(Files.exists(outputFile));
 
@@ -67,11 +73,14 @@ public class UsageStatsSchedulerTest {
         assertNotNull(result);
         assertTrue(result.containsKey("analytics"));
         assertTrue(result.containsKey("year_stats"));
+        assertTrue(result.containsKey("species_stats"));
 
         List<AnalyticsDataDTO> resultAnalytics = new ObjectMapper().convertValue(result.get("analytics"), new TypeReference<List<AnalyticsDataDTO>>() {});
         List<UsageStatsDTO> resultUsageStats = new ObjectMapper().convertValue(result.get("year_stats"), new TypeReference<List<UsageStatsDTO>>() {});
+        List<SpeciesStatsDTO> resultSpeciesStats = new ObjectMapper().convertValue(result.get("species_stats"), new TypeReference<List<SpeciesStatsDTO>>() {});
 
         assertEquals(analyticsData, resultAnalytics);
         assertEquals(usageStats, resultUsageStats);
+        assertEquals(speciesStats, resultSpeciesStats);
     }
 }

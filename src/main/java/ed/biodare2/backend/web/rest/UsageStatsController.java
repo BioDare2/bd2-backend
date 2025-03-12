@@ -6,6 +6,7 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.dto.AnalyticsDataDTO;
+import ed.biodare2.backend.dto.SpeciesStatsDTO;
 import ed.biodare2.backend.dto.UsageStatsDTO;
 import ed.biodare2.backend.services.analytics.AnalyticsService;
 import ed.biodare2.backend.features.tsdata.sorting.TSSortOption;
@@ -125,56 +126,37 @@ public class UsageStatsController extends BioDare2Rest {
     
         return stats;
     }
+    
+    public List<SpeciesStatsDTO> get_stats_by_species() {
+        List<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
+        System.out.println("Entries: " + entries);
 
-    @RequestMapping(value="species",method = RequestMethod.GET)
-    public Map<String, Map<String, Integer>> speciesStats(@NotNull @AuthenticationPrincipal BioDare2User currentUser) {
-        log.debug("speciesStats: {}", currentUser);
+        Map<String, List<List<String>>> speciesGroups = entries.stream()
+                .collect(Collectors.groupingByConcurrent(lst -> lst.get(0)));
+    
+        Map<String, Integer> setsStats = countSets(speciesGroups);
+        Map<String, Integer> seriesStats = countSeries(speciesGroups);
+    
+        // Calculate public sets and series by species
+        Map<String, Integer> publicSetsBySpecies = entries.stream()
+                .filter(lst -> lst.get(3).equals("public"))
+                .collect(Collectors.groupingBy(lst -> lst.get(0), Collectors.summingInt(lst -> 1)));
+    
+        Map<String, Integer> publicSeriesBySpecies = entries.stream()
+                .filter(lst -> lst.get(3).equals("public"))
+                .collect(Collectors.groupingBy(lst -> lst.get(0), Collectors.summingInt(lst -> Integer.parseInt(lst.get(2)))));
+    
+        List<SpeciesStatsDTO> stats = new ArrayList<>();
+        for (String species : setsStats.keySet()) {
+            long sets = setsStats.getOrDefault(species, 0);
+            long series = seriesStats.getOrDefault(species, 0);
+            long publicSets = publicSetsBySpecies.getOrDefault(species, 0);
+            long publicSeries = publicSeriesBySpecies.getOrDefault(species, 0);
+            stats.add(new SpeciesStatsDTO(species, sets, publicSets, series, publicSeries));
+        }
         
-        if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
-            throw new InsufficientRightsException("Only demo and test users can call it");
-        
-        Stream<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds());
-        
-        Map<String, List<List<String>>> speciesGroups = entries.collect(
-                Collectors.groupingByConcurrent( lst -> lst.get(0) ));
-        
-        Map<String, Integer> setsStats = countSets(speciesGroups); 
-        Map<String, Integer> seriesStats = countSeries(speciesGroups); 
-        
-        Map<String, Map<String, Integer>> stats = new HashMap<>();
-        stats.put("speciesSets",setsStats);
-        stats.put("speciesSeries",seriesStats);
+        System.out.println("Stats: " + stats);
         return stats;
-    }
-
-    public Map<String, Integer> countStats() {
-
-        List<List<String>> entries = getDataEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
-
-        int totalSets = (int) entries.size();
-
-        long totalPublicSets = entries.stream()
-                .filter( lst -> lst.get(3).equals("public"))
-                .count();
-    
-        int totalSeries = entries.stream()
-        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
-        .sum();
-
-        int totalPublicSeries = entries.stream()
-        .filter(lst -> lst.get(3).equals("public"))
-        .mapToInt(lst -> Integer.parseInt(lst.get(2)))
-        .sum();
-
-        long totalUsers = accounts.count();
-    
-        Map<String, Integer> count = new HashMap<>();
-        count.put("totalSets", totalSets);
-        count.put("totalPublicSets", (int) totalPublicSets);
-        count.put("totalSeries", totalSeries);
-        count.put("totalPublicSeries", totalPublicSeries);
-        count.put("totalUsers", (int) totalUsers);
-        return count;
     }
 
     public List<AnalyticsDataDTO> getAnalyticsData() throws IOException {
@@ -186,7 +168,6 @@ public class UsageStatsController extends BioDare2Rest {
         byte[] jsonData = Files.readAllBytes(jsonFilePath);
         return objectMapper.readValue(jsonData, new TypeReference<Map<String, List<?>>>(){});
     }
-    
     
     Stream<List<String>> getDataEntries(Stream<Long> ids) {
         
@@ -227,6 +208,7 @@ public class UsageStatsController extends BioDare2Rest {
         
         AssayPack expPack = opt.get();
         String species = expPack.getAssay().species;
+        String isPublic = expPack.getSystemInfo().security.isPublic ? "public" : "private";
         int tsCount = 0;
         Page page = new Page(0,Integer.MAX_VALUE);        
         if (expPack.getSystemInfo().experimentCharacteristic.hasTSData) {
@@ -236,7 +218,7 @@ public class UsageStatsController extends BioDare2Rest {
                     .orElse(Collections.emptyList()).size();
         }
         
-        return Arrays.asList(species,"1",""+tsCount);
+        return Arrays.asList(species,"1",""+tsCount, isPublic);
     }    
     
     Map<Pair<String,String>, List<List<String>>> group(Stream<List<String>> entries) {

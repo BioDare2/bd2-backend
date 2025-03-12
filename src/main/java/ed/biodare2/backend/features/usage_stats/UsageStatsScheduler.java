@@ -2,6 +2,7 @@ package ed.biodare2.backend.features.usage_stats;
 
 import ed.biodare2.backend.dto.AnalyticsDataDTO;
 import ed.biodare2.backend.dto.UsageStatsDTO;
+import ed.biodare2.backend.dto.SpeciesStatsDTO;
 import ed.biodare2.backend.web.rest.UsageStatsController;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -41,8 +42,10 @@ public class UsageStatsScheduler {
         Map<String, Object> usage = new HashMap<>();
         List<AnalyticsDataDTO> analytics_data = usageStatsController.getAnalyticsData();
         List<UsageStatsDTO> statsByYear = usageStatsController.get_stats_by_year();
+        List<SpeciesStatsDTO> speciesStats = usageStatsController.get_stats_by_species();
         usage.put("analytics", analytics_data);
         usage.put("year_stats", statsByYear);
+        usage.put("species_stats", speciesStats);
         objectMapper.writeValue(outputFile.toFile(), usage);
         log.info("Usage stats saved to " + outputFile.toAbsolutePath());
     }
