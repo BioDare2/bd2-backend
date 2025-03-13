@@ -129,7 +129,6 @@ public class UsageStatsController extends BioDare2Rest {
     
     public List<SpeciesStatsDTO> get_stats_by_species() {
         List<List<String>> entries = getSpeciesEntries(expRep.getExerimentsIds()).collect(Collectors.toList());
-        System.out.println("Entries: " + entries);
 
         Map<String, List<List<String>>> speciesGroups = entries.stream()
                 .collect(Collectors.groupingByConcurrent(lst -> lst.get(0)));
@@ -155,7 +154,6 @@ public class UsageStatsController extends BioDare2Rest {
             stats.add(new SpeciesStatsDTO(species, sets, publicSets, series, publicSeries));
         }
         
-        System.out.println("Stats: " + stats);
         return stats;
     }
 
