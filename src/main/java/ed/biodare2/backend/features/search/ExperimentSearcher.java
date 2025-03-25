@@ -60,7 +60,6 @@ public class ExperimentSearcher {
     
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
     public ListWrapper<Long> findVisible(String query,
-            String speciesName,
             BioDare2User user, boolean showPublic,
             SortOption sorting, boolean asc, 
             int pageIndex, int pageSize) {
@@ -73,9 +72,8 @@ public class ExperimentSearcher {
         visibility.showPublic = showPublic;
 
         //log.info("\nSEARCHING visibility {}", visibility);
-        log.info("SEARCHING SPECIES {}", speciesName);
         
-        return luceneExperimentsSearcher.findVisible(query, speciesName, visibility, sorting, asc, pageIndex, pageSize);
+        return luceneExperimentsSearcher.findVisible(query, visibility, sorting, asc, pageIndex, pageSize);
         
     }    
     

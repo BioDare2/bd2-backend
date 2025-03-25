@@ -293,11 +293,10 @@ public class ExperimentHandler extends BaseExperimentHandler {
     }
         
     public ListWrapper<ExperimentalAssay> searchExperiments(String query,
-            String speciesName,
             BioDare2User user, boolean showPublic, 
             SortOption sorting, boolean ascending, Page page) {
         
-        ListWrapper<Long> ids = searchVisible(query, speciesName, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
+        ListWrapper<Long> ids = searchVisible(query, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
         
         return idsToVisibleAssays(ids, user);        
 
@@ -333,12 +332,11 @@ public class ExperimentHandler extends BaseExperimentHandler {
     }
     
     protected ListWrapper<Long> searchVisible(String query,
-            String speciesName,
             BioDare2User user, boolean showPublic,
             SortOption sorting, boolean ascending,
             int pageIndex, int pageSize) {
         
-        return searcher.findVisible(query, speciesName, user, showPublic, sorting, ascending, pageIndex, pageSize);
+        return searcher.findVisible(query, user, showPublic, sorting, ascending, pageIndex, pageSize);
     }    
     
     public Optional<AssayPack> getExperiment(long expId) {

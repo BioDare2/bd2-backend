@@ -58,47 +58,27 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
     public ListWrapper<Long> findAllVisible(ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
-        Query query = new MatchAllDocsQuery();
-        String speciesName = "";     
-        return find(query, speciesName, visibility, sorting, asc, pageIndex, pageSize);
+        Query query = new MatchAllDocsQuery();   
+        return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }
     
-    public ListWrapper<Long> findVisible(String queryString, String speciesName,
+    public ListWrapper<Long> findVisible(String queryString,
             ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         Query query = parseQuery(queryString); 
         // log.info("\nWill searech for:\n{}\n\n",query.toString());
-        return find(query, speciesName, visibility, sorting, asc, pageIndex, pageSize);
+        return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }    
     
-    protected ListWrapper<Long> find(Query query, String speciesName,
+    protected ListWrapper<Long> find(Query query,
             ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
-        query = addSpeciesFilter(query, speciesName);
         query = addVisibilityFilter(query, visibility);        
         Optional<Sort> sort = sortCriteria(sorting, asc);
                 
         return searcher.search(query, sort, pageIndex, pageSize);
-    }
-
-    protected Query speciesFilter(String speciesName) {
-        if (speciesName.isEmpty()) {
-            return new MatchAllDocsQuery();
-        }
-        
-        Term speciesTerm = new Term(SPECIES, speciesName);
-        return new TermQuery(speciesTerm);
-    }
-    
-    Query addSpeciesFilter(Query query, String speciesName) {
-        Query speciesFilter = speciesFilter(speciesName);
-        
-        return new BooleanQuery.Builder()
-                .add(query, BooleanClause.Occur.MUST)
-                .add(speciesFilter, BooleanClause.Occur.FILTER)
-                .build();
     }
     
     protected Query visibilityFilter(ExperimentVisibility visibility) {
@@ -150,9 +130,6 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
     }
 
     Query parseQuery(String queryString) {
-        if ("*".equals(queryString.trim())) {
-            return new MatchAllDocsQuery();
-        }
         
         String[] fields = {NAME, PURPOSE, AUTHORS, WHOLE_CONTENT};
         BooleanClause.Occur[] flags = new BooleanClause.Occur[fields.length];
