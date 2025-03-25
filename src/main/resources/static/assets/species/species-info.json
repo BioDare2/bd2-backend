@@ -1,0 +1,65 @@
+[
+    {
+      "speciesId": 1,
+      "name": "Arabidopsis thaliana",
+      "image": "assets/species/Arabidopsis_thaliana.jpg",
+      "reference": "By <a href='//commons.wikimedia.org/wiki/User:Suisetz' class='mw-redirect' title='User:Suisetz'>Suisetz</a>, <a href='http://creativecommons.org/licenses/by-sa/3.0/' title='Creative Commons Attribution-Share Alike 3.0'>CC BY-SA 3.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=2448732'>Link</a>",
+      "keywords": "plant, mutant, arabidopsis, condition, constant"
+    },
+    {
+      "speciesId": 2,
+      "name": "Mus musculus",
+      "image": "assets/species/Mus_musculus.png",
+      "reference": "By <a href='//commons.wikimedia.org/wiki/User:George_Shuklin' title='User:George Shuklin'>George Shuklin</a> , <a href='https://creativecommons.org/licenses/by-sa/1.0' title='Creative Commons Attribution-Share Alike 1.0'>CC BY-SA 1.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=5521043'>Link</a>",
+      "keywords": "slice, mouse, scn, cell, effect"
+    },
+    {
+      "speciesId": 3,
+      "name": "Homo sapiens",
+      "image": "assets/species/Homo_sapiens.png",
+      "reference": "By <a href='//commons.wikimedia.org/w/index.php?title=User:Ineedtofinishmyschoolwork&amp;action=edit&amp;redlink=1' class='new' title='User:Ineedtofinishmyschoolwork (page does not exist)'>Ineedtofinishmyschoolwork</a>, <a href='https://creativecommons.org/licenses/by-sa/4.0' title='Creative Commons Attribution-Share Alike 4.0'>CC BY-SA 4.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=132724579'>Link</a>",
+      "keywords": "inhibitor, cell, blood, drug, effect"
+    },
+    {
+      "speciesId": 4,
+      "name": "Danio rerio",
+      "image": "assets/species/Danio_rerio.png",
+      "reference": "By <a href='//commons.wikimedia.org/wiki/User:Cherus' title='User:Cherus'>Pogrebnoj-Alexandroff</a>, <a href='https://creativecommons.org/licenses/by-sa/3.0' title='Creative Commons Attribution-Share Alike 3.0'>CC BY-SA 3.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=25855505'>Link</a>",
+      "keywords": "zebrafish, mouse, gene, bmal1, cell"
+    },
+    {
+      "speciesId": 5,
+      "name": "Neurospora crassa",
+      "image": "assets/species/Neurospora_crassa.jpg",
+      "reference": "By <a href='//commons.wikimedia.org/w/index.php?title=User:Roland_Gromes&amp;action=edit&amp;redlink=1' class='new' title='User:Roland Gromes (page does not exist)'>Roland Gromes</a>, <a href='https://creativecommons.org/licenses/by-sa/3.0' title='Creative Commons Attribution-Share Alike 3.0'>CC BY-SA 3.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=25292689'>Link</a>",
+      "keywords": "lnnccd, obtener, strain, oscilacione, amplitude"
+    },
+    {
+      "speciesId": 6,
+      "name": "Synechococcus elongatus",
+      "image": "assets/species/Synechococcus_elongatus.png",
+      "reference": "By <a href='http://www.kerfeldlab.org/images.html'>Raul Gonzalez and Cheryl Kerfeld</a>, <a href='https://creativecommons.org/licenses/by-sa/3.0' title='Creative Commons Attribution-Share Alike 3.0'>CC BY-SA 3.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=105290440'>Link</a>",
+      "keywords": "strain, effect, sasa, oscillator, datum"
+    },
+    {
+      "speciesId": 7,
+      "name": "Drosophila melanogaster",
+      "image": "assets/species/Drosophila_melanogaster.jpg",
+      "reference": "By <a href='//commons.wikimedia.org/wiki/User:Aka' title='User:Aka'>André Karwath</a>, <a href='https://creativecommons.org/licenses/by-sa/2.5' title='Creative Commons Attribution-Share Alike 2.5'>CC BY-SA 2.5</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=227170'>Link</a>",
+      "keywords": "male, fly, female, calexa, datum"
+    },
+    {
+      "speciesId": 8,
+      "name": "Medicago truncatula",
+      "image": "assets/species/Medicago_truncatula.jpg",
+      "reference": "By <a href='//commons.wikimedia.org/wiki/User:Kenraiz' title='User:Kenraiz'>Krzysztof Ziarnek</a>, <a href='https://creativecommons.org/licenses/by-sa/4.0' title='Creative Commons Attribution-Share Alike 4.0'>CC BY-SA 4.0</a>, <a href='https://commons.wikimedia.org/w/index.php?curid=152338452'>Link</a>",
+      "keywords": "adaptation, plant, performance, geographic, location"
+    },
+    {
+      "speciesId": 9,
+      "name": "Chlamydomonas reinhardtii",
+      "image": "assets/species/Chlamydomonas_reinhardtii.png",
+      "reference": "By <a href=http://remf.dartmouth.edu/imagesindex.html>Dartmouth college</a>, Public Domain, <a href='https://commons.wikimedia.org/w/index.php?curid=2787215'>Link</a>",
+      "keywords": "mutant, phenotype, gene, strain, lhk1"
+    }
+]

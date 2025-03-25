@@ -58,11 +58,12 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
     public ListWrapper<Long> findAllVisible(ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
-        Query query = new MatchAllDocsQuery();        
+        Query query = new MatchAllDocsQuery();   
         return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }
     
-    public ListWrapper<Long> findVisible(String queryString, ExperimentVisibility visibility, 
+    public ListWrapper<Long> findVisible(String queryString,
+            ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         Query query = parseQuery(queryString); 
@@ -70,15 +71,15 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
         return find(query, visibility, sorting, asc, pageIndex, pageSize);
     }    
     
-    protected ListWrapper<Long> find(Query query, ExperimentVisibility visibility, 
+    protected ListWrapper<Long> find(Query query,
+            ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         query = addVisibilityFilter(query, visibility);        
         Optional<Sort> sort = sortCriteria(sorting, asc);
                 
         return searcher.search(query, sort, pageIndex, pageSize);
-    }    
-    
+    }
     
     protected Query visibilityFilter(ExperimentVisibility visibility) {
         
@@ -132,18 +133,15 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
         
         String[] fields = {NAME, PURPOSE, AUTHORS, WHOLE_CONTENT};
         BooleanClause.Occur[] flags = new BooleanClause.Occur[fields.length];
-        for (int i = 0; i< flags.length; i++) {
+        for (int i = 0; i < flags.length; i++) {
             flags[i] = BooleanClause.Occur.SHOULD;
         }
         
         try {
             return MultiFieldQueryParser.parse(queryString, fields, flags, analyzer);
-        } catch (ParseException e)  {
-            throw new HandlingException("Could not parse query: "+queryString+"; "+e.getMessage(),e);
+        } catch (ParseException e) {
+            throw new HandlingException("Could not parse query: " + queryString + "; " + e.getMessage(), e);
         }
     }
-
-
-    
 
 }

@@ -93,9 +93,9 @@ public class ExperimentController extends BioDare2Rest {
     }    
     
     @RequestMapping(path="experiments/search",method = RequestMethod.GET)
-    @Transactional    
+    @Transactional
     public ListWrapper<ExperimentSummary> searchExperiments(
-            @RequestParam(name = "query",defaultValue = "") String query, 
+            @RequestParam(name = "query",defaultValue = "") String query,
             @RequestParam(name = "showPublic",defaultValue = "false") boolean showPublic, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
@@ -103,7 +103,7 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
-        log.debug("search experiments, query:{}; {}",query,user);
+        log.debug("search experiments, query: {}; {}",query,user);
 
         try {
           
