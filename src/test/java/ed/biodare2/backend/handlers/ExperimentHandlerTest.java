@@ -59,6 +59,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
@@ -277,7 +281,7 @@ public class ExperimentHandlerTest {
         AssayPack p2 = MockReps.testAssayPack();
         AssayPack p3 = MockReps.testAssayPack();
         
-        when(searcher.findVisible("clock", user, true,SortOption.MODIFICATION_DATE, false , 0, 10)).thenReturn(new ListWrapper<>(Arrays.asList(p1.getId(),p2.getId(),p3.getId())));        
+        when(searcher.findVisible("clock", "", "", "", "", "", user, true,SortOption.MODIFICATION_DATE, false , 0, 10)).thenReturn(new ListWrapper<>(Arrays.asList(p1.getId(),p2.getId(),p3.getId())));        
         when(experiments.findByIds((List<Long>)any())).thenReturn(Arrays.asList(p1,p2,p3).stream());
         
         List<ExperimentalAssay> exp = Arrays.asList(p1.getAssay(),p2.getAssay(),p3.getAssay());
@@ -285,10 +289,10 @@ public class ExperimentHandlerTest {
         Page page = new Page(0, 10);
         SortOption sorting = SortOption.MODIFICATION_DATE;
         boolean ascending = false;
-        List<ExperimentalAssay> res = handler.searchExperiments("clock", user,true,sorting, ascending, page).data; 
+        List<ExperimentalAssay> res = handler.searchExperiments("clock", "", "", "", "", "", user,true,sorting, ascending, page).data; 
         
         assertEquals(exp,res);
-        verify(searcher).findVisible("clock", user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
+        verify(searcher).findVisible("clock", "", "", "", "", "", user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
         verify(experiments).findByIds((List<Long>)any());
         
     }      

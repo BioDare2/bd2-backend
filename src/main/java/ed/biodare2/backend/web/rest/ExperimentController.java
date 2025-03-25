@@ -95,8 +95,12 @@ public class ExperimentController extends BioDare2Rest {
     @RequestMapping(path="experiments/search",method = RequestMethod.GET)
     @Transactional
     public ListWrapper<ExperimentSummary> searchExperiments(
-            @RequestParam(name = "query",defaultValue = "") String query,
-            @RequestParam(name = "species",defaultValue = "") String species,
+            @RequestParam(name = "query", defaultValue = "") String query,
+            @RequestParam(name = "species", defaultValue = "") String species,
+            @RequestParam(name = "author", defaultValue = "") String author,
+            @RequestParam(name = "fromCreationDate", defaultValue = "") String fromCreationDate,
+            @RequestParam(name = "toCreationDate", defaultValue = "") String toCreationDate,
+            @RequestParam(name = "dataCategory", defaultValue = "") String dataCategory,
             @RequestParam(name = "showPublic",defaultValue = "false") boolean showPublic, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
             @RequestParam(name="pageSize", defaultValue = "25") int pageSize,            
@@ -104,7 +108,7 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
-        log.debug("search experiments, query: {}, species: {}; {}",query,species,user);
+        log.debug("search experiments, query: {}, author: {}; {}",query,author,user);
 
         try {
           
@@ -113,7 +117,7 @@ public class ExperimentController extends BioDare2Rest {
             SortOption sort = paramsToSort(sorting, direction);
             boolean ascending = "asc".equals(direction);
             
-            ListWrapper<ExperimentalAssay> exps = handler.searchExperiments(query, species, user, showPublic, sort, ascending, page);
+            ListWrapper<ExperimentalAssay> exps = handler.searchExperiments(query, species, author, fromCreationDate, toCreationDate, dataCategory, user, showPublic, sort, ascending, page);
             page = exps.currentPage;
             
             List<ExperimentSummary> sums = exps.data.stream()

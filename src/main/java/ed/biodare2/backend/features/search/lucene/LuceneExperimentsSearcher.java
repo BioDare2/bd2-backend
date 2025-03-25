@@ -23,6 +23,8 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
+import org.apache.lucene.search.WildcardQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,45 +61,76 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         Query query = new MatchAllDocsQuery();
-        String speciesName = "";     
-        return find(query, speciesName, visibility, sorting, asc, pageIndex, pageSize);
+        String speciesName = "";
+        String author = "";
+        String fromCreationDate = "";
+        String toCreationDate = "";
+        String dataCategory = "";  
+        return find(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
     }
     
-    public ListWrapper<Long> findVisible(String queryString, String speciesName,
+    public ListWrapper<Long> findVisible(String queryString,
+            String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory,
             ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
         Query query = parseQuery(queryString); 
         // log.info("\nWill searech for:\n{}\n\n",query.toString());
-        return find(query, speciesName, visibility, sorting, asc, pageIndex, pageSize);
+        return find(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
     }    
     
-    protected ListWrapper<Long> find(Query query, String speciesName,
+    protected ListWrapper<Long> find(Query query,
+            String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory,
             ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
         
-        query = addSpeciesFilter(query, speciesName);
+        query = addAdvancedFilters(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory);
         query = addVisibilityFilter(query, visibility);        
         Optional<Sort> sort = sortCriteria(sorting, asc);
                 
         return searcher.search(query, sort, pageIndex, pageSize);
     }
 
-    protected Query speciesFilter(String speciesName) {
-        if (speciesName.isEmpty()) {
+    protected Query advancedFilters(String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory) {
+        BooleanQuery.Builder builder = new BooleanQuery.Builder();
+
+        if (!speciesName.isEmpty()) {
+            Term speciesTerm = new Term(SPECIES, speciesName);
+            builder.add(new TermQuery(speciesTerm), BooleanClause.Occur.MUST);
+        }
+    
+        if (!author.isEmpty()) {
+            log.debug("Adding filter for author: " + author);
+            Term authorTerm = new Term(AUTHORS, "*" + author + "*");
+            builder.add(new WildcardQuery(authorTerm), BooleanClause.Occur.MUST);
+        }
+    
+        if (!fromCreationDate.isEmpty()) {
+            builder.add(TermRangeQuery.newStringRange(EXECUTED, fromCreationDate, null, true, true), BooleanClause.Occur.MUST);
+        }
+
+        if (!toCreationDate.isEmpty()) {
+            builder.add(TermRangeQuery.newStringRange(EXECUTED, null, toCreationDate, true, true), BooleanClause.Occur.MUST);
+        }
+    
+        if (!dataCategory.isEmpty()) {
+            Term dataCategoryTerm = new Term(DATA_CATEGORY, dataCategory);
+            builder.add(new TermQuery(dataCategoryTerm), BooleanClause.Occur.MUST);
+        }
+    
+        if (builder.build().clauses().isEmpty()) {
             return new MatchAllDocsQuery();
         }
-        
-        Term speciesTerm = new Term(SPECIES, speciesName);
-        return new TermQuery(speciesTerm);
+    
+        return builder.build();
     }
     
-    Query addSpeciesFilter(Query query, String speciesName) {
-        Query speciesFilter = speciesFilter(speciesName);
+    Query addAdvancedFilters(Query query, String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory) {
+        Query advancedFilter = advancedFilters(speciesName, author, fromCreationDate, toCreationDate, dataCategory);
         
         return new BooleanQuery.Builder()
                 .add(query, BooleanClause.Occur.MUST)
-                .add(speciesFilter, BooleanClause.Occur.FILTER)
+                .add(advancedFilter, BooleanClause.Occur.FILTER)
                 .build();
     }
     

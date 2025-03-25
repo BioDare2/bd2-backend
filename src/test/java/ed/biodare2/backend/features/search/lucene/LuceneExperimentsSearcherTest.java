@@ -417,6 +417,11 @@ public class LuceneExperimentsSearcherTest {
         
         
         String queryString = "clock";
+        String speciesName = "Arabidopsis thaliana";
+        String author = "Tomasz";
+        String fromCreationDate = "2019-01-01";
+        String toCreationDate = "2020-01-01";
+        String dataCategory = "RNAseq";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;
@@ -429,7 +434,7 @@ public class LuceneExperimentsSearcherTest {
         int pageSize = 10;
         
         
-        ListWrapper<Long> ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        ListWrapper<Long> ids = instance.findVisible(queryString, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
 
         List<Long> exp = List.of(2L, 1L, 14L);
 
@@ -441,6 +446,11 @@ public class LuceneExperimentsSearcherTest {
         
         
         String queryString = "LHY";
+        String speciesName = "Arabidopsis thaliana";
+        String author = "Tomasz";
+        String fromCreationDate = "2019-01-01";
+        String toCreationDate = "2020-01-01";
+        String dataCategory = "RNAseq";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;
@@ -453,20 +463,20 @@ public class LuceneExperimentsSearcherTest {
         int pageSize = 10;
         
         
-        ListWrapper<Long> ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        ListWrapper<Long> ids = instance.findVisible(queryString, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
 
         List<Long> exp = List.of(1L);
 
         assertEquals(exp, ids.data);
         
         queryString = "prr9";
-        ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        ids = instance.findVisible(queryString, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
         exp = List.of(2L, 13L, 14L);
 
         assertEquals(exp, ids.data);
         
         queryString = "prr7";
-        ids = instance.findVisible(queryString, visibility, sorting, asc, pageIndex, pageSize);
+        ids = instance.findVisible(queryString, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
         exp = List.of(14L);
 
         assertEquals(exp, ids.data);        
