@@ -107,8 +107,8 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="sorting", defaultValue = "modified") String sorting,
             @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
-
-        // log.debug("search experiments, {} to {}; {}", fromCreationDate, toCreationDate, user);
+        
+        log.debug("search experiments, query: {}; {}",query,user);
 
         try {
           

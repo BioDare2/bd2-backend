@@ -220,9 +220,6 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
     }
 
     Query parseQuery(String queryString) {
-        if ("*".equals(queryString.trim())) {
-            return new MatchAllDocsQuery();
-        }
         
         String[] fields = {NAME, PURPOSE, AUTHORS, WHOLE_CONTENT};
         BooleanClause.Occur[] flags = new BooleanClause.Occur[fields.length];
