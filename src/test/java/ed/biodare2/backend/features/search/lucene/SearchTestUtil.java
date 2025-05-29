@@ -30,14 +30,14 @@ public class SearchTestUtil {
                 "Name dFirst doc clock LHY", 
                 "Purpose Testing search train", 
                 "Description is what it is",
-                DataCategory.GEN_IMAGING, 
+                DataCategory.EXPR_REPORTER, 
                 "Homo sapiens", 
                 "Whole Content Purpose clock Testing search should contain the contan all but not Purpose Testing search Description is what it is", 
                 "Zielinski2 Tomasz", 
                 "Tomasz Zielinski Mark Smith", 
                 LocalDateTime.now().minus(5, ChronoUnit.MONTHS), 
                 LocalDateTime.now().minus(5, ChronoUnit.DAYS), 
-                LocalDate.now().minus(5, ChronoUnit.WEEKS),
+                LocalDate.parse("2022-04-02"),
                 "demo1", 
                 false);
         
@@ -54,9 +54,9 @@ public class SearchTestUtil {
                 "Whole Content Purpose clock Testing search should contain the contan all but not Purpose Testing search Description is what it is", 
                 "Zielinski3 Tomasz", 
                 "Tomasz Zielinski Andrew Millar", 
-                LocalDateTime.now().minus(1, ChronoUnit.MONTHS), 
-                LocalDateTime.now().minus(1, ChronoUnit.DAYS), 
-                LocalDate.now().minus(3, ChronoUnit.WEEKS),
+                LocalDateTime.now().minus(1, ChronoUnit.MONTHS),
+                LocalDateTime.now().minus(1, ChronoUnit.DAYS),
+                LocalDate.parse("2019-05-20"),
                 "demo1", 
                 true);
         
@@ -75,7 +75,7 @@ public class SearchTestUtil {
                 "Tomasz Zielinski Johnny Hay", 
                 LocalDateTime.now().minus(2, ChronoUnit.MONTHS), 
                 LocalDateTime.now().minus(2, ChronoUnit.DAYS), 
-                LocalDate.now().minus(2, ChronoUnit.WEEKS),
+                LocalDate.parse("2021-05-20"),
                 "demo1", 
                 false);
         
@@ -107,13 +107,13 @@ public class SearchTestUtil {
                 "Purpose Testing search ship", 
                 "Description is what it is clock",
                 DataCategory.EXPR_REPORTER, 
-                "Mus musculus", 
+                "Homo sapiens", 
                 "Whole Content Purpose Testing clock search should contain the contan all but not Purpose Testing search Description is what it is", 
                 "Darwin 2Charles", 
-                "Charles Darwin Johnny Hay", 
+                "Charles Darwin Johnny Hay Tomasz Zielinski", 
                 LocalDateTime.now().minus(3, ChronoUnit.MONTHS), 
                 LocalDateTime.now().minus(4, ChronoUnit.DAYS), 
-                LocalDate.now().minus(1, ChronoUnit.WEEKS),
+                LocalDate.parse("2021-05-20"),
                 "demo2", 
                 true);
         

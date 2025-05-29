@@ -353,7 +353,7 @@ public class LuceneExperimentsSearcherTest {
             TopDocs hits = index.search(query, 10, sort);
             
             List<Long> ids = extractdIds(hits, index);
-            List<Long> exp = List.of(1L, 25L, 2L, 13L, 14L);
+            List<Long> exp = List.of(2L, 13L, 14L, 1L, 25L);
             
             assertEquals(exp, ids);
             
@@ -417,11 +417,11 @@ public class LuceneExperimentsSearcherTest {
         
         
         String queryString = "clock";
-        String speciesName = "Arabidopsis thaliana";
+        String speciesName = "Homo sapiens";
         String author = "Tomasz";
-        String fromCreationDate = "2019-01-01";
-        String toCreationDate = "2020-01-01";
-        String dataCategory = "RNAseq";
+        String fromCreationDate = "2020-01-01";
+        String toCreationDate = "2025-01-01";
+        String dataCategory = "Expression reporter (e.g. Luc/GFP-imaging)";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;
@@ -436,7 +436,7 @@ public class LuceneExperimentsSearcherTest {
         
         ListWrapper<Long> ids = instance.findVisible(queryString, speciesName, author, fromCreationDate, toCreationDate, dataCategory, visibility, sorting, asc, pageIndex, pageSize);
 
-        List<Long> exp = List.of(2L, 1L, 14L);
+        List<Long> exp = List.of(1L, 14L);
 
         assertEquals(exp, ids.data);
     }   
@@ -446,11 +446,11 @@ public class LuceneExperimentsSearcherTest {
         
         
         String queryString = "LHY";
-        String speciesName = "Arabidopsis thaliana";
+        String speciesName = "Homo sapiens";
         String author = "Tomasz";
         String fromCreationDate = "2019-01-01";
-        String toCreationDate = "2020-01-01";
-        String dataCategory = "RNAseq";
+        String toCreationDate = "2025-01-01";
+        String dataCategory = "Expression reporter (e.g. Luc/GFP-imaging)";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;

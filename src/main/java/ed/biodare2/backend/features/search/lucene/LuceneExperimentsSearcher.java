@@ -11,25 +11,33 @@ import static ed.biodare2.backend.features.search.lucene.Fields.*;
 import static ed.biodare2.backend.features.search.lucene.LuceneConfiguration.configAnalyser;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.biodare2.backend.web.rest.ListWrapper;
+
+import java.io.IOException;
 import java.util.Optional;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import jakarta.annotation.PreDestroy;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.MatchNoDocsQuery;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.search.WildcardQuery;
+import org.apache.lucene.document.LongPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 /**
  *
@@ -83,7 +91,7 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
             String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory,
             ExperimentVisibility visibility, 
             SortOption sorting, boolean asc, int pageIndex, int pageSize) {
-        
+
         query = addAdvancedFilters(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory);
         query = addVisibilityFilter(query, visibility);        
         Optional<Sort> sort = sortCriteria(sorting, asc);
@@ -100,24 +108,53 @@ public class LuceneExperimentsSearcher implements AutoCloseable {
         }
     
         if (!author.isEmpty()) {
-            log.debug("Adding filter for author: " + author);
-            Term authorTerm = new Term(AUTHORS, "*" + author + "*");
-            builder.add(new WildcardQuery(authorTerm), BooleanClause.Occur.MUST);
+        try {
+            QueryParser parser = new QueryParser(AUTHORS, analyzer);
+            Query authorQuery = parser.parse(author);
+            builder.add(authorQuery, BooleanClause.Occur.MUST);
+        } catch (ParseException e) {
+            log.error("Error parsing author query: {}", author, e);
+        }
         }
     
-        if (!fromCreationDate.isEmpty()) {
-            builder.add(TermRangeQuery.newStringRange(EXECUTED, fromCreationDate, null, true, true), BooleanClause.Occur.MUST);
-        }
+        if (!fromCreationDate.isEmpty() || !toCreationDate.isEmpty()) {
+            long fromEpoch = fromCreationDate.isEmpty() 
+                ? Long.MIN_VALUE 
+                : LocalDate.parse(fromCreationDate).toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
+            long toEpoch = toCreationDate.isEmpty() 
+                ? Long.MAX_VALUE 
+                : LocalDate.parse(toCreationDate).toEpochSecond(LocalTime.MAX, ZoneOffset.UTC);
 
-        if (!toCreationDate.isEmpty()) {
-            builder.add(TermRangeQuery.newStringRange(EXECUTED, null, toCreationDate, true, true), BooleanClause.Occur.MUST);
+            builder.add(
+                LongPoint.newRangeQuery(
+                    EXECUTED,
+                    fromEpoch,
+                    toEpoch
+                ),
+                BooleanClause.Occur.MUST
+            );
         }
     
         if (!dataCategory.isEmpty()) {
-            Term dataCategoryTerm = new Term(DATA_CATEGORY, dataCategory);
-            builder.add(new TermQuery(dataCategoryTerm), BooleanClause.Occur.MUST);
+            try {
+                // Use the analyzer to tokenize the input
+                TokenStream tokenStream = analyzer.tokenStream(DATA_CATEGORY, dataCategory);
+                tokenStream.reset();
+
+                PhraseQuery.Builder phraseBuilder = new PhraseQuery.Builder();
+                while (tokenStream.incrementToken()) {
+                    String term = tokenStream.getAttribute(CharTermAttribute.class).toString();
+                    phraseBuilder.add(new Term(DATA_CATEGORY, term));
+                }
+                tokenStream.end();
+                tokenStream.close();
+
+                builder.add(phraseBuilder.build(), BooleanClause.Occur.MUST);
+            } catch (IOException e) {
+                log.error("Error building PhraseQuery for Data Category: {}", dataCategory, e);
+            }
         }
-    
+
         if (builder.build().clauses().isEmpty()) {
             return new MatchAllDocsQuery();
         }

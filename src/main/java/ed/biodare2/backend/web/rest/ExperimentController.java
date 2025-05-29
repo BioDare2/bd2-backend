@@ -98,8 +98,8 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name = "query", defaultValue = "") String query,
             @RequestParam(name = "species", defaultValue = "") String species,
             @RequestParam(name = "author", defaultValue = "") String author,
-            @RequestParam(name = "fromCreationDate", defaultValue = "") String fromCreationDate,
-            @RequestParam(name = "toCreationDate", defaultValue = "") String toCreationDate,
+            @RequestParam(name = "executedFrom", defaultValue = "") String fromCreationDate,
+            @RequestParam(name = "executedTo", defaultValue = "") String toCreationDate,
             @RequestParam(name = "dataCategory", defaultValue = "") String dataCategory,
             @RequestParam(name = "showPublic",defaultValue = "false") boolean showPublic, 
             @RequestParam(name="pageIndex", defaultValue = "0") int pageIndex,
@@ -107,8 +107,8 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="sorting", defaultValue = "modified") String sorting,
             @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
-        
-        log.debug("search experiments, query: {}, author: {}; {}",query,author,user);
+
+        // log.debug("search experiments, {} to {}; {}", fromCreationDate, toCreationDate, user);
 
         try {
           

@@ -88,7 +88,7 @@ public class LuceneSearcher implements AutoCloseable {
         TopDocs hits = sort.isPresent() ? 
                 search(searcher, query, sort.get(), maxHits) 
                 : search(searcher, query, maxHits);
-
+        // log.debug("Search query: {}", query.toString());
         int total = hits.scoreDocs.length;
         // reset page to zero if over the hits
         if (pageIndex*pageSize >= total) pageIndex = 0;

@@ -58,13 +58,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author tzielins
  */
 @Service
 public class ExperimentHandler extends BaseExperimentHandler {
- 
+    
     
     final IdGenerator expIdGenerator;
     final ExperimentPackHub experiments;
@@ -298,7 +301,6 @@ public class ExperimentHandler extends BaseExperimentHandler {
             SortOption sorting, boolean ascending, Page page) {
         
         ListWrapper<Long> ids = searchVisible(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
-        
         return idsToVisibleAssays(ids, user);        
 
     }      
