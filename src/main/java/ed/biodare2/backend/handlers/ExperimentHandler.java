@@ -58,13 +58,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  *
  * @author tzielins
  */
 @Service
 public class ExperimentHandler extends BaseExperimentHandler {
- 
+    
     
     final IdGenerator expIdGenerator;
     final ExperimentPackHub experiments;
@@ -293,11 +296,11 @@ public class ExperimentHandler extends BaseExperimentHandler {
     }
         
     public ListWrapper<ExperimentalAssay> searchExperiments(String query,
+            String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory,
             BioDare2User user, boolean showPublic, 
             SortOption sorting, boolean ascending, Page page) {
         
-        ListWrapper<Long> ids = searchVisible(query, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
-        
+        ListWrapper<Long> ids = searchVisible(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory, user, showPublic, sorting, ascending, page.pageIndex, page.pageSize);
         return idsToVisibleAssays(ids, user);        
 
     }      
@@ -332,11 +335,12 @@ public class ExperimentHandler extends BaseExperimentHandler {
     }
     
     protected ListWrapper<Long> searchVisible(String query,
+            String speciesName, String author, String fromCreationDate, String toCreationDate, String dataCategory,
             BioDare2User user, boolean showPublic,
             SortOption sorting, boolean ascending,
             int pageIndex, int pageSize) {
         
-        return searcher.findVisible(query, user, showPublic, sorting, ascending, pageIndex, pageSize);
+        return searcher.findVisible(query, speciesName, author, fromCreationDate, toCreationDate, dataCategory, user, showPublic, sorting, ascending, pageIndex, pageSize);
     }    
     
     public Optional<AssayPack> getExperiment(long expId) {

@@ -145,12 +145,12 @@ public class SearchingIntegrationTest {
        
        indexer.indexExperiment(exp, sys);
        
-       ListWrapper<Long> hits = searcher.findVisible("missing", visibility, sorting, asc, pageIndex, pageSize);
+       ListWrapper<Long> hits = searcher.findVisible("missing", "", "", "", "", "", visibility, sorting, asc, pageIndex, pageSize);
        
        assertTrue(hits.data.isEmpty());
        
        
-       hits = searcher.findVisible("wanderland", visibility, sorting, asc, pageIndex, pageSize);
+       hits = searcher.findVisible("wanderland", "", "", "", "", "", visibility, sorting, asc, pageIndex, pageSize);
        assertEquals(1, hits.data.size());
        
     }    

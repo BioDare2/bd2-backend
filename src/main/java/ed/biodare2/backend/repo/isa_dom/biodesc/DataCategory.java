@@ -19,14 +19,14 @@ public enum DataCategory {
  
     //order mathers!!!! IN DB and JS side!!!!
     NONE("NONE","None",true), //NONE is here only to assure 1-based of numbering for the real values
-    EXPR_REPORTER("EXPR_REP","Expression reporter (e.g. Luc-imaging)"),
+    EXPR_REPORTER("EXPR_REP","Expression reporter (e.g. Luc/GFP-imaging)"),
     SIGNALLING_REPORTER("SIG_REP","Signalling reporter (e.g. Aequorin)"),
     DELAYED_FLUORESCENCE("DF","Delayed fluorescence"),
     LEAF_MOVEMENT("LEAF_MV","Leaf movement"),
     GEN_IMAGING("IMG","Other imaging"),
-    PROTEIN("PROT","Protein assay (e.g. Western blot)"),
-    TRANSCRIPT("RNA","RNA assay (e.g. qRT-PCR)"),
-    METABOLITE("MET","Metabolite assay (e.g. LC-MS)"),
+    PROTEIN("PROT","Protein levels (e.g. Western blot)"),
+    TRANSCRIPT("RNA","RNA levels (e.g. qRT-PCR)"),
+    METABOLITE("MET","Metabolite levels (e.g. LC-MS)"),
     BEHAVIOUR("BEHAVE","Behaviour (e.g. wheel running)"),
     PHYSIOLOGY("PHYS","Physiology (e.g. biomass)"),
     DEVELOPMENT("DEVEL","Development"),
