@@ -16,6 +16,7 @@ import ed.biodare2.backend.repo.ui_dom.exp.ExperimentSummary;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import ed.biodare2.backend.repo.ui_dom.shared.Page;
+import ed.biodare2.backend.repo.isa_dom.biodesc.DataCategory;
 import ed.biodare2.backend.web.tracking.ExperimentTracker;
 import java.util.List;
 import java.util.Map;
@@ -107,8 +108,19 @@ public class ExperimentController extends BioDare2Rest {
             @RequestParam(name="sorting", defaultValue = "modified") String sorting,
             @RequestParam(name="direction", defaultValue = "") String direction,            
             @NotNull @AuthenticationPrincipal BioDare2User user) {
-        
-        log.debug("search experiments, query: {}; {}",query,user);
+
+        log.debug("search experiments, query {}, data category {}, user {}", query, dataCategory, user);
+
+        DataCategory category = null;
+        if (dataCategory != null && !dataCategory.isBlank()) {
+            try {
+                category = DataCategory.fromShortName(dataCategory);
+            } catch (IllegalArgumentException e) {
+                log.warn("Unknown DataCategory shortName: {}", dataCategory);
+            }
+        }
+
+        String longName = (category != null) ? category.longName : "";
 
         try {
           
@@ -116,8 +128,8 @@ public class ExperimentController extends BioDare2Rest {
 
             SortOption sort = paramsToSort(sorting, direction);
             boolean ascending = "asc".equals(direction);
-            
-            ListWrapper<ExperimentalAssay> exps = handler.searchExperiments(query, species, author, fromCreationDate, toCreationDate, dataCategory, user, showPublic, sort, ascending, page);
+
+            ListWrapper<ExperimentalAssay> exps = handler.searchExperiments(query, species, author, fromCreationDate, toCreationDate, longName, user, showPublic, sort, ascending, page);
             page = exps.currentPage;
             
             List<ExperimentSummary> sums = exps.data.stream()

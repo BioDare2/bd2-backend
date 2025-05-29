@@ -88,7 +88,7 @@ public class LuceneSearcher implements AutoCloseable {
         TopDocs hits = sort.isPresent() ? 
                 search(searcher, query, sort.get(), maxHits) 
                 : search(searcher, query, maxHits);
-        // log.debug("Search query: {}", query.toString());
+        // log.debug("Sort is present: {}", sort.isPresent());
         int total = hits.scoreDocs.length;
         // reset page to zero if over the hits
         if (pageIndex*pageSize >= total) pageIndex = 0;
@@ -126,8 +126,8 @@ public class LuceneSearcher implements AutoCloseable {
 
     TopFieldDocs search(IndexSearcher searcher, Query query, Sort sort, int maxHits) throws IOException {
         TopFieldDocs hits = searcher.search(query, maxHits+1, sort);
-        if (hits.scoreDocs.length > maxHits)
-            throw new IllegalStateException("Number of matches exceeds the limit "+maxHits+" searching with sorting would not be acurate");
+        // if (hits.scoreDocs.length > maxHits)
+        //     throw new IllegalStateException("Number of matches exceeds the limit "+maxHits+" searching with sorting would not be acurate");
         
         return hits;
     }

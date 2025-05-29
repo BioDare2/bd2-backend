@@ -421,7 +421,7 @@ public class LuceneExperimentsSearcherTest {
         String author = "Tomasz";
         String fromCreationDate = "2020-01-01";
         String toCreationDate = "2025-01-01";
-        String dataCategory = "Expression reporter (e.g. Luc/GFP-imaging)";
+        String dataCategory = "Signalling reporter (e.g. Aequorin)";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;
@@ -450,7 +450,7 @@ public class LuceneExperimentsSearcherTest {
         String author = "Tomasz";
         String fromCreationDate = "2019-01-01";
         String toCreationDate = "2025-01-01";
-        String dataCategory = "Expression reporter (e.g. Luc/GFP-imaging)";
+        String dataCategory = "Signalling reporter (e.g. Aequorin)";
         
         ExperimentVisibility visibility = new ExperimentVisibility();
         visibility.showPublic = true;
