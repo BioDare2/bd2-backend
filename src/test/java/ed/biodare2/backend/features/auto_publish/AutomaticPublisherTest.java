@@ -87,34 +87,6 @@ public class AutomaticPublisherTest {
     @After
     public void tearDown() {
     }
-
-
-
-    /**
-     * Test of getCutoffDate method, of class AutomaticPublisher.
-     */
-    @Test
-    public void readsCutoffDateFromFile() throws IOException {
-
-        Optional<LocalDate> cutoff = handler.getCutoffDate(configFile.getParent().resolve("missing.txt"));
-        assertFalse(cutoff.isPresent());
-        
-        String confText = "PUBLISH_BEFORE: "+LocalDate.now();
-        Files.write(configFile, List.of(confText));
-        
-        cutoff = handler.getCutoffDate(configFile);
-        assertEquals(LocalDate.now(), cutoff.get());
-        
-        confText = "2024-03-05";
-        Files.write(configFile, List.of(confText));
-        try {
-            cutoff = handler.getCutoffDate(configFile);
-            fail("Exception expected");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "));
-        }
-        
-    }
     
     @Test
     public void getsExpIdsFromTheRepository() {

@@ -68,15 +68,11 @@ public class AutomaticPublisher {
     }
     
 
-    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)   //  
+    @Scheduled(fixedRate = 1000*60*60*2, initialDelay = 1000*60*2)   //  every 2 hours, starting after 2 minutes
     @Transactional
     public void trigerAutoPublishing() throws IOException {
 
-        Optional<LocalDate> cutoff = getCutoffDate(this.configFile);
-        if (cutoff.isEmpty()) {
-            log.info("Auto publisher did not found cutoff date in the config file: "+this.configFile);
-            return;
-        }
+        Optional<LocalDate> cutoff = Optional.of(java.time.LocalDate.now());
         
         logEmbargoUsers();
                 
@@ -114,25 +110,6 @@ public class AutomaticPublisher {
                 log.debug("Ignored publishing of exp: "+pack.get().getId()+" from: "+pack.get().getACL().getOwner().getLogin()+" created: "+" cutoff: "+cutoff);
                 return false;
             }
-    }    
-
-    Optional<LocalDate> getCutoffDate(Path configFile) throws IOException {
-        if (!Files.isRegularFile(configFile))
-            return Optional.empty();
-        
-        String configText = Files.readString(configFile);
-        if (!configText.startsWith(CUTOFF_PREFIX))
-            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
-
-        if (!configText.contains(":"))
-            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
-        
-        String[] parts = configText.split(":");
-        if (parts.length != 2)
-            throw new IllegalArgumentException("Expected "+CUTOFF_PREFIX+":YYYY-MM-DD not: "+ configText);
-        
-        String date = parts[1].trim();
-        return Optional.of(LocalDate.parse(date));
     }
 
     List<Long> getPublishingCandidates(LocalDate cutoff, int limit) {
