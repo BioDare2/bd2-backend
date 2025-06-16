@@ -11,6 +11,8 @@ import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -29,4 +31,8 @@ public interface UserAccountRep extends JpaRepository<UserAccount, Long> {
     List<UserAccount> findByLoginOrEmailOrInitialEmail(String identifier, String identifier0, String identifier1);
     
     List<UserAccount> findBySubscriptionKind(SubscriptionType subscription);
+    
+    @Modifying
+    @Query("UPDATE UserAccount u SET u.locked = false, u.failedAttempts = 0 WHERE u.locked = true")
+    void unlockExpiredAccounts();    
 }
