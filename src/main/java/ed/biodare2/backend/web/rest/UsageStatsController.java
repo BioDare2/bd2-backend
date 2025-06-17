@@ -162,9 +162,9 @@ public class UsageStatsController extends BioDare2Rest {
     }
 
     @RequestMapping(value="get_usage_stats", method=RequestMethod.GET)
-    public Map<String, List<?>> getUsageStats() throws IOException {
+    public Map<String, Object> getUsageStats() throws IOException {
         byte[] jsonData = Files.readAllBytes(jsonFilePath);
-        return objectMapper.readValue(jsonData, new TypeReference<Map<String, List<?>>>(){});
+        return objectMapper.readValue(jsonData, new TypeReference<Map<String, Object>>() {});
     }
     
     Stream<List<String>> getDataEntries(Stream<Long> ids) {

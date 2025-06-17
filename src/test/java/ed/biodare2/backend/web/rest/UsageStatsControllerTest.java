@@ -118,12 +118,13 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
 
         assertNotNull(resp);
 
-        Map<String, List<?>> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, List<?>>>() {});
+        Map<String, Object> result = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<Map<String, Object>>() {});
         
         assertNotNull(result);
-        assertTrue(result.containsKey("analytics"));
-        assertTrue(result.containsKey("year_stats"));
-        assertTrue(result.containsKey("species_stats"));
+        assertTrue(result.get("timestamp") instanceof String);
+        assertTrue(result.get("analytics") instanceof List);
+        assertTrue(result.get("year_stats") instanceof List);
+        assertTrue(result.get("species_stats") instanceof List);
     }
 
     @Test
