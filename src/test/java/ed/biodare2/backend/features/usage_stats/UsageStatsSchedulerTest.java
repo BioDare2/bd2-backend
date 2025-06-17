@@ -74,6 +74,7 @@ public class UsageStatsSchedulerTest {
         assertTrue(result.containsKey("analytics"));
         assertTrue(result.containsKey("year_stats"));
         assertTrue(result.containsKey("species_stats"));
+        assertTrue(result.containsKey("timestamp"));
 
         List<AnalyticsDataDTO> resultAnalytics = new ObjectMapper().convertValue(result.get("analytics"), new TypeReference<List<AnalyticsDataDTO>>() {});
         List<UsageStatsDTO> resultUsageStats = new ObjectMapper().convertValue(result.get("year_stats"), new TypeReference<List<UsageStatsDTO>>() {});
