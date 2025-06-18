@@ -9,6 +9,7 @@ import ed.biodare2.Fixtures;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
 import ed.biodare2.backend.security.dao.db.UserAccount;
+import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.After;
@@ -40,6 +41,9 @@ public class UserAccountRepTest {
     
     @Autowired
     UserAccountRep repository;
+    
+    @Autowired
+    private EntityManager em;    
     
     //@MockBean // neede cause main apps needs it and JPA profile does not set it
     //Jackson2ObjectMapperBuilder builder;
@@ -165,6 +169,38 @@ public class UserAccountRepTest {
         id = acc1.getInitialEmail();
         assertSame(acc1,repository.findByLoginOrEmailOrInitialEmail("X", "X", id).get(0));
     }
+    
+    @Test
+    public void unlockAccounts() {
+        
+        UserAccount acc1 = new UserAccount();
+        acc1.setLogin("lockylei1");
+        acc1.setFirstName("Test");
+        acc1.setLastName("User1");
+        acc1.setEmail("lock@test.ed");
+        acc1.setInitialEmail("lock@intial.test.ed");
+        acc1.setPassword("test");
+        acc1.setInstitution("University of Edinburgh");
+        acc1.setActivationDate(LocalDate.now());
+        acc1.setLocked(true);
+        acc1.setFailedAttempts(10);
+        
+        acc1 = repository.saveAndFlush(acc1);
+
+        acc1 = em.find(UserAccount.class,acc1.getId());
+        assertTrue(acc1.isLocked());
+        
+        repository.unlockExpiredAccounts();
+        repository.flush();
+        
+        em.clear();
+        
+        acc1 = em.find(UserAccount.class,acc1.getId());
+        assertFalse(acc1.isLocked());
+        assertEquals(0, acc1.getFailedAttempts());
+        
+    }
+    
     
     @Test
     public void findBySubscriptionKind() {

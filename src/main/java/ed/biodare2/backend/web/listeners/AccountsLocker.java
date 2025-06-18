@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  *
@@ -92,4 +93,12 @@ public class AccountsLocker {
             
         }
     }
+    
+    @Scheduled(fixedRate = 30*60*1000, initialDelay = 1*60*1000)
+    @Transactional
+    public void unlockAccounts() {
+        log.info("Unlocking accounts");
+        users.unlockExpiredAccounts();
+    }
+    
 }
