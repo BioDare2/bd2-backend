@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Date;
+import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,7 +44,7 @@ public class UsageStatsScheduler {
         List<AnalyticsDataDTO> analytics_data = usageStatsController.getAnalyticsData();
         List<UsageStatsDTO> statsByYear = usageStatsController.get_stats_by_year();
         List<SpeciesStatsDTO> speciesStats = usageStatsController.get_stats_by_species();
-        usage.put("timestamp", new Date().toString());
+        usage.put("timestamp", Instant.now().toString());
         usage.put("analytics", analytics_data);
         usage.put("year_stats", statsByYear);
         usage.put("species_stats", speciesStats);
