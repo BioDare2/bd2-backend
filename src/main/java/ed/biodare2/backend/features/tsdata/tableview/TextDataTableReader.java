@@ -45,7 +45,7 @@ public class TextDataTableReader implements DataTableReader {
         long separators = lines.stream().mapToInt(line -> countPresence(line, sep))
                 .sum();
         
-        return separators > 5;
+        return separators >= 5;
     }
     
     static int countPresence(String line, String sep) {
