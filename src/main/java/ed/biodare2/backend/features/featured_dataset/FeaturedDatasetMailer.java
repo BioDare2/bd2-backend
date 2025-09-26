@@ -44,8 +44,8 @@ public class FeaturedDatasetMailer {
         this.experimentalAssayRep = experimentalAssayRep;
     }
 
-    // @Scheduled(cron = "0 0 9 ? * MON")
-    @Scheduled(fixedRate = 1000 * 1000, initialDelay = 1000 * 5)  // every 5 seconds (for testing)
+    @Scheduled(cron = "0 0 9 ? * MON")
+    // @Scheduled(fixedRate = 1000 * 1000, initialDelay = 1000 * 5)  // every 5 seconds (for testing)
     @Transactional
     public void emailFeaturedDatasetAuthor() throws AccountHandlingException {
         Long dataset_id = null;
