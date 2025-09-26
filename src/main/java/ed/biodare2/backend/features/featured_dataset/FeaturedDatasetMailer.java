@@ -4,11 +4,14 @@ import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.services.mail.Mailer;
 import ed.biodare2.backend.handlers.UsersHandler.AccountHandlingException;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
+import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
+import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.web.rest.FeaturedDatasetController;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,22 +27,25 @@ public class FeaturedDatasetMailer {
     final Mailer mailer;
     final FeaturedDatasetController featured;
     final DBSystemInfoRep dbSystemInfoRep;
+    final ExperimentalAssayRep experimentalAssayRep;
 
     public FeaturedDatasetMailer(
         Mailer mailer,
         UserAccountRep users,
         FeaturedDatasetController featured,
-        DBSystemInfoRep dbSystemInfoRep
+        DBSystemInfoRep dbSystemInfoRep,
+        ExperimentalAssayRep experimentalAssayRep
     ) {
 
         this.mailer = mailer;
         this.users = users;
         this.featured = featured;
         this.dbSystemInfoRep = dbSystemInfoRep;
+        this.experimentalAssayRep = experimentalAssayRep;
     }
 
-    @Scheduled(cron = "0 0 9 ? * MON")
-    // @Scheduled(fixedRate = 1000 * 10, initialDelay = 1000 * 10)  // every 10 seconds (for testing)
+    // @Scheduled(cron = "0 0 9 ? * MON")
+    @Scheduled(fixedRate = 1000 * 1000, initialDelay = 1000 * 5)  // every 5 seconds (for testing)
     @Transactional
     public void emailFeaturedDatasetAuthor() throws AccountHandlingException {
         Long dataset_id = null;
@@ -57,29 +63,33 @@ public class FeaturedDatasetMailer {
             return;
         }
 
+        Optional<ExperimentalAssay> assayOpt = experimentalAssayRep.findOne(dataset_id);
+        ExperimentalAssay assay = null;
+        if (assayOpt.isPresent()) {
+            assay = assayOpt.get();
+        } else {
+            log.warn("No ExperimentalAssay found for dataset ID: " + dataset_id);
+            return;
+        }
+
         BioDare2User featured_user = info.getAcl().getOwner();
         log.info("Found featured dataset owner: " + featured_user.getLogin() + " for dataset ID: " + dataset_id);
 
-        sendFeaturedDatasetEmail(featured_user);
-        log.info("Sent featured dataset email to: " + featured_user.getEmail());
+        sendFeaturedDatasetEmail(featured_user, assay);
+        log.info("Sent featured dataset email to: " + featured_user.getEmail() + " for dataset ID: " + dataset_id);
     }
 
     @Transactional
-    public BioDare2User sendFeaturedDatasetEmail(BioDare2User user) throws AccountHandlingException {
-        // Needs a second input: the featured dataset info (id, title)
+    public BioDare2User sendFeaturedDatasetEmail(BioDare2User user, ExperimentalAssay assay) throws AccountHandlingException {
         
         String to = user.getEmail();
-        String subject = "BioDare2 password reset";
+        String subject = "Experiment featured on BioDare2!";
         String body = 
-                "Dear "+user.getName()+".\n"
-                +"Please use the link below to reset your password:\n\n"
-                ;
-        body += "------------------\n"
-                + "\n------------------\n"
-                + "If the link does not work please copy the whole text between ----- to your browser "
-                + "\n(it has to be one line no spaces so you may need to use an editor if your mail client scrambled it)"
-                +"\n\n"
-                + "All the best\nBioDare"
+                "Dear " + user.getName() + ",\n\n"
+                + "Your experiment \"" + assay.getName() + "\" is being featured on the BioDare2 homepage this week!\n\n"
+                + "Every week, we feature an experiment with high-quality metadata on our homepage.\n\n"
+                + "Many thanks for describing your experiment on BioDare2 and contributing to open science!\n\n"
+                + "All the best,\nBioDare"
                 ;
                 
         if (!mailer.send(to, subject, body)) {
