@@ -26,17 +26,25 @@ public class FeaturedDatasetController extends BioDare2Rest {
 
     @GetMapping("featured-dataset")
     public ResponseEntity<Long> getFeaturedDataset() {
+        try {
+            Long featuredId = getFeaturedDatasetId();
+            if (featuredId == null) return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(featuredId);
+        } catch (IOException e) {
+            log.error("Error reading curated datasets file: {}", curatedDatasetsFile, e);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    public Long getFeaturedDatasetId() throws IOException {
         try (var lines = Files.lines(curatedDatasetsFile)) {
             List<String> ids = lines
                     .map(String::trim)
                     .filter(l -> !l.isEmpty() && !l.startsWith("#"))
                     .collect(Collectors.toList());
             String pick = computeFeaturedIdForWeek(ids);
-            if (pick == null) return ResponseEntity.noContent().build();
-            return ResponseEntity.ok(Long.valueOf(pick));
-        } catch (IOException e) {
-            log.error("Error reading curated datasets file: {}", curatedDatasetsFile, e);
-            return ResponseEntity.internalServerError().build();
+            if (pick == null) return null;
+            return Long.valueOf(pick);
         }
     }
 

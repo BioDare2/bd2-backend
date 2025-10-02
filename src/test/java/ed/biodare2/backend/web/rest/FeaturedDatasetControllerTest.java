@@ -17,7 +17,7 @@ class FeaturedDatasetControllerTest {
     Path tmp;
 
     @Test
-    void returnsDeterministicIdFromFile() throws IOException {
+    void getFeaturedDataset_returnsDeterministicIdFromFile() throws IOException {
         Path file = tmp.resolve("curated.txt");
         Files.writeString(file, """
                 # Comment line
@@ -29,12 +29,10 @@ class FeaturedDatasetControllerTest {
 
         FeaturedDatasetController ctrl = new FeaturedDatasetController(file.toString());
 
-        // Call endpoint
         ResponseEntity<Long> resp = ctrl.getFeaturedDataset();
         assertEquals(HttpStatus.OK, resp.getStatusCode());
         assertNotNull(resp.getBody());
 
-        // Reproduce expected using same logic
         List<String> ids = Files.readAllLines(file).stream()
                 .map(String::trim)
                 .filter(l -> !l.isEmpty() && !l.startsWith("#"))
@@ -48,7 +46,7 @@ class FeaturedDatasetControllerTest {
     }
 
     @Test
-    void returnsSingleIdIfOnlyOnePresent() throws IOException {
+    void getFeaturedDataset_returnsSingleIdIfOnlyOnePresent() throws IOException {
         Path file = tmp.resolve("one.txt");
         Files.writeString(file, "99999\n");
         FeaturedDatasetController ctrl = new FeaturedDatasetController(file.toString());
@@ -59,7 +57,7 @@ class FeaturedDatasetControllerTest {
     }
 
     @Test
-    void returnsNoContentIfNoUsableIds() throws IOException {
+    void getFeaturedDataset_returnsNoContentIfNoUsableIds() throws IOException {
         Path file = tmp.resolve("empty.txt");
         Files.writeString(file, """
                 # only comments
@@ -71,6 +69,24 @@ class FeaturedDatasetControllerTest {
         ResponseEntity<Long> resp = ctrl.getFeaturedDataset();
         assertEquals(HttpStatus.NO_CONTENT, resp.getStatusCode());
         assertNull(resp.getBody());
+    }
+
+    @Test
+    void getFeaturedDataset_returnsInternalServerErrorOnIOException() {
+        // Use a non-existent file to trigger IOException
+        FeaturedDatasetController ctrl = new FeaturedDatasetController("/non/existent/file.txt");
+        ResponseEntity<Long> resp = ctrl.getFeaturedDataset();
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, resp.getStatusCode());
+        assertNull(resp.getBody());
+    }
+
+    @Test
+    void getFeaturedDatasetId_handlesNullOrEmpty() throws IOException {
+        // Simulate empty file by creating a temp file with only comments
+        Path file = tmp.resolve("empty2.txt");
+        Files.writeString(file, "# comment\n");
+        FeaturedDatasetController ctrl2 = new FeaturedDatasetController(file.toString());
+        assertNull(ctrl2.getFeaturedDatasetId());
     }
 
     @Test
