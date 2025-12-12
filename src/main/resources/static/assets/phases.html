@@ -4,7 +4,7 @@
     Since we recommend using more than one method, some unified way of treating phases was necessary.
   </p>
 
-  <h4>Phase range</h4>
+  <h3>Phase range</h3>
   <p>First to note is that, phases now are always reported in the range from 0 to period:<br/>
     <code>phase ϵ [0,period)</code><br/>
   so it should roughly coincide with the time of the peak.
@@ -16,7 +16,7 @@
     and observe peaks in data at time 4, 28, 52, then the phase would be 4 (for example like for CCA1).
     If your data peaks at 18, 42, 66, 90, then your phase would be 18 (for example like for TOC1).
 </p>
-  <h4>Phase relation</h4>
+  <h3>Phase relation</h3>
 
   <p>But what if the data starts at 30h or was analysed with data window from 30.
     Since, the data are periodic, and the period is already estimated, it is possible to back calculate the data to the 0.
@@ -56,12 +56,12 @@
   </ul>
 
 
-  <h4>Phase units</h4>
+  <h3>Phase units</h3>
   <p>Phase can be reported in <code>absolute</code> (simple hours) or <code>circadian units</code>. Circadian unit is 1/24 of the free running period and it allows
   comparison of peaking times independently of the period. For example if WT has period of 24h and peak time (phase) at 6, while the toc1 mutant
   has period of 20h and peak time at 5, then both lines have the same phase in circadian units (6) as they peak at 1/4 at their respective oscilation circle.</p>
 
-  <h4>Phase calculation</h4>
+  <h3>Phase calculation</h3>
   <p>But how the phase is calculated, there are 4 possible options,
 </p>
 
@@ -89,7 +89,7 @@
 </li>
   </ul>
 
-  <h4>Amplitude</h4>
+  <h3>Amplitude</h3>
   <p>Amplitude depends on the estimation method for the phase:</p>
 
   <ul>
