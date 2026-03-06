@@ -1,1 +1,0 @@
-import{d as e}from"./chunk-PC2IDAPI.js";import{c as n}from"./chunk-NWNPCRAQ.js";import{W as r,Z as a}from"./chunk-SK3BANDA.js";var p=(()=>{let t=class t{constructor(o){this.dialog=o}show(o){this.dialog.open(e,{data:{docName:o}})}};t.\u0275fac=function(c){return new(c||t)(a(n))},t.\u0275prov=r({token:t,factory:t.\u0275fac,providedIn:"root"});let i=t;return i})();export{p as a};
