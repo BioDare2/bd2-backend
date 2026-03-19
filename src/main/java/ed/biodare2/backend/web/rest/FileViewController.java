@@ -7,6 +7,7 @@ package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.services.upload_guard.UserUploadGuard;
 import ed.biodare2.backend.features.tsdata.dataimport.ExcelTableSimplifier;
 import ed.biodare2.backend.features.tsdata.dataimport.FileFormatVerifier;
 import ed.biodare2.backend.features.tsdata.dataimport.TableSimplifier;
@@ -21,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -49,15 +49,19 @@ public class FileViewController extends BioDare2Rest {
     
     final FileFormatVerifier formatVerifier;
     final FileTracker tracker;
+    final UserUploadGuard uploadguard;
     
     @Autowired
-    public FileViewController(FileUploadHandler handler,FileTracker tracker) {
+    public FileViewController(FileUploadHandler handler,
+			      FileTracker tracker,
+			      UserUploadGuard uploadguard) {
         this.handler = handler;
         this.excelSimplifier = new ExcelTableSimplifier();
         this.topcountSimplifier = new TopCountTableSimplifier();
         this.formatVerifier = new FileFormatVerifier();
         this.tracker = tracker;
         this.tableSlicer = new DataTableSlicer();
+	this.uploadguard = uploadguard;
     }
 
     @RequestMapping(value = "{fileId}/view/simpletable",method = RequestMethod.GET)
@@ -126,16 +130,17 @@ public class FileViewController extends BioDare2Rest {
         
     }   
     
-
-    
-    
     @RequestMapping(value = "{fileId}/verify/format/{format}",method = RequestMethod.GET)
     public boolean verifyFormat(@PathVariable String fileId, @PathVariable @NotNull ImportFormat format,
             @NotNull @AuthenticationPrincipal BioDare2User user) {
         
         log.debug("verify format: {} file:{}; {}",format,fileId,user);
-        
-        
+
+	Long userId = user.getId();
+
+	if (!uploadguard.isOwnedBy(userId, fileId)) {
+	    throw new HandlingException("This file is not the active upload for this user");
+	}
         
         Path file = handler.get(fileId, user);
         if (!Files.isRegularFile(file)) {
@@ -146,6 +151,7 @@ public class FileViewController extends BioDare2Rest {
         try {
             tracker.fileFormatCheck(fileId,format,user);
             formatVerifier.verify(file, format);
+	    log.debug("verify format finished: {} file:{}; {}",format,fileId,user);
             return true;
         } catch (FormatException e) {
             log.warn("FormatException {}", e.getMessage());
@@ -156,7 +162,9 @@ public class FileViewController extends BioDare2Rest {
         } catch (Exception e) {
             log.error("Cannot verify format: {} {} {}",fileId,format,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
-        } 
+        } finally {
+	    uploadguard.finish(userId);
+	}
         
     }    
 
@@ -167,8 +175,6 @@ public class FileViewController extends BioDare2Rest {
             default: throw new HandlingException("Unsuported format: "+format);
         }
     }
-    
- 
     
     protected ImportFormat getFormat(Path file) throws IOException {
         
@@ -184,6 +190,5 @@ public class FileViewController extends BioDare2Rest {
         
         throw new HandlingException("Cannot guess file format");
         
-    }    
-
+    }
 }

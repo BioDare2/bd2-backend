@@ -8,6 +8,7 @@ package ed.biodare2.backend.web.rest;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.security.BioDare2User;
+import ed.biodare2.backend.services.upload_guard.UserUploadGuard;
 import ed.biodare2.backend.web.tracking.FileTracker;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,33 +30,47 @@ public class FileUploadController extends BioDare2Rest {
    
     final FileUploadHandler handler;
     final FileTracker tracker;
+    final UserUploadGuard uploadguard;
     
     @Autowired
-    public FileUploadController(FileUploadHandler handler,FileTracker tracker) {
+    public FileUploadController(FileUploadHandler handler,
+				FileTracker tracker,
+				UserUploadGuard uploadguard) {
         this.handler = handler;
         this.tracker = tracker;
+	this.uploadguard = uploadguard;
     }
 
     @RequestMapping(path = "one",method = RequestMethod.POST)
     public UploadFileInfo uploadFile(@RequestParam("file") MultipartFile fileInfo,@NotNull @AuthenticationPrincipal BioDare2User user) {
-        log.debug("Upload file: {} size: {}; {}",fileInfo.getOriginalFilename(),fileInfo.getSize(),user);
         
         if (user.isAnonymous())
             throw new LogginRequiredException("Loggin to upload file");
+
+	Long userId = user.getId();
+
+	if (!uploadguard.tryReserve(userId)) {
+	    log.debug("Refused concurrent upload: {} size: {}; {}",fileInfo.getOriginalFilename(),fileInfo.getSize(), user);
+	    throw new HandlingException("Another upload is already being processed for this user");
+	}
+
+	log.debug("Upload file: {} size: {}; {}",fileInfo.getOriginalFilename(),fileInfo.getSize(),user);
         
         try {
-        UploadFileInfo info = handler.save(fileInfo, user);
-        tracker.fileUpload(info,user);
-        
-        return info;
+	    UploadFileInfo info = handler.save(fileInfo, user);
+	    uploadguard.bindFile(userId, info.id);
+	    
+	    tracker.fileUpload(info,user);
+	    return info;
         } catch(WebMappedException e) {
+	    uploadguard.finish(userId);
             log.error("Cannot upload file {}",e.getMessage(),e);
             throw e;
         } catch (Exception e) {
+	    uploadguard.finish(userId);
             log.error("Cannot upload file {}",e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
-        
     }
     
     

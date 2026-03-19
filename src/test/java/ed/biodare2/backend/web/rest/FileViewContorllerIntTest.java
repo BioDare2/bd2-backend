@@ -7,6 +7,7 @@ package ed.biodare2.backend.web.rest;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
+import ed.biodare2.backend.services.upload_guard.UserUploadGuard;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
 import ed.biodare2.backend.features.tsdata.tableview.Slice;
 import ed.biodare2.backend.handlers.FileUploadHandler;
@@ -51,6 +52,9 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
     @Autowired
     FileUploadHandler handler;
 
+    @Autowired
+    UserUploadGuard uploadguard;
+
     UploadFileInfo uploaded;
     
     @Before
@@ -59,11 +63,7 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
     
         super.setUp();
         
-        
-        /*InputStream in = this.getClass().getResourceAsStream("data-sheet.xlsx");
-        MockMultipartFile upload = new MockMultipartFile("file", "original", "text", in);
-        uploaded = handler.save(upload, currentUser);
-        */
+        uploadguard.finish(currentUser.getId());
         
         uploaded = upload("data-sheet.xlsx");
     }
@@ -81,7 +81,13 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         MockMultipartFile upload = new MockMultipartFile("file", "original", "text", in);
 
         return handler.save(upload, currentUser);        
-    }    
+    }
+
+    protected void bindUploadGuard(UploadFileInfo uploaded) {
+	uploadguard.finish(currentUser.getId());
+	assertTrue(uploadguard.tryReserve(currentUser.getId()));
+	uploadguard.bindFile(currentUser.getId(), uploaded.id);
+    }
     
     @Test
     public void getSimpleTableViewWorksOnExcel() throws Exception {
@@ -167,6 +173,8 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
     public void verifyGivesTrueOnValidExcelFile() throws Exception {
 
         ImportFormat format = ImportFormat.EXCEL_TABLE;
+	bindUploadGuard(uploaded);
+	
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/"+uploaded.id+"/verify/format/"+format.name())
                 .accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
@@ -176,18 +184,16 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
                 .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
                 .andReturn();
 
-        assertNotNull(resp);
-        //System.out.println("Verify JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
-        
+        assertNotNull(resp);        
         assertEquals("true",resp.getResponse().getContentAsString());
-                
-    }   
+    }
     
     @Test
     public void verifyGivesTrueOnValidTopcountFile() throws Exception {
 
         ImportFormat format = ImportFormat.TOPCOUNT;
         uploaded = upload("col1609.zip");
+	bindUploadGuard(uploaded);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/"+uploaded.id+"/verify/format/"+format.name())
                 .accept(APPLICATION_JSON_UTF8)
@@ -215,6 +221,7 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         //MockMultipartFile upload = new MockMultipartFile("file", "original", "text", in);
         //uploaded = handler.save(upload, currentUser);
         uploaded = upload("signs.csv");
+	bindUploadGuard(uploaded);
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/"+uploaded.id+"/verify/format/"+format.name())
                 .accept(APPLICATION_JSON_UTF8)
@@ -390,6 +397,5 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         
         assertEquals("Time", dataSlice.data.get(0).get(0));
         
-    }    
-    
+    }
 }

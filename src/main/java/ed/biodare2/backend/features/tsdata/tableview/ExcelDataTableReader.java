@@ -22,8 +22,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
  */
 public class ExcelDataTableReader implements DataTableReader {
 
-
-    
     
     final Path file;
     Pair<Integer, Integer> rowsColsSize;    
@@ -38,7 +36,7 @@ public class ExcelDataTableReader implements DataTableReader {
     } 
     
     public static Optional<String> checkFormatError(Path file) throws IOException {
-        
+
         if (!ModernExcelView.isExcelFile(file)) return Optional.of("wrong content");
         ExcelDataTableReader reader = new ExcelDataTableReader(file);
         List<List<Object>> records = reader.readRecords(0, 5);
@@ -145,12 +143,5 @@ public class ExcelDataTableReader implements DataTableReader {
         public void close() throws IOException {
             excel.close();
         }
-        
-        
     }
-    
-    
-
-    
-    
 }
