@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "Please cite BioDare2 with its website: biodare2.ed.ac.uk and the following article."
+authors:
+- family-names: "Zielinski"
+  given-names: "Tomasz"
+  orcid: "https://orcid.org/0000-0002-0194-5706"
+- family-names: "Thédié"
+  given-names: "Daniel"
+  orcid: "https://orcid.org/0000-0002-1352-7245"
+- family-names: "Millar"
+  given-names: "Andrew"
+  orcid: "https://orcid.org/0000-0003-1756-3654"
+title: "BioDare2"
+date-released: 2017-01-01
+url: "https://biodare2.ed.ac.uk"
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Zielinski"
+    given-names: "Tomasz"
+    orcid: "https://orcid.org/0000-0002-0194-5706"
+  - family-names: "Hay"
+    given-names: "Johnny"
+    orcid: "https://orcid.org/0000-0001-9685-3718"
+  - family-names: "Millar"
+    given-names: "Andrew"
+    orcid: "https://orcid.org/0000-0003-1756-3654"
+  doi: "10.1007/978-1-0716-1912-4_2"
+  journal: "Plant Circadian Networks"
+  month: 10
+  start: 15 # First page number
+  end: 32 # Last page number
+  title: "Period Estimation and Rhythm Detection in Timeseries Data Using BioDare2, the Free, Online, Community Resource"
+  volume: 2398
+  year: 2022
