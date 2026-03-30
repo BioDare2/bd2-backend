@@ -5,10 +5,7 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -21,24 +18,24 @@ public class CellRangeDescription implements Serializable {
    
     static final long serialVersionUID = 11L;
   
-public CellRange range;
-public CellRole role;
-public RangeDetails details;
+    public CellRange range;
+    public CellRole role;
+    public RangeDetails details;
 
-//ingored used only on JS site
-private String content;    
+    //ingored used only on JS site
+    private String content;    
 
-/*
-@JsonProperty("details")
-public void setValue(JsonNode jsonNode) {
+    /*
+      @JsonProperty("details")
+      public void setValue(JsonNode jsonNode) {
         
     
-    if (jsonNode.isTextual()) {
-        this.value = jsonNode.textValue();
-    } else {
-        this.value = jsonNode.toString();
-    }
-}*/
+      if (jsonNode.isTextual()) {
+      this.value = jsonNode.textValue();
+      } else {
+      this.value = jsonNode.toString();
+      }
+      }*/
 
     @Override
     public int hashCode() {
@@ -70,7 +67,4 @@ public void setValue(JsonNode jsonNode) {
         }
         return true;
     }
-
-
-
 }

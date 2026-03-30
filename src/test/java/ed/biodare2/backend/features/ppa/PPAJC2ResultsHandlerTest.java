@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.features.ppa;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.PPAJobResults;
 import ed.biodare.jobcentre2.dom.State;
@@ -31,7 +32,6 @@ import ed.biodare2.backend.repo.system_dom.MockExperimentPack;
 import ed.biodare2.backend.web.rest.HandlingException;
 import ed.robust.dom.data.DetrendingType;
 
-
 import ed.robust.dom.tsprocessing.FFT_PPA;
 import ed.robust.dom.tsprocessing.FailedPPA;
 import ed.robust.dom.tsprocessing.GenericPPAResult;
@@ -45,7 +45,6 @@ import ed.robust.dom.tsprocessing.StatsEntryContainer;
 import ed.robust.dom.tsprocessing.WeightingType;
 import ed.robust.dom.util.ComplexId;
 import ed.robust.dom.util.ListMap;
-
 
 import ed.robust.ppa.PPAMethod;
 import java.io.File;
@@ -65,12 +64,12 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -84,9 +83,10 @@ public class PPAJC2ResultsHandlerTest {
     
     public PPAJC2ResultsHandlerTest() {
     }
+
+    @TempDir
+    Path testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
     Path expDir;
     
     PPAJC2ResultsHandler instance;
@@ -95,22 +95,21 @@ public class PPAJC2ResultsHandlerTest {
     TSDataHandler dataHandler;
     ExperimentsStorage expStorage;
     
-    @Before
+    @BeforeEach
     public void init() throws IOException {
         dataHandler = mock(TSDataHandler.class);
         
-        expDir = testFolder.newFolder().toPath();
+        expDir = testFolder.resolve("test");
         //expDir = Paths.get("D:/Temp/ppaResTest");
         //Files.createDirectories(expDir);
         
         expStorage = mock(ExperimentsStorage.class);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules(); 
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         ppaRep = new PPAArtifactsRepJC2(expStorage, mapper);        
         instance = new PPAJC2ResultsHandler(ppaRep, dataHandler);
-    }   
+    }
     
     
 
@@ -208,7 +207,7 @@ public class PPAJC2ResultsHandlerTest {
     }    
     
     @Test
-    @Ignore("Test reasults are not implemetend after migration")
+    @Disabled("Test results are not implemetend after migration")
     public void handleResultsSavesTheResults() throws ArgumentException, IOException {
         
 

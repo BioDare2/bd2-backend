@@ -5,9 +5,10 @@
  */
 package ed.biodare2.backend.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare2.EnvironmentVariables;
 
 import ed.biodare2.backend.web.rest.DeniedAccessException;
@@ -127,7 +128,7 @@ public class FileUploadHandler {
                 throw new NotFoundException("Upload: "+uploadId);
 
             return infoReader.readValue(infoFile.toFile());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.error("Cannot get uploaded file {}: {}",uploadId,e.getMessage(),e);
             throw new NonTransientDataAccessException("Cannot get uploaded file: "+e.getMessage(),e) {
             };

@@ -5,9 +5,10 @@
  */
 package ed.biodare2.backend.features.rdmsocial.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
@@ -69,7 +70,6 @@ public class RDMAssetsAspectRep {
     public RDMAssetsAspect save(RDMAssetsAspect aspect) throws ServerSideException {
        return resourceGuard.guard(aspect.parentId, (id) -> {
             try {
-
                 Path storageDir = getStorageDir(aspect.parentId, aspect.entityType);
                 Path file = getAspectFile(storageDir);
 
@@ -78,7 +78,7 @@ public class RDMAssetsAspectRep {
                 */
                 aspectWriter.writeValue(file.toFile(), aspect);
                 return aspect;
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot access system info: "+e.getMessage(),e);
             }
        });
@@ -103,25 +103,17 @@ public class RDMAssetsAspectRep {
     }
 
     protected Optional<RDMAssetsAspect> readAspect(long parentId,Path storageDir) {
-        
-        
-        
        return resourceGuard.guard(parentId, (id) -> {
             try {
-
                 Path file = getAspectFile(storageDir);
                 if (!Files.exists(file))
                     return Optional.<RDMAssetsAspect>empty();
                 
                 RDMAssetsAspect asp = aspectReader.readValue(file.toFile());
                 return Optional.of(asp);
-                
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot access system info: "+e.getMessage(),e);
             }
        });
-        
     }
-    
-    
 }

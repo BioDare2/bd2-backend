@@ -6,9 +6,10 @@
 package ed.biodare2.backend.features.ppa.dao;
 
 import ed.biodare2.backend.repo.dao.*;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import ed.biodare.jobcentre2.dom.PPAJobResults;
@@ -134,8 +135,6 @@ public class PPAArtifactsRepJC2 {
     public PPAArtifactsRepJC2(ExperimentsStorage expStorage, @Qualifier("DomMapper") ObjectMapper mapper) {
         this.expStorage = expStorage;
         
-
-        
         this.groupSummaryReader = mapper.readerFor(PPAJobResultsGroups.class);
         this.groupSummaryWriter = mapper.writerFor(PPAJobResultsGroups.class);        
         this.simpleStatsReader = mapper.readerFor(PPAJobSimpleStats.class);
@@ -168,12 +167,10 @@ public class PPAArtifactsRepJC2 {
     protected void clearCaches() {
         jobDirCache.invalidateAll();
         jobSummaryCache.invalidateAll();
-        
     }
     
     public void clearAllPPAArtefacts(AssayPack exp)   {
 
-        
         guard.guard(exp.getId(),()-> {
 
             try {
@@ -189,9 +186,7 @@ public class PPAArtifactsRepJC2 {
             } catch (IOException e) {
                 throw new ServerSideException("Cannot clear containers: "+e.getMessage(),e);
             }
-
         });
-        
     }
 
     public void deleteJobArtefacts(AssayPack exp, UUID jobId) {
@@ -204,7 +199,6 @@ public class PPAArtifactsRepJC2 {
         });
     }
     
-    
     public Path saveJC2JobRawResults(PPAJobResults results, UUID jobId, AssayPack exp,boolean overwrite)  {
         
         if (!jobId.equals(results.jobId)) {
@@ -212,7 +206,6 @@ public class PPAArtifactsRepJC2 {
         }
         
         return guard.guard(exp.getId(),(id)-> {
-
         
         try {
         
@@ -220,7 +213,6 @@ public class PPAArtifactsRepJC2 {
             
             String fName = "res."+jobId+".json";
             Path file = jobDir.resolve(fName);
-            
             
             if (!overwrite && Files.exists(file)) throw new IOException("Results file already exists: "+file);
 
@@ -232,7 +224,6 @@ public class PPAArtifactsRepJC2 {
                 throw new ServerSideException("Cannot save jobsresults containers: "+e.getMessage(),e);
             }
         });
-    
     }
     
     public void saveFits(Map<Long, TimeSeries> fits, UUID jobId, AssayPack exp)  {
@@ -240,8 +231,6 @@ public class PPAArtifactsRepJC2 {
         guard.guard(exp.getId(),()-> {
             
             try {
-
-        
             //Path ppaDir = getPPADir(exp);
             Path jobDir = getJobDir(exp.getId(), jobId);
             
@@ -312,7 +301,6 @@ public class PPAArtifactsRepJC2 {
         }
     }
     
-    
     public void saveJobFullStats(StatsEntry stats, AssayPack exp, UUID jobId)  {
         
         if (!jobId.equals(stats.getUuid())) {
@@ -324,14 +312,12 @@ public class PPAArtifactsRepJC2 {
         try {
         
             Path jobStatsFile = jobFullStatsFile(exp.getId(), jobId);
-            
-            
             //stats.setJobId(jobId);
         
             fullStatsWriter.writeValue(jobStatsFile.toFile(), stats);
             //simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
         
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save full stats stats: "+e.getMessage(),e);
             }
         });
@@ -355,10 +341,9 @@ public class PPAArtifactsRepJC2 {
             
             Path jobFile = jobSummaryFile(expId, job.jobId);
             
-        
             jobSummaryWriter.writeValue(jobFile.toFile(),job);
         
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save job simple summary: "+e.getMessage(),e);
             }
     }     
@@ -372,12 +357,11 @@ public class PPAArtifactsRepJC2 {
         guard.guard(exp.getId(),()-> {
             
         try {
-        
             Path jobStatsFile = jobSimpleStatsFile(exp.getId(), jobId);
                        
             simpleStatsWriter.writeValue(jobStatsFile.toFile(),stats);
         
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save job simple stats: "+e.getMessage(),e);
             }
         });
@@ -392,12 +376,11 @@ public class PPAArtifactsRepJC2 {
         guard.guard(exp.getId(),()-> {
             
         try {
-        
             Path resFile = jobSimpleResultsFile(exp.getId(), jobId);
             
             simpleResultsWriter.writeValue(resFile.toFile(),res);
         
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save job simple results: "+e.getMessage(),e);
             }
         });
@@ -412,12 +395,10 @@ public class PPAArtifactsRepJC2 {
         guard.guard(experiment.getId(),(id)-> {
           
         try {
-        
             Path jobResultsFile = jobGroupedResultsFile(experiment.getId(), jobId);
-            
             groupSummaryWriter.writeValue(jobResultsFile.toFile(),results);
 
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot save results: "+e.getMessage(),e);
         }
         }); 
@@ -430,7 +411,6 @@ public class PPAArtifactsRepJC2 {
         return guard.guard(exp.getId(),(id)-> {
 
         try {
-        
             //Path ppaDir = getPPADir(exp);            
             Path jobStatsFile = jobFullStatsFile(exp.getId(),jobId); 
             if (!Files.exists(jobStatsFile)) {
@@ -440,17 +420,14 @@ public class PPAArtifactsRepJC2 {
             //StatsEntry entry = xmlUtil.readFromFile(jobStatsFile, StatsEntry.class);
             StatsEntry entry = fullStatsReader.readValue(jobStatsFile.toFile());
             return entry;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot read job full stats: "+e.getMessage(),e);
         }            
         });  
-        
     }
     
     public Optional<PPAJobSummary> getJobSummary(AssayPack exp, UUID jobId)  {
-
         return jobSummaryCache.get(new ExpJobKey(exp.getId(), jobId));
-        
     }
     
     
@@ -470,39 +447,34 @@ public class PPAArtifactsRepJC2 {
             }            
             PPAJobSummary entry = jobSummaryReader.readValue(jobFile.toFile());
             return Optional.of(entry);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot read job summary: "+e.getMessage(),e);
         }
         
     }
     
     public PPAJobSimpleStats getJobSimpleStats(AssayPack exp, UUID jobId)  {
-
         return guard.guard(exp.getId(),(id)-> {
-
+		try {
         
-        try {
-        
-            //Path ppaDir = getPPADir(exp);            
-            Path jobStatsFile = jobSimpleStatsFile(exp.getId(),jobId); 
-            if (!Files.exists(jobStatsFile)) {
-                log.warn("Stats asked from not existing container in exp: {} {}",exp.getId(), jobId);
-                return new PPAJobSimpleStats(jobId);
-            }            
-            PPAJobSimpleStats entry = simpleStatsReader.readValue(jobStatsFile.toFile());
-            return entry;
-        } catch (IOException e) {
-            throw new ServerSideException("Cannot read stats: "+e.getMessage(),e);
-        }
-        });  
-        
+		    //Path ppaDir = getPPADir(exp);            
+		    Path jobStatsFile = jobSimpleStatsFile(exp.getId(),jobId); 
+		    if (!Files.exists(jobStatsFile)) {
+			log.warn("Stats asked from not existing container in exp: {} {}",exp.getId(), jobId);
+			return new PPAJobSimpleStats(jobId);
+		    }            
+		    PPAJobSimpleStats entry = simpleStatsReader.readValue(jobStatsFile.toFile());
+		    return entry;
+		} catch (JacksonException e) {
+		    throw new ServerSideException("Cannot read stats: "+e.getMessage(),e);
+		}
+	    });  
     }
 
     public PPAJobSimpleResults getJobSimpleResults(AssayPack exp, UUID jobId)  {
 
         return guard.guard(exp.getId(),(id)-> {
 
-        
         try {
         
             //Path ppaDir = getPPADir(exp);            
@@ -513,7 +485,7 @@ public class PPAArtifactsRepJC2 {
             }            
             PPAJobSimpleResults entry = simpleResultsReader.readValue(resFile.toFile());
             return entry;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot read results: "+e.getMessage(),e);
         }
         });  
@@ -524,7 +496,6 @@ public class PPAArtifactsRepJC2 {
         return guard.guard(experiment.getId(),(id)-> {
           
         try {
-        
             //Path ppaDir = getPPADir(experiment);
             Path jobResultsFile = jobGroupedResultsFile(experiment.getId(), jobId);
             if (!Files.exists(jobResultsFile)) return new PPAJobResultsGroups(jobId);
@@ -532,19 +503,16 @@ public class PPAArtifactsRepJC2 {
             PPAJobResultsGroups entry = groupSummaryReader.readValue(jobResultsFile.toFile());
             return entry;
 
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot read results: "+e.getMessage(),e);
         }
         }); 
-            
-        
     }
     
     public void saveJobIndResults(List<PPAFullResultEntry> results, AssayPack exp, UUID jobId) {
         guard.guard(exp.getId(),()-> {
             
         try {
-        
             //Path ppaDir = getPPADir(exp);
             Path resFile = jobIndResultsFile(exp.getId(), jobId);
             
@@ -552,7 +520,7 @@ public class PPAArtifactsRepJC2 {
             
             fullResultsWriter.writeValue(resFile.toFile(),container);
         
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save job ind results: "+e.getMessage(),e);
             }
         });
@@ -572,14 +540,13 @@ public class PPAArtifactsRepJC2 {
 
                 PPAJobIndResults container = fullResultsReader.readValue(jobIndResultsFile.toFile());
                 return container.results;
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot read results: "+e.getMessage(),e);
             }        
         });
     }    
     
     protected Path getPPADir(AssayPack exp) {
-        
         return getPPADir(exp.getId());
     } 
     

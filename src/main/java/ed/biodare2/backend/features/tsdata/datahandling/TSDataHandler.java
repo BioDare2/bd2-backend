@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.datahandling;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;

@@ -5,9 +5,9 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
 import ed.biodare2.backend.repo.system_dom.EntityType;
@@ -48,8 +48,6 @@ public class SystemInfoRep {
     
     //final XMLUtil xmlUtil = new XMLUtil();
     
-    
-    
     @Autowired
     public SystemInfoRep(ExperimentsStorage expStorage,@Qualifier("DomMapper") ObjectMapper mapper) {
         this.expStorage = expStorage;
@@ -58,8 +56,6 @@ public class SystemInfoRep {
         this.infoReader = mapper.readerFor(SystemInfo.class);
         this.infoWriter = mapper.writerFor(SystemInfo.class);        
     }
-    
-  
 
     @Cacheable(key="{#parentId,#type}",unless="#result == null")
     public Optional<SystemInfo> findByParent(long parentId,EntityType type)  {
@@ -91,7 +87,6 @@ public class SystemInfoRep {
        });
     }
     
-    
     protected Optional<SystemInfo> findSysInfo(long expId,Path systemDir)  {
         
        return resourceGuard.guard(expId, (id) -> {
@@ -110,9 +105,6 @@ public class SystemInfoRep {
             }
        });
     }    
-    
-     
-    
     
     protected Path getSystemDir(long expId,EntityType type)  {
         
@@ -138,8 +130,4 @@ public class SystemInfoRep {
         String name = expId+SYSTEM_SUFFIX;
         return systemDir.resolve(name);
     }
-
-
-
-    
 }

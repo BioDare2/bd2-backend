@@ -6,7 +6,7 @@
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 //import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 import java.io.Serializable;
 //import javax.xml.bind.annotation.XmlSeeAlso;
 

@@ -5,9 +5,10 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -173,7 +174,7 @@ public class ExperimentalAssayRep {
         
         try {
             return expReader.readValue(expFile.toFile());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.error("Cannot read experiment from {} : {}",expFile,e.getMessage(),e);
             throw new DataRetrievalFailureException("Cannot read experiment from json: "+e.getMessage(),e);
         }
@@ -182,7 +183,7 @@ public class ExperimentalAssayRep {
     protected void writeToFile(ExperimentalAssay exp, Path expFile) {
         try {
             expWriter.writeValue(expFile.toFile(), exp);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             log.error("Cannot write experiment {} to {} : {}",exp.getId(),expFile,e.getMessage(),e);
             throw new NonTransientDataAccessException("Cannot create experiment resource: "+e.getMessage(),e) {
             };

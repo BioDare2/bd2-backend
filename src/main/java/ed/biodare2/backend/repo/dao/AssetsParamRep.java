@@ -5,10 +5,10 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
@@ -75,13 +75,12 @@ public class AssetsParamRep {
         String fileName = assetIdsToName(assetId,versionId);
         Path file = paramsDir.resolve(fileName);
         
-        
         AssetParams params = new AssetParams(assetId,versionId);
         params.paramsClass = parameters.getClass().getName();
         
         try {
             params.params = mapper.writeValueAsString(parameters);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot save parameters for asset: "+assetId+"; "+e.getMessage(),e);
         }
         
@@ -92,8 +91,6 @@ public class AssetsParamRep {
 
             saveParamsInfo(params,file);
         });
-        
-        
     }
     
     public <T> Optional<T> getParams(FileAsset assetDsc,AssayPack exp) {
@@ -131,7 +128,7 @@ public class AssetsParamRep {
             Object obj = mapper.readValue(params.params, cls);
         
             return Optional.of((T)obj);
-        } catch (ClassNotFoundException | IOException e) {
+        } catch (ClassNotFoundException | JacksonException e) {
             throw new ServerSideException("Cannot read parameters for "+params.assetId+"; "+e.getMessage(),e);
         }        
     }
@@ -154,7 +151,7 @@ public class AssetsParamRep {
     protected void saveParamsInfo(AssetParams params,Path file) {
         try {
             paramsWriter.writeValue(file.toFile(), params);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot save params: "+e.getMessage(),e);
         }
     }
@@ -162,13 +159,8 @@ public class AssetsParamRep {
     protected AssetParams readParamsInfo(Path file) {
         try {
             return paramsReader.readValue(file.toFile());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot read params info: "+e.getMessage(),e);
         }    
     }
-
-
-    
-
-    
 }

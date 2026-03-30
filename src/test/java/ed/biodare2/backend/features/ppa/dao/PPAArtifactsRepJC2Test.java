@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.features.ppa.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2.ExpJobKey;
 import static ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2.JOB_SIMPLE_SUMMARY_FILE;
@@ -41,13 +42,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import static org.mockito.Mockito.*;
-//import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
  *
@@ -57,9 +57,9 @@ public class PPAArtifactsRepJC2Test {
     
 
     static double EPS = 1E-6;
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     ExperimentsStorage expStorage;
     PPAArtifactsRepJC2 ppaRep;
@@ -67,15 +67,14 @@ public class PPAArtifactsRepJC2Test {
     ExpTestSeeder seeder;
     
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
-        expDir = testFolder.newFolder().toPath();
+        expDir = testFolder.resolve("test");
         expStorage = mock(ExperimentsStorage.class);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         
         seeder = new ExpTestSeeder();
         ppaRep = new PPAArtifactsRepJC2(expStorage, mapper);
@@ -262,8 +261,6 @@ public class PPAArtifactsRepJC2Test {
         
         PPAJobResultsGroups cpy = ppaRep.getJobResultsGroups(exp, jobId);
         assertEquals(cpy.jobId,jobId);
-        // [TODO find reflective eq] assertReflectionEquals(results,cpy); 
-        
     }
     
     @Test
@@ -287,8 +284,6 @@ public class PPAArtifactsRepJC2Test {
         
         PPAJobSimpleStats cpy = ppaRep.getJobSimpleStats(exp, jobId);
         assertEquals(cpy.jobId,jobId);
-        // [TODO find reflective eq] assertReflectionEquals(stats,cpy); 
-        
     }
 
     
@@ -308,9 +303,6 @@ public class PPAArtifactsRepJC2Test {
         
         StatsEntry cpy = ppaRep.getJobFullStats(exp, jobId);
         assertEquals(jobId,cpy.getUuid());
-        // [TODO find reflective eq] assertReflectionEquals(stats,cpy); 
-        
-        
     }
     
     @Test
@@ -326,10 +318,7 @@ public class PPAArtifactsRepJC2Test {
         
         PPAJobSimpleResults cpy = ppaRep.getJobSimpleResults(exp, jobId);
         assertEquals(cpy.jobId,jobId);
-        // [TODO find reflective eq] assertReflectionEquals(org,cpy); 
-        
     }
-    
     
     @Test
     public void savesAndRetrieveJobSimpleSummary() {
@@ -340,7 +329,6 @@ public class PPAArtifactsRepJC2Test {
         ppaRep.saveJobSummary(job, exp);
         
         Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(exp, job.jobId);
-        // [TODO find reflective eq] assertReflectionEquals(job,cpy.get()); 
         
         Path file = expDir.resolve("PPA3/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
         assertTrue(Files.exists(file));
@@ -385,15 +373,10 @@ public class PPAArtifactsRepJC2Test {
         ppaRep.saveJobSummary(job, exp);
         
         Optional<PPAJobSummary> cpy = ppaRep.getJobSummary(new ExpJobKey(exp.getId(), job.jobId));
-        // [TODO find reflective eq] assertReflectionEquals(job,cpy.get()); 
         
         Path file = expDir.resolve("PPA3/JOBS").resolve(""+job.jobId).resolve(JOB_SIMPLE_SUMMARY_FILE);
         assertTrue(Files.exists(file));
     }    
-    
-
-    
-    
     
     @Test
     public void deleteJobDirDeletesJobSubfolderAndItsContent() throws Exception {
@@ -444,8 +427,6 @@ public class PPAArtifactsRepJC2Test {
         
         List<PPAJobSummary> jobs = ppaRep.getJobsSummaries(exp);
         assertEquals(2,jobs.size());
-        // [TODO find reflective eq] assertReflectionEquals(s2,jobs.get(0)); 
-        
     }
     
     @Test
@@ -475,7 +456,7 @@ public class PPAArtifactsRepJC2Test {
         List<PPAJobSummary> jobs2 = ppaRep.getJobsSummaries(exp);
         
         for (int i =0;i<jobs1.size();i++) {
-            assertSame("Jobs at:"+i+" not same",jobs1.get(i),jobs2.get(i));
+            assertSame(jobs1.get(i), jobs2.get(i), "Jobs at:"+i+" not same");
         }
         
         UUID s2Id = s2.jobId;
@@ -496,14 +477,12 @@ public class PPAArtifactsRepJC2Test {
         jobs2 = ppaRep.getJobsSummaries(exp);
         
         for (int i =0;i<jobs1.size();i++) {
-            assertNotSame("Jobs at:"+i+" should not be same",jobs1.get(i),jobs2.get(i));
+            assertNotSame(jobs1.get(i), jobs2.get(i), "Jobs at:"+i+" should not be same");
         }
-        
     }    
     
     @Test
     public void deleteJobArtifactsDeletesAllParts() {
-        
         
         AssayPack exp = new MockExperimentPack(1);
         
@@ -518,7 +497,6 @@ public class PPAArtifactsRepJC2Test {
         fits.put(2L,new TimeSeries());
         ppaRep.saveFits(fits, jobId, exp);        
         assertTrue(ppaRep.getFits(jobId, exp).isPresent());
-        
         
         //stats
         StatsEntry stats = new StatsEntry();
@@ -553,7 +531,6 @@ public class PPAArtifactsRepJC2Test {
     @Test
     public void deleteJobArtifactsRemovesJobFromCache() {
         
-        
         AssayPack exp = new MockExperimentPack(1);
         
         PPAJobSummary job = PPAJobSummaryTest.makePPAJobSummary();
@@ -571,9 +548,7 @@ public class PPAArtifactsRepJC2Test {
         assertNotSame(cpy1,cpy2);
         
         assertTrue(ppaRep.getJobsSummaries(exp).isEmpty());
-        
     }
-    
     
     @Test
     public void jobIndResultsFileGivesCorrectFileInJobFolder()  throws Exception {
@@ -583,8 +558,6 @@ public class PPAArtifactsRepJC2Test {
         Path exp = ppa.resolve("JOBS").resolve(jobId.toString()).resolve(ppaRep.JOB_FULL_RESULTS_FILE);
         Path resp = ppaRep.jobIndResultsFile(7, jobId);
         assertEquals(exp,resp);
-        
-                
     }
     
     @Test
@@ -607,6 +580,4 @@ public class PPAArtifactsRepJC2Test {
         assertEquals(2,read.get(1).dataId);
         
     }
-    
-    
 }

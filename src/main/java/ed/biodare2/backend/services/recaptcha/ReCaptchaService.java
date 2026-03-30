@@ -5,10 +5,8 @@
  */
 package ed.biodare2.backend.services.recaptcha;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.backend.web.rest.ServerSideException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,7 +27,6 @@ public class ReCaptchaService {
     final String recaptchaURL;
     final String recaptchaSiteKey;
     final String recaptchaSecretKey;
-    //final ObjectMapper mapper;
 
     final RestTemplate restTemplate;
     
@@ -39,7 +36,6 @@ public class ReCaptchaService {
         this.recaptchaSecretKey = environment.recaptchaSecretKey;
         
         this.recaptchaURL= "https://www.google.com/recaptcha/api/siteverify"+"?secret="+this.recaptchaSecretKey+"&response=";
-        //this.mapper = mapper;
         this.restTemplate = new RestTemplate(); //restTemplate;
     }
     
@@ -52,7 +48,6 @@ public class ReCaptchaService {
         //log.debug("Captcha response {}",resp);
         List<String> err = (List)resp.getOrDefault("error-codes", null);
         
-
         /*
         if (err != null) {
             log.error("captcha errors: {}",err);
@@ -66,6 +61,5 @@ public class ReCaptchaService {
         Boolean ans = (Boolean)resp.getOrDefault("success", Boolean.FALSE);
         
         return ans;
-        
     }
 }

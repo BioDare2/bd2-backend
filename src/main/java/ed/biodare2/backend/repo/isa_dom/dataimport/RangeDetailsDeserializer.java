@@ -5,33 +5,32 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.JsonNode;
 
 /**
  *
  * @author tzielins
  */
-public class RangeDetailsDeserializer extends JsonDeserializer<RangeDetails> {
+public class RangeDetailsDeserializer extends StdDeserializer<RangeDetails> {
 
     static final String DataLabelK = "dataLabel";
     static final String TimeTypeK = "timeType";
     static final String FirstRowK = "firstRow";
     static final String ImgInterK = "imgInterval";
     static final String OffsetK = "timeOffset";
+
+    public RangeDetailsDeserializer() {
+	super(RangeDetails.class);
+    }
     
     @Override
-    public RangeDetails deserialize(JsonParser jp, DeserializationContext dc) throws IOException, JsonProcessingException {
+    public RangeDetails deserialize(JsonParser jp, DeserializationContext dc) throws JacksonException {
         
-        
-        ObjectCodec oc = jp.getCodec();
-        JsonNode node = oc.readTree(jp);
+        JsonNode node = jp.readValueAsTree();
         
         if (node.has(DataLabelK)) 
             return deserializeDataProperties(node);
@@ -40,7 +39,6 @@ public class RangeDetailsDeserializer extends JsonDeserializer<RangeDetails> {
             return deserializeTimeProperties(node);
 
         return null;
-        //throw new JsonParseException("Value is not a data nor time properties: "+node.toString(),jp.getCurrentLocation());
     }
 
     protected RangeDetails deserializeDataProperties(JsonNode node) {
@@ -63,5 +61,4 @@ public class RangeDetailsDeserializer extends JsonDeserializer<RangeDetails> {
         if (node.has(ImgInterK)) prop.imgInterval = node.get(ImgInterK).asDouble();
         return prop;
     }
-    
 }

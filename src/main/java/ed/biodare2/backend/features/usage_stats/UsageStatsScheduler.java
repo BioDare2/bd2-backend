@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class UsageStatsScheduler {
@@ -51,5 +51,4 @@ public class UsageStatsScheduler {
         objectMapper.writeValue(outputFile.toFile(), usage);
         log.info("Usage stats saved to " + outputFile.toAbsolutePath());
     }
-
 }

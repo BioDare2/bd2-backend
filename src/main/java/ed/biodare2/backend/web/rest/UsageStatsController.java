@@ -16,7 +16,6 @@ import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
-import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.util.Pair;
@@ -27,26 +26,20 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import jakarta.annotation.PostConstruct;
-import jakarta.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -259,7 +252,5 @@ public class UsageStatsController extends BioDare2Rest {
                     return new Pair<>(e.getKey(),sum);        
                 })
                 .collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight()));
-                
-        
     }
 }

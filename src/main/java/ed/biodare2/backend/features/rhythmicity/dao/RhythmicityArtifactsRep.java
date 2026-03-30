@@ -5,10 +5,11 @@
  */
 package ed.biodare2.backend.features.rhythmicity.dao;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
@@ -94,14 +95,11 @@ public class RhythmicityArtifactsRep {
         
         return guard.guard(expId,(id)-> {
             try {
-
                 Path jobFile = jobDetailsFile(expId, job.jobId);
-
-
                 jobDetailsWriter.writeValue(jobFile.toFile(),job);
 
                 return job;
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save job: "+e.getMessage(),e);
             }
         });        
@@ -170,7 +168,7 @@ public class RhythmicityArtifactsRep {
                 RhythmicityJobSummary job = jobDetailsReader.readValue(file.toFile());
                 return Optional.of(job);
                 
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot access system info: "+e.getMessage(),e);
             }
        });
@@ -187,7 +185,7 @@ public class RhythmicityArtifactsRep {
                 jobResultsWriter.writeValue(resultsFile.toFile(),results);
 
                 return results;
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot save results: "+e.getMessage(),e);
             }
         });         
@@ -210,7 +208,7 @@ public class RhythmicityArtifactsRep {
                 JobResults<TSResult<BD2eJTKRes>> res = jobResultsReader.readValue(file.toFile());
                 return Optional.of(res);
                 
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new ServerSideException("Cannot access results: "+e.getMessage(),e);
             }
        });

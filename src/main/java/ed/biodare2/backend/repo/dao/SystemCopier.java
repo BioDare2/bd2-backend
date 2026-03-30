@@ -5,18 +5,15 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
-import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import java.io.IOException;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -55,7 +52,7 @@ class SystemCopier {
             String json = experimentalAssayWriter.writeValueAsString(org);
             ExperimentalAssay copy = experimentalAssayReader.readValue(json);
             return copy;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot copy experimentalassay: "+e.getMessage(),e);
         }        
     }
@@ -66,7 +63,7 @@ class SystemCopier {
             String json = systemInfoWriter.writeValueAsString(org);
             SystemInfo copy = systemInfoReader.readValue(json);
             return copy;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot copy system info: "+e.getMessage(),e);
         }
         

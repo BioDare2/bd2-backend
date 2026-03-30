@@ -5,9 +5,10 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectReader;
+import tools.jackson.databind.ObjectWriter;
 
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.handlers.UploadFileInfo;
@@ -25,7 +26,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -297,7 +297,7 @@ public class FileAssetRep {
             if (!Files.exists(file)) return new FileAssets();
 
             return assetsReader.readValue(file.toFile());
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot get assets info: "+e.getMessage(),e);
         }
             
