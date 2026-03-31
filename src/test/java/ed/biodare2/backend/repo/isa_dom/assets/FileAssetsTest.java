@@ -31,7 +31,7 @@ public class FileAssetsTest {
     
     @BeforeEach
     public void setUp() {
-	ObjectMapper mapper = JsonMapper
+	mapper = JsonMapper
 	    .builder()
 	    .enable(SerializationFeature.INDENT_OUTPUT)
 	    .build();

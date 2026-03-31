@@ -5,19 +5,14 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
-import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
-import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -30,19 +25,19 @@ public class CellRangeDescriptionTest {
     
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }    
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         CellRangeDescription org = DomRepoTestBuilder.makeCellRangeDescription();
         
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);        
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
         System.out.println(json);
@@ -70,11 +65,10 @@ public class CellRangeDescriptionTest {
         //System.out.println(prop.imgInterval);
         
         assertEquals(org.details,cpy.details);
-        
     } 
     
     @Test
-    public void readsUIJSON() throws JsonProcessingException, IOException {
+    public void readsUIJSON() throws JacksonException {
         
         String json = "{\"range\":{\"first\":{\"col\":6,\"row\":1},\"last\":{\"col\":9,\"row\":1}},\"role\":\"DATA\",\"details\":{\"dataLabel\":\"WT\"}}";
         
@@ -92,7 +86,7 @@ public class CellRangeDescriptionTest {
     } 
     
     @Test
-    public void readsUIJSONWithTime() throws JsonProcessingException, IOException {
+    public void readsUIJSONWithTime() throws JacksonException {
         
         String json = "{\"range\":{\"first\":{\"col\":1,\"row\":1},\"last\":{\"col\":1,\"row\":1}},\n" +
 "\"role\":\"TIME\",\n" +
@@ -108,7 +102,5 @@ public class CellRangeDescriptionTest {
         assertEquals(1.5,details.imgInterval,1E-6);
         assertEquals(2, details.timeOffset,1E-6);
         assertEquals(3,details.firstRow);
-        
-        
     }    
 }

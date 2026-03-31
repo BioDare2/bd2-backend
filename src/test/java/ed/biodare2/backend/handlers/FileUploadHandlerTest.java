@@ -53,7 +53,7 @@ public class FileUploadHandlerTest {
         bdStorageDir = testFolder.resolve("test");
         uploadsDir = bdStorageDir.resolve(FileUploadHandler.UPLOADS_STORAGE_DIR);
 
-	ObjectMapper mapper = JsonMapper.builder().build();
+	mapper = JsonMapper.builder().build();
 	
         MockEnvironmentVariables var = new MockEnvironmentVariables();
         var.storageDir = bdStorageDir.toString();

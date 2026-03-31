@@ -5,16 +5,10 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
-import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
-import ed.biodare2.backend.repo.isa_dom.dataimport.RangeDetails;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -26,7 +20,7 @@ public class RangeDetailsTest {
     }
 
     @Test
-    public void serializesTimeToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesTimeToJSONAndBack() throws JacksonException {
 
         TimeColumnProperties prop = new TimeColumnProperties();
         prop.timeType = TimeType.IMG_NUMBER;
@@ -45,7 +39,7 @@ public class RangeDetailsTest {
     }
     
     @Test
-    public void serializesDataToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesDataToJSONAndBack() throws JacksonException {
 
         DataColumnProperties prop = new DataColumnProperties();
         prop.dataLabel = "TOC3";
@@ -61,7 +55,7 @@ public class RangeDetailsTest {
     }    
     
     @Test
-    public void readsTimeUIJSON() throws JsonProcessingException, IOException {
+    public void readsTimeUIJSON() throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         
         String json = "{\"firstRow\":3,\"timeType\":\"IMG_NUMBER\",\"timeOffset\":2,\"imgInterval\":1.5}";
@@ -73,5 +67,4 @@ public class RangeDetailsTest {
         assertEquals(2,cpy.timeOffset,1E-6);        
         assertEquals(1.5,cpy.imgInterval,1E-6);        
     }
-    
 }

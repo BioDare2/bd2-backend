@@ -5,17 +5,11 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import ed.biodare2.backend.repo.isa_dom.dataimport.CellCoordinates;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import ed.biodare2.backend.repo.isa_dom.contribution.ContributionDesc;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -27,7 +21,7 @@ public class CellCoordinatesTest {
     }
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         CellCoordinates org = DomRepoTestBuilder.makeCellCoordinates();
         ObjectMapper mapper = new ObjectMapper();
@@ -42,7 +36,7 @@ public class CellCoordinatesTest {
     }
     
     @Test
-    public void readsUIJSON() throws JsonProcessingException, IOException {
+    public void readsUIJSON() throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         
         String json = "{\"col\":1,\"row\":3}";
@@ -64,11 +58,8 @@ public class CellCoordinatesTest {
         }
     }
     
-  
-    
     @Test
     public void convertsColumnNumberToLettersForAllUpTo10000() {
-        
         
         for (int i=1;i<2000;i++) {
             try {
@@ -129,7 +120,4 @@ public class CellCoordinatesTest {
         }
         
     }     
-    
- 
-
 }

@@ -62,7 +62,7 @@ public class FileAssetRepTest {
         when(idGenerator.next()).thenReturn(2L);
         uploads = mock(FileUploadHandler.class);
 
-	ObjectMapper mapper = JsonMapper.builder().build();
+	mapper = JsonMapper.builder().build();
         assets = new FileAssetRep(idGenerator,expStorage, uploads,mapper);
     }    
 

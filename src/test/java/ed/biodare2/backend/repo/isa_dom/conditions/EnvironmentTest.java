@@ -6,14 +6,13 @@
 package ed.biodare2.backend.repo.isa_dom.conditions;
 
 import ed.biodare2.backend.repo.isa_dom.conditions.Environment;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.param.FullParameters;
 import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -24,12 +23,8 @@ public class EnvironmentTest {
     public EnvironmentTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     public static Environment makeInstance() {
@@ -40,7 +35,7 @@ public class EnvironmentTest {
     }
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         Environment org = makeInstance();
         
@@ -54,7 +49,5 @@ public class EnvironmentTest {
         assertEquals(org.name ,cpy.name);
         assertEquals(org.description ,cpy.description);
         assertEquals(org,cpy);
-        
     }
-    
 }

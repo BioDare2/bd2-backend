@@ -5,18 +5,16 @@
  */
 package ed.biodare2.backend.repo.isa_dom.exp;
 
-import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalDetails;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -29,19 +27,16 @@ public class ExperimentalDetailsTest {
 
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);        
-    }
-    
-    @After
-    public void tearDown() {
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         ExperimentalDetails org = DomRepoTestBuilder.makeExperimentalDetails();
         
@@ -62,7 +57,7 @@ public class ExperimentalDetailsTest {
     }
    
     @Test
-    public void deserializesJSJSON() throws JsonProcessingException, IOException {
+    public void deserializesJSJSON() throws JacksonException {
 
         String json = "{\"measurementDesc\":{\"parameters\":[{\"name\":\"last\",\"value\":\"a value\"},{\"name\":\"first\",\"value\":\"2\",\"label\":\"first param\",\"unit\":\"a unit\"},\n" +
 "{\"name\":\"second\",\"value\":\"3\",\"label\":\"2n param\"},{\"name\":\"empty\"}],\"technique\":\"Luciferase luminescence\",\n" +

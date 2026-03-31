@@ -5,14 +5,10 @@
  */
 package ed.biodare2.backend.repo.isa_dom;
 
-import ed.biodare2.backend.repo.isa_dom.GeneralDesc;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -23,17 +19,8 @@ public class GeneralDescTest {
     public GeneralDescTest() {
     }
     
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-    
-
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         GeneralDesc org = DomRepoTestBuilder.makeGeneralDesc();
         ObjectMapper mapper = new ObjectMapper();
@@ -49,5 +36,4 @@ public class GeneralDescTest {
         assertEquals(org.comments,cpy.comments);
         assertEquals(org,cpy);
     }
-    
 }

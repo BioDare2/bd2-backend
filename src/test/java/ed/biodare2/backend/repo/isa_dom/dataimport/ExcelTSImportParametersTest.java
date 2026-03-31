@@ -5,17 +5,11 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import ed.biodare2.backend.repo.isa_dom.dataimport.CellRangeDescription;
-import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
-import ed.biodare2.backend.repo.isa_dom.dataimport.ExcelTSImportParameters;
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeColumnProperties;
-import ed.biodare2.backend.repo.isa_dom.dataimport.TimeType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -27,7 +21,7 @@ public class ExcelTSImportParametersTest {
     }
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         ExcelTSImportParameters org = DomRepoTestBuilder.makeExcelTSImportParameters();
         ObjectMapper mapper = new ObjectMapper();
@@ -42,7 +36,7 @@ public class ExcelTSImportParametersTest {
     } 
     
     @Test
-    public void readsUIJSON() throws JsonProcessingException, IOException {
+    public void readsUIJSON() throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         
         String json = "{\"_class_name\":\".ExcelTSImportParameters\",\n" +

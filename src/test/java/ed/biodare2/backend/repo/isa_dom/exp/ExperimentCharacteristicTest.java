@@ -5,15 +5,14 @@
  */
 package ed.biodare2.backend.repo.isa_dom.exp;
 
-import ed.biodare2.backend.repo.isa_dom.exp.ExperimentCharacteristic;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
@@ -26,21 +25,16 @@ public class ExperimentCharacteristicTest {
 
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
-    
-    @After
-    public void tearDown() {
-    }
-
-    
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         ExperimentCharacteristic org = new ExperimentCharacteristic();
         org.hasDataFiles = true;
@@ -49,7 +43,6 @@ public class ExperimentCharacteristicTest {
         org.hasAttachments = true;
         org.attachmentsSize = 2;
         
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
         //System.out.println("ExperimentFeatures JSON:\n"+json+"\n");
@@ -70,5 +63,4 @@ public class ExperimentCharacteristicTest {
         cpy = mapper.readValue(str, ExperimentCharacteristic.class); 
         // [TODO find reflective eq] assertReflectionEquals(org, cpy);
     }
-    
 }

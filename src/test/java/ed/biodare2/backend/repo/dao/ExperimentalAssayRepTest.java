@@ -62,10 +62,9 @@ public class ExperimentalAssayRepTest {
         
         //Files.createDirectories(experimentsDir);
 
-	ObjectMapper mapper = JsonMapper.builder().build();
+	mapper = JsonMapper.builder().build();
         
         exp = DomRepoTestBuilder.makeExperimentalAssay();
-        
         
         experiments = new ExperimentalAssayRep(expStorage,mapper);
         

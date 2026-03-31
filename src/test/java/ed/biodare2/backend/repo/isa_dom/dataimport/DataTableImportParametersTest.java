@@ -5,23 +5,19 @@
  */
 package ed.biodare2.backend.repo.isa_dom.dataimport;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @JsonTest
 public class DataTableImportParametersTest {
     
@@ -34,10 +30,6 @@ public class DataTableImportParametersTest {
     public DataTableImportParametersTest() {
     }
     
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testCanDeserializeAngularJSON() throws Exception {
         
@@ -101,5 +93,4 @@ public class DataTableImportParametersTest {
         trans = colPar.transpose();
         assertEquals(49, trans.userLabels.size());
     }
-    
 }
