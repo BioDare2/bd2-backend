@@ -5,17 +5,15 @@
  */
 package ed.biodare2.backend.repo.isa_dom.assets;
 
-import ed.biodare2.backend.repo.isa_dom.assets.FileAssets;
-import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
-import ed.biodare2.backend.repo.isa_dom.assets.AssetType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
 import java.util.TreeMap;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -31,12 +29,12 @@ public class FileAssetsTest {
     FileAsset f1;
     FileAsset f2;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        
+	ObjectMapper mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
         
         f1 = new FileAsset(1,"f1","f1", AssetType.DATA);
         f1.add("local","cos1", "txt");
@@ -48,11 +46,10 @@ public class FileAssetsTest {
         assets = new FileAssets();
         assets.set( f1);
         assets.set(f2);
-        
     }    
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         FileAssets org = assets;
         
@@ -65,5 +62,4 @@ public class FileAssetsTest {
         
         assertTrue(cpy.assets instanceof TreeMap);
     }
-    
 }

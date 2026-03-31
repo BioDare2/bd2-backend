@@ -5,16 +5,12 @@
  */
 package ed.biodare2.backend.repo.isa_dom.actors;
 
-import ed.biodare2.backend.repo.isa_dom.actors.Institution;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import ed.biodare2.backend.repo.isa_dom.conditions.Environments;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -25,17 +21,12 @@ public class InstitutionTest {
     public InstitutionTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
     }
-    
-    @After
-    public void tearDown() {
-    }
-    
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         Institution org = DomRepoTestBuilder.makeInstitution("UoE");
         
@@ -52,7 +43,5 @@ public class InstitutionTest {
         assertEquals(org.longName ,cpy.longName);
         assertEquals(org.web ,cpy.web);        
         assertEquals(org,cpy);
-        
     }
-    
 }

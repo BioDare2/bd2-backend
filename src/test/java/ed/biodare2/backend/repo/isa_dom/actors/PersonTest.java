@@ -5,15 +5,13 @@
  */
 package ed.biodare2.backend.repo.isa_dom.actors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -24,17 +22,12 @@ public class PersonTest {
     public PersonTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
     }
     
-    @After
-    public void tearDown() {
-    }
-
-    
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         Person org = new Person();
         org.login = "test";
@@ -58,7 +51,6 @@ public class PersonTest {
         assertEquals(org.firstName ,cpy.firstName);
         assertEquals(org.lastName ,cpy.lastName);
         assertEquals(org,cpy);
-        
     }    
     
     @Test
