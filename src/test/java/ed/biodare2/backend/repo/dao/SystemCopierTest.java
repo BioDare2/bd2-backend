@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.Fixtures;
 import ed.biodare2.SimpleRepoTestConfig;
 //import ed.biodare2.backend.SimpleTestConfiguration;
@@ -21,28 +22,20 @@ import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import static org.unitils.reflectionassert.ReflectionAssert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
-//@DataJpaTest(showSql = false)
+// @DataJpaTest
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureTestEntityManager //need this to get entity manager
 @Import(SimpleRepoTestConfig.class)
 public class SystemCopierTest {
     
@@ -58,10 +51,6 @@ public class SystemCopierTest {
     @Autowired
     UserGroupRep groups;  
     
-    
-    @Autowired
-    TestEntityManager entityManager;    
-    
     @Autowired
     EntityManagerFactory EMF;
     
@@ -71,31 +60,19 @@ public class SystemCopierTest {
     public SystemCopierTest() {
     }
     
-    @Before
+    @BeforeEach
     //@Transactional
     public void setup() {
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         //mapper.enable(SerializationFeature.INDENT_OUTPUT);
         
         //DBSystemInfoRep dbSystemInfos = mock(DBSystemInfoRep.class);
         fixture = Fixtures.build();//Fixtures.build(accounts,groups);
-
-        
-
         
         copier = new SystemCopier(dbSystemInfos,mapper);
-        
-
     }
     
-    @After
-    public void clean() {
-      
-    }
- 
-
     @Test
     public void testCopySystemInfo() {
         
@@ -104,8 +81,6 @@ public class SystemCopierTest {
         SystemInfo cpy = copier.copy(org);
         assertNotSame(org,cpy);
         assertEquals(org,cpy);
-        // [TODO find reflective eq] assertReflectionEquals(org,cpy);
-
     }
     
     @Test
@@ -116,9 +91,7 @@ public class SystemCopierTest {
         assertNotSame(org,cpy);
         //assertEquals(org,cpy);
         assertEquals(org.getId(),cpy.getId());
-        // [TODO find reflective eq] assertReflectionEquals(org,cpy);        
     }
-    
     
     protected DBSystemInfo insertDBSysInfo() {
         
@@ -195,5 +168,4 @@ public class SystemCopierTest {
         assertEquals(org.getInnerId(),cpy.getInnerId());
                 */
     }
-    
 }

@@ -5,8 +5,9 @@
  */
 package ed.biodare2.backend.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.core.JacksonException;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.features.ppa.PPAJC2Handler;
 import ed.biodare2.backend.features.rhythmicity.RhythmicityHandler;
@@ -40,19 +41,15 @@ import ed.biodare2.backend.repo.ui_dom.tsdata.TraceSet;
 import ed.biodare2.backend.util.json.TimeSeriesModule;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.dom.data.TimeSeries;
-//import ed.biodare2.backend.util.json.TimeSeriesModule;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.ArgumentMatchers.*;
-//import static org.mockito.Matchers.any;
-//import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -83,7 +80,7 @@ public class ExperimentDataHandlerTest {
     MockReps.ExperimentPackTestImp testBoundle;
     Fixtures fixtures;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         fixtures = Fixtures.build();
@@ -183,13 +180,13 @@ public class ExperimentDataHandlerTest {
     /* BD1 import */
     
     DataBundle biodareImport() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.registerModule(new TimeSeriesModule());
+	ObjectMapper mapper = JsonMapper.builder()
+	    .addModule(new TimeSeriesModule())
+	    .build();
         
         try {
             return mapper.readValue(testFile("importdata.json"), DataBundle.class);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -235,7 +232,6 @@ public class ExperimentDataHandlerTest {
         
         assertEquals(prevDV+1,boundle.getSystemInfo().currentDataVersion);
         assertEquals(prevEV,boundle.getSystemInfo().currentDescVersion);
-        
     }
     
     @Test
@@ -259,7 +255,6 @@ public class ExperimentDataHandlerTest {
         assertEquals(90, dataset.traces.get(0).traceNr);
         assertEquals(100, dataset.totalTraces);
         assertEquals(page, dataset.currentPage);
-        
     }
     
     @Test
@@ -287,7 +282,6 @@ public class ExperimentDataHandlerTest {
         assertEquals(90, dataset.traces.get(0).traceNr);
         assertEquals(100, dataset.totalTraces);
         assertEquals(page, dataset.currentPage);
-        
     }    
     
     @Test
@@ -308,7 +302,6 @@ public class ExperimentDataHandlerTest {
         TraceSet dataset = oDataset.get();
         assertEquals(0,dataset.traces.size());
         assertEquals(100,dataset.totalTraces);
-        
     } 
     
     @Test
@@ -335,6 +328,5 @@ public class ExperimentDataHandlerTest {
         assertEquals(123, resp.dataId);
         assertEquals("[A3]", resp.traceRef);
         assertEquals("1.[A3] Cookoo", resp.label);
-        
     }
 }

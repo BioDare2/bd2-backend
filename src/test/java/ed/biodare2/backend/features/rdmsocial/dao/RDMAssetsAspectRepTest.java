@@ -5,7 +5,9 @@
  */
 package ed.biodare2.backend.features.rdmsocial.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+
 import static ed.biodare2.BioDare2TestUtils.assertFieldsEquals;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.system_dom.EntityType;
@@ -17,12 +19,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -33,9 +34,9 @@ public class RDMAssetsAspectRepTest {
     
     public RDMAssetsAspectRepTest() {
     }
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     RDMAssetsAspectRep rep;
     
@@ -46,22 +47,17 @@ public class RDMAssetsAspectRepTest {
     ObjectMapper mapper;
     
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
-        expDir = testFolder.newFolder().toPath();
+        expDir = testFolder.resolve("test");
         
         expStorage = mock(ExperimentsStorage.class);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
        
         rep = new RDMAssetsAspectRep(expStorage, mapper);
-    }
-    
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -75,7 +71,6 @@ public class RDMAssetsAspectRepTest {
         
         //RDMAssetsAspect aspect = o.get();
         //assertEquals(RDMCohort.CONTROL,aspect.cohort);
-        
     }
     
     @Test
@@ -90,8 +85,6 @@ public class RDMAssetsAspectRepTest {
         
         rep.save(aspect);
         assertTrue(Files.exists(file));
-        
-        
     }
     
     @Test
@@ -107,7 +100,5 @@ public class RDMAssetsAspectRepTest {
         RDMAssetsAspect res = rep.findByParent(aspect.parentId, aspect.entityType).get();
         
         assertFieldsEquals(aspect,res);
-        
     }
-    
 }

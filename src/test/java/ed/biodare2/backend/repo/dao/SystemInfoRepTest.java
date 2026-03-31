@@ -5,10 +5,8 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.SystemInfoRep;
-import ed.biodare2.backend.repo.dao.ExperimentsStorage;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ed.biodare2.backend.handlers.FileUploadHandler;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
@@ -16,11 +14,11 @@ import ed.biodare2.backend.repo.system_dom.SystemInfoTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,21 +26,20 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class SystemInfoRepTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     ExperimentsStorage expStorage;
     SystemInfoRep systems;
     SystemInfo info;
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
         expStorage = mock(ExperimentsStorage.class);
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         systems = new SystemInfoRep(expStorage, mapper);
         
         info = SystemDomTestBuilder.makeSystemInfo();
@@ -52,7 +49,7 @@ public class SystemInfoRepTest {
     @Test
     public void saveCreatesNewSystemFileUnderSystemDir() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -74,7 +71,7 @@ public class SystemInfoRepTest {
     @Test
     public void saveMakesBackups() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -95,12 +92,10 @@ public class SystemInfoRepTest {
         
     } 
     
-    
-    
     @Test
     public void findByParentGivesSavedExpSystemInfo() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -110,8 +105,5 @@ public class SystemInfoRepTest {
         SystemInfo res = systems.findByParent(info.parentId, EntityType.EXP_ASSAY).get();
         
         SystemInfoTest.checkSame(info, res);
-        
     }
-    
-    
 }

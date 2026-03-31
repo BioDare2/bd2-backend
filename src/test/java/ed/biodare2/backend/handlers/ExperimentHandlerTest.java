@@ -5,7 +5,9 @@
  */
 package ed.biodare2.backend.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.features.rdmsocial.RDMCohort;
 import ed.biodare2.backend.security.dao.db.EntityACL;
@@ -43,22 +45,15 @@ import ed.biodare2.backend.repo.ui_dom.shared.Page;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.web.rest.ListWrapper;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -70,7 +65,6 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class ExperimentHandlerTest {
-    
     
     public ExperimentHandlerTest() {
     }
@@ -90,7 +84,7 @@ public class ExperimentHandlerTest {
     MockReps.ExperimentPackTestImp testBoundle;
     Fixtures fixtures;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         fixtures = Fixtures.build();
@@ -145,7 +139,6 @@ public class ExperimentHandlerTest {
         // when(searcher.findByOwner(any())).thenReturn(LongStream.empty());
         // when(searcher.findPublic()).thenReturn(LongStream.empty());
         
-        
         rdmSocialHandler = mock(RDMSocialHandler.class);
         
         //handler = new ExperimentHandler(experiments,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
@@ -158,14 +151,9 @@ public class ExperimentHandlerTest {
                 securityResolver
         );
     }
-    
-    @After
-    public void tearDown() {
-    }
 
     @Test
     public void newDraftGivesExpWithUserAsTheAuthor() {
-        
         
         ExperimentalAssayView exp = handler.newDraft(user);
         
@@ -177,7 +165,6 @@ public class ExperimentHandlerTest {
     @Test
     public void newDraftGivesExpWithUserInstitution() {
         
-        
         ExperimentalAssayView exp = handler.newDraft(user);
         
         assertTrue(exp.contributionDesc.institutions.stream()
@@ -185,11 +172,8 @@ public class ExperimentHandlerTest {
                         .anyMatch( inst -> inst.equals(user.getInstitution())));
     }
     
-    
-    
     @Test
     public void newDraftCreatesSubFieldsInExperiment() {
-        
         
         ExperimentalAssayView assay = handler.newDraft(user);
 
@@ -204,7 +188,6 @@ public class ExperimentHandlerTest {
         assertNotNull(assay.security);
         assertNotNull(assay.provenance);
         
-        
         ExperimentalDetails exp = assay.experimentalDetails;
         assertNotNull(exp.measurementDesc);
         assertNotNull(exp.experimentalEnvironments);
@@ -214,9 +197,7 @@ public class ExperimentHandlerTest {
         
         // copies execution date to the view
         assertEquals(exp.executionDate, assay.generalDesc.executionDate);
-        
     }
-    
 
     /*
     @Test
@@ -271,7 +252,6 @@ public class ExperimentHandlerTest {
         assertEquals(exp,res);
         verify(searcher).findAllVisible(user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
         verify(experiments).findByIds((List<Long>)any());
-        
     }    
     
     @Test
@@ -294,7 +274,6 @@ public class ExperimentHandlerTest {
         assertEquals(exp,res);
         verify(searcher).findVisible("clock", "", "", "", "", "", user, true,SortOption.MODIFICATION_DATE, false , 0, 10);
         verify(experiments).findByIds((List<Long>)any());
-        
     }      
     /*
     @Test
@@ -409,7 +388,6 @@ public class ExperimentHandlerTest {
     @Test
     public void getExperimentGetsExperimentFromRep() {
         
-        
         //when(experiments.findOne(eq(1L))).thenReturn(Optional.empty());
         //when(experiments.findOne(eq(2L))).thenReturn(Optional.of(testExp));
         
@@ -427,7 +405,6 @@ public class ExperimentHandlerTest {
         verify(experiments).findOne(eq(1L));
         assertSame(boundle,res.get());
     }
-    
     
     @Test
     public void account2PersonMakesCorrectPerson() {
@@ -464,7 +441,6 @@ public class ExperimentHandlerTest {
         
         verify(serviceLevelResolver).buildForExperiment(user);
         
-        
         verify(rdmSocialHandler).registerNewAssay(any(), any(BioDare2User.class));
         
         //verify(dbSystemInfos).save(any(DBSystemInfo.class));
@@ -472,7 +448,6 @@ public class ExperimentHandlerTest {
         //verify(experiments).save(any(ExperimentalAssay.class));
         
         //assertSame(sec, ans);
-        
     }    
     
     @Test
@@ -520,7 +495,6 @@ public class ExperimentHandlerTest {
 
         verify(experiments).save(eq(boundle));
         verify(rdmSocialHandler).registerUpdateAssay(boundle, user);
-        
     }    
     
     /*
@@ -551,7 +525,6 @@ public class ExperimentHandlerTest {
         
     }  */  
     
-
     @Test
     public void createNewACLCallesSecurityResolver() {
         ExperimentalAssay exp = new ExperimentalAssay(testExp.getId()+20);
@@ -562,8 +535,6 @@ public class ExperimentHandlerTest {
         assertSame(acl,res);
     }
 
-
-    
     @Test
     public void createNewProvenanceCreatesCorrectRecord() {
         
@@ -625,9 +596,7 @@ public class ExperimentHandlerTest {
         
         ServiceLevel lev = serviceLevelResolver.buildForExperiment(user).serviceLevel;
         assertEquals(lev,info.featuresAvailability.serviceLevel);
-        
     }
-    
 
     @Test
     public void registerExpUpdateUpdatesProvenanceAndVersion() {
@@ -647,11 +616,9 @@ public class ExperimentHandlerTest {
         
         assertEquals(OperationType.DESC_EDITION,info.provenance.lastChange.operation);
         assertEquals(user.getLogin(), info.provenance.lastChange.actorLogin);
-        
     }
-    
   
-     @Test
+    @Test
     public void mergeRequestsIgnoresNullValues() throws Exception {
         
         ExperimentalAssayView req = new ExperimentalAssayView();
@@ -664,7 +631,6 @@ public class ExperimentHandlerTest {
         assertNotNull(testExp.contributionDesc);
         assertNotNull(testExp.generalDesc);
         assertNotNull(testExp.experimentalDetails);
-        
     }    
     
     @Test
@@ -679,7 +645,6 @@ public class ExperimentHandlerTest {
         
         assertNotSame(req.features, testExp.characteristic);
         assertNotSame(req.provenance, testExp.provenance);
-        
     }    
     
     @Test
@@ -696,7 +661,6 @@ public class ExperimentHandlerTest {
         assertSame(req.generalDesc, testExp.generalDesc);
         assertSame(req.contributionDesc, testExp.contributionDesc);
         assertSame(req.experimentalDetails, testExp.experimentalDetails);
-        
     } 
     
     @Test
@@ -718,7 +682,6 @@ public class ExperimentHandlerTest {
         assertSame(req.contributionDesc, testExp.contributionDesc);
         assertSame(req.experimentalDetails, testExp.experimentalDetails);
         assertSame(date, testExp.experimentalDetails.executionDate);
-        
     }    
     
     @Test
@@ -727,17 +690,15 @@ public class ExperimentHandlerTest {
         assertNotNull(desc);
         assertEquals(1,desc.bios.size());
         desc.bios.forEach( bio -> assertEquals("",bio.genotype));
-        
     }
     
     /* BD imports */
     ExperimentalAssay importedAssay() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+	ObjectMapper mapper = JsonMapper.builder().build();
         
         try {
             return mapper.readValue(testFile("3967.importdsc.json"), ExperimentalAssay.class);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
@@ -762,7 +723,6 @@ public class ExperimentHandlerTest {
     public void importProvenanceUsersNamesAndDatesFromTheRecord() {
         SimpleProvenance external = importedAssay().provenance;
         
-        
         Provenance res = handler.importProvenance(external, user, "1.0.5");
         assertEquals(user.getLogin(),res.creation.actorLogin);
         assertEquals(external.createdBy,res.creation.actorName);
@@ -775,7 +735,6 @@ public class ExperimentHandlerTest {
         assertEquals(external.modified,res.lastChange.dateTime);
         assertEquals("1.0.5",res.lastChange.versionId);
         assertEquals(OperationType.DESC_EDITION,res.lastChange.operation);
-        
     }
     
     @Test
@@ -801,7 +760,6 @@ public class ExperimentHandlerTest {
         assertEquals(user.getLogin(),res.security.creator);
         assertEquals(user.getLogin(),res.security.owner);        
         assertNotNull(res.versionsInfo);        
-
     }
     
     @Test
@@ -825,12 +783,8 @@ public class ExperimentHandlerTest {
         
         verify(serviceLevelResolver).buildForExperiment(user);
         
-        
         verify(rdmSocialHandler).registerNewAssay(any(), eq(RDMCohort.CONTROL));
-        
-        
     }    
-    
     
     @Test
     public void makesNewOpenAccessInfo() {
@@ -841,7 +795,6 @@ public class ExperimentHandlerTest {
         assertSame(OpenAccessLicence.CC_BY,info.licence);
         assertEquals(LocalDate.now(), info.grantedOn.toLocalDate());
         assertEquals(user.getLogin(),info.grantedByLogin);
-        
     } 
     
     @Test
@@ -853,7 +806,6 @@ public class ExperimentHandlerTest {
 
         assertTrue(testBoundle.getACL().isPublic());
         assertTrue(testBoundle.systemInfo.security.isPublic);
-        
     }
     
     @Test
@@ -892,7 +844,5 @@ public class ExperimentHandlerTest {
         verify(experiments).save(eq(boundle));
         verify(securityResolver).makePublic(any());
         verify(serviceLevelResolver).setServiceForOpen(any());
-        
     }    
-    
 }

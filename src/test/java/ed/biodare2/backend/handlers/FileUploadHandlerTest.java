@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.handlers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.MockEnvironmentVariables;
 import ed.biodare2.backend.security.dao.db.UserAccount;
@@ -20,12 +21,11 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,10 +34,9 @@ import org.springframework.web.multipart.MultipartFile;
  * @author tzielins
  */
 public class FileUploadHandlerTest {
-    
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     Path bdStorageDir;
     Path uploadsDir;
@@ -49,23 +48,17 @@ public class FileUploadHandlerTest {
     public FileUploadHandlerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        bdStorageDir = testFolder.newFolder().toPath();
+        bdStorageDir = testFolder.resolve("test");
         uploadsDir = bdStorageDir.resolve(FileUploadHandler.UPLOADS_STORAGE_DIR);
-        
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        
+
+	ObjectMapper mapper = JsonMapper.builder().build();
+	
         MockEnvironmentVariables var = new MockEnvironmentVariables();
         var.storageDir = bdStorageDir.toString();
         environment = var.mock(); //new EnvironmentVariables(bdStorageDir.toString(),,,"","","","","");
         handler = new FileUploadHandler(environment,mapper);
-        
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     @Test
@@ -81,7 +74,6 @@ public class FileUploadHandlerTest {
         handler = new FileUploadHandler(env,mapper);
 
         assertTrue(Files.exists(dir.resolve(FileUploadHandler.UPLOADS_STORAGE_DIR)));
-        
     }    
     
     @Test
@@ -235,7 +227,6 @@ public class FileUploadHandlerTest {
         Path file = handler.get(info.id,user);
         assertTrue(Files.exists(file));
         assertEquals(10,Files.size(file));
-    
     }
     
     @Test

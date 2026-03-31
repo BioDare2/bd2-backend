@@ -5,45 +5,38 @@
  */
 package ed.biodare2.backend.features.rhythmicity.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare.jobcentre2.dom.JobResults;
-import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
-import ed.biodare.rhythm.ejtk.patterns.AsymCosine;
-import ed.biodare2.backend.features.rhythmicity.dao.RhythmicityArtifactsRep;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
-import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @JsonTest
 public class RhythmicityArtifactsRepTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     @Autowired
     ObjectMapper mapper;
@@ -56,10 +49,10 @@ public class RhythmicityArtifactsRepTest {
     public RhythmicityArtifactsRepTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
-        expDir = testFolder.newFolder().toPath();
+        expDir = testFolder.resolve("test");
         expStorage = mock(ExperimentsStorage.class);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
@@ -117,7 +110,6 @@ public class RhythmicityArtifactsRepTest {
         assertTrue(res.isPresent());
         assertEquals(results, res.get());
     }    
-
 
     @Test
     public void getJobsReadsJobsInCorrectOrder() {
@@ -189,5 +181,4 @@ public class RhythmicityArtifactsRepTest {
         res = instance.readJobResults(jobId, expId);
         assertFalse(res.isPresent());        
     }     
-    
 }

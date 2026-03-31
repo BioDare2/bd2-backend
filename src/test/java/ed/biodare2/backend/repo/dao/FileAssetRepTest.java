@@ -7,7 +7,8 @@ package ed.biodare2.backend.repo.dao;
 
 import ed.biodare2.backend.repo.dao.FileAssetRep;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.biodare2.backend.handlers.FileUploadHandler;
@@ -27,11 +28,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.*;
 
@@ -40,9 +41,9 @@ import static org.mockito.ArgumentMatchers.*;
  * @author tzielins
  */
 public class FileAssetRepTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public FileAssetRepTest() {
     }
@@ -53,25 +54,22 @@ public class FileAssetRepTest {
     FileAssetRep assets;
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
         expStorage = mock(ExperimentsStorage.class);
         idGenerator = mock(IdGenerator.class);
         when(idGenerator.next()).thenReturn(2L);
         uploads = mock(FileUploadHandler.class);
-        
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         assets = new FileAssetRep(idGenerator,expStorage, uploads,mapper);
-        
-        
     }    
 
     @Test
     public void makeUniqueNameCreatesUniqueName() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         String fName = "up.txt";
         
         Path exs = dir.resolve(fName);
@@ -89,7 +87,7 @@ public class FileAssetRepTest {
     @Test
     public void savesAndReadsAssetsInfo() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         
         FileAssets info = new FileAssets();
         FileAsset asset = new FileAsset(1,"jakis.xml");
@@ -110,16 +108,14 @@ public class FileAssetRepTest {
         assertEquals("txt", cpyF.getContentType());
         
     }
-
-    
     
     @Test
     public void storeFileUploadSaveTheFileAndItsDescription() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
-        Path upDir = testFolder.newFolder().toPath();
+        Path upDir = testFolder.resolve("test");
         Path upFile = upDir.resolve("file.txt");
         Files.write(upFile, Arrays.asList("Cos tam"));
         
@@ -152,10 +148,10 @@ public class FileAssetRepTest {
     @Test
     public void storeCallsGeneratorOnlyForNewNames() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
-        Path upDir = testFolder.newFolder().toPath();
+        Path upDir = testFolder.resolve("test");
         Path upFile = upDir.resolve("file.txt");
         Files.write(upFile, Arrays.asList("Cos tam"));
         
@@ -187,7 +183,7 @@ public class FileAssetRepTest {
     @Test
     public void storeFileUploadsSaveTheFilesAndItsDescription() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         when(idGenerator.next())
@@ -195,7 +191,7 @@ public class FileAssetRepTest {
                 .thenReturn(3L)
                 ;
         
-        Path upDir = testFolder.newFolder().toPath();
+        Path upDir = testFolder.resolve("test");
         Path upFile1 = upDir.resolve("file1.txt");
         Files.write(upFile1, Arrays.asList("Cos tam"));
         
@@ -249,14 +245,14 @@ public class FileAssetRepTest {
     @Test
     public void lastIdGivesLastId() throws Exception {
         
-        Path exps = testFolder.newFolder().toPath();        
+        Path exps = testFolder.resolve("test");        
         Path expDir1 = exps.resolve("1");        
         Path expDir2 = exps.resolve("2"); 
         when(expStorage.getExperimentsDir()).thenReturn(exps);
         when(expStorage.getExperimentDir(eq(1L))).thenReturn(expDir1);
         when(expStorage.getExperimentDir(eq(2L))).thenReturn(expDir2);
         
-        Path upDir = testFolder.newFolder().toPath();
+        Path upDir = testFolder.resolve("test");
         Path upFile = upDir.resolve("file.txt");
         Files.write(upFile, Arrays.asList("Cos tam"));
         
@@ -296,7 +292,7 @@ public class FileAssetRepTest {
 
     @Test
     public void getAssetsHandlesNewExp()  throws Exception {
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
  
         AssayPack exp = new MockExperimentPack(2);
@@ -308,7 +304,7 @@ public class FileAssetRepTest {
     @Test
     public void getAssetsReturnsExistingAssetsStream()  throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
  
         AssayPack exp = new MockExperimentPack(2);  
@@ -361,7 +357,7 @@ public class FileAssetRepTest {
     @Test
     public void saveMakesBackups() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -384,7 +380,7 @@ public class FileAssetRepTest {
     @Test
     public void canSaveAndReadsAssetsInfo() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         
         FileAssets info = new FileAssets();
         FileAsset asset = new FileAsset(1,"jakis.xml");
@@ -413,10 +409,10 @@ public class FileAssetRepTest {
     @Test
     public void storeTSUploadStoresTheFileAndItsDescription() throws Exception {
         
-        Path expDir = testFolder.newFolder().toPath();        
+        Path expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
-        Path upDir = testFolder.newFolder().toPath();
+        Path upDir = testFolder.resolve("test");
         Path upFile = upDir.resolve("file.txt");
         Files.write(upFile, Arrays.asList("Cos tam"));
         

@@ -5,15 +5,17 @@
  */
 package ed.biodare2.backend.features.rdmsocial;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
 import static ed.biodare2.BioDare2TestUtils.assertFieldsEquals;
 import ed.biodare2.backend.repo.system_dom.EntityType;
 import java.io.IOException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -26,16 +28,15 @@ public class RDMAssetsAspectTest {
     
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	ObjectMapper mapper = JsonMapper.builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();	
     }
-
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException, IOException {
 
         RDMAssetsAspect org = new RDMAssetsAspect();
         org.cohort = RDMCohort.ADIVSE;
@@ -55,5 +56,4 @@ public class RDMAssetsAspectTest {
         assertFieldsEquals(org,cpy);
         
     }    
-    
 }

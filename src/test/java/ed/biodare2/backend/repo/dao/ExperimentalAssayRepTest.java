@@ -7,7 +7,8 @@ package ed.biodare2.backend.repo.dao;
 
 import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.MockEnvironmentVariables;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
@@ -20,23 +21,21 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
 
 /**
  *
  * @author tzielins
  */
 public class ExperimentalAssayRepTest {
-    
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     Path bdStorageDir;
     Path experimentsDir;
@@ -49,9 +48,9 @@ public class ExperimentalAssayRepTest {
     public ExperimentalAssayRepTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        bdStorageDir = testFolder.newFolder().toPath();
+        bdStorageDir = testFolder.resolve("test");
         
         MockEnvironmentVariables var = new MockEnvironmentVariables();
         var.storageDir = bdStorageDir.toString();
@@ -62,19 +61,14 @@ public class ExperimentalAssayRepTest {
         experimentsDir = expStorage.getExperimentsDir();
         
         //Files.createDirectories(experimentsDir);
-        
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();  
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         
         exp = DomRepoTestBuilder.makeExperimentalAssay();
         
         
         experiments = new ExperimentalAssayRep(expStorage,mapper);
         
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     @Test
@@ -213,7 +207,5 @@ public class ExperimentalAssayRepTest {
         
         assertTrue(Files.exists(file));
         assertTrue(Files.size(file) > 10);
-        
     }    
-    
 }

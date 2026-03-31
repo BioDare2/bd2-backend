@@ -5,13 +5,13 @@
  */
 package ed.biodare2.backend.handlers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDateTime;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -21,10 +21,9 @@ public class UploadFileInfoTest {
     
     public UploadFileInfoTest() {
     }
-
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         UploadFileInfo org = new UploadFileInfo();
         org.id = "test";
@@ -33,10 +32,11 @@ public class UploadFileInfoTest {
         org.contentType = "text/html";
         org.uploadedBy = "zielu";
         org.uploadedOn = LocalDateTime.now();
-        
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
+
+	ObjectMapper mapper = JsonMapper
+	    .builder()
+	    .addModule(new JavaTimeModule())
+	    .build();
 
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
@@ -50,8 +50,5 @@ public class UploadFileInfoTest {
         assertEquals(org.uploadedBy ,cpy.uploadedBy);        
         assertEquals(org.uploadedOn ,cpy.uploadedOn);        
         assertEquals(org,cpy);
-        
     }    
-    
-    
 }

@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.features.search.ExperimentIndexer;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
@@ -17,10 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.AdditionalMatchers.and;
@@ -44,7 +44,7 @@ public class ExperimentPackHubTest {
     public ExperimentPackHubTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         
         testPack = MockReps.testAssayPack();
@@ -55,17 +55,13 @@ public class ExperimentPackHubTest {
         
         dbSysInfos = mock(DBSystemInfoRep.class);
         when(dbSysInfos.findById(anyLong())).thenReturn(Optional.of(emptySystemInfo(1)));
-        
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();        
+
+	ObjectMapper mapper = JsonMapper.builder().build();
+	
         SystemCopier copier = new SystemCopier(dbSysInfos, mapper);
         
         indexer = mock(ExperimentIndexer.class);
         hub = new ExperimentPackHub(assembler,copier, indexer);
-    }
-    
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -132,7 +128,6 @@ public class ExperimentPackHubTest {
         
         Optional<AssayPack> ans = hub.findOne(id);
         assertFalse(ans.isPresent());
-        
     }
     
     @Test
@@ -195,7 +190,6 @@ public class ExperimentPackHubTest {
         assertEquals(pack.assay.getId(),testPack.assay.getId());
         assertEquals(pack.systemInfo.parentId,testPack.assay.getId());
         assertEquals(pack.dbSystemInfo.getParentId(),testPack.assay.getId());
-        
     }  
     
     @Test
@@ -209,7 +203,6 @@ public class ExperimentPackHubTest {
         assertNotNull(pack);
         assertEquals(pack.expId,testPack.assay.getId());
         assertEquals(emb, pack.dbSystemInfo.getReleaseDate());
-        
     }    
     
     @Test
@@ -220,6 +213,4 @@ public class ExperimentPackHubTest {
         assertNotNull(pack.dbSystemInfo);
         assertNotNull(pack.dbSystemInfo.getSearchInfo());
     }     
-    
-    
 }

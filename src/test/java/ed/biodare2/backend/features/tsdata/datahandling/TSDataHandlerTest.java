@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.datahandling;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,19 +38,18 @@ public class TSDataHandlerTest {
     
     public TSDataHandlerTest() {
     }
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     TSDataHandler instance;
     
     ExperimentsStorage expStorage;
     
-    @Before
+    @BeforeEach
     public void init() {
         expStorage = mock(ExperimentsStorage.class);
         instance = new TSDataHandler(expStorage, new ObjectMapper());
-        
     }
 
     @Test
@@ -164,8 +163,6 @@ public class TSDataHandlerTest {
             List<DataTrace> res = proc.get(detrending);
             assertEquals(data.size(),res.size());
         
-            
-
             for (int i =0;i<data.size();i++) {
                 assertEquals(data.get(i).trace.size(), res.get(i).trace.size());
             
@@ -180,9 +177,7 @@ public class TSDataHandlerTest {
                     assertArrayEquals(exp, res.get(i).trace.getValues(),1E-3);
                 }
             }
-            
         }
-        
     }
     
     @Test
@@ -214,7 +209,6 @@ public class TSDataHandlerTest {
         data.add(trace);
         
         
-        
         Map<DetrendingType,List<DataTrace>> proc = instance.processData(data);
         
         for(DetrendingType detrending:DetrendingType.values()) {
@@ -229,10 +223,7 @@ public class TSDataHandlerTest {
                     data.stream().map(t -> t.rawDataId).collect(Collectors.toList()),
                     res.stream().map(t -> t.rawDataId).collect(Collectors.toList())
             );            
-
-            
         }
-        
     }    
     
     @Test
@@ -278,7 +269,7 @@ public class TSDataHandlerTest {
         
         bundles.put(DetrendingType.BAMP_DTR,data);
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         instance.storeData(bundles, dir);
         
         assertEquals(2,Files.list(dir).count());
@@ -327,7 +318,7 @@ public class TSDataHandlerTest {
         
         bundles.put(DetrendingType.BAMP_DTR,data);
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         instance.storeData(bundles, dir);
         
         List<DataTrace> res = instance.getDataSet(DetrendingType.BAMP_DTR, dir).get();
@@ -372,7 +363,7 @@ public class TSDataHandlerTest {
     @Test
     public void storesDataMetricsThatCanBeRead() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         
         TimeSeries serie = new TimeSeries();
         serie.add(1,1);
@@ -391,7 +382,7 @@ public class TSDataHandlerTest {
     }
     
     @Test
-    @Ignore("Allways false as it seems to cause memory leak")
+    @Disabled("Always false as it seems to cause memory leak")
     public void shouldPreCalculateBinnedIsFalseForSparcedData() {
         
         TimeSeries serie = new TimeSeries();
@@ -417,11 +408,10 @@ public class TSDataHandlerTest {
         
         series = List.of(trace);        
         assertTrue(instance.shouldPreCalculateHourly(series));        
-        
     }
     
     @Test
-    @Ignore("Allways false as it seems to cause memory leak")    
+    @Disabled("Allways false as it seems to cause memory leak")    
     public void shouldPreCalculateBinnedIsFalseForGenerallySparcedData() {
         
         TimeSeries serie = new TimeSeries();
@@ -433,7 +423,6 @@ public class TSDataHandlerTest {
         
         DataTrace trace = new DataTrace();
         trace.trace = serie;
-        
         
         List<DataTrace> series = List.of(trace);
         
@@ -494,8 +483,6 @@ public class TSDataHandlerTest {
         serie.add(3,2);
         serie.add(4,3);
         assertEquals(serie, results.get(1).trace);
-        
-
     }
     
     @Test
@@ -541,7 +528,7 @@ public class TSDataHandlerTest {
         
         bundles.put(DetrendingType.BAMP_DTR,data);
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         instance.storeHourlyData(bundles, dir);
         
         assertEquals(2,Files.list(dir).count());
@@ -593,7 +580,7 @@ public class TSDataHandlerTest {
         
         bundles.put(DetrendingType.BAMP_DTR,data);
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         instance.storeHourlyData(bundles, dir);
         
         List<DataTrace> res = instance.getHourlyDataSet(DetrendingType.BAMP_DTR, dir).get();
@@ -603,7 +590,6 @@ public class TSDataHandlerTest {
         assertEquals(data.get(0).trace,res.get(0).trace);
     }  
     
-
     @Test
     public void clearPreCalculateRemovesStored() throws Exception {
         
@@ -647,7 +633,7 @@ public class TSDataHandlerTest {
         
         bundles.put(DetrendingType.BAMP_DTR,data);
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         instance.storeHourlyData(bundles, dir);
         
         long stored = Files.list(dir).count();
@@ -692,7 +678,7 @@ public class TSDataHandlerTest {
         AssayPack exp = mock(AssayPack.class);
         when(exp.getId()).thenReturn(123L);
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         
@@ -701,8 +687,6 @@ public class TSDataHandlerTest {
         
         List<DataTrace> res = instance.getHourlyDataSet(exp, DetrendingType.LIN_DTR).get();
 
-        
-        
         assertEquals(data.size(),res.size());
         assertEquals(data.get(0).traceRef,res.get(0).traceRef);
         assertEquals(data.get(0).trace,res.get(0).trace);
@@ -748,22 +732,17 @@ public class TSDataHandlerTest {
         AssayPack exp = mock(AssayPack.class);
         when(exp.getId()).thenReturn(123L);
         
-        Path expDir = testFolder.newFolder().toPath();
+        Path expDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
-        
         
         Path dir = instance.getDataStorage(123);
         instance.storeData(bundles, dir);
         
         List<DataTrace> res = instance.getHourlyDataSet(exp, DetrendingType.LIN_DTR).get();
-
-        
         
         assertEquals(data.size(),res.size());
         assertEquals(data.get(0).traceRef,res.get(0).traceRef);
         
         assertEquals(expected,res.get(0).trace);
     }    
-    
-    
 }

@@ -5,9 +5,8 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.AssetsParamRep;
-import ed.biodare2.backend.repo.dao.ExperimentsStorage;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetParams;
 import ed.biodare2.backend.repo.isa_dom.assets.AssetType;
@@ -16,11 +15,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,9 +27,9 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class AssetsParamRepTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();   
+
+    @TempDir
+    Path testFolder;
     
     public AssetsParamRepTest() {
     }
@@ -41,19 +40,17 @@ public class AssetsParamRepTest {
 
     AssetsParamRep repo;
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
         expStorage = mock(ExperimentsStorage.class);
-        
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
+
+	ObjectMapper mapper = JsonMapper.builder().build();
         
         repo = new AssetsParamRep(expStorage, mapper);
         
-        expDir = testFolder.newFolder().toPath();        
+        expDir = testFolder.resolve("test");        
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);        
-        
     }    
     
     @Test
@@ -82,7 +79,6 @@ public class AssetsParamRepTest {
         Long res = repo.<Long>extractParams(params).get();
         
         assertEquals(2L,(long)res);
-        
     }    
     
     @Test
@@ -104,7 +100,4 @@ public class AssetsParamRepTest {
         assertEquals(params.assetVersion,cpy.assetVersion);
         assertEquals(params.params,cpy.params);
     }
-    
-    
-    
 }
