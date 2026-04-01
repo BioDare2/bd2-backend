@@ -20,11 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -35,21 +35,17 @@ public class TSDataExporterTest {
     public TSDataExporterTest() {
     }
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
+    @TempDir
+    Path testFolder;
+
     TSDataExporter instance;
     
     AssayPack exp;
     
-    
-    @Before
+    @BeforeEach
     public void init() {
-        
         exp = MockReps.testAssayPack();
         instance = new TSDataExporter();
-        
-        
     }
     
     @Test
@@ -74,7 +70,7 @@ public class TSDataExporterTest {
         //System.out.println("Headers: "+terms);
         
         toInclude.forEach( term -> {
-            assertTrue("Missing term: "+term,terms.stream().anyMatch(term::equals));
+		assertTrue(terms.stream().anyMatch(term::equals), "Missing term: "+term);
         });
     }
     
@@ -125,7 +121,7 @@ public class TSDataExporterTest {
         data.add(TSGenerator.makeCos(50, 1, 25, 2));
         
         
-        Path file = testFolder.newFile().toPath();        
+        Path file = testFolder.resolve("test");        
         assertEquals(0,Files.size(file));
         
         instance.save(setDescription, dataHeaders, data, file);
@@ -159,7 +155,7 @@ public class TSDataExporterTest {
         
         //Path file = Paths.get("D:/Temp/t.csv");        
         //assertFalse(Files.exists(file));
-        Path file = testFolder.newFile().toPath();        
+        Path file = testFolder.resolve("test");        
         assertEquals(0,Files.size(file));        
         
         instance.export(traces, exp, detrending, file);
@@ -167,6 +163,4 @@ public class TSDataExporterTest {
         assertTrue(Files.exists(file));
         assertTrue(Files.size(file) > 10);
     }
-    
-    
 }

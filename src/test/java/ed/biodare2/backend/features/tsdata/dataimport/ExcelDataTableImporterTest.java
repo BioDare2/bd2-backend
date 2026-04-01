@@ -15,10 +15,10 @@ import ed.robust.dom.data.TimeSeries;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -33,13 +33,13 @@ public class ExcelDataTableImporterTest {
     
     ExcelDataTableImporter instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new ExcelDataTableImporter();
     }
 
     @Test
-    @Ignore("The test file is not committed")
+    @Disabled("The test file is not committed")
     public void importExcelColDataFromLargeFile() throws Exception {
         
         Path file = Paths.get("/home/dthedie/Temp/long_10000x1200.xlsx");
@@ -60,7 +60,7 @@ public class ExcelDataTableImporterTest {
     }      
     
     @Test
-    @Ignore("The test file is not committed")
+    @Disabled("The test file is not committed")
     public void importExcelColDataFromMediumLargeFile() throws Exception {
         
         Path file = Paths.get("/home/dthedie/Temp/long_5000x1200.xlsx");
@@ -81,7 +81,7 @@ public class ExcelDataTableImporterTest {
     } 
     
     @Test
-    @Ignore("The test file is not committed")
+    @Disabled("The test file is not committed")
     public void importExcelColDataFromMediumLargeXLSFile() throws Exception {
         
         Path file = Paths.get("/home/dthedie/Temp/long_255x5000.xls");

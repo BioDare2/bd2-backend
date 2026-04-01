@@ -18,20 +18,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class TextDataTableReaderTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public TextDataTableReaderTest() {
     }
@@ -39,10 +39,9 @@ public class TextDataTableReaderTest {
     Path dataFile;
     TextDataTableReader instance;
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        
-        dataFile = testFolder.newFile().toPath();
+        dataFile = testFolder.resolve("test");
         instance = new TextDataTableReader(dataFile, ",");
     }
 
@@ -73,19 +72,19 @@ public class TextDataTableReaderTest {
     @Test
     public void testIsSuitableFormat() throws Exception {
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         assertFalse(isSuitableFormat(file, ","));
         
         List<String> lines = List.of("alkafaf","ma","kota","kot ma ale");        
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));
         
-        file = testFolder.newFile().toPath();
+        file = testFolder.resolve("test");
         lines = List.of("alk,afa,f","ma","ko,ta","kot ma ale");       
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));        
         
-        file = testFolder.newFile().toPath();
+        file = testFolder.resolve("test");
         lines = List.of("alk,afa,f","ma","ko,t,a","k,ot ,ma ale");       
         Files.write(file, lines);        
         assertTrue(isSuitableFormat(file, ","));        

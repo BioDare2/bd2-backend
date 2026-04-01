@@ -16,21 +16,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @Import({SimpleRepoTestConfig.class})
 public class DBExperimentsSearcherTest {
@@ -46,7 +43,7 @@ public class DBExperimentsSearcherTest {
     public DBExperimentsSearcherTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new DBExperimentsSearcher(dbSystemInfos);
     }

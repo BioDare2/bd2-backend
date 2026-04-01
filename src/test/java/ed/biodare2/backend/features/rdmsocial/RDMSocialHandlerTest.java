@@ -8,7 +8,6 @@ package ed.biodare2.backend.features.rdmsocial;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
-import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.dao.MockReps.ExperimentPackTestImp;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
@@ -18,9 +17,9 @@ import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySyst
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
 
@@ -38,7 +37,7 @@ public class RDMSocialHandlerTest {
     RDMAssetsAspect assetAspect;
     Fixtures fixtures;
     
-    @Before
+    @BeforeEach
     public void setup() {
         fixtures = Fixtures.build();
         assetsAspects = mock(RDMAssetsAspectRep.class);

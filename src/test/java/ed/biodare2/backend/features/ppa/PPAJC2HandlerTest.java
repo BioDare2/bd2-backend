@@ -22,11 +22,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 /**
  *
@@ -34,9 +34,9 @@ import static org.mockito.Mockito.*;
  */
 public class PPAJC2HandlerTest {
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    
+    @TempDir
+    Path testFolder;
+
     ExperimentHandler experimentHandler;
     PPAArtifactsRepJC2 ppaRep;
     TSDataHandler dataHandler;
@@ -51,15 +51,13 @@ public class PPAJC2HandlerTest {
     public PPAJC2HandlerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         experimentHandler = mock(ExperimentHandler.class);
         ppaRep = mock(PPAArtifactsRepJC2.class);
         dataHandler = mock(TSDataHandler.class);
         ppaService = mock(PPAJC2AnalysisService.class);
         ppaResultsHandler = mock(PPAJC2ResultsHandler.class);
-        
         instance = new PPAJC2Handler(experimentHandler, ppaRep, ppaService, dataHandler, ppaResultsHandler);
     }
 

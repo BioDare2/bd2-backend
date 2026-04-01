@@ -12,32 +12,24 @@ import ed.biodare2.backend.security.dao.db.UserAccount;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.List;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Optional;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @Import({SimpleRepoTestConfig.class})
 public class UserAccountRepTest {
     
     @Autowired
     Fixtures fixtures;
-    
     
     @Autowired
     UserAccountRep repository;
@@ -52,27 +44,6 @@ public class UserAccountRepTest {
     
     public UserAccountRepTest() {
     }
-    
-    @BeforeClass
-    public static void setUpClass() {        
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    //@Transactional
-    public void setUp() {
-        //initAccounts(repository,created);
-    }
-    
-    @After
-    //@Transactional
-    public void tearDown() {
-        //clearAccounts(repository,created);
-    }
-    
     
     @Test
     public void testSetup() {

@@ -13,20 +13,17 @@ import java.time.LocalDate;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnit;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 //@Import({SimpleRepoTestConfig.class, IdGeneratorsConfiguration.class})
 @Import({SimpleRepoTestConfig.class})
 @DataJpaTest

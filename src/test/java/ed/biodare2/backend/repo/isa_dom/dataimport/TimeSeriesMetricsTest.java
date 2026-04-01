@@ -7,9 +7,9 @@ package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 import static ed.biodare2.backend.repo.isa_dom.dataimport.TimeSeriesMetrics.*;
 import ed.robust.dom.data.TimeSeries;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -22,7 +22,7 @@ public class TimeSeriesMetricsTest {
     public TimeSeriesMetricsTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
     }
 

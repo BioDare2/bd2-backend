@@ -5,19 +5,18 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare.jobcentre2.dom.State;
 import ed.robust.ppa.PPAMethod;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
@@ -32,19 +31,16 @@ public class PPAJobSummaryTest {
     ObjectMapper mapper;
     
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-}
-    
-    @After
-    public void tearDown() {
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
-
+    
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         PPAJobSummary org = makePPAJobSummary();
         
@@ -86,5 +82,4 @@ public class PPAJobSummaryTest {
         
         return job;
     }
-    
 }

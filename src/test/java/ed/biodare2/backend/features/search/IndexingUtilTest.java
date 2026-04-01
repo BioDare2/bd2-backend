@@ -11,9 +11,8 @@ import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makePerson;
 import ed.biodare2.backend.repo.isa_dom.contribution.ContributionDesc;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import java.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -24,14 +23,9 @@ public class IndexingUtilTest {
     public IndexingUtilTest() {
     }
     
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testSomeMethod() {
     }
-    
     
     @Test
     public void authorsJoinNames() {

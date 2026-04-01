@@ -12,10 +12,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
@@ -26,7 +26,7 @@ public class DataTableReaderProviderTest {
     public DataTableReaderProviderTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
     }
 
@@ -88,7 +88,7 @@ public class DataTableReaderProviderTest {
     }
     
     @Test
-    @Ignore("Test file is not committed")
+    @Disabled("Test file is not committed")
     public void testProvidesExcelReadersForLargeExcells() throws IOException {
         
         Path file = Paths.get("/home/dthedie/Temp/long_5000x1200.xlsx");

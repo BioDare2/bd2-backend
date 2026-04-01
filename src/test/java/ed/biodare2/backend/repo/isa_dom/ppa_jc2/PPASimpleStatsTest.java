@@ -5,14 +5,14 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.robust.dom.tsprocessing.PhaseType;
-import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
@@ -26,11 +26,12 @@ public class PPASimpleStatsTest {
     
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }    
     
     public static PPASimpleStats makeSimpleStats() {
@@ -69,7 +70,7 @@ public class PPASimpleStatsTest {
     }
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         PPASimpleStats org = makeSimpleStats();
 
@@ -80,7 +81,5 @@ public class PPASimpleStatsTest {
         
         PPASimpleStats cpy = mapper.readValue(json, PPASimpleStats.class); 
         // [TODO find reflective eq] assertReflectionEquals(org,cpy); 
-        
     }    
-    
 }

@@ -6,18 +6,16 @@
 package ed.biodare2.backend.features.accounts;
 
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
-import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import static ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder.emptySystemInfo;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,9 +34,8 @@ public class AccountsCleanerTest {
     public AccountsCleanerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         users = mock(UserAccountRep.class);
         systemInfos = mock(DBSystemInfoRep.class);
         cleaner = new AccountsCleaner(users, systemInfos);

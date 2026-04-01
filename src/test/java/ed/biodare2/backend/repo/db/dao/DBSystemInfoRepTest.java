@@ -15,13 +15,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Limit;
@@ -29,7 +28,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 //import org.springframework.transaction.annotation.Transactional;
 
@@ -37,13 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @Import({SimpleRepoTestConfig.class})
 public class DBSystemInfoRepTest {
 
-
-    
     @Autowired
     DBSystemInfoRep repository;
     
@@ -55,11 +50,10 @@ public class DBSystemInfoRepTest {
     //@MockBean
     //Jackson2ObjectMapperBuilder jacksonB;
     
-    
     public DBSystemInfoRepTest() {
     }
     
-    @Before
+    @BeforeEach
     public void init() {
         info = new DBSystemInfo();
         info.setParentId(12);
@@ -73,7 +67,6 @@ public class DBSystemInfoRepTest {
         info.setReleaseDate(LocalDate.now().plusDays(3));
         
         info.setSearchInfo(makeSearchInfo("Exp "+12, fixtures.user1.getLastName()));
-        
     }
 
     @Test
@@ -91,7 +84,7 @@ public class DBSystemInfoRepTest {
         
     }
     
-    @Ignore("This method was removed from the repo")
+    @Disabled("This method was removed from the repo")
     @Test
     //@Transactional
     public void canFindByOwner() {
@@ -137,7 +130,7 @@ public class DBSystemInfoRepTest {
         */
     }    
     
-    @Ignore("This method was removed from the repo")
+    @Disabled("This method was removed from the repo")
     @Test
     //@Transactional
     public void canFindByOwnerLogin() {

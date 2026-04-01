@@ -5,25 +5,17 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.AssayPackAssembler;
-import ed.biodare2.backend.repo.dao.SystemInfoRep;
-import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
-import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import static ed.biodare2.backend.repo.dao.MockReps.mockDBSystemInfoRep;
 import static ed.biodare2.backend.repo.dao.MockReps.mockExperimentAssayRep;
 import static ed.biodare2.backend.repo.dao.MockReps.mockSystemInfoRep;
 import static ed.biodare2.backend.repo.dao.MockReps.testAssayPack;
-import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
-import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
-import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import java.util.Optional;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 
 
@@ -44,9 +36,8 @@ public class AssayPackAssemblerTest {
     public AssayPackAssemblerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        
         testPack = testAssayPack();
         /*testPack.expId = assay.getId();
         testPack.assay = assay;
@@ -135,7 +126,6 @@ public class AssayPackAssemblerTest {
             AssayPack pack = assembler.save(testPack);
             fail("Exception expected on read only pack");
         } catch (IllegalArgumentException e) {};
-        
         
         verify(experiments,never()).save(testPack.assay);
         verify(systemInfos,never()).save(testPack.systemInfo);

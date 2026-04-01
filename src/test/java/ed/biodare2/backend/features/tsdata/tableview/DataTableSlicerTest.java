@@ -7,9 +7,9 @@ package ed.biodare2.backend.features.tsdata.tableview;
 
 import ed.robust.dom.util.Pair;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -25,9 +25,8 @@ public class DataTableSlicerTest {
     DataTableSlicer instance;
     DataTableReader tableReader;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         tableReader = mock(DataTableReader.class);
         instance = new DataTableSlicer();
     }

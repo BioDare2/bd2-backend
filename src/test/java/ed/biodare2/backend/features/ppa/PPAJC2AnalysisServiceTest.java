@@ -12,9 +12,9 @@ import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
 import java.net.URL;
 import java.util.List;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,21 +31,17 @@ public class PPAJC2AnalysisServiceTest {
     PPAServiceParameters parameters;
     PPAUtilsJC2 utils;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        
         parameters = new PPAServiceParameters();
         parameters.backendURL = new URL("http://localhost:9000");
         parameters.ppaUsername = "user1";
         parameters.ppaPassword = "password1";
         parameters.testClient = false;
-        
         client = mock(JobCentreEndpointClient.class);
-                
         utils = new PPAUtilsJC2();
         instance = new PPAJC2AnalysisService(client, parameters);
     }
-
     
     @Test
     public void resultsHandlerEndpoint() {

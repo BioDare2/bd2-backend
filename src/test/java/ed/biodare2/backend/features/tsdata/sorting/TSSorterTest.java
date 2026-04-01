@@ -27,10 +27,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import static org.mockito.Mockito.*;
 
 /**
@@ -49,7 +49,7 @@ public class TSSorterTest {
     
     AssayPack experiment;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         
         dataHandler = mock(TSDataHandler.class);
@@ -539,7 +539,7 @@ public class TSSorterTest {
     
 
     @Test
-    @Ignore
+    @Disabled
     public void testSortingParraleStreamToListPreservesOrder() {
         
         class A {

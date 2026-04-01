@@ -36,9 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -53,10 +52,6 @@ public class PPAUtilsJC2Test {
     
     PPAUtilsJC2 instance = new PPAUtilsJC2();
     
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void prepareJobRequestCreatesTheRequest() throws Exception {
         

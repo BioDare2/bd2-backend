@@ -13,9 +13,9 @@ import static ed.biodare2.backend.repo.system_dom.ServiceLevel.*;
 import static ed.biodare2.backend.features.subscriptions.SubscriptionType.*;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -29,7 +29,7 @@ public class ServiceLevelResolverTest {
     ServiceLevelResolver instance;
     Fixtures fixtures;
     
-    @Before
+    @BeforeEach
     public void init() {
         instance = new ServiceLevelResolver();
         fixtures = Fixtures.build();

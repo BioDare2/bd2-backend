@@ -13,30 +13,27 @@ import static ed.biodare2.backend.web.rest.AbstractIntTestBase.APPLICATION_JSON_
 import ed.biodare2.backend.security.BioDare2User;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
-
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class FileUploadContorllerIntTest extends AbstractIntTestBase {
- 
     
     final String serviceRoot = "/api/upload";
     
@@ -47,12 +44,11 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
     public void uploadsFile() throws Exception {
 
         MockMultipartFile upload = new MockMultipartFile("file", "original", "text", new byte[10]);
-        
-        
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot+"/one")
-                .file(upload)
-                .accept(APPLICATION_JSON_UTF8)
-                .with(mockAuthentication);
+
+	RequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot + "/one")
+	    .file(upload)
+	    .accept(APPLICATION_JSON_UTF8)
+	    .with(mockAuthentication);
 
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -75,7 +71,6 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
         
         Path file = handler.get(info.id, currentUser);
         assertEquals(10,Files.size(file));
-        
     }
     
     @Test
@@ -84,18 +79,16 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
         MockMultipartFile upload = new MockMultipartFile("file", "original", "text", new byte[10]);
         
         UserAccount user = fixtures.anonymous;
-        
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot+"/one")
-                .file(upload)
-                .accept(APPLICATION_JSON_UTF8)
-                .with(authenticate(user));
+
+	RequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot + "/one")
+	    .file(upload)
+	    .accept(APPLICATION_JSON_UTF8)
+	    .with(mockAuthentication);
 
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isForbidden())
-                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
                 .andReturn();
         assertNotNull(resp);
-    
     }
     
     @Test

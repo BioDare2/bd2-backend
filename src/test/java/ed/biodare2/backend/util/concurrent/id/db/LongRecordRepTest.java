@@ -8,22 +8,17 @@ package ed.biodare2.backend.util.concurrent.id.db;
 //import ed.biodare2.backend.SimpleTestConfiguration;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-//import org.springframework.transaction.annotation.Transactional;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 /**
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @DataJpaTest
 public class LongRecordRepTest {
     
@@ -35,20 +30,17 @@ public class LongRecordRepTest {
     
     List<LongRecord> created = new ArrayList<>();
     
-    
-    
-    @Before
+    @BeforeEach
     //@Transactional
     public void setUp() {
         init(repository,created);
     }
     
-    @After
+    @AfterEach
     //@Transactional
     public void tearDown() {
         clear(repository,created);
     }
-    
     
     @Test
     public void testSetup() {

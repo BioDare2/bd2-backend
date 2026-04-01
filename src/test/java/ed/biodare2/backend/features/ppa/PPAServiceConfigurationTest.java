@@ -7,21 +7,17 @@ package ed.biodare2.backend.features.ppa;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare2.SimpleRepoTestConfig;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Import(SimpleRepoTestConfig.class)
 public class PPAServiceConfigurationTest {
@@ -39,10 +35,6 @@ public class PPAServiceConfigurationTest {
     @Qualifier(value = "ppaClient")        
     JobCentreEndpointClient client;
     
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testParamsAreSet() {
         assertNotNull(params);
@@ -54,5 +46,4 @@ public class PPAServiceConfigurationTest {
     public void testClientIsProvided() {
         assertNotNull(client);
     }
-    
 }

@@ -6,10 +6,9 @@
 package ed.biodare2.backend.web.rest;
 
 import ed.biodare2.SimpleRepoTestConfig;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -18,18 +17,14 @@ import static org.hamcrest.Matchers.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class RoutesTest extends AbstractIntTestBase {
-    
-
     
     @LocalServerPort
     int port = 0;
@@ -41,7 +36,7 @@ public class RoutesTest extends AbstractIntTestBase {
     public RoutesTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         server = "localhost:"+port;

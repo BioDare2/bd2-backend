@@ -5,10 +5,7 @@
 package ed.biodare2.backend.features.auto_publish;
 
 import ed.biodare2.Fixtures;
-import ed.biodare2.backend.features.subscriptions.SubscriptionType;
-import static ed.biodare2.backend.features.subscriptions.SubscriptionType.*;
 import ed.biodare2.backend.handlers.ExperimentHandler;
-import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
@@ -25,16 +22,10 @@ import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -58,15 +49,7 @@ public class ExpPublishingHandlerTest {
     public ExpPublishingHandlerTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         fixtures = Fixtures.build();
@@ -106,18 +89,7 @@ public class ExpPublishingHandlerTest {
         //handler = new ExperimentHandler(experiments,experiments,systemInfos,dbSystemInfos,idGenerator,routes,importHandler,dataHandler,fileAssets,securityResolver);
         handler = new ExpPublishingHandler(experimentHandler, users);
     }
-    
-    @After
-    public void tearDown() {
-    }
 
-    
-
-    
-    
-
-
-    
     @Test
     public void notSuitableForPublishingWithYoungerEmbargo() {
         

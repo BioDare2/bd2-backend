@@ -5,15 +5,16 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.robust.dom.tsprocessing.PhaseType;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
 /**
@@ -28,13 +29,13 @@ public class ValuesByPhaseTest {
     ObjectMapper mapper;
     
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }    
-    
 
     @Test
     public void serializesToJSONAndBack() throws Exception {
@@ -64,7 +65,7 @@ public class ValuesByPhaseTest {
     }   
     
     @Test
-    @Ignore //cause comes back as list, but it is ok
+    @Disabled //cause comes back as list, but it is ok
     public void serializesToJSONAndBackArrayVals() throws Exception {
         ValuesByPhase<double[]> org = makeValuesByPhaseArray();
         
@@ -114,5 +115,4 @@ public class ValuesByPhaseTest {
         }
         return values;
     }       
-    
 }

@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.ScoreDoc;
@@ -19,12 +18,12 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.TopFieldDocs;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,10 +31,10 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class LuceneSearcherTest {
-   
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @TempDir
+    Path testFolder;
+   
     Path indexDir;  
     LuceneWriter writer;
     List<Document> docs;
@@ -45,9 +44,9 @@ public class LuceneSearcherTest {
     public LuceneSearcherTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        indexDir = testFolder.newFolder().toPath();
+        indexDir = testFolder.resolve("test");
         
         writer = new LuceneWriter(indexDir);
         
@@ -59,7 +58,7 @@ public class LuceneSearcherTest {
         searcher = new LuceneSearcher(writer);
     }
     
-    @After
+    @AfterEach
     public void close() throws Exception {
         writer.close();
         searcher.close();

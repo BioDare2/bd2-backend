@@ -10,11 +10,11 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -23,9 +23,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author tzielins
  */
 public class BioDare2RestTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     static class BioDare2RestImpl extends BioDare2Rest {
         
@@ -36,7 +36,7 @@ public class BioDare2RestTest {
     public BioDare2RestTest() {
     }
     
-    @Before
+    @BeforeEach
     public void init() {
         instance = new BioDare2RestImpl();
     }
@@ -44,7 +44,7 @@ public class BioDare2RestTest {
     @Test
     public void sendFilesSetsCorrectHeaders() throws Exception {
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         String contentType = "txt";
         String fileName = "a.file.txt";

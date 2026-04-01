@@ -21,12 +21,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@Import(SimpleRepoTestConfig.class)
 @Import({SimpleRepoTestConfig.class})
@@ -42,8 +39,6 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
  
     @Autowired
     ExpTestSeeder testSeeder;
-    
-            
     
     @Autowired
     ExperimentPackHub expBoundles;
@@ -60,8 +55,6 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     @Autowired
     TSDataHandler tsHandler;
     
-    
-    
     static AtomicLong expIds = new AtomicLong(150);
     
     @Autowired
@@ -70,7 +63,7 @@ public abstract class ExperimentBaseIntTest extends AbstractIntTestBase {
     @Autowired
     LuceneWriter luceneWriter;
     
-    @Before
+    @BeforeEach
     @Transactional
     public void cleanTestSpace() throws IOException {
         

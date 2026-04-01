@@ -20,16 +20,15 @@ import ed.biodare2.backend.util.TableBuilder;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,28 +36,27 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class PPAResultsExporterJC2Test {
+
+    @TempDir
+    Path testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
     PPATestSeederJC2 seeder;  
     PPAResultsExporterJC2 exporter;
     
     public PPAResultsExporterJC2Test() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         exporter = new PPAResultsExporterJC2();
         seeder = new PPATestSeederJC2();
-
     }
 
     @Test
     public void exportPPAJobSavesToFile() throws IOException, RobustFormatException {
         
-        
         //Path file = Paths.get("E:/Temp/exported.csv");
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         ExperimentalAssay exp = mock(ExperimentalAssay.class);
         when(exp.getId()).thenReturn(5670L);
@@ -81,7 +79,7 @@ public class PPAResultsExporterJC2Test {
         
         
         //Path file = Paths.get("E:/Temp/stats_exported.csv");
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         ExperimentalAssay exp = mock(ExperimentalAssay.class);
         when(exp.getId()).thenReturn(5670L);
@@ -102,7 +100,7 @@ public class PPAResultsExporterJC2Test {
         
         
         //Path file = Paths.get("E:/Temp/res_exported.csv");
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         ExperimentalAssay exp = mock(ExperimentalAssay.class);
         when(exp.getId()).thenReturn(5670L);

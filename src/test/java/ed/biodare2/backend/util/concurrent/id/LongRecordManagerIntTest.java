@@ -9,13 +9,11 @@ import ed.biodare2.backend.util.concurrent.id.db.LongRecord;
 import ed.biodare2.backend.util.concurrent.id.db.LongRecordRep;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.ConcurrencyFailureException;
@@ -25,11 +23,8 @@ import org.springframework.dao.ConcurrencyFailureException;
  *
  * @author Zielu
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//@SpringBootTest(classes = {BioDare2TestConfiguration.class},webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class LongRecordManagerIntTest {
-
     
     @SpringBootApplication
     //@Import(EnvironmentConfiguration.class)
@@ -46,31 +41,27 @@ public class LongRecordManagerIntTest {
     
     LongRecord rec;
     
-    @Before
+    @BeforeEach
     //@Transactional
     public void setup() {
         rec = new LongRecord("cos",2);
         rec = save(rec);
-        
     }
     
     @Test
-    @Ignore
+    @Disabled
     //@Transactional
     public void reserveNextRecordsUpdatesRepopsitory() throws Exception {
-
         
         int size = 2;
         
         List expResult = Arrays.asList(2L,3L);
         List result = manager.reserveNextRecords(rec.getRecordName(), size,Long.MAX_VALUE);
         assertEquals(expResult, result);        
-        
-        
     }
     
     @Test
-    @Ignore
+    @Disabled
     //@Transactional
     public void updateStartsUpdatesRepopsitory() throws Exception {
 
@@ -80,10 +71,7 @@ public class LongRecordManagerIntTest {
         List expResult = Arrays.asList(200L,201L);
         List result = manager.reserveNextRecords(rec.getRecordName(), size,Long.MAX_VALUE);
         assertEquals(expResult, result);        
-        
-        
     }
-    
     
     @Test
     public void reserveNextRecordsUpdatesRepopsitoryConcurrentMod() throws Exception {
@@ -105,7 +93,6 @@ public class LongRecordManagerIntTest {
         
     }
     
-    
     @Test
     //@Transactional
     public void createRecordIfNotExistsCreates() throws Exception {
@@ -120,8 +107,5 @@ public class LongRecordManagerIntTest {
     protected LongRecord save(LongRecord record) {
         
         return records.save(record);
-        
     }
-
-    
 }

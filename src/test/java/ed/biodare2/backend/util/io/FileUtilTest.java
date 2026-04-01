@@ -16,24 +16,24 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
  * @author tzielins
  */
 public class FileUtilTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     FileUtil instance;
     
-    @Before
+    @BeforeEach
     public void init() {
         instance = new FileUtil();
     }
@@ -55,7 +55,7 @@ public class FileUtilTest {
     @Test
     public void uniqueFileGivesPathWIthGivenPrefixAndSuffix() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         String prefix = "ala";
         String suffix = ".xml";
         String exp = prefix+".1"+suffix;
@@ -67,7 +67,7 @@ public class FileUtilTest {
     @Test
     public void uniqueFileIncrementsCounterWIthGivenPrefixAndSuffixToAvoidColisions() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         String prefix = "ala";
         String suffix = ".xml";
         
@@ -87,7 +87,7 @@ public class FileUtilTest {
     @Test
     public void uniqueFileThrowsExceptionIfTooManyIterations() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         String prefix = "ala";
         String suffix = ".xml";
 
@@ -103,7 +103,7 @@ public class FileUtilTest {
     @Test
     public void backupMakesCopy() throws Exception {
         
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         Path org = dir.resolve("cos.txt");
         Files.write(org, Arrays.asList("Blla bla bla"));
         
@@ -116,7 +116,7 @@ public class FileUtilTest {
     
     @Test
     public void removeDirectoryRemovesDirectoryAndItsContent() throws Exception {
-        Path dir = testFolder.newFolder().toPath();
+        Path dir = testFolder.resolve("test");
         
         Path subDir = dir.resolve("dir1");
         Files.createDirectory(subDir);

@@ -16,10 +16,9 @@ import ed.biodare2.backend.web.tracking.SecurityTracker;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,7 +26,6 @@ import static org.mockito.Mockito.*;
  * @author Zielu
  */
 public class AccountControllerTest {
-    
     
     UserAccountRep accounts;
     UsersHandler usersHandler;
@@ -40,11 +38,10 @@ public class AccountControllerTest {
     Fixtures fixtures;
     
     public AccountControllerTest() {
-
     }
     
     
-    @Before
+    @BeforeEach
     public void setUp() {
         fixtures = Fixtures.build();
         
@@ -66,10 +63,6 @@ public class AccountControllerTest {
         account.setEmail("test1@ed.ac.uk");
         account.setPassword("xyz");*/
         
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     /*@Test

@@ -10,20 +10,20 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author tzielins
  */
 public class SpeciesServiceTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     Path configFile;
     SpeciesService service;
@@ -31,10 +31,9 @@ public class SpeciesServiceTest {
     public SpeciesServiceTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        
-        configFile = testFolder.newFile().toPath();
+        configFile = testFolder.resolve("test");
         service = new SpeciesService(configFile.toString());
     }
 
@@ -58,7 +57,7 @@ public class SpeciesServiceTest {
     @Test
     public void readSpeciesReadsListFromFileStripingSpacesAndOrdering() throws Exception {
         
-        Path tFile = testFolder.newFile().toPath();
+        Path tFile = testFolder.resolve("test");
         
         List<String> content = Arrays.asList("Species 1 ","Species 2",""," Species 3","A","  ");
         Files.write(tFile, content);

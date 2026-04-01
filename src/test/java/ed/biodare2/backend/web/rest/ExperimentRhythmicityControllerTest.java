@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
@@ -23,9 +23,8 @@ import ed.biodare2.backend.repo.system_dom.AssayPack;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 // import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -45,17 +43,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
     
     final String serviceRoot = "/api/experiment";
     
-    
     @MockitoBean
     RhythmicityService rhythmicityService;
-    
 
     @Autowired
     RhythmicityArtifactsRep rhythmicityRep;
@@ -106,7 +101,6 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         assertTrue(exp.characteristic.hasRhythmicityJobs);
         
         assertTrue(rhythmicityRep.findJob(jobId, exp.getId()).isPresent());
-        
     }
     
     @Test

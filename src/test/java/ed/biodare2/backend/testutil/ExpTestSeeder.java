@@ -5,7 +5,8 @@
  */
 package ed.biodare2.backend.testutil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.Fixtures;
 import ed.biodare2.backend.features.rdmsocial.RDMSocialHandler;
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
@@ -28,12 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import jakarta.xml.bind.JAXB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-//import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -57,7 +56,6 @@ public class ExpTestSeeder {
     
     @Autowired
     public ObjectMapper mapper;
-    
     
     @Transactional(propagation = Propagation.REQUIRED)
     public AssayPack insertExperiment() {
@@ -85,11 +83,7 @@ public class ExpTestSeeder {
         //expBoundles.flush();
         return pack;
     }
-    
 
-    
-    
-    //@Transactional
     public void seedData(List<DataTrace> data, AssayPack exp) {
         DataBundle rawData = new DataBundle();
         rawData.data.addAll(data);
@@ -100,7 +94,6 @@ public class ExpTestSeeder {
             throw new RuntimeException("Cannot seed data: "+e.getMessage(),e);
         }
     }
-
     
     public List<DataTrace> getData() {
         return getData("SHORT");        
@@ -132,11 +125,10 @@ public class ExpTestSeeder {
     protected <T extends Object> T fromJSON(Path file,Class<T> valueType) {
         try {
             return mapper.readValue(file.toFile(), valueType);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     }
-    
     
     protected Path getResourceFile(String name) {
         URL url = this.getClass().getResource(name);
@@ -151,10 +143,4 @@ public class ExpTestSeeder {
             throw new RuntimeException("Cannot get file resource: "+name+": "+e.getMessage(),e);
         }
     }
-
-
-
-
-    
-    
 }

@@ -5,18 +5,16 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.Fixtures;
-import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.backend.security.BioDare2User;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import jakarta.annotation.Resource;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -35,7 +33,6 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
  * @author tzielins
  */
 public class AbstractIntTestBase {
-     
     
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
                                                                         MediaType.APPLICATION_JSON.getSubtype(),                        
@@ -56,18 +53,13 @@ public class AbstractIntTestBase {
     @Resource(name = "DomMapper" )        
     ObjectMapper mapper;
     
-    
     MockMvc mockMvc;
     
     BioDare2User currentUser;
     RequestPostProcessor mockAuthentication;
     
-
-    
-    
-    @Before
+    @BeforeEach
     public void setUp() throws Exception  {
-        
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac)
             .apply(springSecurity())
             .build();        
@@ -75,11 +67,6 @@ public class AbstractIntTestBase {
         currentUser = fixtures.user1;
         mockAuthentication = authenticate(currentUser);
     }
-    
-    @After
-    public void tearDown() {
-    } 
-    
     
     Authentication makeAuthentication(BioDare2User user) {
         TestingAuthenticationToken authentication = new TestingAuthenticationToken(user, user.getPassword(),USER_ROLES);
@@ -90,6 +77,4 @@ public class AbstractIntTestBase {
     RequestPostProcessor authenticate(BioDare2User user) {
         return SecurityMockMvcRequestPostProcessors.authentication(makeAuthentication(user));
     }
-    
-    
 }

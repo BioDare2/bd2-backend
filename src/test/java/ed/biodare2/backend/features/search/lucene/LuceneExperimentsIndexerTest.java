@@ -24,12 +24,12 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,9 +37,9 @@ import static org.mockito.Mockito.*;
  * @author tzielins
  */
 public class LuceneExperimentsIndexerTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public LuceneExperimentsIndexerTest() {
     }
@@ -49,22 +49,21 @@ public class LuceneExperimentsIndexerTest {
     LuceneSearcher searcher;
     Path indexDir;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         writer = mock(LuceneWriter.class);
         searcher = mock(LuceneSearcher.class);
         instance = new LuceneExperimentsIndexer(writer, searcher);
     }
     
     void setUpReal() throws Exception {
-        indexDir = testFolder.newFolder().toPath();
+        indexDir = testFolder.resolve("test");
         
         writer = new LuceneWriter(indexDir);   
         searcher = new LuceneSearcher(writer);
     }
     
-    @After
+    @AfterEach
     public void close() throws IOException {
         writer.close();
         searcher.close();
@@ -83,7 +82,7 @@ public class LuceneExperimentsIndexerTest {
        List<String> allFields = Fields.allFields();
        
        allFields.forEach( f -> {
-           assertNotNull(f, doc.getField(f));
+	       assertNotNull(doc.getField(f), f);
        });
        
     }

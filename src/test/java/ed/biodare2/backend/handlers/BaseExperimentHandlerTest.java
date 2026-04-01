@@ -11,9 +11,9 @@ import ed.biodare2.backend.repo.isa_dom.openaccess.OpenAccessLicence;
 import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -25,7 +25,7 @@ public class BaseExperimentHandlerTest {
     }
     BaseExperimentHandler handler;
     
-    @Before
+    @BeforeEach
     public void setup() {
         handler = new BaseExperimentHandler();
     }

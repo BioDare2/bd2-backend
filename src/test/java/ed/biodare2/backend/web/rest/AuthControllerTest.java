@@ -11,10 +11,9 @@ import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import java.util.Map;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 /**
  *
@@ -22,20 +21,16 @@ import static org.mockito.Mockito.*;
  */
 public class AuthControllerTest {
     
-
     //AccountRep accounts;
     UserAccount account;
     UserAccountRep accounts;
     
     AuthController controller;
     
-    
-    
     public AuthControllerTest() {
     }
     
-    
-    @Before
+    @BeforeEach
     public void setUp() {
         account = UserAccount.testInstance(1234);
         account.setLogin("test1");
@@ -51,16 +46,8 @@ public class AuthControllerTest {
         //controller = new AuthController(accounts);
         controller = new AuthController();
         
-        
         //*/
     }
-    
-    @After
-    public void tearDown() {
-    }
-
-    
-
     
     /**
      * Test of user method, of class AuthController.
@@ -101,5 +88,4 @@ public class AuthControllerTest {
         assertFalse(userMap.containsKey("password"));
         assertFalse(userMap.containsValue("xyz"));
     }
-    
 }

@@ -5,13 +5,15 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa_jc2;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
 import static ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPASimpleResultEntryTest.makePPASimpleResultEntry;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
@@ -24,11 +26,12 @@ public class PPAJobSimpleResultsTest {
     
     ObjectMapper mapper;    
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
 
     @Test
@@ -44,5 +47,4 @@ public class PPAJobSimpleResultsTest {
         PPAJobSimpleResults cpy = mapper.readValue(json, PPAJobSimpleResults.class); 
         // [TODO find reflective eq] assertReflectionEquals(org,cpy); 
     }
-    
 }

@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import static org.mockito.Mockito.*;
 
 /**
@@ -44,14 +44,11 @@ public class DataTableImporterTest {
     DataTableImporter instance;
     TextDataTableReader reader;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         instance = new DataTableImporter();
         reader = mock(TextDataTableReader.class);
-        
     }
-
     
     @Test
     public void importTimesRowGivesTransformedRow() throws Exception {
@@ -591,7 +588,7 @@ public class DataTableImporterTest {
     
 
     @Test
-    @Ignore("The test file is not committed")
+    @Disabled("The test file is not committed")
     public void importCSVColDataFromMediumLargeFile() throws Exception {
         
 

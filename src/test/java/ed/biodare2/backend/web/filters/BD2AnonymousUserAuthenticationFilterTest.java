@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.util.List;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
-import org.springframework.security.web.context.SecurityContextRepository;
 /**
  *
  * @author tzielins
@@ -39,7 +38,7 @@ public class BD2AnonymousUserAuthenticationFilterTest {
     AuthenticationEventPublisher eventPublisher;
     //SecurityContextRepository securityContextRepository;
     
-    @Before
+    @BeforeEach
     public void init() {
         eventPublisher = mock(AuthenticationEventPublisher.class);
         //securityContextRepository = mock(SecurityContextRepository.class);

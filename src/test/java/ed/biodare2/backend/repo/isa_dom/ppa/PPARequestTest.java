@@ -5,15 +5,13 @@
  */
 package ed.biodare2.backend.repo.isa_dom.ppa;
 
-import ed.biodare2.backend.repo.isa_dom.ppa.PPARequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.robust.dom.data.DetrendingType;
 import ed.robust.ppa.PPAMethod;
-import java.io.IOException;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -25,7 +23,7 @@ public class PPARequestTest {
     }
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         PPARequest org = DomRepoTestBuilder.makePPARequest();
         ObjectMapper mapper = new ObjectMapper();
@@ -39,7 +37,7 @@ public class PPARequestTest {
     }
     
     @Test
-    public void readsUIJSON() throws JsonProcessingException, IOException {
+    public void readsUIJSON() throws JacksonException {
         ObjectMapper mapper = new ObjectMapper();
         
         String json = "{\"windowStart\":5,\"windowEnd\":100,\"periodMin\":18,\"periodMax\":35,\"method\":\"MFourFit\",\"detrending\":\"POLY_DTR\",\"methodN\":\"MFourFit\",\"detrendingN\":\"POLY_DTR\"}";
@@ -95,8 +93,5 @@ public class PPARequestTest {
         req.periodMin = 30;
         req.periodMax = 10;
         assertFalse(req.isValid());
-        
-        
     }    
-    
 }

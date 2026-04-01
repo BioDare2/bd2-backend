@@ -10,12 +10,11 @@ import ed.biodare2.backend.repo.dao.ExperimentalAssayRep;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.handlers.ExperimentDataHandler;
 import ed.robust.dom.util.Pair;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -37,15 +35,11 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import({SimpleRepoTestConfig.class})
 public class UsageStatsControllerTest extends ExperimentBaseIntTest {
@@ -80,7 +74,7 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
     @Autowired
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         outputFile = Paths.get(outputPath);
@@ -235,5 +229,4 @@ public class UsageStatsControllerTest extends ExperimentBaseIntTest {
         Map<Pair<String,String>, Integer> res = usageStatsController.countSeries(groups);
         assertEquals(exp, res);
     }
-
 }

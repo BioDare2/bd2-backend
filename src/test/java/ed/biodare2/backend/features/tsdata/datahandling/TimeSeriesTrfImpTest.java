@@ -18,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -37,10 +36,6 @@ public class TimeSeriesTrfImpTest {
         return TimeSeriesTrfImp.getInstance();        
     }
     
-    @Before
-    public void setUp() {
-    }
-
     @Test
     public void testStandardise() throws IOException {
         System.out.println("Testing standarization");
@@ -615,7 +610,7 @@ public class TimeSeriesTrfImpTest {
                 lEPS = 0.2;
                 if (type.equals(DetrendingType.BAMP_DTR)) lEPS = 0.4;
             }
-            assertTrue("DT: "+type+", exp:"+data+", got:"+out,data.almostEquals(out,lEPS));
+            assertTrue(data.almostEquals(out,lEPS), "DT: "+type+", exp:"+data+", got:"+out);
             
         }
     }
@@ -826,7 +821,7 @@ public class TimeSeriesTrfImpTest {
                 Timepoint o = oL.get(i);
                 
                 assertEquals(d.getTime(), o.getTime(),1E-12);
-                assertEquals("T: "+d.getTime(),d.getValue(), o.getValue(),d.getValue()/1000);
+                assertEquals(d.getValue()/1000, d.getValue(), o.getValue(), "T: "+d.getTime());
                 //assertEquals(0, o.getStdError(),1E-12);
                 //assertEquals(0, o.getStdDev(),1E-12);
             }
@@ -879,15 +874,12 @@ public class TimeSeriesTrfImpTest {
                 Timepoint o = oL.get(i);
                 
                 assertEquals(d.getTime(), o.getTime(),1E-12);
-                assertEquals("T: "+d.getTime(),d.getValue(), o.getValue(),d.getValue()/1000);
+                assertEquals(d.getValue(), o.getValue(),d.getValue()/1000, "T: "+d.getTime());
                 //assertEquals(0, o.getStdError(),1E-12);
                 //assertEquals(0, o.getStdDev(),1E-12);
             }
             assertEquals(0,oL.get(oL.size()-1).getStdDev(),1E-12);
         }
-        
-        
-        
     }
     
     @Test

@@ -9,7 +9,6 @@ import ed.biodare2.Fixtures;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.security.dao.UserAccountRep;
 import ed.biodare2.backend.security.dao.db.UserAccount;
-//import ed.biodare2.backend.handlers.UsersHandler.ActivationToken;
 import ed.biodare2.backend.security.BioDare2User;
 import ed.biodare2.backend.services.mail.EmailChecker;
 import ed.biodare2.backend.services.mail.Mailer;
@@ -29,12 +28,10 @@ import java.util.Map;
 import java.util.Optional;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,18 +41,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Validator;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
-//@Ignore //[TODO DB TEST]
 public class UsersHandlerTest {
     
     @Autowired
@@ -90,13 +83,12 @@ public class UsersHandlerTest {
     public UsersHandlerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void init() {
         //users = mock(UserAccountRep.class);
         //handler = new UsersHandler(users,validator);
         //fixtures = Fixtures.build();
         fixtures.demoUser.setPassword("GoodPasword1");
-
     }
     
     @Test

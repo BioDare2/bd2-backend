@@ -14,9 +14,9 @@ import java.util.Optional;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -35,14 +35,11 @@ public class RefreshUserFilterTest {
     public RefreshUserFilterTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         accounts = mock(UserAccountRep.class);
         filter = new RefreshUserFilter(accounts);
     }
-    
-    
 
     @Test
     public void makeAuthenticationUsesExistingCredentialsAndRoles() {

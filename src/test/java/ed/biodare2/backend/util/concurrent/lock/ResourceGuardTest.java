@@ -5,7 +5,6 @@
  */
 package ed.biodare2.backend.util.concurrent.lock;
 
-import ed.biodare2.backend.util.concurrent.lock.ResourceGuard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,9 +14,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -30,7 +29,7 @@ public class ResourceGuardTest {
     
     ResourceGuard<Integer> guard;
     
-    @Before
+    @BeforeEach
     public void init() {
         guard = new ResourceGuard<>(5);
     }

@@ -11,18 +11,13 @@ import ed.biodare2.backend.features.rdmsocial.RDMCohort;
 import ed.biodare2.backend.features.rdmsocial.dao.RDMAssetsAspectRep;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
 import ed.biodare2.backend.repo.system_dom.EntityType;
-import ed.biodare2.backend.security.BioDare2User;
-import ed.robust.dom.util.Pair;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,7 +28,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class RDMSocialStatsControllerTest extends ExperimentBaseIntTest {
@@ -45,13 +39,12 @@ public class RDMSocialStatsControllerTest extends ExperimentBaseIntTest {
     
     public RDMSocialStatsControllerTest() {
     }
-    
 
     /**
      * Test of dataStats method, of class RDMSocialStatsController.
      */
     @Test
-    @Ignore("RDMSocial is disabled in the production code")
+    @Disabled("RDMSocial is disabled in the production code")
     public void testWarningStats() throws Exception {
         
         AssayPack pack = insertExperiment();

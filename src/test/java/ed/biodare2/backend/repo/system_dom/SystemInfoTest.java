@@ -5,19 +5,14 @@
  */
 package ed.biodare2.backend.repo.system_dom;
 
-import ed.biodare2.backend.repo.system_dom.Provenance;
-import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import ed.biodare2.backend.repo.system_dom.VersionsInfo;
-import ed.biodare2.backend.repo.system_dom.ACLInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import java.io.IOException;
-import java.util.concurrent.atomic.AtomicLong;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -31,22 +26,18 @@ public class SystemInfoTest {
 
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
     
-    @After
-    public void tearDown() {
-    }    
-    
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         SystemInfo org = SystemDomTestBuilder.makeSystemInfo();
-        
         
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
@@ -85,7 +76,4 @@ public class SystemInfoTest {
     protected static void checkSame(VersionsInfo org, VersionsInfo cpy) {
         assertEquals(org.versions,cpy.versions);
     }    
-
-
-    
 }

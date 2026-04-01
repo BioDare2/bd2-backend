@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.services.upload_guard.UserUploadGuard;
 import ed.biodare2.backend.features.tsdata.tableview.DataTableSlice;
@@ -19,20 +19,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
@@ -40,12 +38,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class FileViewContorllerIntTest extends AbstractIntTestBase {
- 
-
     
     final String serviceRoot = "/api/file";
     
@@ -57,14 +52,11 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
 
     UploadFileInfo uploaded;
     
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-    
         super.setUp();
-        
         uploadguard.finish(currentUser.getId());
-        
         uploaded = upload("data-sheet.xlsx");
     }
     
@@ -74,7 +66,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
 
         return handler.save(upload, currentUser);        
     }
-       
     
     protected UploadFileInfo upload(Path file) throws IOException {
         InputStream in = Files.newInputStream(file);
@@ -92,7 +83,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
     @Test
     public void getSimpleTableViewWorksOnExcel() throws Exception {
 
-        
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/"+uploaded.id+"/view/simpletable")
                 .accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
@@ -111,8 +101,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         assertNotNull(table);
         
         assertEquals(25,table.size());
-        
-        
     }
     
     @Test
@@ -140,14 +128,10 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         
         assertEquals(25,table.size());
         assertEquals(96,table.get(0).size());
-        
-        
     }
     
     @Test
     public void getSimpleTableViewGivesHandlingExceptionOnNonRecognizedFile() throws Exception {
-
-        
         //InputStream in = this.getClass().getResourceAsStream("signs.csv");
         //MockMultipartFile upload = new MockMultipartFile("file", "original", "text", in);
 
@@ -164,9 +148,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
 
         assertNotNull(resp);
         //System.out.println("DataView ERROR JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
-        
-        
-        
     }    
     
     @Test
@@ -208,7 +189,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         //System.out.println("Verify JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
         assertEquals("true",resp.getResponse().getContentAsString());
-                
     }   
     
     
@@ -236,8 +216,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         System.out.println("Verify JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
         //assertEquals("true",resp.getResponse().getContentAsString());
-        
-        
     }     
     
     @Test
@@ -276,7 +254,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         
         assertEquals("id", dataSlice.data.get(0).get(0));
         assertEquals("1.113459299", dataSlice.data.get(1).get(2));
-        
     }    
     
     @Test
@@ -292,7 +269,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         slice.colPage.pageSize = 5;
         
         String orgJSON = mapper.writeValueAsString(slice);
-        
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
                 .contentType(APPLICATION_JSON_UTF8)
@@ -318,7 +294,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         assertEquals(10, (int)dataSlice.rowsNumbers.get(0));
         assertEquals("0.677429628", dataSlice.data.get(0).get(0));
         assertEquals("0.735742597", dataSlice.data.get(1).get(0));
-        
     }     
     
     @Test
@@ -332,7 +307,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         slice.colPage.pageSize = 5;
         
         String orgJSON = mapper.writeValueAsString(slice);
-        
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
                 .contentType(APPLICATION_JSON_UTF8)
@@ -357,11 +331,10 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         
         assertEquals("id", dataSlice.data.get(0).get(0));
         assertEquals(1.113459299, dataSlice.data.get(1).get(2));
-        
     }    
     
     @Test
-    @Ignore("Test file not commited")
+    @Disabled("Test file not commited")
     public void getTableSliceWorksOnLargeExcel() throws Exception {
 
         uploaded = upload(Paths.get("/home/dthedie/Temp/long_255x5000.xls"));
@@ -372,7 +345,6 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         slice.colPage.pageSize = 5;
         
         String orgJSON = mapper.writeValueAsString(slice);
-        
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post(serviceRoot+"/"+uploaded.id+"/view/tableslice"+"/"+format.name())
                 .contentType(APPLICATION_JSON_UTF8)
@@ -396,6 +368,5 @@ public class FileViewContorllerIntTest extends AbstractIntTestBase {
         assertEquals(5, dataSlice.data.get(0).size());
         
         assertEquals("Time", dataSlice.data.get(0).get(0));
-        
     }
 }

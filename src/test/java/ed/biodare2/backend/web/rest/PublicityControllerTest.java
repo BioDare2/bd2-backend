@@ -13,14 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -28,9 +26,8 @@ import org.junit.Rule;
  */
 public class PublicityControllerTest {
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); 
-    
+    @TempDir
+    Path testFolder;
     
     PublicityController instance;
     Mailer mailer;
@@ -41,27 +38,22 @@ public class PublicityControllerTest {
     public PublicityControllerTest() {
     }
     
-    
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         mailer = mock(Mailer.class);
         instance = new PublicityController(mailer);
         
         //testFolder.newFolder();
-        addressFile = testFolder.newFile().toPath();        
+        addressFile = testFolder.resolve("test");        
         Files.write(addressFile, List.of("biodare@ed.ac.uk","biodare2@ed.ac.uk"));
         
-        contentFile = testFolder.newFile().toPath();
+        contentFile = testFolder.resolve("test");
         Files.write(contentFile, List.of("Subject","Body"));
         
         instance.addressesFile = addressFile;
         instance.contentFile = contentFile;        
     }
     
-
-    
-
-
     @Test
     //@Ignore("Test ig cause normaly publicity sending is disabled")
     public void testSendPublicity() throws Exception {

@@ -12,12 +12,11 @@ import ed.biodare2.backend.features.tsdata.TSUtil;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
-import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -32,9 +31,8 @@ public class RhythmicityUtilsTest {
     
     RhythmicityUtils instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         instance = new RhythmicityUtils();
     }
 

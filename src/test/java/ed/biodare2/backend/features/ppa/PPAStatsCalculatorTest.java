@@ -16,10 +16,8 @@ import ed.robust.dom.tsprocessing.WeightingType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -28,14 +26,6 @@ import static org.junit.Assert.*;
 public class PPAStatsCalculatorTest {
     
     public PPAStatsCalculatorTest() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
     }
 
     @Test

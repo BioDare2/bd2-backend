@@ -10,27 +10,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author tzielins
  */
 public class EmailCheckerTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     EmailChecker handler;
     
     public EmailCheckerTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         handler = new EmailChecker();
     }
@@ -49,7 +49,7 @@ public class EmailCheckerTest {
         );
         
         for (String email : mails) {
-            assertTrue("Expected academic for "+email,handler.isAcademic(email));
+            assertTrue(handler.isAcademic(email), "Expected academic for "+email);
         }
         
        // fail("Exepcted");
@@ -70,7 +70,7 @@ public class EmailCheckerTest {
         );
         
         for (String email : mails) {
-            assertTrue("Expected academic for "+email,handler.isAcademic(email));
+            assertTrue(handler.isAcademic(email), "Expected academic for "+email);
         }
         
        // fail("Exepcted");
@@ -94,7 +94,7 @@ public class EmailCheckerTest {
         );
         
         for (String email : mails) {
-            assertFalse("Expected non academic for "+email,handler.isAcademic(email));
+            assertFalse(handler.isAcademic(email), "Expected non academic for "+email);
         }
         
         //fail("Exepcted");
@@ -103,7 +103,7 @@ public class EmailCheckerTest {
     @Test
     public void readKnowDomainsReadsTrimmedFilesContent() throws IOException {
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         List<String> domains = Arrays.asList("first.pl","last.ed"," ","");
         Files.write(file, domains);
         
@@ -118,7 +118,7 @@ public class EmailCheckerTest {
         String email = "bla@not.known";
         assertFalse(handler.isAcademic(email));
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         List<String> domains = Arrays.asList("first.pl","not.known","last.ed");
         Files.write(file, domains);
         
@@ -133,22 +133,15 @@ public class EmailCheckerTest {
         String email = "bla@not.known";
         assertFalse(handler.isAcademic(email));
         
-        
         Path file = null;
         
-        try {
-            file = testFolder.newFolder().toPath().resolve("missing");
-            assertFalse(Files.exists(file));
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        
+	file = testFolder.resolve("test").resolve("missing");
+	assertFalse(Files.exists(file));
         
         handler.updateKnownDomains(file);
         
         assertFalse(handler.isAcademic(email));        
-    
-    }  
+    }
 
     /*
     @Test
@@ -156,7 +149,7 @@ public class EmailCheckerTest {
         String email = "bla@not.known";
         assertFalse(handler.isAcademic(email));
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         List<String> domains = Arrays.asList("first.pl","not.known","last.ed");
         Files.write(file, domains);
         

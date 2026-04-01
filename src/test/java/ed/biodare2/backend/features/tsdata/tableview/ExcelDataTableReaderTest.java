@@ -17,22 +17,21 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class ExcelDataTableReaderTest {
-    
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     Path dataFile;
     ExcelDataTableReader instance;
@@ -40,10 +39,10 @@ public class ExcelDataTableReaderTest {
     public ExcelDataTableReaderTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         
-        dataFile = testFolder.newFile().toPath();
+        dataFile = testFolder.resolve("test");
         instance = new ExcelDataTableReader(dataFile);
     }
     
@@ -60,7 +59,7 @@ public class ExcelDataTableReaderTest {
      */
     @Test
     public void testIsSuitableFormat() throws Exception {
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         assertFalse(ExcelDataTableReader.isSuitableFormat(file));
         
@@ -75,7 +74,7 @@ public class ExcelDataTableReaderTest {
     
     @Test
     public void checFormatErrosReturnsError() throws Exception {
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         assertTrue(ExcelDataTableReader.checkFormatError(file).isPresent());
         
@@ -120,7 +119,7 @@ public class ExcelDataTableReaderTest {
     }
     
     @Test
-    @Ignore("Test files not commited")
+    @Disabled("Test files not commited")
     public void getsSizesOfLargeFiles() throws Exception {
         
         // System.out.println("Get large");

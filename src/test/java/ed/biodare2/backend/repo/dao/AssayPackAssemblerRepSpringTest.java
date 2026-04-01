@@ -10,18 +10,14 @@ import ed.biodare2.backend.MapperConfiguration;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
 import static ed.biodare2.backend.repo.dao.MockReps.testAssayPack;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
-// import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
@@ -29,13 +25,11 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 /**
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class AssayPackAssemblerRepSpringTest {
@@ -73,17 +67,12 @@ public class AssayPackAssemblerRepSpringTest {
     @Autowired
     CacheManager cacheManager;
             
-
-    
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-
         testPack = testAssayPack();
-        
         MockReps.configureMock(dbSystemInfos, testPack.getDbSystemInfo());
         MockReps.configureMock(systemInfos, testPack.getSystemInfo());
         MockReps.configureMock(experiments, testPack.getAssay());
-        
     }
     
     @Test

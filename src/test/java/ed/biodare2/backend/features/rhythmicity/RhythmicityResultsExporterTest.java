@@ -24,26 +24,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class RhythmicityResultsExporterTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public RhythmicityResultsExporterTest() {
     }
     RhythmicityResultsExporter instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new RhythmicityResultsExporter();
     }
@@ -94,7 +94,7 @@ public class RhythmicityResultsExporterTest {
     @Test
     public void exportSavesToFile() throws IOException {
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         ExperimentalAssay exp = mock(ExperimentalAssay.class);
         when(exp.getId()).thenReturn(5670L);

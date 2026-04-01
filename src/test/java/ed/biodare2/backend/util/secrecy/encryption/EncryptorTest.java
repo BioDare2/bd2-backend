@@ -20,19 +20,19 @@ import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author tzielins
  */
 public class EncryptorTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public EncryptorTest() {
     }
@@ -93,15 +93,15 @@ public class EncryptorTest {
     
         System.out.println("encodeFile");
         String msg = "My simple message to be saved in file\n and its rest";
-        Path file = testFolder.newFile().toPath(); //new File("D:/Temp/sec_test_org.txt");
+        Path file = testFolder.resolve("test"); //new File("D:/Temp/sec_test_org.txt");
         Files.write(file, msg.getBytes("UTF-8"));
         
         Encryptor instance = makeInstance();
-        Path coded = testFolder.newFile().toPath();
+        Path coded = testFolder.resolve("test");
         
         instance.encodeFile(file, coded);
         
-        Path decoded = testFolder.newFolder().toPath().resolve("decoded");
+        Path decoded = testFolder.resolve("test").resolve("decoded");
         instance.decodeFile(coded, decoded);
         
         List<String> org = Files.readAllLines(file, Charset.forName("UTF-8"));

@@ -9,9 +9,9 @@ import ed.biodare2.Fixtures;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.repo.ui_dom.security.SecuritySummary;
 import ed.biodare2.backend.security.dao.db.UserAccount;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -26,12 +26,11 @@ public class PermissionsResolverTest {
     Fixtures fixtures;
     BioDare2User user;
     
-    @Before
+    @BeforeEach
     public void init() {
         resolver = new PermissionsResolver();
         fixtures = Fixtures.build();
         user = fixtures.demoUser;
-        
      }
 
     @Test

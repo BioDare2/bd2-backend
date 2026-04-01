@@ -10,39 +10,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.StoredField;
-import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
-import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static ed.biodare2.backend.features.search.lucene.Fields.ID;
 /**
  *
  * @author tzielins
  */
 public class LuceneWriterTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
 
+    @TempDir
+    Path testFolder;
+    
     Path indexDir;
     public LuceneWriterTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        
-        indexDir = testFolder.newFolder().toPath();
-        
-    }
-    
-    @After
-    public void close() {
-        
+        indexDir = testFolder.resolve("test");
     }
 
     @Test
@@ -58,7 +48,6 @@ public class LuceneWriterTest {
     @Test
     public void updateCallsCommit() throws IOException {
         
-        
         try (LuceneWriter instance = new LuceneWriter(indexDir)) {
             Document doc = new Document();
             doc.add(new StoredField(ID, 123));
@@ -72,5 +61,4 @@ public class LuceneWriterTest {
             assertEquals(-1, resp);
         }
     }
-    
 }

@@ -38,9 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -60,22 +60,14 @@ public class RhythmicityHandlerTest {
     
     RhythmicityHandler instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         experimentHandler = mock(ExperimentHandler.class);
-        
         rhythmicityRep = mock(RhythmicityArtifactsRep.class);
-    
         dataHandler = mock(TSDataHandler.class);
-        
         rhythmicityService = mock(RhythmicityService.class);
-    
         instance = new RhythmicityHandler(experimentHandler, dataHandler, rhythmicityRep, rhythmicityService);        
     }
-    
-
- 
 
     @Test
     public void testWaitForJobWaits() {

@@ -8,26 +8,20 @@ package ed.biodare2.backend.services.mail;
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.SimpleRepoTestConfig;
 import jakarta.mail.Session;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class MailerTest {
-    
-    
-
     
     @Autowired
     Mailer instance;
@@ -36,7 +30,7 @@ public class MailerTest {
     }
 
     @Test
-    @Ignore("Not know the password")
+    @Disabled("Not know the password")
     public void sendsAnEmail() {
         
         String to = "biodare@ed.ac.uk";

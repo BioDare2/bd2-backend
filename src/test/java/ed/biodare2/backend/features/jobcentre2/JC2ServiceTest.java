@@ -11,9 +11,9 @@ import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
 import java.net.URL;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -45,7 +45,7 @@ public class JC2ServiceTest {
         
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         parameters = new JC2ServiceParameters();

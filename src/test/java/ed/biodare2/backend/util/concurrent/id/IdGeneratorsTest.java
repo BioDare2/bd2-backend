@@ -4,16 +4,12 @@
  */
 package ed.biodare2.backend.util.concurrent.id;
 
-import ed.biodare2.backend.util.concurrent.id.IdGenerator;
-import ed.biodare2.backend.util.concurrent.id.LongRecordManager;
-import ed.biodare2.backend.util.concurrent.id.IdGenerators;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,16 +25,11 @@ public class IdGeneratorsTest {
     LongRecordManager manager;
     Random random;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         manager = mock(LongRecordManager.class);
         generators = new IdGenerators(manager);
         random = new Random();
-        
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     /**

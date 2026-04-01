@@ -5,14 +5,11 @@
  */
 package ed.biodare2.backend.repo.isa_dom.param;
 
-import ed.biodare2.backend.repo.isa_dom.param.SimpleParameters;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -25,20 +22,15 @@ public class SimpleParametersTest {
     
     SimpleParameters params;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         params = new SimpleParameters();
         params.set("param1","val1");
         params.set("param2",null);
     }
     
-    @After
-    public void tearDown() {
-    }
-    
-
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         SimpleParameters org = params;
         ObjectMapper mapper = new ObjectMapper();
@@ -50,5 +42,4 @@ public class SimpleParametersTest {
         SimpleParameters cpy = mapper.readValue(json, SimpleParameters.class);        
         assertEquals(org.parameters,cpy.parameters);
     }
-    
 }

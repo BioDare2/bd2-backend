@@ -5,7 +5,6 @@
 package ed.biodare2.backend.features.auto_publish;
 
 import ed.biodare2.Fixtures;
-import static ed.biodare2.backend.features.auto_publish.AutomaticPublisher.CUTOFF_PREFIX;
 import ed.biodare2.backend.repo.dao.ExperimentPackHub;
 import ed.biodare2.backend.repo.dao.MockReps;
 import ed.biodare2.backend.repo.db.dao.DBSystemInfoRep;
@@ -19,19 +18,15 @@ import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import ed.biodare2.backend.security.dao.db.EntityACL;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.springframework.data.domain.Limit;
 import ed.biodare2.backend.features.subscriptions.SubscriptionType;
@@ -43,10 +38,10 @@ import ed.biodare2.backend.security.dao.UserAccountRep;
  */
 //@Ignore
 public class AutomaticPublisherTest {
+
+    @TempDir
+    Path testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-        
     AutomaticPublisher handler;
     Path configFile;
     DBSystemInfoRep dbSystemInfos;
@@ -58,21 +53,11 @@ public class AutomaticPublisherTest {
     public AutomaticPublisherTest() {
     }
     
-    @BeforeClass
-    public static void setUpClass() {
-        
-
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         fixtures = Fixtures.build();
         
-        configFile = testFolder.newFile("cuttoff.txt").toPath();
+        configFile = testFolder.resolve("cuttoff.txt");
         dbSystemInfos = mock(DBSystemInfoRep.class);
         experiments = mock(ExperimentPackHub.class);
         pubHandler = mock(ExpPublishingHandler.class);
@@ -84,10 +69,6 @@ public class AutomaticPublisherTest {
         
     }
     
-    @After
-    public void tearDown() {
-    }
-    
     @Test
     public void getsExpIdsFromTheRepository() {
         
@@ -97,7 +78,6 @@ public class AutomaticPublisherTest {
         
         List<Long> res = handler.getPublishingCandidates(cutoff, 10);
         assertEquals(List.of(3L, 5L), res);
-        
     }
     
     @Test

@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -27,7 +27,7 @@ public class MakeLongDataTest {
     
     
     @Test
-    @Ignore
+    @Disabled
     public void makeCSVColumnFile() throws Exception {
         
         int series = 100; //5000;
@@ -81,7 +81,7 @@ public class MakeLongDataTest {
     }
     
     @Test
-    @Ignore
+    @Disabled
     public void makeCSVRowFile() throws Exception {
         
         int series = 2000; //5000;

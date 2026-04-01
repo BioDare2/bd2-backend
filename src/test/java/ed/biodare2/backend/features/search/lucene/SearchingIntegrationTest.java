@@ -18,19 +18,16 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class SearchingIntegrationTest {
@@ -42,9 +39,8 @@ public class SearchingIntegrationTest {
     @Autowired
     LuceneExperimentsIndexer indexer;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
-        
         indexer.writer.deleteAll();
         searcher.searcher.updateIndex();
     }

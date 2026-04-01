@@ -7,22 +7,19 @@ package ed.biodare2.backend.security.dao.db;
 
 import ed.biodare2.SimpleRepoTestConfig;
 import jakarta.persistence.PersistenceException;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @DataJpaTest
 @Import({SimpleRepoTestConfig.class})
 public class UserGroupTest {
@@ -91,7 +88,7 @@ public class UserGroupTest {
     }
     
     
-    @Ignore("Currently groups do not have members list as was not usre of the semantics for system and non sistem groups")
+    @Disabled("Currently groups do not have members list as was not usre of the semantics for system and non sistem groups")
     @Test
     //@Transactional
     public void relationsWorks() {

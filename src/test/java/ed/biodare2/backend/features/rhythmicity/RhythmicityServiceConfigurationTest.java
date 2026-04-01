@@ -7,21 +7,17 @@ package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
 import ed.biodare2.SimpleRepoTestConfig;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @Import(SimpleRepoTestConfig.class)
 public class RhythmicityServiceConfigurationTest {
@@ -38,10 +34,6 @@ public class RhythmicityServiceConfigurationTest {
     @Autowired
     @Qualifier(value = "rhythmicityClient")        
     JobCentreEndpointClient client;
-    
-    @Before
-    public void setUp() {
-    }
 
     @Test
     public void testParamsAreSet() {

@@ -5,11 +5,9 @@
  */
 package ed.biodare2.backend.repo.isa_dom.assets;
 
-import ed.biodare2.backend.repo.isa_dom.assets.FileAsset;
-import ed.biodare2.backend.repo.isa_dom.assets.AssetVersion;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -22,7 +20,7 @@ public class FileAssetTest {
     
     FileAsset asset;
     
-    @Before() 
+    @BeforeEach
     public void setup() {
         asset = new FileAsset(1,"bla");
     }

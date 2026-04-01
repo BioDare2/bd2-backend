@@ -11,10 +11,9 @@ import java.util.HashSet;
 import java.util.Set;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.core.env.Environment;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,16 +31,12 @@ public class CORSFilterTest {
     public CORSFilterTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() {
         MockEnvironment env = new MockEnvironment();
         env.setProperty(CORSFilter.CORS_ORIGINS_KEY, "localhost:3000,http://biodare.ed.ac.uk");
         
         filter = makeInstance(env);
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     CORSFilter makeInstance(Environment env) {
@@ -83,12 +78,12 @@ public class CORSFilterTest {
         String allowed = resp.getHeader("Access-Control-Allow-Headers");
         String[] expected = {"X-Requested-With","Content-Type","Access-Control-Request-Method","Access-Control-Request-Headers","Authorization","X-XSRF-TOKEN","X-Auth-Token"};
         for (String s : expected)
-            assertTrue(s+" missing in allowed header",allowed.contains(s));
+            assertTrue(allowed.contains(s), s+" missing in allowed header");
         
         String exposed =  resp.getHeader("Access-Control-Expose-Headers");
         expected = new String[]{"X-XSRF-TOKEN,x-auth-token"};
         for (String s : expected)
-            assertTrue(s+" missing in exposed header",exposed.contains(s));
+            assertTrue(exposed.contains(s), s+" missing in exposed header");
     }    
 
     @Test

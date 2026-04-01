@@ -5,24 +5,20 @@
  */
 package ed.biodare2.backend.repo.isa_dom.rhythmicity;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.robust.dom.data.DetrendingType;
-import java.io.IOException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @JsonTest
 public class RhythmicityRequestTest {
     
@@ -34,14 +30,13 @@ public class RhythmicityRequestTest {
     
     RhythmicityRequest instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        
         instance = DomRepoTestBuilder.makeRhythmicityRequest();
     }
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         RhythmicityRequest org = instance;
         
@@ -54,7 +49,7 @@ public class RhythmicityRequestTest {
     }
     
     @Test
-    public void readsUIJSON() throws JsonProcessingException, IOException {
+    public void readsUIJSON() throws JacksonException {
         
         String json = "{\"windowStart\":5,\"windowEnd\":100,\"periodMin\":18,\"periodMax\":35,\"method\":\"BD2EJTK\",\"detrending\":\"POLY_DTR\",\"preset\":\"BD2_CLASSIC\",\"detrendingN\":\"POLY_DTR\"}";
         

@@ -5,16 +5,14 @@
  */
 package ed.biodare2.backend.repo.isa_dom.param;
 
-import ed.biodare2.backend.repo.isa_dom.param.FullParameters;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -27,21 +25,15 @@ public class FullParametersTest {
     
     FullParameters params;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         params = DomRepoTestBuilder.makeParameters();
     }
     
-    @After
-    public void tearDown() {
-    }
-    
-    
-
     @Test
-    public void deserilizesJSJson() throws JsonProcessingException, IOException {
+    public void deserilizesJSJson() throws JacksonException {
         String json = "[{\"name\":\"p1\",\"value\":\"2\",\"label\":\"A param\",\"unit\":\"m/s\"},{\"name\":\"p2\",\"value\":\"cos\"}]";
-        ObjectMapper mapper = new ObjectMapper();
+	ObjectMapper mapper = JsonMapper.builder().build();
         
         FullParameters cpy = mapper.readValue(json, FullParameters.class);
         assertNotNull(cpy.parameters.get("p1"));
@@ -49,11 +41,14 @@ public class FullParametersTest {
     }
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         FullParameters org = params;
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+	ObjectMapper mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
         
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);

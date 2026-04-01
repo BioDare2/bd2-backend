@@ -6,51 +6,35 @@
 package ed.biodare2.backend.repo.dao;
 
 import ed.biodare2.SimpleRepoTestConfig;
-import ed.biodare2.backend.MapperConfiguration;
 import ed.biodare2.backend.repo.system_dom.SystemDomTestBuilder;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Mockito.*;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
 // import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 /**
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class SystemInfoRepSpringTest {
     
-
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); 
+    @TempDir
+    Path testFolder;
     
     Path bdStorageDir;
     SystemInfo info;
@@ -66,12 +50,10 @@ public class SystemInfoRepSpringTest {
     
     @Autowired
     CacheManager cacheManager;
-            
-
     
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        bdStorageDir = testFolder.newFolder().toPath();
+        bdStorageDir = testFolder.resolve("test");
         when(expStorage.getExperimentDir(anyLong())).thenReturn(bdStorageDir.resolve(""+returnsFirstArg()));
         when(expStorage.getExperimentsDir()).thenReturn(bdStorageDir);
         

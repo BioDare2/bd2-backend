@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.features.tsdata.dataimport.RegionBasedExcelTableImporterTest;
@@ -39,18 +39,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +59,6 @@ import org.springframework.util.MultiValueMap;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 @DirtiesContext
@@ -207,8 +204,6 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
         assertNotNull(info);
         assertEquals(4,info.get("imported"));
-        
-        
     }
     
     @Test
@@ -275,8 +270,6 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
         assertNotNull(info);
         assertEquals(92,info.get("imported"));
-        
-        
     }
     
     @Test
@@ -390,8 +383,6 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         Map<String,String> info = mapper.readValue(resp.getResponse().getContentAsString(), Map.class);
         assertNotNull(info);
         assertEquals(48,info.get("imported"));
-        
-        
     }
     
     String bd1requestJSON() throws IOException {
@@ -399,16 +390,14 @@ public class ExperimentDataControllerTest extends ExperimentBaseIntTest {
         try (Stream<String> lines = Files.lines(req)) {
             return lines.collect(Collectors.joining("\n"));
         }
-        
     }
     
     @Test    
-    @Ignore
+    @Disabled
     public void importBD1ImportsDataAndReturnsDataTracesNumber() throws Exception {
     
         AssayPack pack = insertExperiment();
         ExperimentalAssay exp = pack.getAssay();        
-
         
         Optional<List<DataTrace>> imported = tsHandler.getDataSet(pack, DetrendingType.NO_DTR);
         // System.out.println(imported.get());

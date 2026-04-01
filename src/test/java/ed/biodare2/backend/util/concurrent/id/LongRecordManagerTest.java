@@ -12,10 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,18 +30,13 @@ public class LongRecordManagerTest {
     LongRecordRep records;
     Random random;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         records = mock(LongRecordRep.class);
         manager = new LongRecordManager(records);
         random = new Random();
-        
     }
     
-    @After
-    public void tearDown() {
-    }
-
    /**
      * Test of reserveNextRecords method, of class LongRecordDAO.
      */
@@ -55,7 +49,6 @@ public class LongRecordManagerTest {
         LongRecord record = new LongRecord(name, 11);        
         when(records.findById(eq(name))).thenReturn(Optional.of(record));
         when(records.save(eq(record))).thenReturn(record);
-        
         
         int size = 1;
         

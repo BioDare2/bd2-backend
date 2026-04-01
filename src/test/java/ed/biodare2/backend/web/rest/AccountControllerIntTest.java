@@ -17,10 +17,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 //import org.mockito.Matchers;
 import static org.mockito.Mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +31,14 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 // import org.springframework.boot.test.mock.mockito.*;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 /**
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class AccountControllerIntTest  extends AbstractIntTestBase {
-
-
     
     final String serviceRoot = "/api/account";
     
@@ -53,18 +48,15 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
     @MockitoBean
     Mailer mailer;
     
-    
     @Autowired
     UserAccountRep users;
     
     @Test
     public void currentAccountGivesLoggedInAccount() throws Exception {
         
-        
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot)
                 .accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
-        
         
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -80,7 +72,6 @@ public class AccountControllerIntTest  extends AbstractIntTestBase {
         
         assertEquals(currentUser.getLogin(),res.get("login"));
         assertFalse(res.containsKey("password"));
-        
     }
     
     @Test

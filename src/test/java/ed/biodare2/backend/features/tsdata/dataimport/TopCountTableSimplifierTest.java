@@ -9,16 +9,15 @@ import ed.biodare.data.topcount.TopCountReader;
 import ed.robust.dom.data.TimeSeries;
 import ed.robust.dom.util.Pair;
 import java.nio.file.Path;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -33,7 +32,7 @@ public class TopCountTableSimplifierTest {
     TopCountTableSimplifier instance;
     TopCountReader reader;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new TopCountTableSimplifier();
         reader = new TopCountReader(false);

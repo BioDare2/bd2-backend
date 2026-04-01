@@ -5,8 +5,10 @@
  */
 package ed.biodare2.backend.testutil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
 import ed.biodare2.backend.features.tsdata.datahandling.DataProcessingException;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
@@ -66,9 +68,10 @@ public class PPATestSeederJC2 {
     TSDataHandler tsHandler;    
     
     public static ObjectMapper makeMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();  
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	ObjectMapper mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
         return mapper;
     }
     
@@ -96,7 +99,6 @@ public class PPATestSeederJC2 {
         
     }
     
-    
     public PPAJobSimpleResults getJobSimpleResults(PPAJobSummary job) throws IOException {
         return getJobSimpleResults(job2name(job));
     }
@@ -105,7 +107,6 @@ public class PPATestSeederJC2 {
         Path f = getJobFile(job, "PPA_SIMPLE_RESULTS.json");
         return mapper.readValue(f.toFile(), PPAJobSimpleResults.class);
     }
-    
 
     public PPAJobSimpleStats getJobSimpleStats(PPAJobSummary job) throws IOException {
         return getJobSimpleStats(job2name(job));
@@ -138,7 +139,7 @@ public class PPATestSeederJC2 {
         try {
             Path f = getJobFile(job, "PPA_FULL_RESULTS.json");
             return  mapper.readValue(f.toFile(), PPAJobIndResults.class);    
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
         }
     } 
@@ -151,11 +152,10 @@ public class PPATestSeederJC2 {
         try {
             Path f = getJobFile(job, "PPA_GROUPED_RESULTS.json");
             return  mapper.readValue(f.toFile(), PPAJobResultsGroups.class);    
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException(e);
-        }    }
-    
-    
+        }
+    }
 
     public List<DataTrace> getData() throws RobustFormatException, IOException {
         
@@ -234,9 +234,7 @@ public class PPATestSeederJC2 {
         } catch (IOException | RobustFormatException e) {
             throw new RuntimeException("Cannot seed job "+e.getMessage(),e);
         }
-        
     }
-
 
     void seedJobArtifacts(PPAJobSummary job, AssayPack exp) throws IOException {
         UUID jobId = job.jobId;
@@ -266,12 +264,4 @@ public class PPATestSeederJC2 {
             throw new RuntimeException("Cannot seed data: "+e.getMessage(),e);
         }        
     }
-    
-
-
-
-
-
-
-    
 }

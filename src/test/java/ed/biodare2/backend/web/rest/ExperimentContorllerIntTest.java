@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.features.search.SortOption;
 import static ed.biodare2.backend.features.search.SortOption.*;
@@ -34,19 +34,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,17 +51,14 @@ import org.springframework.transaction.annotation.Transactional;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
  
-
     final String serviceRoot = "/api/experiment";
     
     @Autowired
     ExperimentPackHub expBoundles;    
-
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
@@ -72,7 +66,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
     
         AssayPack pack = insertExperiment();
         ExperimentalAssay org = pack.getAssay();
-        
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
                 //.param("onlyOwned", "false")
@@ -149,7 +142,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertTrue(exps.stream().anyMatch( s -> s.id == id));    
     }    
     
-    
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void getExperimentsAppliesPagination() throws Exception {
@@ -160,8 +152,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         UserAccount user = fixtures.demoUser;
 
-        
-        
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
                 .param("showPublic", "true")
                 .accept(APPLICATION_JSON_UTF8)
@@ -213,14 +203,11 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         // System.out.println(exps.stream().map(e -> ""+e.id).collect(Collectors.joining(",")));
 
         // assertTrue(exps.stream().anyMatch( s -> s.id == id || s.id == pack2.getId()));    
-        
     }    
-    
     
     @Test
     @Transactional
     public void getExperimentsAppliesSorting() throws Exception {
-    
         
         AssayPack pack = insertPublicExperiment();
         AssayPack pack2 = insertPublicExperiment();
@@ -234,10 +221,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         expBoundles.save(expBoundles.enableWriting(pack2));
         expBoundles.save(expBoundles.enableWriting(pack3));
         
-        
         UserAccount user = fixtures.demoUser;
-
-        
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments")
                 .param("showPublic", "true")
@@ -289,9 +273,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(pack3.getId(), exps.get(0).id);
         assertEquals(pack.getId(), exps.get(1).id);
         assertEquals(pack2.getId(), exps.get(2).id);
-        
     }    
-    
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)    
@@ -312,8 +294,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         UserAccount user = fixtures.demoUser;
 
-        
-        
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/api/experiments/search")
                 .param("showPublic", "true")
                 .param("sorting", "name")
@@ -383,14 +363,10 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(1, exps.size());
         
         assertEquals(pack.getId(), exps.get(0).id);
-        
-        
     }    
     
     @Test
     public void draftCreatesNewExperimentWithCurrentUserAsAuthor() throws Exception {
-    
-        
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get(serviceRoot+"/draft")
                 .accept(APPLICATION_JSON_UTF8)
                 .with(mockAuthentication);
@@ -438,9 +414,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         //assertEquals("Loggin to perform the operation",info.get("message"));
         assertEquals("Loggin to perform the operation",info);
-
     }
-    
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
@@ -472,18 +446,14 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(org.getName(),exp.generalDesc.name);
         assertEquals(org.experimentalDetails.executionDate,exp.experimentalDetails.executionDate);
         //assertTrue(org.hasSameValues(exp));
-        
     }
     
     @Test
     public void insertThrowsInsufficientRightsForAnonymousUser() throws Exception {
-    
-        
         UserAccount user = fixtures.anonymous;
         
         ExperimentalAssayView org = DomRepoTestBuilder.makeExperimentalAssayView();
         //assertFalse(expBoundles.findOne(org.getId()).isPresent());
-        
         
         String orgJSON = mapper.writeValueAsString(org);
         
@@ -506,9 +476,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         //assertEquals("Loggin to perform the operation",info.get("message"));
         assertEquals("Loggin to perform the operation",info);
-
     }
-    
 
     @Test
     public void insertExperimentSavesJsonRepresentationAsExperiment() throws Exception {
@@ -533,7 +501,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Exp Insert JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
@@ -541,24 +508,18 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertTrue(exp.id > 0L);
         
         assertTrue(expBoundles.findOne(exp.id).isPresent());
-        
     }
-    
     
     String bd1requestJSON() throws IOException {
         Path req = (new ExperimentHandlerTest()).testFile("3967.importdsc.json").toPath();
         try (Stream<String> lines = Files.lines(req)) {
             return lines.collect(Collectors.joining("\n"));
         }
-        
     } 
     
     @Test
-    @Ignore
+    @Disabled
     public void importBD1ExperimentSavesJsonRepresentationAsExperiment() throws Exception {
-    
-        
-        
         String orgJSON = bd1requestJSON();
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(serviceRoot+"/bd1-import")
@@ -576,7 +537,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Exp BD1 Import JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
@@ -584,13 +544,10 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(3967,exp.id);
         
         assertTrue(expBoundles.findOne(exp.id).isPresent());
-        
     }
     
     @Test
     public void insertExperimentSavesAngularRequest() throws Exception {
-    
-        
         String orgJSON = "{\"generalDesc\":{\"name\":\"New experiment payload\",\"purpose\":\"Checking how wiring works\",\"description\":\"Is it ok, you think so??\",\"comments\":null,\"executionDate\" : [ 2020, 1, 20 ]},\"contributionDesc\":{\"authors\":[{\"firstName\":\"Demo\",\"lastName\":\"User\",\"id\":4,\"login\":\"demo\",\"ORCID\":null}],\"curators\":[],\"institutions\":[{\"name\":\"University of Edinburgh\"}],\"fundings\":[]},\"experimentalDetails\":{\"measurementDesc\":{\"parameters\":[],\"technique\":null,\"equipment\":null,\"description\":null},\"growthEnvironments\":{\"environments\":[]},\"experimentalEnvironments\":{\"environments\":[]},\"executionDate\":[2016,10,5]},\"id\":0,\"features\":{\"hasTSData\":false,\"hasPPAJobs\":false,\"hasDataFiles\":false},\"species\":\"Arabidopsis thaliana\",\"dataCategory\":\"GEN_IMAGING\",\"provenance\":{\"created\":null,\"createdBy\":null,\"modified\":null,\"modifiedBy\":null},\"security\":{\"canRead\":true,\"canWrite\":true,\"isOwner\":true,\"isSuperOwner\":false}}";
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put(serviceRoot)
@@ -608,7 +565,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Exp Insert JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
@@ -616,14 +572,11 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertTrue(exp.id > 0L);
         
         assertTrue(expBoundles.findOne(exp.id).isPresent());
-        
     }    
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void updateThrowsInsufficientRightsForAnonymousUser() throws Exception {
-    
-        
         UserAccount user = fixtures.anonymous;
         AssayPack pack = insertExperiment();
         
@@ -652,7 +605,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         //assertEquals("Loggin to perform the operation",info.get("message"));
         assertEquals("Loggin to perform the operation",info);
-
     }
     
     @Test
@@ -665,7 +617,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         ExperimentalAssayView req = DomRepoTestBuilder.makeExperimentalAssayView();
         req.generalDesc.name = "Updated name";
-
         
         String orgJSON = mapper.writeValueAsString(req);
         
@@ -684,15 +635,11 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Update JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
         assertEquals(pack.getId(),exp.id);
         assertEquals(exp.generalDesc.name,req.generalDesc.name);
-
-
-        
     }
     
     @Test
@@ -726,7 +673,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Update JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
@@ -734,7 +680,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(exp.generalDesc.name,req.generalDesc.name);
         assertEquals(date, exp.generalDesc.executionDate);
         assertEquals(date, exp.experimentalDetails.executionDate);
-        
     }    
     
     @Test
@@ -761,20 +706,16 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("Update JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         
-        
         ExperimentalAssayView exp = mapper.readValue(resp.getResponse().getContentAsString(), ExperimentalAssayView.class);
         assertNotNull(exp);
         
         assertEquals(pack.getId(),exp.id);
         assertEquals(exp.generalDesc.name,"Testing new experiment creationg");
-        
     }
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void publishThrowsInsufficientRightsForAnonymousUser() throws Exception {
-    
-        
         UserAccount user = fixtures.anonymous;
         AssayPack pack = insertExperiment();
         
@@ -801,14 +742,11 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         //assertEquals("Loggin to perform the operation",info.get("message"));
         assertEquals("Loggin to perform the operation",info);
-
     }
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void publishThrowsInsufficientRightsForNotOwnerUser() throws Exception {
-    
-        
         UserAccount user = fixtures.demoUser;
         AssayPack pack = insertExperiment();
         
@@ -835,14 +773,11 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         //assertEquals("Loggin to perform the operation",info.get("message"));
         assertEquals("Insufficient rights to perform the operation",info);
-
     }
     
     @Test
     @Transactional(propagation = Propagation.REQUIRED)
     public void publishPublishesTheExperiment() throws Exception {
-    
-        
         AssayPack pack = insertExperiment();
         
         assertTrue(expBoundles.findOne(pack.getId()).isPresent());
@@ -872,15 +807,12 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         
         pack = expBoundles.findOne(pack.getId()).get();
         assertTrue(pack.getACL().isPublic());
-
     }
     
     @Test
     //@Ignore //it is ingnored as was getting errors with tests from TestSeeder. Don't understand why but hibernates id generators
     //were not commited and clashes with each other.
     public void checkConcurrentInsertsGeneratesIds() throws Exception {
-        
-        
         Queue<String> errs = new ConcurrentLinkedQueue<>();
         Queue<Long> ids = new ConcurrentLinkedQueue<>();
 
@@ -923,8 +855,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         assertEquals(N,ids.size());
         Set<Long> unique = new HashSet<>(ids);
         assertEquals(N,unique.size());
-        
-        
     }
     
     @Test
@@ -963,7 +893,6 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
         direction = "desc";
         sort = ExperimentController.paramsToSort(sorting, direction);
         assertEquals(SortOption.MODIFICATION_DATE, sort);        
-        
     }
     
     @Test
@@ -978,8 +907,7 @@ public class ExperimentContorllerIntTest extends ExperimentBaseIntTest {
             SortOption exp = exps[i];
             
             SortOption sort = ExperimentController.paramsToSort(term, "asc");
-            assertEquals(term, exp,sort);
+            assertEquals(exp, sort, term);
         }
-        
     }
 }

@@ -5,14 +5,10 @@
  */
 package ed.biodare2.backend.repo.isa_dom.param;
 
-import ed.biodare2.backend.repo.isa_dom.param.Parameter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -21,14 +17,6 @@ import static org.junit.Assert.*;
 public class ParameterTest {
     
     public ParameterTest() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
     }
     
     //@Test
@@ -59,7 +47,7 @@ public class ParameterTest {
     
 
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
         
         Parameter org = new Parameter("param1", "value1", "a label", "a unit");
         
@@ -92,7 +80,7 @@ public class ParameterTest {
  
     
     @Test
-    public void serializesToJSONDontPrintNullss() throws JsonProcessingException, IOException {
+    public void serializesToJSONDontPrintNullss() throws JacksonException {
         
         Parameter org = new Parameter("param2","val",null,null);
         
@@ -107,5 +95,4 @@ public class ParameterTest {
         assertFalse(json.contains("label"));
         assertFalse(json.contains("unit"));
     }
-    
 }

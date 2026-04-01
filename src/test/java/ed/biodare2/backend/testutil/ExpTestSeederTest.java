@@ -5,10 +5,9 @@
  */
 package ed.biodare2.backend.testutil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 //import ed.biodare2.BioDare2TestConfiguration;
 import ed.biodare2.SimpleRepoTestConfig;
-//import ed.biodare2.BioDare2TestConfiguration;
 import ed.biodare2.backend.features.tsdata.datahandling.TSDataHandler;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
@@ -22,43 +21,31 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.Assert.fail;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @DirtiesContext //("Need it to prevent some pprimery key confirlicts with entityacl in integration tests")
 @Import(SimpleRepoTestConfig.class)
 public class ExpTestSeederTest {
     
-
-    
-    
-    
     @Autowired
     ExpTestSeeder seeder;
     
-    
     @Autowired
     ObjectMapper mapper;    
-        
     
     @Autowired
     TSDataHandler tsHandler;
-   
-    
-    
     
     @Test
     //@Ignore("Cause was clashing with restint tests, dont know why")
@@ -72,14 +59,6 @@ public class ExpTestSeederTest {
         assertTrue(saved.isPresent());
         assertEquals(data.size(), saved.get().size());
     }
-    
-     
-    
-     
-    
-     
-
-    
 
     @Test
     public void getDataWorks() {
@@ -88,7 +67,6 @@ public class ExpTestSeederTest {
         assertEquals(12,data.size());
     }    
     
-    
     @Test
     public void getResourceFileWorks() {
         String name = "171.fit.ser";
@@ -96,9 +74,8 @@ public class ExpTestSeederTest {
         assertTrue(Files.exists(file));
     }
     
-    
     @Test    
-    @Ignore("It is only to generate test data for the artefacts")
+    @Disabled("It is only to generate test data for the artefacts")
     public void generateTestDataForPPASeeds() throws Exception {
         Path file = Paths.get("/home/dthedie/Temp/ppaTest.csv");
         
@@ -165,7 +142,5 @@ public class ExpTestSeederTest {
         TimeSeriesFileHandler.saveToText(data, file.toFile(), ",", heads);
         
         fail();
-        
     }
-    
 }

@@ -34,16 +34,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -55,7 +53,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@AutoConfigureMockMvc(secure = false)
 @AutoConfigureMockMvc
@@ -81,7 +78,7 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
     PPAArtifactsRepJC2 ppaRep;
     
     
-    @Before
+    @BeforeEach
     @Override //so it will not configure security
     public void setUp() throws Exception  {
     }    

@@ -2,9 +2,9 @@ package ed.biodare2.backend.web.listeners;
 
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -20,7 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 public class OKLogoutSuccessHandlerTest {
     
-    @Before
+    @BeforeEach
     public void setUp() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestAttributes requestAttributes = new ServletRequestAttributes(request);

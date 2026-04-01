@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.util.xml;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
@@ -23,7 +23,7 @@ public class XMLUtilTest {
     
     XMLUtil util;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         util = new XMLUtil();
     }

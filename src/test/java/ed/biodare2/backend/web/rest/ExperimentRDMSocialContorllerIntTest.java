@@ -12,28 +12,23 @@ import ed.biodare2.backend.repo.system_dom.EntityType;
 import ed.biodare2.backend.features.rdmsocial.RDMAssayGUIAspects;
 import ed.biodare2.backend.features.rdmsocial.RDMAssetsAspect;
 import ed.biodare2.backend.features.rdmsocial.dao.RDMAssetsAspectRep;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class ExperimentRDMSocialContorllerIntTest extends ExperimentBaseIntTest {
- 
-
     
     final String serviceRoot = "/api/experiment";
     
@@ -64,9 +59,7 @@ public class ExperimentRDMSocialContorllerIntTest extends ExperimentBaseIntTest 
         RDMAssayGUIAspects aspects = mapper.readValue(resp.getResponse().getContentAsString(), RDMAssayGUIAspects.class);
         assertNotNull(aspects);
         assertFalse(aspects.showMeasurementWarning);
-        
     }
-    
     
     @Test
     public void registerWarningIncreasesWarningsSize() throws Exception {
@@ -93,14 +86,5 @@ public class ExperimentRDMSocialContorllerIntTest extends ExperimentBaseIntTest 
         //System.out.println("registerWarning JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+"; "+resp.getResponse().getContentAsString());
         aspect = assetsAspects.findByParent(exp.getId(), EntityType.EXP_ASSAY).get();
         assertEquals(prev+1,aspect.measurementWarnings);
-        
-        
-        
     }
-    
-    
-    
-    
-    
-    
 }

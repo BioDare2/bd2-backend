@@ -12,10 +12,9 @@ import ed.biodare2.backend.util.concurrent.id.db.LongRecord;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,18 +30,12 @@ public class DBIdGeneratorTest {
 
     Random random;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         manager = mock(LongRecordManager.class);
         random = new Random();
-        
     }
     
-    @After
-    public void tearDown() {
-    }
-    
-
     /**
      * Test of newInstance method, of class DBIdGenerator.
      */

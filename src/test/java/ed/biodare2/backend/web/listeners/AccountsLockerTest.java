@@ -13,10 +13,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -24,19 +22,14 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @Import(SimpleRepoTestConfig.class)
 public class AccountsLockerTest {
-    
-
     
     @Autowired
     AccountsLocker instance;
@@ -73,7 +66,6 @@ public class AccountsLockerTest {
         user = em.find(UserAccount.class,fixtures.demoUser.getId());
         
         assertEquals(prev+1,user.getFailedAttempts());
-        
     }
     
     @Test

@@ -10,9 +10,8 @@ import static ed.biodare2.backend.features.tsdata.TSUtil.*;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeDataTraces;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *

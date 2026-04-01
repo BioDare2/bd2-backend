@@ -11,9 +11,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -34,8 +34,7 @@ public class TableSimplifierTest {
     
     TableSimplifier instance;
     
-    
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new TestTableSimplifier();
     }

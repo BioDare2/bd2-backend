@@ -6,10 +6,8 @@
 package ed.biodare2.backend.features.ppa;
 
 import ed.robust.dom.tsprocessing.Statistics;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -21,12 +19,6 @@ public class StatsUtilTest {
     
     public StatsUtilTest() {
     }
-    
-    @Before
-    public void setUp() {
-    }
-    
- 
 
     @Test
     public void calculateStatsCanHandleEmptySets() {

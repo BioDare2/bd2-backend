@@ -5,16 +5,15 @@
  */
 package ed.biodare2.backend.repo.ui_dom.exp;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -27,25 +26,19 @@ public class ExperimentSummaryTest {
 
     ObjectMapper mapper;
     
-    @Before
+    @BeforeEach
     public void setUp() {
-        mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();
-        
+	mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
     }
-    
-    @After
-    public void tearDown() {
-    }
-
-    
     
     @Test
-    public void serializesToJSONAndBack() throws JsonProcessingException, IOException {
+    public void serializesToJSONAndBack() throws JacksonException {
 
         ExperimentSummary org = new ExperimentSummary(DomRepoTestBuilder.makeExperimentalAssay());
         
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         String json = mapper.writeValueAsString(org);
         assertNotNull(json);
         //System.out.println("ExperimentSummary JSON:\n\n"+json+"\n");
@@ -66,5 +59,4 @@ public class ExperimentSummaryTest {
         assertNotNull(org.authors);
         assertTrue(org.authors.contains(assay.contributionDesc.authors.get(0).getName()));
     }
-    
 }

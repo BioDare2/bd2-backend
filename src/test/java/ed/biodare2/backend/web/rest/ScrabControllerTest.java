@@ -8,12 +8,10 @@ package ed.biodare2.backend.web.rest;
 import ed.biodare2.SimpleRepoTestConfig;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,12 +21,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class ScrabControllerTest extends AbstractIntTestBase {
-    
-
 
     @Test
     public void greetingsGivesGreeting() throws Exception {

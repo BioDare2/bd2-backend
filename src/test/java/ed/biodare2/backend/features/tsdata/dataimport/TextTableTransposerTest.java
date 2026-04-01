@@ -19,12 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import static org.mockito.Mockito.*;
 
 /**
@@ -32,16 +31,16 @@ import static org.mockito.Mockito.*;
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
  */
 public class TextTableTransposerTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     public TextTableTransposerTest() {
     }
     
     TextTableTransposer instance;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         instance = new TextTableTransposer();
     }
@@ -115,7 +114,7 @@ public class TextTableTransposerTest {
                 Arrays.asList("L3", null, "v23")
         );
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         
         
         instance.saveToTextTable(rows, file, ",");
@@ -140,10 +139,10 @@ public class TextTableTransposerTest {
                 "2,v21,v22,v23"
         );
         
-        Path inFile = testFolder.newFile().toPath();
+        Path inFile = testFolder.resolve("test");
         Files.write(inFile, inRows);
         
-        Path outFile = testFolder.newFile().toPath();
+        Path outFile = testFolder.resolve("test");
         
         instance.transpose(inFile, ",", outFile);
         
@@ -172,10 +171,10 @@ public class TextTableTransposerTest {
                 "2,v21,v22,v23,v24"
         );
         
-        Path inFile = testFolder.newFile().toPath();
+        Path inFile = testFolder.resolve("test");
         Files.write(inFile, inRows);
         
-        Path outFile = testFolder.newFile().toPath();
+        Path outFile = testFolder.resolve("test");
         
         TextDataTableReader reader = new TextDataTableReader(inFile, ",");
         
@@ -233,15 +232,15 @@ public class TextTableTransposerTest {
     
     @Test
     public void joinFilesAppendsFiles() throws Exception {
-        Path f1 = testFolder.newFile().toPath();
-        Path f2 = testFolder.newFile().toPath();
-        Path f3 = testFolder.newFile().toPath();
+        Path f1 = testFolder.resolve("test");
+        Path f2 = testFolder.resolve("test");
+        Path f3 = testFolder.resolve("test");
         
         Files.writeString(f1, "A");
         Files.write(f2, List.of("B","C"));
         Files.write(f3, List.of("D","E"));
         
-        Path out = testFolder.newFile().toPath();
+        Path out = testFolder.resolve("test");
         
         instance.joinFiles(List.of(f1,f2,f3), out);
         
@@ -265,7 +264,7 @@ public class TextTableTransposerTest {
     }
     
     @Test
-    @Ignore("Trnsposig of large excel files fails cause out of memmery, that is why they are covnerted first to csv before calling"
+    @Disabled("Trnsposig of large excel files fails cause out of memmery, that is why they are covnerted first to csv before calling"
             + "tranposer")
     public void transposeExcelLongFile() throws Exception {
         
@@ -279,7 +278,7 @@ public class TextTableTransposerTest {
     }     
     
     @Test
-    @Ignore("The long test file is not committed")
+    @Disabled("The long test file is not committed")
     public void transposeCSVLongFile() throws Exception {
         
         Path inFile = Paths.get("/home/dthedie/Temp/long_10000x1200.csv");
@@ -292,16 +291,16 @@ public class TextTableTransposerTest {
     }    
     
     @Test
-    @Ignore("takes too long to generate and transpose big file")
+    @Disabled("takes too long to generate and transpose big file")
     public void transposeLongFile2() throws Exception {
         
-        Path file = testFolder.newFile().toPath();
+        Path file = testFolder.resolve("test");
         int series = 3000;
         int timepoints = 5*24*10;
         
         makeLongCSVColumnFile(file,series, timepoints);
         
-        Path out = testFolder.newFile().toPath();
+        Path out = testFolder.resolve("test");
         
         long sT = System.currentTimeMillis();
         instance.transpose(file, ",", out);

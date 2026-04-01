@@ -15,21 +15,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import jakarta.persistence.EntityManager;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 public class AccountsCleanerIntTest {

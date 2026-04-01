@@ -5,16 +5,17 @@
  */
 package ed.biodare2.backend.testutil;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSummary;
 import ed.robust.dom.tsprocessing.StatsEntry;
 import ed.robust.error.RobustFormatException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 /**
  *
@@ -25,9 +26,10 @@ public class PPATestSeederJC2Test {
     PPATestSeederJC2 seeder;
     
     public static ObjectMapper makeMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.findAndRegisterModules();  
-        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+	ObjectMapper mapper = JsonMapper
+	    .builder()
+	    .enable(SerializationFeature.INDENT_OUTPUT)
+	    .build();
         return mapper;
     }
     
@@ -41,10 +43,8 @@ public class PPATestSeederJC2Test {
     
     @Test
     public void testFiles() {
-        
         Path f = seeder.getJobFile(seeder.fftJob, "PPA_JOB_SUMMARY.json");
         assertTrue(Files.isRegularFile(f));
-        
     }
     
     @Test
@@ -55,31 +55,26 @@ public class PPATestSeederJC2Test {
     @Test
     public void testJobSimpleResults() throws IOException {
         assertNotNull(seeder.getJobSimpleResults(seeder.getJobSummary()));
-        
     }
     
     @Test
     public void testJobSimpleStats() throws IOException {
         assertNotNull(seeder.getJobSimpleStats(seeder.getJobSummary()));
-        
     } 
     
     @Test
     public void testJobFullStats() throws IOException {
         assertEquals(5, seeder.getJobFullStats(seeder.getJobSummary()).getStats().size());
-        
     }    
     
     @Test
     public void testJobFullResults() throws IOException {
         assertEquals(10, seeder.getJobFullResults(seeder.getJobSummary()).results.size());
-        
     }     
     
     @Test
     public void testJobResultsGroups() throws IOException {
         assertEquals(5, seeder.getJobResultsGroups(seeder.getJobSummary()).groups.size());
-        
     }     
     
     
@@ -108,8 +103,5 @@ public class PPATestSeederJC2Test {
         assertEquals(json, json2);
         
         // [TODO find reflective eq] assertReflectionEquals(stats1, stats2);
-        
     }    
-
-    
 }

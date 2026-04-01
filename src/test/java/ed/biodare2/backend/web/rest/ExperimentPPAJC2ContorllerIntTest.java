@@ -5,7 +5,7 @@
  */
 package ed.biodare2.backend.web.rest;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import tools.jackson.core.type.TypeReference;
 import ed.biodare2.SimpleRepoTestConfig;
 import static ed.biodare2.backend.features.ppa.PPAUtilsJC2.periodToInt;
 import ed.biodare2.backend.features.ppa.dao.PPAArtifactsRepJC2;
@@ -27,28 +27,21 @@ import ed.biodare2.backend.repo.ui_dom.ppa.PPASelectGroup;
 import ed.biodare2.backend.testutil.PPATestSeederJC2;
 import ed.robust.dom.tsprocessing.PhaseType;
 
-
-
-
-
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 //import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 
@@ -56,12 +49,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
  *
  * @author tzielins
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(SimpleRepoTestConfig.class)
 @DirtiesContext
 public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
- 
 
     final String serviceRoot = "/api/experiment";
     
@@ -71,14 +62,12 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
     @Autowired    
     PPATestSeederJC2 ppaTestSeeder;
     
-    
     PPARequest preparePPARequest() {
         return DomRepoTestBuilder.makePPARequest();
     }
     
-    
     @Test
-    @Ignore("JobCentre not available during tests")
+    @Disabled("JobCentre not available during tests")
     public void newPPAInvokesPPAProcessing() throws Exception {
     
         //ExperimentalAssay desc = DomRepoTestBuilder.makeExperiment(15);
@@ -112,11 +101,7 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
         assertNotNull(info);
         assertNotNull(info.get("analysis"));
         //assertEquals(123,info.get("analysis"));
-        
-        
     }
-    
-    
     
     @Test
     public void getPPAJobsReturnsListOfJobsOrderedByIdDesc() throws Exception {
@@ -140,7 +125,6 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
         
         //System.out.println("JOBS JSON: "+resp.getResponse().getStatus()+"; "+ resp.getResponse().getErrorMessage()+";\n"+resp.getResponse().getContentAsString()+'\n');
         
-        
         ListWrapper<PPAJobSummary> wrapper = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<ListWrapper<PPAJobSummary>>() { });
         assertNotNull(wrapper);
         //List<JobSummary> jobs = mapper.readValue(resp.getResponse().getContentAsString(), new TypeReference<List<JobSummary>>() { });
@@ -156,9 +140,7 @@ public class ExperimentPPAJC2ContorllerIntTest extends ExperimentBaseIntTest {
         // [TODO find reflective eq] assertReflectionEquals(expJ,job);
         
         assertTrue(jobs.get(0).submitted.isAfter(jobs.get(1).submitted));
-        
     }
-    
     
     @Test
     public void getPPAJobGivesJob() throws Exception {

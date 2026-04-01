@@ -15,23 +15,21 @@ import ed.robust.dom.data.TimeSeries;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.junit4.SpringRunner;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
 import static org.mockito.Mockito.*;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration;
+import org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration;
 // import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -41,22 +39,20 @@ import org.springframework.core.env.Environment;
  *
  * @author Zielu
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment=WebEnvironment.MOCK)
 public class TSDataHandlerSpringTest {
     
     @EnableCaching
     @SpringBootApplication
     @Import(MapperConfiguration.class)
-    @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,JpaRepositoriesAutoConfiguration.class,HibernateJpaAutoConfiguration.class})
+    @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class,DataJpaRepositoriesAutoConfiguration.class,HibernateJpaAutoConfiguration.class})
     public static class Config {
-
-
     }    
     final String cacheName = "TSData";
+
+    @TempDir
+    Path testFolder;
     
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder(); 
     Path bdStorageDir;
     
     AssayPack exp;
@@ -67,19 +63,15 @@ public class TSDataHandlerSpringTest {
     @MockitoBean
     ExperimentsStorage expStorage;
     
-
-    
     @Autowired
     Environment env;
     
     @Autowired
     CacheManager cacheManager;
             
-
-    
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        bdStorageDir = testFolder.newFolder().toPath();
+        bdStorageDir = testFolder.resolve("test");
         Files.createDirectories(bdStorageDir.resolve("1"));
         Files.createDirectories(bdStorageDir.resolve("2"));
 

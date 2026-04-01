@@ -6,19 +6,15 @@
 package ed.biodare2.backend.features.rhythmicity;
 
 import ed.biodare.jobcentre2.client.JobCentreEndpointClient;
-import ed.biodare.jobcentre2.dom.JobStatus;
 import ed.biodare.jobcentre2.dom.TSDataSetJobRequest;
-import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityRequest;
-import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -35,7 +31,7 @@ public class RhythmicityServiceTest {
     RhythmicityServiceParameters parameters;
     RhythmicityUtils utils;
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         
         parameters = new RhythmicityServiceParameters();

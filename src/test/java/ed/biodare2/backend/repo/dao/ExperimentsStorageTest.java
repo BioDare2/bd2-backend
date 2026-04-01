@@ -5,53 +5,48 @@
  */
 package ed.biodare2.backend.repo.dao;
 
-import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import ed.biodare2.EnvironmentVariables;
 import ed.biodare2.MockEnvironmentVariables;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
  * @author tzielins
  */
 public class ExperimentsStorageTest {
-    
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
+
+    @TempDir
+    Path testFolder;
     
     Path bdStorageDir;
     Path experimentsDir;
     
     ExperimentsStorage expStorage;
     
-    
     public ExperimentsStorageTest() {
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
-        bdStorageDir = testFolder.newFolder().toPath();
+        bdStorageDir = testFolder.resolve("test");
         experimentsDir = bdStorageDir.resolve("experiments");
         
         MockEnvironmentVariables var = new MockEnvironmentVariables();
         var.storageDir = bdStorageDir.toString();
         
-        EnvironmentVariables env = var.mock(); //new EnvironmentVariables(bdStorageDir.toString(),"http://localhost","http://localhost:8084/JobCenter/PPAJobCenterWS?wsdl","","","","","");        
-        
+        EnvironmentVariables env = var.mock(); //new EnvironmentVariables(bdStorageDir.toString(),"http://localhost","http://localhost:8084/JobCenter/PPAJobCenterWS?wsdl","","","","","");
         expStorage = new ExperimentsStorage(env);        
     }    
-    
 
     @Test
     public void experimentsDirGivesResolvesSubfolder() {
-        
         assertEquals(experimentsDir,expStorage.getExperimentsDir());
     }
     
