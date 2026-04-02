@@ -16,7 +16,6 @@ import ed.biodare2.backend.repo.isa_dom.dataimport.CellRole;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataBundle;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataColumnProperties;
 import ed.biodare2.backend.repo.isa_dom.dataimport.DataTrace;
-import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAFullResultEntry;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobIndResults;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobResultsGroups;
 import ed.biodare2.backend.repo.isa_dom.ppa_jc2.PPAJobSimpleResults;
@@ -36,12 +35,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,11 +80,6 @@ public class PPATestSeederJC2 {
         this.mapper = mapper;
     }    
     
-    /*public PPATestSeederJC2(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }*/
-    
-
     public PPAJobSummary getJobSummary() throws IOException {
         return getJobSummary(fftJob);
     }

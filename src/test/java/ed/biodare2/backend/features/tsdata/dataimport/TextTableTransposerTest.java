@@ -115,7 +115,7 @@ public class TextTableTransposerTest {
         );
         
         Path file = testFolder.resolve("test");
-        
+        Files.createFile(file);
         
         instance.saveToTextTable(rows, file, ",");
         
@@ -139,10 +139,11 @@ public class TextTableTransposerTest {
                 "2,v21,v22,v23"
         );
         
-        Path inFile = testFolder.resolve("test");
+        Path inFile = testFolder.resolve("test_in");
+	Files.createFile(inFile);
         Files.write(inFile, inRows);
         
-        Path outFile = testFolder.resolve("test");
+        Path outFile = testFolder.resolve("test_out");
         
         instance.transpose(inFile, ",", outFile);
         
@@ -232,15 +233,18 @@ public class TextTableTransposerTest {
     
     @Test
     public void joinFilesAppendsFiles() throws Exception {
-        Path f1 = testFolder.resolve("test");
-        Path f2 = testFolder.resolve("test");
-        Path f3 = testFolder.resolve("test");
+        Path f1 = testFolder.resolve("f1");
+        Path f2 = testFolder.resolve("f2");
+        Path f3 = testFolder.resolve("f3");
+	Files.createFile(f1);
+	Files.createFile(f2);
+	Files.createFile(f3);
         
         Files.writeString(f1, "A");
         Files.write(f2, List.of("B","C"));
         Files.write(f3, List.of("D","E"));
         
-        Path out = testFolder.resolve("test");
+        Path out = testFolder.resolve("test_out");
         
         instance.joinFiles(List.of(f1,f2,f3), out);
         
@@ -264,13 +268,12 @@ public class TextTableTransposerTest {
     }
     
     @Test
-    @Disabled("Trnsposig of large excel files fails cause out of memmery, that is why they are covnerted first to csv before calling"
+    @Disabled("Trnsposig of large excel files fails cause out of memory, that is why they are covnerted first to csv before calling"
             + "tranposer")
     public void transposeExcelLongFile() throws Exception {
         
         Path inFile = Paths.get("/home/dthedie/Temp/long_10000x1200.xlsx");
         Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
-
         
         instance.transpose(new ExcelDataTableReader(inFile), outFile, ",");
         
@@ -284,7 +287,6 @@ public class TextTableTransposerTest {
         Path inFile = Paths.get("/home/dthedie/Temp/long_10000x1200.csv");
         Path outFile = inFile.getParent().resolve(inFile.getFileName().toString()+".transp.csv");
 
-        
         instance.transpose(new TextDataTableReader(inFile, ","), outFile, ",");
         
         assertTrue(Files.exists(outFile));
@@ -295,6 +297,7 @@ public class TextTableTransposerTest {
     public void transposeLongFile2() throws Exception {
         
         Path file = testFolder.resolve("test");
+	Files.createFile(file);
         int series = 3000;
         int timepoints = 5*24*10;
         

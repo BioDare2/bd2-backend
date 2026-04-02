@@ -14,7 +14,6 @@ import ed.biodare2.backend.repo.db.dao.db.DBSystemInfo;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.system_dom.SystemInfo;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +33,7 @@ class SystemCopier {
     final ObjectReader experimentalAssayReader;
     final ObjectWriter experimentalAssayWriter;      
     
-    public SystemCopier(DBSystemInfoRep dbSystemInfos,@Qualifier("PlainMapper") ObjectMapper mapper) {
+    public SystemCopier(DBSystemInfoRep dbSystemInfos, ObjectMapper mapper) {
         
         this.dbSystemInfos = dbSystemInfos;
         

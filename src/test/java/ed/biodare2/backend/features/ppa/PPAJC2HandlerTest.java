@@ -43,7 +43,6 @@ public class PPAJC2HandlerTest {
     PPAJC2AnalysisService ppaService;
     PPAJC2ResultsHandler ppaResultsHandler;
     
-
     PPATestSeederJC2 seeder =new PPATestSeederJC2();     
     
     PPAJC2Handler instance;
@@ -80,7 +79,6 @@ public class PPAJC2HandlerTest {
         assertEquals(uid, res);
         verify(ppaRep).saveJobSummary(any(), any());
         verify(experimentHandler).updateHasPPAJobs(exp,true);
-        
     }
 
     @Test

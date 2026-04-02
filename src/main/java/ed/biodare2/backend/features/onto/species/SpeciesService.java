@@ -39,7 +39,7 @@ public class SpeciesService {
         this.configFile = Paths.get(configPath);
     
         if (!Files.isRegularFile(configFile))
-            throw new IllegalArgumentException("Cannot access species definition file: "+configFile.toAbsolutePath());
+            throw new IllegalArgumentException("Cannot access species definition file: " + configFile.toAbsolutePath());
         
         log.info("Species service created");
         
@@ -56,7 +56,6 @@ public class SpeciesService {
     }
 
     void updateKnown(Path configFile) {
-        
         species = readSpecies(configFile);
     }
     
@@ -74,8 +73,7 @@ public class SpeciesService {
                     
                     
         } catch (IOException e) {
-            throw new IllegalStateException("Could not read content of the file: "+e.getMessage());
+            throw new IllegalStateException("Could not read content of the file: " + e.getMessage());
         }
     }
-    
 }

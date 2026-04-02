@@ -38,13 +38,6 @@ public class TopCountImporter extends TSDataImporter {
     
     public DataBundle importTimeSeries(Path file, ExcelTSImportParameters parameters) throws ImportException {
         
-        /* try {
-            ObjectMapper mapper = new ObjectMapper();
-            String param = mapper.writeValueAsString(parameters);
-            System.out.println("Import top params:\n"+param);
-        } catch (Exception e) {
-            throw new ImportException("Topcount param error: "+e.getMessage(),e);
-        } */
         try {
     
             Map<Pair<Integer, Integer>, TimeSeries> data = topcount.read(file);

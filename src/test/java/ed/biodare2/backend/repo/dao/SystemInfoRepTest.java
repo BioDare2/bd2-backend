@@ -50,6 +50,7 @@ public class SystemInfoRepTest {
     public void saveCreatesNewSystemFileUnderSystemDir() throws Exception {
         
         Path expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -72,6 +73,7 @@ public class SystemInfoRepTest {
     public void saveMakesBackups() throws Exception {
         
         Path expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());
@@ -96,6 +98,7 @@ public class SystemInfoRepTest {
     public void findByParentGivesSavedExpSystemInfo() throws Exception {
         
         Path expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         assertEquals(0L,Files.list(expDir).count());

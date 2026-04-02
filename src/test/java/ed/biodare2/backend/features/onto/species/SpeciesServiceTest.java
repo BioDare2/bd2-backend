@@ -33,7 +33,8 @@ public class SpeciesServiceTest {
     
     @BeforeEach
     public void setUp() throws Exception {
-        configFile = testFolder.resolve("test");
+        configFile = testFolder.resolve("onto.txt");
+	Files.createFile(configFile);
         service = new SpeciesService(configFile.toString());
     }
 
@@ -57,7 +58,7 @@ public class SpeciesServiceTest {
     @Test
     public void readSpeciesReadsListFromFileStripingSpacesAndOrdering() throws Exception {
         
-        Path tFile = testFolder.resolve("test");
+        Path tFile = testFolder.resolve("onto.txt");
         
         List<String> content = Arrays.asList("Species 1 ","Species 2",""," Species 3","A","  ");
         Files.write(tFile, content);

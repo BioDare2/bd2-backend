@@ -41,7 +41,8 @@ public class TextDataTableReaderTest {
     
     @BeforeEach
     public void setUp() throws IOException {
-        dataFile = testFolder.resolve("test");
+        dataFile = testFolder.resolve("test.txt");
+	Files.createFile(dataFile);
         instance = new TextDataTableReader(dataFile, ",");
     }
 
@@ -72,23 +73,25 @@ public class TextDataTableReaderTest {
     @Test
     public void testIsSuitableFormat() throws Exception {
         
-        Path file = testFolder.resolve("test");
+        Path file = testFolder.resolve("test.txt");
+	Files.createFile(file);
         assertFalse(isSuitableFormat(file, ","));
         
         List<String> lines = List.of("alkafaf","ma","kota","kot ma ale");        
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));
         
-        file = testFolder.resolve("test");
+        file = testFolder.resolve("test.txt");
+	Files.createFile(file);
         lines = List.of("alk,afa,f","ma","ko,ta","kot ma ale");       
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));        
         
         file = testFolder.resolve("test");
+	Files.createFile(file);
         lines = List.of("alk,afa,f","ma","ko,t,a","k,ot ,ma ale");       
         Files.write(file, lines);        
         assertTrue(isSuitableFormat(file, ","));        
-        
     }
     
     @Test

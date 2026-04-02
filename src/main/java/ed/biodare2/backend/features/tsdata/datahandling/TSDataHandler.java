@@ -66,7 +66,7 @@ public class TSDataHandler {
     protected Path getDataStorage(long expId) {
         try {
         Path dataDir = expStorage.getExperimentDir(expId).resolve(DATA_DIR); 
-        if (!Files.exists(dataDir)) Files.createDirectory(dataDir);
+        if (!Files.exists(dataDir)) Files.createDirectories(dataDir);
         return dataDir;
         } catch (IOException e) {
             throw new ServerSideException("Cannot access data storage: "+e.getMessage(),e);

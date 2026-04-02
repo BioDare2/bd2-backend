@@ -6,6 +6,8 @@
 package ed.biodare2.backend.web.rest;
 
 import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.State;
 import ed.biodare.jobcentre2.dom.TSResult;
@@ -20,6 +22,8 @@ import ed.biodare2.backend.repo.isa_dom.exp.ExperimentalAssay;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityRequest;
 import ed.biodare2.backend.repo.system_dom.AssayPack;
+import ed.biodare2.backend.util.json.BD2eJTKDomModule;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -272,6 +276,10 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         ExperimentalAssay exp = pack.getAssay();
         long expId = exp.getId();
         int size = insertData(pack);
+
+	ObjectMapper ejtkMapper = JsonMapper.builder()
+	    .addModule(new BD2eJTKDomModule())
+	    .build();
         
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), exp.getId());
         job1.jobStatus.state = State.SUCCESS;
@@ -279,7 +287,6 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
         rhythmicityRep.saveJobDetails(job1);
         
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(job1.jobId, expId, 1, size); 
-        
         
         rhythmicityRep.saveJobResults(results);
         
@@ -296,15 +303,13 @@ public class ExperimentRhythmicityControllerTest extends ExperimentBaseIntTest {
 
         assertNotNull(resp);
         
-        JobResults<TSResult<BD2eJTKRes>> res = mapper.readValue(resp.getResponse().getContentAsString(), 
+        JobResults<TSResult<BD2eJTKRes>> res = ejtkMapper.readValue(resp.getResponse().getContentAsString(), 
                 new TypeReference<JobResults<TSResult<BD2eJTKRes>>>() { });
         assertNotNull(res);
         
         assertEquals(results, res);
         
         verify(rhythmicityService, never()).getJobStatus(job1.jobId);
-        
-        
     }
     
     @Test

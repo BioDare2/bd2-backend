@@ -36,7 +36,6 @@ public class FeaturedDatasetMailer {
         DBSystemInfoRep dbSystemInfoRep,
         ExperimentalAssayRep experimentalAssayRep
     ) {
-
         this.mailer = mailer;
         this.users = users;
         this.featured = featured;

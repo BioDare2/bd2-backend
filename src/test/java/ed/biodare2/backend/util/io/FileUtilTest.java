@@ -56,6 +56,7 @@ public class FileUtilTest {
     public void uniqueFileGivesPathWIthGivenPrefixAndSuffix() throws Exception {
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         String prefix = "ala";
         String suffix = ".xml";
         String exp = prefix+".1"+suffix;
@@ -68,6 +69,7 @@ public class FileUtilTest {
     public void uniqueFileIncrementsCounterWIthGivenPrefixAndSuffixToAvoidColisions() throws Exception {
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         String prefix = "ala";
         String suffix = ".xml";
         
@@ -88,6 +90,7 @@ public class FileUtilTest {
     public void uniqueFileThrowsExceptionIfTooManyIterations() throws Exception {
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         String prefix = "ala";
         String suffix = ".xml";
 
@@ -104,6 +107,7 @@ public class FileUtilTest {
     public void backupMakesCopy() throws Exception {
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         Path org = dir.resolve("cos.txt");
         Files.write(org, Arrays.asList("Blla bla bla"));
         
@@ -117,6 +121,7 @@ public class FileUtilTest {
     @Test
     public void removeDirectoryRemovesDirectoryAndItsContent() throws Exception {
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         
         Path subDir = dir.resolve("dir1");
         Files.createDirectory(subDir);
@@ -143,7 +148,6 @@ public class FileUtilTest {
     @Test
     public void makeUploadSanitizesFilesNames() {
         
-        
         List<String> names = Arrays.asList(
                 "",
                 null,
@@ -162,8 +166,5 @@ public class FileUtilTest {
             String resp = instance.sanitizeFileName(names.get(i));
             assertEquals(exps.get(i),resp);
         }
-        
-        
     }
-    
 }

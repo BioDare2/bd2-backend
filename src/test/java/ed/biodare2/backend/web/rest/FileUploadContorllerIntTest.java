@@ -9,7 +9,6 @@ import ed.biodare2.SimpleRepoTestConfig;
 import ed.biodare2.backend.security.dao.db.UserAccount;
 import ed.biodare2.backend.handlers.FileUploadHandler;
 import ed.biodare2.backend.handlers.UploadFileInfo;
-import static ed.biodare2.backend.web.rest.AbstractIntTestBase.APPLICATION_JSON_UTF8;
 import ed.biodare2.backend.security.BioDare2User;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -117,10 +116,6 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
         
         assertNotNull(info.id);
         assertEquals(info.contentType,"text");
-        
         assertEquals(uploaded,info);
-        
     }
-    
-    
 }

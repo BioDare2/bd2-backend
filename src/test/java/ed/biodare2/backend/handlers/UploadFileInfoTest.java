@@ -6,9 +6,8 @@
 package ed.biodare2.backend.handlers;
 
 import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.datatype.jsr310.JavaTimeModule;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +34,6 @@ public class UploadFileInfoTest {
 
 	ObjectMapper mapper = JsonMapper
 	    .builder()
-	    .addModule(new JavaTimeModule())
 	    .build();
 
         String json = mapper.writeValueAsString(org);

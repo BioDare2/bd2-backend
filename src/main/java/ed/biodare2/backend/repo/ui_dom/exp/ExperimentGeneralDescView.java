@@ -21,15 +21,13 @@ public class ExperimentGeneralDescView extends GeneralDesc {
         
     }
     
-    public ExperimentGeneralDescView(GeneralDesc desc, LocalDate executionDate) {
-        
+    ExperimentGeneralDescView(GeneralDesc desc, LocalDate executionDate) {
         this.name = desc.name;
         this.purpose = desc.purpose;
         this.description = desc.description;
         this.comments = desc.comments;
         this.executionDate = executionDate;        
     }
-    
 
     @Override
     public int hashCode() {
@@ -55,6 +53,4 @@ public class ExperimentGeneralDescView extends GeneralDesc {
         }
         return super.equals(other);
     }
-    
-    
 }

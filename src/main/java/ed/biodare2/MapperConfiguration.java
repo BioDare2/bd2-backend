@@ -1,4 +1,4 @@
-package ed.biodare2.backend;
+package ed.biodare2;
 
 import ed.biodare2.backend.util.json.BD2eJTKDomModule;
 import ed.biodare2.backend.util.json.TimeSeriesModule;

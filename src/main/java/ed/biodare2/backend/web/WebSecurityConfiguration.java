@@ -173,8 +173,8 @@ public class WebSecurityConfiguration {
             http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                     authorizeHttpRequests
-                    .requestMatchers("/", "/home","node_modules").permitAll()
-                    .requestMatchers("browser-sync").denyAll()
+                    .requestMatchers("/", "/home","/node_modules/**").permitAll()
+                    .requestMatchers("/browser-sync/**").denyAll()
                     .requestMatchers("/api/services/**").hasRole("SERVICE")
                     .anyRequest().hasRole("USER")//.authenticated()
                 )

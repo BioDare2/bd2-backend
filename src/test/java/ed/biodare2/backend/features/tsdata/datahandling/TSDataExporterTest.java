@@ -121,14 +121,14 @@ public class TSDataExporterTest {
         data.add(TSGenerator.makeCos(50, 1, 25, 2));
         
         
-        Path file = testFolder.resolve("test");        
+        Path file = testFolder.resolve("test.csv");
+	Files.createFile(file);
         assertEquals(0,Files.size(file));
         
         instance.save(setDescription, dataHeaders, data, file);
         
         assertTrue(Files.exists(file));
         assertTrue(Files.size(file) > 10);
-        
     }
     
     @Test
@@ -155,7 +155,8 @@ public class TSDataExporterTest {
         
         //Path file = Paths.get("D:/Temp/t.csv");        
         //assertFalse(Files.exists(file));
-        Path file = testFolder.resolve("test");        
+        Path file = testFolder.resolve("test.csv");
+	Files.createFile(file);
         assertEquals(0,Files.size(file));        
         
         instance.export(traces, exp, detrending, file);

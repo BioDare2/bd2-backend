@@ -5,7 +5,6 @@
  */
 package ed.biodare2.backend.util.secrecy.encryption;
 
-import ed.biodare2.backend.util.secrecy.encryption.Encryptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -69,7 +68,6 @@ public class EncryptorTest {
         String code2 = instance2.encodeMsg(msg);
         
         assertEquals(code1,code2);
-        
     }
     
     @Test
@@ -93,22 +91,21 @@ public class EncryptorTest {
     
         System.out.println("encodeFile");
         String msg = "My simple message to be saved in file\n and its rest";
-        Path file = testFolder.resolve("test"); //new File("D:/Temp/sec_test_org.txt");
+        Path file = testFolder.resolve("original.txt"); //new File("D:/Temp/sec_test_org.txt");
         Files.write(file, msg.getBytes("UTF-8"));
         
         Encryptor instance = makeInstance();
-        Path coded = testFolder.resolve("test");
+        Path coded = testFolder.resolve("encoded.bin");
         
         instance.encodeFile(file, coded);
         
-        Path decoded = testFolder.resolve("test").resolve("decoded");
+        Path decoded = testFolder.resolve("decoded.txt");
         instance.decodeFile(coded, decoded);
         
         List<String> org = Files.readAllLines(file, Charset.forName("UTF-8"));
         List<String> read = Files.readAllLines(decoded, Charset.forName("UTF-8"));
         
         assertEquals(org,read);
-
     }
     
     @Test

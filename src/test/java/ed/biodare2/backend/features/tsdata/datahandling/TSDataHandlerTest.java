@@ -270,6 +270,7 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         instance.storeData(bundles, dir);
         
         assertEquals(2,Files.list(dir).count());
@@ -319,6 +320,7 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         instance.storeData(bundles, dir);
         
         List<DataTrace> res = instance.getDataSet(DetrendingType.BAMP_DTR, dir).get();
@@ -364,7 +366,8 @@ public class TSDataHandlerTest {
     public void storesDataMetricsThatCanBeRead() throws Exception {
         
         Path dir = testFolder.resolve("test");
-        
+	Files.createDirectories(dir);
+	
         TimeSeries serie = new TimeSeries();
         serie.add(1,1);
         serie.add(2,2);
@@ -529,6 +532,7 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         instance.storeHourlyData(bundles, dir);
         
         assertEquals(2,Files.list(dir).count());
@@ -581,6 +585,7 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         instance.storeHourlyData(bundles, dir);
         
         List<DataTrace> res = instance.getHourlyDataSet(DetrendingType.BAMP_DTR, dir).get();
@@ -634,6 +639,7 @@ public class TSDataHandlerTest {
         bundles.put(DetrendingType.BAMP_DTR,data);
         
         Path dir = testFolder.resolve("test");
+	Files.createDirectories(dir);
         instance.storeHourlyData(bundles, dir);
         
         long stored = Files.list(dir).count();
@@ -679,6 +685,7 @@ public class TSDataHandlerTest {
         when(exp.getId()).thenReturn(123L);
         
         Path expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         
@@ -733,6 +740,7 @@ public class TSDataHandlerTest {
         when(exp.getId()).thenReturn(123L);
         
         Path expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);
         
         Path dir = instance.getDataStorage(123);

@@ -8,14 +8,9 @@ import tools.jackson.databind.json.JsonMapper;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class JSONConfiguration {
-
-    // Removed date formatting as timestamps (should be iso instead) for simplicity
-    // It's no longer under SerializationFeature
-    // Could probably be found somewhere else if needed
 
     @Bean(name = "DomMapper")
     ObjectMapper domMapper() {
@@ -24,26 +19,8 @@ public class JSONConfiguration {
                 .withObjectIndenter(new DefaultIndenter(" ", "\n"));
 
         return JsonMapper.builder()
-                // .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .defaultPrettyPrinter(pp)
-                .build();
-    }
-
-    @Bean(name = "PlainMapper")
-    ObjectMapper plainMapper() {
-        return JsonMapper.builder()
-                // .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .disable(SerializationFeature.INDENT_OUTPUT)
-                .build();
-    }
-
-    @Bean
-    @Primary
-    ObjectMapper defaultMapper() {
-        return JsonMapper.builder()
-                // .enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .disable(SerializationFeature.INDENT_OUTPUT)
                 .build();
     }
 }

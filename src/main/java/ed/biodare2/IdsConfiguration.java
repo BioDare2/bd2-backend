@@ -9,7 +9,6 @@ import static ed.biodare2.BioDare2WSApplication.BD1LIMIT;
 import ed.biodare2.backend.util.concurrent.id.IdGenerator;
 import ed.biodare2.backend.util.concurrent.id.IdGenerators;
 import ed.biodare2.backend.util.concurrent.id.LongRecordManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -49,7 +49,8 @@ public class AssetsParamRepTest {
         
         repo = new AssetsParamRep(expStorage, mapper);
         
-        expDir = testFolder.resolve("test");        
+        expDir = testFolder.resolve("test");
+	Files.createDirectories(expDir);
         when(expStorage.getExperimentDir(anyLong())).thenReturn(expDir);        
     }    
     
