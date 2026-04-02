@@ -46,5 +46,4 @@ public class RhythmicityServiceConfigurationTest {
     public void testClientIsProvided() {
         assertNotNull(client);
     }
-    
 }

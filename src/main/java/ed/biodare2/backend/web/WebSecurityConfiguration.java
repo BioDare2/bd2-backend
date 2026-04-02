@@ -15,7 +15,6 @@ import ed.biodare2.backend.web.filters.RefreshUserFilter;
 import ed.biodare2.backend.web.listeners.OKLogoutSuccessHandler;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
-import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -40,7 +38,6 @@ import org.springframework.security.web.context.DelegatingSecurityContextReposit
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  *
@@ -49,7 +46,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfiguration {
-    
     
     // CORS
     @Bean
@@ -61,8 +57,6 @@ public class WebSecurityConfiguration {
         return reg;
     }
     
-   
-    
     @Bean
     FilterRegistrationBean monitoringFilter() {
         FilterRegistrationBean reg = new FilterRegistrationBean(
@@ -71,7 +65,6 @@ public class WebSecurityConfiguration {
         reg.setOrder(-200);
         return reg;
     }    
-    
     
     @Bean("ppaUsername")
     public String ppaUsername() {
@@ -93,7 +86,6 @@ public class WebSecurityConfiguration {
         // System.out.println("PASS: "+password);
         return password;
     }
-    
     
     @Bean("ppaPasswordEncoded")
     public String ppaPasswordEncoded(String ppaPassword, PasswordEncoder passwordEncoder) {
@@ -127,46 +119,19 @@ public class WebSecurityConfiguration {
                 return makeUser(ppaUsername, ppaPasswordEncoded, "SERVICE");
             }
             
-            
             final UserAccount acc = accounts.findByLogin(username)
                     .map( a -> {
                         a.setAuthorities(roles);
                         return a;
                     })
-                    .orElseThrow(() -> new UsernameNotFoundException("could not find the user '"+ username + "'"));                            
-
+                    .orElseThrow(() -> new UsernameNotFoundException("could not find the user '" + username + "'"));                            
             return acc;
-
         };
     }        
 
-    
-    /*
-    @Configuration
-    @Order(1)                                                        
-    public static class ServicesBackendWebSecurityConfiguration {
- 
-        @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-            http
-                .securityMatcher("/api/services/**")                               
-                .authorizeHttpRequests()
-                    .anyRequest().hasRole("SERVICE")
-                    .and()
-                .anonymous().disable()
-                .csrf().disable()
-                .httpBasic();
-            return http.build();
-        }
-
-    }
-    */
-    
     @Configuration
     @Order(2)                                                        
     public static class UIBackendWebSecurityConfiguration {
-
         
         @Autowired
         UserAccountRep accounts;
@@ -187,17 +152,6 @@ public class WebSecurityConfiguration {
         RefreshUserFilter refreshUserFilter() {
             return new RefreshUserFilter(accounts);
         }        
-        
-        /* Disabled for a moment, as standard implementation seems to be working and it handles the angular x-requested with
-        CustomBasicAuthenticationFilter basicLoginFilter() throws Exception {
-
-            CustomBasicAuthenticationFilter filter = new CustomBasicAuthenticationFilter(authenticationManager());
-            /*SessionAuthenticationStrategy sessionStrategy = new SessionFixationProtectionStrategy();
-            AuthenticationEntryPoint entry = new BasicAuthenticationEntryPoint();
-            CustomBasicAuthenticationFilter filter = new CustomBasicAuthenticationFilter(authenticationManager(),entry);
-            filter.setSessionAuthenticationStrategy(sessionStrategy);*/
-            /*return filter;
-        }*/
         
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -232,57 +186,14 @@ public class WebSecurityConfiguration {
                 )                    
                 .csrf((csrf) -> csrf.disable())
                 // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
-                .httpBasic((basic) -> basic.addObjectPostProcessor(
-                        new ObjectPostProcessor<BasicAuthenticationFilter>() {
-                            public BasicAuthenticationFilter postProcess(BasicAuthenticationFilter filter) {
-                                filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
-                            return filter;
-                            }
-                        })
-                )
+                .httpBasic((basic) -> {})
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout((logout) ->
                             logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
-                            .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
-                            .permitAll()
-                        
+			.logoutUrl("/logout")
+			.permitAll()
                 );
-            
-            /* old configuration bean based not lamdas, refactored above with SB3.1.5
-            http
-                //.anonymous().disable()                    
-                //.headers().frameOptions().sameOrigin().and()    //enable for h2 console
-                .authorizeHttpRequests()
-                    .requestMatchers("/", "/home","node_modules").permitAll()
-                    .requestMatchers("browser-sync").denyAll()
-                    .requestMatchers("/api/services/**").hasRole("SERVICE")
-                    .anyRequest().hasRole("USER")//.authenticated()
-                    .and()
-                .anonymous().authenticationFilter(defaultUserFilter(securityContextRepository)).and()                
-                //.addFilterBefore(basicLoginFilter(), AnonymousAuthenticationFilter.class) //disabled now to use spring one, may be necessary for better session handling
-                //.addFilterBefore(defaultUserFilter(), AnonymousAuthenticationFilter.class)  changeSessionId                  
-                //.sessionManagement().sessionFixation().newSession().and() changed as it may be better
-                .sessionManagement().sessionFixation().changeSessionId().and()                    
-                .csrf().disable()
-                // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
-                .httpBasic((basic) -> basic.addObjectPostProcessor(new ObjectPostProcessor<BasicAuthenticationFilter>() {
-                        public BasicAuthenticationFilter postProcess(BasicAuthenticationFilter filter) {
-                            filter.setSecurityContextRepository(new HttpSessionSecurityContextRepository());
-                        return filter;
-                        }
-                }))
-                .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
-                .logout().logoutSuccessHandler(new OKLogoutSuccessHandler())
-                */ //continuing comment acuse of /** patern        .logoutRequestMatcher(new AntPathRequestMatcher("/**/logout"))
-                //         .permitAll()
-                //    ;
-            
-
-
-            
             return http.build();
         }
-        
     }
-     
 }

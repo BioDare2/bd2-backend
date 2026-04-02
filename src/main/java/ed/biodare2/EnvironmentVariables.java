@@ -7,6 +7,7 @@ package ed.biodare2;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -42,9 +43,9 @@ public class EnvironmentVariables {
         
         this.storageDir = Paths.get(storageDirPath);  
         try {
-            this.backendURL = new URL(backendURL);
+	    this.backendURL = URI.create(backendURL).toURL();
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Problem with backendURL: "+e.getMessage(),e);
+            throw new RuntimeException("Problem with backendURL: " + e.getMessage(), e);
         }
         /*try {
             this.jobcentreURL = new URL(jobcentreURL);
@@ -58,7 +59,5 @@ public class EnvironmentVariables {
         this.mailUser = mailUser;
         this.mailPassword = mailPassword;
         this.mailAuth = mailAuth;
-        
     }
-    
 }

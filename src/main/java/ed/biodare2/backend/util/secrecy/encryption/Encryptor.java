@@ -19,11 +19,11 @@ import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.security.crypto.codec.Base64;
 
 /**
  *
@@ -33,7 +33,7 @@ public class Encryptor {
     
     //for input strings
     static final String UTF = "UTF-8";
-    //for output byte[] representation as it is "byte" loss codign
+    //for output byte[] representation as it is "byte" loss coding
     static final String ISO = "ISO-8859-1";
     
     static final String SALT = "!@uou$(8654";
@@ -55,20 +55,17 @@ public class Encryptor {
             Cipher cipher = prepareCipher(Cipher.ENCRYPT_MODE);
 
             byte[] code = cipher.doFinal(msg.getBytes(UTF));
-            code = Base64.encode(code);
+	    code = Base64.getEncoder().encode(code);
             return new String(code,UTF);        
         } catch (UnsupportedEncodingException e) {
             throw new GeneralSecurityException("Could not encode text (Unsupported encoding): "+e.getMessage());
         }
     }
     
-    
-    
     public String decodeMsg(String code) throws GeneralSecurityException {
         try {
             Cipher cipher = prepareCipher(Cipher.DECRYPT_MODE);
-            
-            byte[] coded = Base64.decode(code.getBytes(UTF));
+            byte[] coded = Base64.getDecoder().decode(code.getBytes(UTF));
             byte[] decoded = cipher.doFinal(coded);
             return new String(decoded,UTF);
         } catch (UnsupportedEncodingException e) {
@@ -122,7 +119,6 @@ public class Encryptor {
             streamCpy(inC,decoded);
             decoded.close();
         }
-        
     }
 
     public void encodeObject(Serializable obj,Path out) throws GeneralSecurityException, IOException {
@@ -157,7 +153,6 @@ public class Encryptor {
         }
     }
     
-    
     protected void streamCpy(InputStream in,OutputStream out) throws IOException {
         final int BUFFER_SIZE = 8192;        
         byte[] buf = new byte[BUFFER_SIZE];
@@ -165,7 +160,6 @@ public class Encryptor {
         while ((n = in.read(buf)) > 0) {
             out.write(buf, 0, n);            
         }
-        
     }
 
     protected Cipher prepareCipher(int CIPHER_MODE) throws GeneralSecurityException {
@@ -188,5 +182,4 @@ public class Encryptor {
             throw new GeneralSecurityException("Could not create key (Unsupported encoding): "+e.getMessage());
         }        
     }
-
 }

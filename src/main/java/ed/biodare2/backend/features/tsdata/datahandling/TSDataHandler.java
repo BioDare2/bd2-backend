@@ -5,6 +5,7 @@
  */
 package ed.biodare2.backend.features.tsdata.datahandling;
 
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import ed.biodare2.backend.web.rest.ServerSideException;
 import ed.biodare2.backend.repo.dao.ExperimentsStorage;
@@ -72,9 +73,7 @@ public class TSDataHandler {
         }
     }
     
-    
     protected int handleNewData(DataBundle rawData,Path dataDir) throws DataProcessingException {
-        
         
         List<DataTrace> standardData = standarize(rawData);
         if (standardData.isEmpty()) throw new DataProcessingException("Empty dataset after standarization");
@@ -108,7 +107,6 @@ public class TSDataHandler {
         if (!Files.exists(file)) return Optional.empty();
         
         try (ObjectInputStream in = new ObjectInputStream(Files.newInputStream(file))) {
-            
             return Optional.of((List)in.readObject());
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e.getMessage(),e);
@@ -158,12 +156,9 @@ public class TSDataHandler {
     }
     
     protected TimeSeries averageTS(List<TimeSeries> series) {
-        
         if (series == null || series.isEmpty()) return new TimeSeries();
-        
         return transformer.average(series);
     }
-
 
     protected Map<DetrendingType, List<DataTrace>> processData(List<DataTrace> standardData) {
         
@@ -181,7 +176,6 @@ public class TSDataHandler {
     }
     
     protected DataTrace detrend(DataTrace org,DetrendingType detrending) {
-        
         DataTrace dtr = org.clone();
         dtr.trace = transformer.detrend(org.trace, detrending);
         return dtr;
@@ -214,7 +208,7 @@ public class TSDataHandler {
         try {
             Path file = dataDir.resolve("metrics.json");
             mapper.writeValue(file.toFile(), metrics);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new ServerSideException("Cannot data metrics: "+e.getMessage(),e);
         }
     }
@@ -233,7 +227,7 @@ public class TSDataHandler {
 
             TimeSeriesMetrics metrics = mapper.readValue(file.toFile(), TimeSeriesMetrics.class);
             return Optional.of(metrics);
-        } catch(IOException e) {
+        } catch(JacksonException e) {
             throw new ServerSideException("Cannot read data metrics: "+e.getMessage(),e);
         }            
     }  

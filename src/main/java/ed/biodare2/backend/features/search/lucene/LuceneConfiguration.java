@@ -12,7 +12,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.store.ByteBuffersDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,14 +36,13 @@ public class LuceneConfiguration {
         Path indexDir = environment.storageDir.resolve(INDEX_DIR);
         log.info("LuceneConfiguration indexDir: {}", indexDir);
         return indexDir;
-        
     }
     
     @Bean(destroyMethod = "close")
     @Profile("test")
     public Directory luceneMemDirectory() {
         log.info("Lucene config provides in memmory directory for testing");
-        return new RAMDirectory();
+        return new ByteBuffersDirectory();
     } 
     
     @Bean(destroyMethod = "close")
@@ -61,5 +60,4 @@ public class LuceneConfiguration {
         StandardAnalyzer analyzer = new StandardAnalyzer();
         return analyzer;
     }    
-    
 }

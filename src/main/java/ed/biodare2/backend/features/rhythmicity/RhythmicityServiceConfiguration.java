@@ -13,9 +13,9 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestClient;
 
 /**
  *
@@ -27,14 +27,8 @@ public class RhythmicityServiceConfiguration {
     final Logger log = LoggerFactory.getLogger(this.getClass());
     
     @Bean
-    JobCentreEndpointClient rhythmicityClient(RestTemplateBuilder builder, RhythmicityServiceParameters parameters) {
-        
+    JobCentreEndpointClient rhythmicityClient(RestClient.Builder builder, RhythmicityServiceParameters parameters) {
         log.info("RhythmicityService configuration uses jobcentre at {}", parameters.directions);
-        //MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        //converter.setPrefixJson(false);
-        //builder = builder.messageConverters(converter);
-        // to disable the json hijiking prefix which was not parsed by jobcentre
-        builder = builder.defaultMessageConverters();
         return new JobCentreEndpointClient(builder, parameters.directions);
     }
     
@@ -64,8 +58,5 @@ public class RhythmicityServiceConfiguration {
         params.directions.password = password;
         
         return params;
-        
     }
-        
-    
 }
