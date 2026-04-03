@@ -6,6 +6,7 @@
 package ed.biodare2.backend.features.rhythmicity.dao;
 
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import ed.biodare.jobcentre2.dom.JobResults;
 import ed.biodare.jobcentre2.dom.TSResult;
 import ed.biodare.rhythm.ejtk.BD2eJTKRes;
@@ -13,6 +14,8 @@ import ed.biodare2.backend.repo.dao.ExperimentsStorage;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeBD2EJTKResults;
 import static ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder.makeRhythmicityJobSummary;
 import ed.biodare2.backend.repo.isa_dom.rhythmicity.RhythmicityJobSummary;
+import ed.biodare2.backend.util.json.BD2eJTKDomModule;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -25,7 +28,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 
 /**
@@ -38,7 +40,6 @@ public class RhythmicityArtifactsRepTest {
     @TempDir
     Path testFolder;
     
-    @Autowired
     ObjectMapper mapper;
     
     ExperimentsStorage expStorage;
@@ -51,6 +52,10 @@ public class RhythmicityArtifactsRepTest {
     
     @BeforeEach
     public void setUp() throws Exception {
+
+	mapper = JsonMapper.builder()
+	    .addModule(new BD2eJTKDomModule())
+	    .build();
         
         expDir = testFolder.resolve("test");
         expStorage = mock(ExperimentsStorage.class);
@@ -100,7 +105,6 @@ public class RhythmicityArtifactsRepTest {
         UUID jobId = UUID.randomUUID();        
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
         
-        
         Optional<JobResults<TSResult<BD2eJTKRes>>> res = instance.readJobResults(jobId, expId);
         assertTrue(res.isEmpty());
         
@@ -118,7 +122,6 @@ public class RhythmicityArtifactsRepTest {
         
         List<RhythmicityJobSummary> res = instance.getJobs(expId);
         assertEquals(List.of(), res);
-        
         
         RhythmicityJobSummary job1 = makeRhythmicityJobSummary(UUID.randomUUID(), expId);
         job1.jobStatus.submitted = LocalDateTime.now().minusHours(1);        
@@ -165,7 +168,6 @@ public class RhythmicityArtifactsRepTest {
         long expId = 123;
         UUID jobId = UUID.randomUUID();        
         JobResults<TSResult<BD2eJTKRes>> results = makeBD2EJTKResults(jobId, expId); 
-        
         
         instance.saveJobResults(results, jobId, expId);
         

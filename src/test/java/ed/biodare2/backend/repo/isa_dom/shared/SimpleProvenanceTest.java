@@ -5,13 +5,11 @@
  */
 package ed.biodare2.backend.repo.isa_dom.shared;
 
-import ed.biodare2.backend.repo.isa_dom.shared.SimpleProvenance;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 import ed.biodare2.backend.repo.isa_dom.DomRepoTestBuilder;
-import ed.biodare2.backend.repo.ui_dom.exp.ExperimentalAssayView;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +27,7 @@ public class SimpleProvenanceTest {
     
     @BeforeEach
     public void setUp() {
-	ObjectMapper mapper = JsonMapper
+	mapper = JsonMapper
 	    .builder()
 	    .enable(SerializationFeature.INDENT_OUTPUT)
 	    .build();

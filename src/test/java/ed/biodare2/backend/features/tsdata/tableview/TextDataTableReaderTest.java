@@ -74,7 +74,6 @@ public class TextDataTableReaderTest {
     public void testIsSuitableFormat() throws Exception {
         
         Path file = testFolder.resolve("test.txt");
-	Files.createFile(file);
         assertFalse(isSuitableFormat(file, ","));
         
         List<String> lines = List.of("alkafaf","ma","kota","kot ma ale");        
@@ -82,13 +81,11 @@ public class TextDataTableReaderTest {
         assertFalse(isSuitableFormat(file, ","));
         
         file = testFolder.resolve("test.txt");
-	Files.createFile(file);
         lines = List.of("alk,afa,f","ma","ko,ta","kot ma ale");       
         Files.write(file, lines);        
         assertFalse(isSuitableFormat(file, ","));        
         
-        file = testFolder.resolve("test");
-	Files.createFile(file);
+        file = testFolder.resolve("test.txt");
         lines = List.of("alk,afa,f","ma","ko,t,a","k,ot ,ma ale");       
         Files.write(file, lines);        
         assertTrue(isSuitableFormat(file, ","));        

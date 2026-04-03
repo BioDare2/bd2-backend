@@ -12,6 +12,7 @@ import ed.biodare2.backend.web.filters.BD2AnonymousUserAuthenticationFilter;
 import ed.biodare2.backend.web.filters.CORSFilter;
 import ed.biodare2.backend.web.filters.MonitoringFilter;
 import ed.biodare2.backend.web.filters.RefreshUserFilter;
+import ed.biodare2.backend.web.filters.SessionSavingBasicAuthenticationFilter;
 import ed.biodare2.backend.web.listeners.OKLogoutSuccessHandler;
 import java.util.Collections;
 import java.util.List;
@@ -22,6 +23,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
@@ -151,10 +154,17 @@ public class WebSecurityConfiguration {
         
         RefreshUserFilter refreshUserFilter() {
             return new RefreshUserFilter(accounts);
-        }        
+        }
+
+	SessionSavingBasicAuthenticationFilter sessionSavingBasicAuthenticationFilter(
+										      AuthenticationManager authenticationManager,
+										      SecurityContextRepository securityContextRepository) {
+	    return new SessionSavingBasicAuthenticationFilter(authenticationManager, securityContextRepository);
+	}
         
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity http,
+						       AuthenticationConfiguration authenticationConfiguration) throws Exception {
 
             // that is the spring6 default context repo which here is created explicitrly so
             // I can pass it to the http.basic filter. 
@@ -164,12 +174,14 @@ public class WebSecurityConfiguration {
 				new RequestAttributeSecurityContextRepository(),
 				new HttpSessionSecurityContextRepository()
 			);
+
+	    AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
         
             http.securityContext((securityContext) -> securityContext
 			.securityContextRepository(securityContextRepository)
                         .requireExplicitSave(true)
             );
-            
+
             http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                     authorizeHttpRequests
@@ -187,9 +199,13 @@ public class WebSecurityConfiguration {
                 .csrf((csrf) -> csrf.disable())
                 // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
                 .httpBasic((basic) -> {})
+		.addFilterAt(
+			     sessionSavingBasicAuthenticationFilter(authenticationManager, securityContextRepository),
+			     BasicAuthenticationFilter.class
+			     )
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout((logout) ->
-                            logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
+			logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
 			.logoutUrl("/logout")
 			.permitAll()
                 );

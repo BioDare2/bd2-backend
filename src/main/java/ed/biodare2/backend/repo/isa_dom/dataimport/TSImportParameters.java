@@ -7,7 +7,7 @@ package ed.biodare2.backend.repo.isa_dom.dataimport;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.Serializable;
-import javax.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
 
 /**
  *

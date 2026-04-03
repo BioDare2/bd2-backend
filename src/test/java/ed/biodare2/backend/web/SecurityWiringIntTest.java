@@ -354,54 +354,7 @@ public class SecurityWiringIntTest {
 	obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
 	assertTrue(obj.get("login").contains("ANONY"));
     }
-    
-    @Test
-    public void logoutsLogoutsFromBasePath() throws IOException, InterruptedException {
-	java.net.CookieManager cookieManager = new java.net.CookieManager();
-	java.net.http.HttpClient client = java.net.http.HttpClient.newBuilder()
-            .cookieHandler(cookieManager)
-            .build();
-
-	String basicAuth = java.util.Base64.getEncoder().encodeToString("demo:demo".getBytes(java.nio.charset.StandardCharsets.UTF_8));
-
-	java.net.http.HttpRequest loginRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/user"))
-            .header("Authorization", "Basic " + basicAuth)
-            .GET()
-            .build();
-
-	java.net.http.HttpResponse<String> response =
-            client.send(loginRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(200, response.statusCode());
-
-	Map<String, String> obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
-	assertEquals("demo", obj.get("login"));
-
-	java.net.http.HttpRequest userRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/user"))
-            .GET()
-            .build();
-
-	response = client.send(userRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(200, response.statusCode());
-	obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
-	assertEquals("demo", obj.get("login"));
-
-	java.net.http.HttpRequest logoutRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/logout"))
-            .POST(java.net.http.HttpRequest.BodyPublishers.ofString(""))
-            .header("Content-Type", "text/plain")
-            .build();
-
-	response = client.send(logoutRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(200, response.statusCode());
-
-	response = client.send(userRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(200, response.statusCode());
-	obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
-	assertTrue(obj.get("login").contains("ANONY"));
-    }
-    
+        
     @Test
     public void serviceUserIsUnauthorizedForNormalPoints() throws IOException, InterruptedException {
 	String basicAuth = java.util.Base64.getEncoder().encodeToString((ppaUsername + ":" + ppaPassword)

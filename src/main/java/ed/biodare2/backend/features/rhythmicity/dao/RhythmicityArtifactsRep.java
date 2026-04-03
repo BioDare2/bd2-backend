@@ -200,7 +200,6 @@ public class RhythmicityArtifactsRep {
         
        return guard.guard(expId, (id) -> {
             try {
-
                 Path file = jobResultsFile(expId, jobId);
                 if (!Files.exists(file))
                     return Optional.empty();
@@ -209,7 +208,7 @@ public class RhythmicityArtifactsRep {
                 return Optional.of(res);
                 
             } catch (JacksonException e) {
-                throw new ServerSideException("Cannot access results: "+e.getMessage(),e);
+                throw new ServerSideException("Cannot access results: " + e.getMessage(),e);
             }
        });
     }    

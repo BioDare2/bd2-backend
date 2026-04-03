@@ -281,17 +281,6 @@
       <version>3.4.2</version>
       <scope>test</scope>
     </dependency>                   
-    
-    <!-- for jaxb support --> 
-    <!--<dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        </dependency> -->
-    
-    <!--<dependency>
-        <groupId>org.glassfish.jaxb</groupId>
-        <artifactId>jaxb-runtime</artifactId>
-        </dependency>-->
 
     <!-- for jax-ws JobCentre client -->                                 
     <!-- https://mvnrepository.com/artifact/javax.xml.ws/jaxws-api -->
