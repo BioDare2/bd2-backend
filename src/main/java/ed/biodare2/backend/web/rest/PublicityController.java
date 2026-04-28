@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
@@ -31,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class PublicityController extends BioDare2Rest {
     
     final Mailer mailer;
-    
 
     Path addressesFile = Paths.get("users-emails.txt");    
     Path contentFile = Paths.get("publicity-content.txt");
@@ -50,29 +48,22 @@ public class PublicityController extends BioDare2Rest {
         
         if (!currentUser.getLogin().equals("demo") && !currentUser.getLogin().equals("test"))
             throw new InsufficientRightsException("Only demo and test users can call it");
-        
 
         Set<String> addresses = readDestinations(addressesFile);        
         String subject = readSubject(contentFile);
         String body = readBody(contentFile);
         
-        
         int sent = sendPublicityEmails(addresses, subject, body);
         
         Map<String, String> stats = new HashMap<>();
-        stats.put("sent",""+sent);
-        stats.put("body",readBody(contentFile));
+        stats.put("sent", "" + sent);
+        stats.put("body", readBody(contentFile));
         return stats;
     }   
-
-
-    
-
 
     protected int sendPublicityEmails(Set<String> addresses, String subject, String body) throws InterruptedException {
         
         body = body + "\n\n";
-        
         
         for (String to:  addresses) {
             
@@ -85,9 +76,7 @@ public class PublicityController extends BioDare2Rest {
             Thread.sleep(200);
             //*/
         }
-        
         return addresses.size();
-        
     }
 
     protected Set<String> readDestinations(Path file) throws IOException {
@@ -120,5 +109,4 @@ public class PublicityController extends BioDare2Rest {
         return subj;
                 
     }
-    
 }

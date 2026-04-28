@@ -41,10 +41,11 @@ public class FileUploadController extends BioDare2Rest {
 	this.uploadguard = uploadguard;
     }
 
-    @RequestMapping(path = "one",method = RequestMethod.POST)
-    public UploadFileInfo uploadFile(@RequestParam("file") MultipartFile fileInfo,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    @RequestMapping(path = "one", method = RequestMethod.POST)
+    public UploadFileInfo uploadFile(@RequestParam("file") MultipartFile fileInfo,
+				     @AuthenticationPrincipal BioDare2User user) {
         
-        if (user.isAnonymous())
+        if (user == null || user.isAnonymous())
             throw new LogginRequiredException("Loggin to upload file");
 
 	Long userId = user.getId();
@@ -75,7 +76,8 @@ public class FileUploadController extends BioDare2Rest {
     
     
     @RequestMapping(value = "{uploadId}",method = RequestMethod.GET)
-    public UploadFileInfo getFileInfo(@PathVariable String uploadId,@NotNull @AuthenticationPrincipal BioDare2User user) {
+    public UploadFileInfo getFileInfo(@PathVariable String uploadId,
+				      @NotNull @AuthenticationPrincipal BioDare2User user) {
         log.debug("get UploadInfo: {}; {}",uploadId,user);
         
         try {
@@ -89,7 +91,5 @@ public class FileUploadController extends BioDare2Rest {
             log.error("Cannot get uploaded file {} {}",uploadId,e.getMessage(),e);
             throw new ServerSideException(e.getMessage());
         } 
-             
-        
     }
 }

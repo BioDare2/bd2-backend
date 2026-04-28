@@ -12,7 +12,7 @@ import ed.biodare2.backend.handlers.UploadFileInfo;
 import ed.biodare2.backend.security.BioDare2User;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
+
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -77,12 +78,9 @@ public class FileUploadContorllerIntTest extends AbstractIntTestBase {
 
         MockMultipartFile upload = new MockMultipartFile("file", "original", "text", new byte[10]);
         
-        UserAccount user = fixtures.anonymous;
-
 	RequestBuilder builder = MockMvcRequestBuilders.multipart(serviceRoot + "/one")
 	    .file(upload)
-	    .accept(APPLICATION_JSON_UTF8)
-	    .with(mockAuthentication);
+	    .accept(APPLICATION_JSON_UTF8);
 
         MvcResult resp = mockMvc.perform(builder)
                 .andExpect(MockMvcResultMatchers.status().isForbidden())

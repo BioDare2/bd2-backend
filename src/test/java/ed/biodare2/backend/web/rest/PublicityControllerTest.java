@@ -15,10 +15,10 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.BeforeEach;
 
 /**
  *
@@ -44,10 +44,10 @@ public class PublicityControllerTest {
         instance = new PublicityController(mailer);
         
         //testFolder.newFolder();
-        addressFile = testFolder.resolve("test");        
+        addressFile = testFolder.resolve("addresses.txt");        
         Files.write(addressFile, List.of("biodare@ed.ac.uk","biodare2@ed.ac.uk"));
         
-        contentFile = testFolder.resolve("test");
+        contentFile = testFolder.resolve("content.txt");
         Files.write(contentFile, List.of("Subject","Body"));
         
         instance.addressesFile = addressFile;
@@ -64,7 +64,6 @@ public class PublicityControllerTest {
         Map<String, String> expResult = Map.of("sent","2","body","Body");
         Map<String, String> result = instance.sendPublicity(currentUser);
         assertEquals(expResult, result);
-        
     }
 
     @Test

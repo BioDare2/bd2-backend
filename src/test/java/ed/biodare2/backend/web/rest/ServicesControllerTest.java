@@ -138,8 +138,6 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
 
         assertNotNull(resp);        
         
-        
-        
         job = rhythmicityRep.findJob(jobId, expId).get();
         assertEquals(State.SUCCESS, job.jobStatus.state);
         assertNotNull(job.jobStatus.completed);
@@ -226,8 +224,6 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
 
         assertNotNull(resp);        
         
-        
-        
         job = ppaRep.getJobSummary(pack, job.jobId).get();
         
         assertEquals(State.FINISHED.name(), job.state.name());
@@ -242,10 +238,5 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         List<PPAResult> send = results.results.stream().map( r -> r.result).collect(Collectors.toList());
         
         assertEquals(send, saved);
-        
-        
     }
-    
-
-    
 }
