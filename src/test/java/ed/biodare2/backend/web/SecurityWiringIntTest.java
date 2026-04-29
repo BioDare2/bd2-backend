@@ -83,8 +83,7 @@ public class SecurityWiringIntTest {
     }
     
     String logoutURL() {
-        //without api at the end
-        return baseURL().substring(0, baseURL().indexOf("/api")) + "/logout";
+        return baseURL() + "/logout";
     }
 
     @Test

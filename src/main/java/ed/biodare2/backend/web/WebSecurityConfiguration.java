@@ -163,8 +163,7 @@ public class WebSecurityConfiguration {
 	}
         
         @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity http,
-						       AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
             // that is the spring6 default context repo which here is created explicitrly so
             // I can pass it to the http.basic filter. 
@@ -175,8 +174,6 @@ public class WebSecurityConfiguration {
 				new HttpSessionSecurityContextRepository()
 			);
 
-	    AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
-        
             http.securityContext((securityContext) -> securityContext
 			.securityContextRepository(securityContextRepository)
                         .requireExplicitSave(false)
@@ -206,7 +203,7 @@ public class WebSecurityConfiguration {
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout((logout) ->
 			logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
-			.logoutUrl("/logout")
+			.logoutUrl("/api/logout")
 			.permitAll()
                 );
             return http.build();
