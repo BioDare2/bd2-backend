@@ -49,6 +49,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 /**
  *
  * @author Tomasz Zielinski <tomasz.zielinski@ed.ac.uk>
@@ -78,10 +81,10 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
     PPAArtifactsRepJC2 ppaRep;
     
     
-    @BeforeEach
-    @Override //so it will not configure security
-    public void setUp() throws Exception  {
-    }    
+    // @BeforeEach
+    // @Override //so it will not configure security
+    // public void setUp() throws Exception  {
+    // }    
 
     /**
      * Test of handleRhythmicityResults method, of class ServicesController.
@@ -118,23 +121,23 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         String orgJSON = mapper.writeValueAsString(results);
         
         /*TestingAuthenticationToken authentication = new TestingAuthenticationToken(
-                rhythmicityParameters.ppaUsername,
-                rhythmicityParameters.ppaPassword, "SERVICE");
-        authentication.setAuthenticated(true);*/
+	  rhythmicityParameters.ppaUsername,
+	  rhythmicityParameters.ppaPassword, "SERVICE");
+	  authentication.setAuthenticated(true);*/
         
         
-        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/services/rhythmicity/results/"+expId)
-                .contentType(APPLICATION_JSON_UTF8)
-                .content(orgJSON)
-                .accept(APPLICATION_JSON_UTF8)                
-                ;//.with(SecurityMockMvcRequestPostProcessors.authentication(authentication));
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/services/rhythmicity/results/" + expId)
+	    .contentType(APPLICATION_JSON_UTF8)
+	    .content(orgJSON)
+	    .accept(APPLICATION_JSON_UTF8)
+	    .with(user("ppaserver").roles("SERVICE"));
+	//.with(SecurityMockMvcRequestPostProcessors.authentication(authentication));
 
-        
         MvcResult resp = mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
+	    .andExpect(MockMvcResultMatchers.status().isOk())
+	    //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+	    .andDo(MockMvcResultHandlers.print())
+	    .andReturn();
 
         assertNotNull(resp);        
         
@@ -150,21 +153,21 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         assertEquals(results, saved);
         
         /*
-        assertEquals(results.externalId, saved.externalId);
-        assertEquals(results.jobId, saved.jobId);
-        assertEquals(results.message, saved.message);
-        assertEquals(results.state, saved.state);
-        //assertEquals(results.results, saved.results);
+	  assertEquals(results.externalId, saved.externalId);
+	  assertEquals(results.jobId, saved.jobId);
+	  assertEquals(results.message, saved.message);
+	  assertEquals(results.state, saved.state);
+	  //assertEquals(results.results, saved.results);
         
-        for (int i = 0; i< results.results.size();i++) {
-            TSResult<BD2eJTKRes> r1 = results.results.get(i);
-            TSResult<BD2eJTKRes> r2 = saved.results.get(i);
+	  for (int i = 0; i< results.results.size();i++) {
+	  TSResult<BD2eJTKRes> r1 = results.results.get(i);
+	  TSResult<BD2eJTKRes> r2 = saved.results.get(i);
             
-            System.out.println(r1.result.getClass());
-            System.out.println(r2.result.getClass());
+	  System.out.println(r1.result.getClass());
+	  System.out.println(r2.result.getClass());
             
-            assertEquals("D"+i, r1, r2);
-        }*/
+	  assertEquals("D"+i, r1, r2);
+	  }*/
         
     }
     
@@ -204,23 +207,24 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         String orgJSON = mapper.writeValueAsString(results);
         
         /*TestingAuthenticationToken authentication = new TestingAuthenticationToken(
-                rhythmicityParameters.ppaUsername,
-                rhythmicityParameters.ppaPassword, "SERVICE");
-        authentication.setAuthenticated(true);*/
+	  rhythmicityParameters.ppaUsername,
+	  rhythmicityParameters.ppaPassword, "SERVICE");
+	  authentication.setAuthenticated(true);*/
         
         
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/api/services/ppa2/results/"+expId)
-                .contentType(APPLICATION_JSON_UTF8)
-                .content(orgJSON)
-                .accept(APPLICATION_JSON_UTF8)                
-                ;//.with(SecurityMockMvcRequestPostProcessors.authentication(authentication));
+	    .contentType(APPLICATION_JSON_UTF8)
+	    .content(orgJSON)
+	    .accept(APPLICATION_JSON_UTF8)
+	    .with(user("ppaserver").roles("SERVICE"));
+	    //.with(SecurityMockMvcRequestPostProcessors.authentication(authentication));
 
         
         MvcResult resp = mockMvc.perform(builder)
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
-                .andDo(MockMvcResultHandlers.print())
-                .andReturn();
+	    .andExpect(MockMvcResultMatchers.status().isOk())
+	    //.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(APPLICATION_JSON_UTF8))
+	    .andDo(MockMvcResultHandlers.print())
+	    .andReturn();
 
         assertNotNull(resp);        
         
@@ -231,7 +235,7 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
 
         
         List<PPAResult> saved = ppaRep.getJobIndResults(pack, job.jobId).stream().map( r -> r.result)
-                .collect(Collectors.toList());
+	    .collect(Collectors.toList());
         
         assertFalse(saved.isEmpty());
         
@@ -239,4 +243,11 @@ public class ServicesControllerTest extends ExperimentBaseIntTest {
         
         assertEquals(send, saved);
     }
+
+    @WithMockUser(roles="SERVICE")
+    @Test
+    void withMockUserShouldPopulateSecurityContext() {
+	assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
 }

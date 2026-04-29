@@ -179,7 +179,7 @@ public class WebSecurityConfiguration {
         
             http.securityContext((securityContext) -> securityContext
 			.securityContextRepository(securityContextRepository)
-                        .requireExplicitSave(true)
+                        .requireExplicitSave(false)
             );
 
             http
@@ -199,10 +199,10 @@ public class WebSecurityConfiguration {
                 .csrf((csrf) -> csrf.disable())
                 // all this fluff is needed to pass the security context to authentication filter, basic filter is aparentrly made to be stateless
                 .httpBasic((basic) -> {})
-		.addFilterAt(
-			     sessionSavingBasicAuthenticationFilter(authenticationManager, securityContextRepository),
-			     BasicAuthenticationFilter.class
-			     )
+		// .addFilterAt(
+		// 	     sessionSavingBasicAuthenticationFilter(authenticationManager, securityContextRepository),
+		// 	     BasicAuthenticationFilter.class
+		// 	     )
                 .addFilterAfter(refreshUserFilter(), BasicAuthenticationFilter.class)
                 .logout((logout) ->
 			logout.logoutSuccessHandler(new OKLogoutSuccessHandler())
