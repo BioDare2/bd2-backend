@@ -5,7 +5,9 @@ After=syslog.target jc2-ppa.service jc2-rhythm.service
 
 [Service]
 User=biodare
-ExecStart=/localdisk/services/biodare2/biodare2.jar
+WorkingDirectory=/localdisk/services/biodare2
+Environment="SPRING_CONFIG_ADDITIONAL_LOCATION=file:/home/services/biodare2/"
+ExecStart=/usr/bin/java -jar /localdisk/services/biodare2/biodare2.jar
 SuccessExitStatus=143
 
 [Install]
