@@ -436,16 +436,19 @@ public class UsersHandler {
         String subject = "BioDare2 account activation";
         String body = 
                 "Welcome to BioDare2\n\n"
-                + "Your login is: "+user.getLogin()+"\n"
+                + "Your login is: " + user.getLogin() + "\n"
                 + "Please use the link below to activate the account:\n\n"
                 ;
-        String link = "https://biodare2.ed.ac.uk/account/activate?token="+token.getToken();
+        String link = "https://biodare2.ed.ac.uk/account/activate?token=" + token.getToken();
         body += "------------------\n"
                 + link
                 + "\n------------------\n"
                 + "If the link does not work please copy the whole text between ----- to your browser "
                 + "\n(it has to be one line no spaces so you may need to use an editor if your mail client scrambled it)"
                 +"\n\n"
+	        + "Feel free to introduce yourself to the BioDare2 community in our GitHub Discussion space!"
+	        + "\n https://github.com/orgs/BioDare2/discussions"
+	        + "\n\n"
                 + "All the best\nBioDare"
                 ;
                 
