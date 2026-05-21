@@ -118,10 +118,14 @@ public class ExperimentFilesController extends ExperimentController {
         } catch(WebMappedException e) {
             log.error("Cannot get file {} {} {}",expId,fileId,e.getMessage(),e);
             throw e;
-        } catch (Exception e) {
-            log.error("Cannot get file {} {} {}",expId,fileId,e.getMessage(),e);
-            throw new ServerSideException(e.getMessage());
-        } 
+	} catch (Exception e) {
+	    if (isClientAbort(e)) {
+		log.debug("Client aborted download exp:{} file:{}; {}", expId, fileId, e.getMessage());
+		return;
+	    }
+	    log.error("Cannot get file {} {} {}", expId, fileId, e.getMessage(), e);
+	    throw new ServerSideException(e.getMessage());
+	}
         
     }
     
@@ -145,14 +149,15 @@ public class ExperimentFilesController extends ExperimentController {
         } catch(WebMappedException e) {
             log.error("Cannot get file version {} {} {}",expId,fileId,e.getMessage(),e);
             throw e;
-        } catch (Exception e) {
-            log.error("Cannot get file version {} {} {}",expId,fileId,e.getMessage(),e);
-            throw new ServerSideException(e.getMessage());
-        } 
-        
+	} catch (Exception e) {
+	    if (isClientAbort(e)) {
+		log.debug("Client aborted download exp:{} file:{}; {}", expId, fileId, e.getMessage());
+		return;
+	    }
+	    log.error("Cannot get file {} {} {}", expId, fileId, e.getMessage(), e);
+	    throw new ServerSideException(e.getMessage());
+	}
     }   
-    
-    
     
     protected void sendAsset(AssetVersion asset, AssayPack exp, HttpServletResponse response) {
      
@@ -163,5 +168,4 @@ public class ExperimentFilesController extends ExperimentController {
         sendFile(assetFile, asset.originalName, asset.contentType, false, response);
         
     }
-    
 }
