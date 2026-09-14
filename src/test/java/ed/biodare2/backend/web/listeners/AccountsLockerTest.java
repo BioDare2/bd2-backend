@@ -48,106 +48,109 @@ public class AccountsLockerTest {
 
     @Test
     public void increaseAttemptsOnBadCredentials() {
+
+	UserAccount user;
+	int prev;
         
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class,fixtures.demoUser.getId());
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser.getId());
         
-        int prev = user.getFailedAttempts();
+	    prev = user.getFailedAttempts();
         
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
+	    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
         
-        AuthenticationFailureBadCredentialsEvent event = new AuthenticationFailureBadCredentialsEvent(auth, new BadCredentialsException("bad"));
+	    AuthenticationFailureBadCredentialsEvent event = new AuthenticationFailureBadCredentialsEvent(auth, new BadCredentialsException("bad"));
         
-        instance.handleBadCredentials(event);
+	    instance.handleBadCredentials(event);
+	}
         
-        //em.getTransaction().begin();
-        //em.refresh(user); // does not work after updatea
-        em = emf.createEntityManager();
-        user = em.find(UserAccount.class,fixtures.demoUser.getId());
+	try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser.getId());
         
-        assertEquals(prev+1,user.getFailedAttempts());
+	    assertEquals(prev+1,user.getFailedAttempts());
+	}
     }
     
     @Test
     public void locksAccountIfLimitReachedOnBadCredentials() {
+
+	UserAccount user;
         
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         
-        em.getTransaction().begin();
-        assertFalse(user.isLocked());
-        user.setFailedAttempts(instance.MAX_ATTEMPTS-1);
-        em.getTransaction().commit();
-        
+	    em.getTransaction().begin();
+	    assertFalse(user.isLocked());
+	    user.setFailedAttempts(instance.MAX_ATTEMPTS-1);
+	    em.getTransaction().commit();
+        }
         
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
-        
         AuthenticationFailureBadCredentialsEvent event = new AuthenticationFailureBadCredentialsEvent(auth, new BadCredentialsException("bad"));
         
         instance.handleBadCredentials(event);
         
-        //em.getTransaction().begin();
-        //em.refresh(user);
-        em = emf.createEntityManager();
-        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         
-        assertTrue(user.isLocked());
-        
+	    assertTrue(user.isLocked());
+        }
     }   
     
     @Test
     public void resetsFailedOnSuccessfulLogging() {
+
+	UserAccount user;
         
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
         
-        em.getTransaction().begin();
-        user.setFailedAttempts(instance.MAX_ATTEMPTS-1);
-        em.getTransaction().commit();
+	    em.getTransaction().begin();
+	    user.setFailedAttempts(instance.MAX_ATTEMPTS-1);
+	    em.getTransaction().commit();
         
         
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
+	    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
         
-        AuthenticationSuccessEvent event = new AuthenticationSuccessEvent(auth);
+	    AuthenticationSuccessEvent event = new AuthenticationSuccessEvent(auth);
         
-        instance.handleSuccessLogin(event);
+	    instance.handleSuccessLogin(event);
+	}
         
-        //em.getTransaction().begin();
-        //em.refresh(user);
-        em = emf.createEntityManager();
-        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
-        assertEquals(0,user.getFailedAttempts());
-        
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+	    assertEquals(0,user.getFailedAttempts());
+        }
     }  
     
     @Test
     //@Transactional
     public void updatesLastLoginOnSuccessfulLogging() {
-        
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class,fixtures.demoUser1.getId());
-        
-        em.getTransaction().begin();
-        user.setFailedAttempts(2);
-        user.setLastLogin(LocalDateTime.now().minusDays(1));
-        user.setLastLoginAddress("xxx");
-        em.getTransaction().commit();
-        
-        
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
-        
-        AuthenticationSuccessEvent event = new AuthenticationSuccessEvent(auth);
-        
-        instance.handleSuccessLogin(event);
-        
-        //em.getTransaction().begin();
-        //em.refresh(user); refresh does not work after SB and hibernate upgrade
 
-        em = emf.createEntityManager();
-        user = em.find(UserAccount.class,fixtures.demoUser1.getId());
-        assertEquals(0,user.getFailedAttempts());
-        assertEquals(LocalDate.now(),user.getLastLogin().toLocalDate());
-        assertEquals("unknown",user.getLastLoginAddress());
-    }     
-    
+	UserAccount user;
+        
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+        
+	    em.getTransaction().begin();
+	    user.setFailedAttempts(2);
+	    user.setLastLogin(LocalDateTime.now().minusDays(1));
+	    user.setLastLoginAddress("xxx");
+	    em.getTransaction().commit();
+        
+        
+	    UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,user.getPassword());
+        
+	    AuthenticationSuccessEvent event = new AuthenticationSuccessEvent(auth);
+        
+	    instance.handleSuccessLogin(event);
+	}
+        
+        try (EntityManager em = emf.createEntityManager()) {
+	    user = em.find(UserAccount.class,fixtures.demoUser1.getId());
+	    assertEquals(0,user.getFailedAttempts());
+	    assertEquals(LocalDate.now(),user.getLastLogin().toLocalDate());
+	    assertEquals("unknown",user.getLastLoginAddress());
+	}     
+    }
 }

@@ -188,67 +188,69 @@ public class SecurityWiringIntTest {
     
     @Test
     public void userLocksAccountAfterMultipleBadCredentials() throws IOException, InterruptedException {
-	EntityManager em = emf.createEntityManager();
-	em.getTransaction().begin();
-	UserAccount user = em.find(UserAccount.class, fixtures.demoUser1.getId());
-	user.setLocked(false);
-	user.setFailedAttempts(0);
-	em.getTransaction().commit();
+	
+	try (EntityManager em = emf.createEntityManager()) {
+	    em.getTransaction().begin();
+	    UserAccount user = em.find(UserAccount.class, fixtures.demoUser1.getId());
+	    user.setLocked(false);
+	    user.setFailedAttempts(0);
+	    em.getTransaction().commit();
 
-	String login = user.getLogin();
-	String good = "demo";
-	String bad = "wrong";
+	    String login = user.getLogin();
+	    String good = "demo";
+	    String bad = "wrong";
 
-	String goodAuth = java.util.Base64.getEncoder().encodeToString((login + ":" + good).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-	java.net.http.HttpClient goodClient = java.net.http.HttpClient.newBuilder()
-            .cookieHandler(new java.net.CookieManager())
-            .build();
+	    String goodAuth = java.util.Base64.getEncoder().encodeToString((login + ":" + good).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+	    java.net.http.HttpClient goodClient = java.net.http.HttpClient.newBuilder()
+		.cookieHandler(new java.net.CookieManager())
+		.build();
 
-	java.net.http.HttpRequest goodRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/user"))
-            .header("Authorization", "Basic " + goodAuth)
-            .GET()
-            .build();
+	    java.net.http.HttpRequest goodRequest = java.net.http.HttpRequest.newBuilder()
+		.uri(java.net.URI.create(baseURL() + "/user"))
+		.header("Authorization", "Basic " + goodAuth)
+		.GET()
+		.build();
 
-	java.net.http.HttpResponse<String> response =
-            goodClient.send(goodRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(200, response.statusCode());
+	    java.net.http.HttpResponse<String> response =
+		goodClient.send(goodRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
+	    assertEquals(200, response.statusCode());
 
-	Map<String, String> obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
-	assertEquals(login, obj.get("login"));
+	    Map<String, String> obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
+	    assertEquals(login, obj.get("login"));
 
-	String badAuth = java.util.Base64.getEncoder().encodeToString((login + ":" + bad).getBytes(java.nio.charset.StandardCharsets.UTF_8));
-	java.net.http.HttpClient badClient = java.net.http.HttpClient.newBuilder()
-            .cookieHandler(new java.net.CookieManager())
-            .build();
+	    String badAuth = java.util.Base64.getEncoder().encodeToString((login + ":" + bad).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+	    java.net.http.HttpClient badClient = java.net.http.HttpClient.newBuilder()
+		.cookieHandler(new java.net.CookieManager())
+		.build();
 
-	java.net.http.HttpRequest badRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/user"))
-            .header("Authorization", "Basic " + badAuth)
-            .GET()
-            .build();
+	    java.net.http.HttpRequest badRequest = java.net.http.HttpRequest.newBuilder()
+		.uri(java.net.URI.create(baseURL() + "/user"))
+		.header("Authorization", "Basic " + badAuth)
+		.GET()
+		.build();
 
-	for (int i = 0; i < 5; i++) {
-	    response = badClient.send(badRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
+	    for (int i = 0; i < 5; i++) {
+		response = badClient.send(badRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
+		assertEquals(401, response.statusCode());
+		obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
+		assertEquals("Unauthorized", obj.get("error"));
+	    }
+
+	    java.net.http.HttpClient lockedClient = java.net.http.HttpClient.newBuilder()
+		.cookieHandler(new java.net.CookieManager())
+		.build();
+
+	    java.net.http.HttpRequest lockedRequest = java.net.http.HttpRequest.newBuilder()
+		.uri(java.net.URI.create(baseURL() + "/user"))
+		.header("Authorization", "Basic " + goodAuth)
+		.GET()
+		.build();
+
+	    response = lockedClient.send(lockedRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
 	    assertEquals(401, response.statusCode());
 	    obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
 	    assertEquals("Unauthorized", obj.get("error"));
 	}
-
-	java.net.http.HttpClient lockedClient = java.net.http.HttpClient.newBuilder()
-            .cookieHandler(new java.net.CookieManager())
-            .build();
-
-	java.net.http.HttpRequest lockedRequest = java.net.http.HttpRequest.newBuilder()
-            .uri(java.net.URI.create(baseURL() + "/user"))
-            .header("Authorization", "Basic " + goodAuth)
-            .GET()
-            .build();
-
-	response = lockedClient.send(lockedRequest, java.net.http.HttpResponse.BodyHandlers.ofString());
-	assertEquals(401, response.statusCode());
-	obj = mapper.readValue(response.body(), new TypeReference<Map<String, String>>() { });
-	assertEquals("Unauthorized", obj.get("error"));
     }
     
     @Test

@@ -59,25 +59,25 @@ public class RDMUserAspectTest {
     
     @Test
     public void removesWithAccount() {
-        EntityManager em = emf.createEntityManager();
+	
+        try (EntityManager em = emf.createEntityManager()) {        
+	    UserAccount u = makeAccount("rdmrwa");
         
-        UserAccount u = makeAccount("rdmrwa");
+	    RDMUserAspect a = new RDMUserAspect();
+	    a.setCohort(RDMCohort.STRICT);
+	    u.setRdmAspect(a);
         
-        RDMUserAspect a = new RDMUserAspect();
-        a.setCohort(RDMCohort.STRICT);
-        u.setRdmAspect(a);
+	    em.getTransaction().begin();
+	    em.persist(u);
+	    em.getTransaction().commit();
         
-        em.getTransaction().begin();
-        em.persist(u);
-        em.getTransaction().commit();
+	    long ac = BioDare2TestUtils.count(RDMUserAspect.class, em);
+	    em.getTransaction().begin();
+	    em.remove(u);
+	    em.getTransaction().commit();
         
-        long ac = BioDare2TestUtils.count(RDMUserAspect.class, em);
-        em.getTransaction().begin();
-        em.remove(u);
-        em.getTransaction().commit();
-        
-        assertEquals(ac-1,BioDare2TestUtils.count(RDMUserAspect.class, em));
-        
+	    assertEquals(ac-1,BioDare2TestUtils.count(RDMUserAspect.class, em));
+        }
     }
     
     protected UserAccount makeAccount(String login) {

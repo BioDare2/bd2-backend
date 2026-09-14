@@ -48,77 +48,76 @@ public class AccountSubscriptionTest {
     @Test
     public void savesAndRetrievesSubscriptionByAccount() {
         
-        EntityManager em2 = EMF.createEntityManager();
+        try (EntityManager em2 = EMF.createEntityManager()) {
         
-        em2.getTransaction().begin();
+	    em2.getTransaction().begin();
         
-        UserAccount u = new UserAccount();
-        u.setEmail("sub.test@ed.ac.uk");
-        u.setFirstName("Test");
-        u.setLastName("Subscription");
-        u.setInitialEmail(u.getEmail());
-        u.setInstitution("Inst");
-        u.setLogin("sub.test");
-        u.setSupervisor(u);
-        u.setPassword("aaa");  
+	    UserAccount u = new UserAccount();
+	    u.setEmail("sub.test@ed.ac.uk");
+	    u.setFirstName("Test");
+	    u.setLastName("Subscription");
+	    u.setInitialEmail(u.getEmail());
+	    u.setInstitution("Inst");
+	    u.setLogin("sub.test");
+	    u.setSupervisor(u);
+	    u.setPassword("aaa");  
         
-        em2.persist(u);
-        em2.getTransaction().commit();
+	    em2.persist(u);
+	    em2.getTransaction().commit();
         
-        em2.getTransaction().begin();
+	    em2.getTransaction().begin();
         
-        AccountSubscription sub = makeSubscription();
-        assertNotNull(u);
-        assertNull(u.getSubscription());
+	    AccountSubscription sub = makeSubscription();
+	    assertNotNull(u);
+	    assertNull(u.getSubscription());
         
-        u.setSubscription(sub);
-        em2.getTransaction().commit();
+	    u.setSubscription(sub);
+	    em2.getTransaction().commit();
         
-        u = testEM.find(UserAccount.class, u.getId());
-        assertNotNull(u);
-        assertNotNull(u.getSubscription());
+	    u = testEM.find(UserAccount.class, u.getId());
+	    assertNotNull(u);
+	    assertNotNull(u.getSubscription());
         
-        AccountSubscription res = u.getSubscription();        
-        assertEquals(sub.getKind(),res.getKind());
-        assertEquals(sub.getRenewDate(),res.getRenewDate());
+	    AccountSubscription res = u.getSubscription();        
+	    assertEquals(sub.getKind(),res.getKind());
+	    assertEquals(sub.getRenewDate(),res.getRenewDate());
+	}
         
     }
     
     @Test
     public void removesOrphanedSubscription() {
         
-        EntityManager em2 = EMF.createEntityManager();
+        try (EntityManager em2 = EMF.createEntityManager()) {
         
-        em2.getTransaction().begin();
+	    em2.getTransaction().begin();
         
-        UserAccount u = new UserAccount();
-        u.setEmail("sub.test@ed.ac.uk");
-        u.setFirstName("Test");
-        u.setLastName("Subscription");
-        u.setInitialEmail(u.getEmail());
-        u.setInstitution("Inst");
-        u.setLogin("sub.test2");
-        u.setSupervisor(u);
-        u.setPassword("aaa");
+	    UserAccount u = new UserAccount();
+	    u.setEmail("sub.test@ed.ac.uk");
+	    u.setFirstName("Test");
+	    u.setLastName("Subscription");
+	    u.setInitialEmail(u.getEmail());
+	    u.setInstitution("Inst");
+	    u.setLogin("sub.test2");
+	    u.setSupervisor(u);
+	    u.setPassword("aaa");
         
-        AccountSubscription sub = makeSubscription();
-        u.setSubscription(sub);
+	    AccountSubscription sub = makeSubscription();
+	    u.setSubscription(sub);
         
-        em2.persist(u);
-        em2.getTransaction().commit();
+	    em2.persist(u);
+	    em2.getTransaction().commit();
+                
+	    long us = count(UserAccount.class,testEM.getEntityManager());
+	    long ss = count(AccountSubscription.class,testEM.getEntityManager());
         
-        //u = EM.find(UserAccount.class, u.getId());
+	    em2.getTransaction().begin();
+	    em2.remove(u);
+	    em2.getTransaction().commit();
         
-        long us = count(UserAccount.class,testEM.getEntityManager());
-        long ss = count(AccountSubscription.class,testEM.getEntityManager());
-        
-        em2.getTransaction().begin();
-        em2.remove(u);
-        em2.getTransaction().commit();
-        
-        assertEquals(us-1,count(UserAccount.class,testEM.getEntityManager()));
-        assertEquals(ss-1,count(AccountSubscription.class,testEM.getEntityManager()));
-        
+	    assertEquals(us-1,count(UserAccount.class,testEM.getEntityManager()));
+	    assertEquals(ss-1,count(AccountSubscription.class,testEM.getEntityManager()));
+        }
     }
     
    

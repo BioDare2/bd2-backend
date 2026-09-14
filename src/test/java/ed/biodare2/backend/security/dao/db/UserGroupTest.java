@@ -88,7 +88,7 @@ public class UserGroupTest {
     }
     
     
-    @Disabled("Currently groups do not have members list as was not usre of the semantics for system and non sistem groups")
+    @Disabled("Currently groups do not have members list as was not sure of the semantics for system and non system groups")
     @Test
     //@Transactional
     public void relationsWorks() {

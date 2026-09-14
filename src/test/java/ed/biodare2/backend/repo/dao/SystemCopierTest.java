@@ -95,77 +95,47 @@ public class SystemCopierTest {
     
     protected DBSystemInfo insertDBSysInfo() {
         
-        EntityManager EM = EMF.createEntityManager();
-        EM.getTransaction().begin();
-        System.out.println("\n\nBefore user");
+        try (EntityManager EM = EMF.createEntityManager()) {
+	    EM.getTransaction().begin();
         
-        UserAccount user = new UserAccount();
-        user.setLogin("auser");
-        user.setFirstName("auser");
-        user.setLastName("auser");
-        user.setPassword("pass");
-        user.setEmail("bioadare@ed.ac.uk");
-        user.setInstitution("UoE");
+	    UserAccount user = new UserAccount();
+	    user.setLogin("auser");
+	    user.setFirstName("auser");
+	    user.setLastName("auser");
+	    user.setPassword("pass");
+	    user.setEmail("bioadare@ed.ac.uk");
+	    user.setInstitution("UoE");
         
-        EM.persist(user);
-        EM.flush();
+	    EM.persist(user);
+	    EM.flush();
         
-        //user = EM.find(UserAccount.class, user.getId());
-        //assertNotNull(user);
+	    DBSystemInfo org = SystemDomTestBuilder.makeDBSystemInfo(SystemDomTestBuilder.makeSystemInfo());
+	    org.getAcl().setCreator(user);
+	    org.getAcl().setOwner(user);
+	    org.getAcl().setSuperOwner(user);
+	    org.setReleaseDate(LocalDate.now().plusDays(5));
         
-        //user.getGroups().forEach(EM::persist);        
-        //EM.persist(user);
+	    EM.persist(org);
+	    EM.flush();
+	    EM.getTransaction().commit();
         
-        DBSystemInfo org = SystemDomTestBuilder.makeDBSystemInfo(SystemDomTestBuilder.makeSystemInfo());
-        org.getAcl().setCreator(user);
-        org.getAcl().setOwner(user);
-        org.getAcl().setSuperOwner(user);
-        org.setReleaseDate(LocalDate.now().plusDays(5));
-        
-        System.out.println("\n\nBefore insert");
-        EM.persist(org);
-        EM.flush();
-        EM.getTransaction().commit();
-        
-        //org = dbSystemInfos.save(org);
-        dbSysInfo = org; 
-        return dbSysInfo;
+	    dbSysInfo = org; 
+	    return dbSysInfo;
+	}
     }
     
     @Test
     public void testCopyDBSytemInfo() {
         
         DBSystemInfo org = insertDBSysInfo();
-        //DBSystemInfo org = dbSysInfo;
         
         long p =org.getParentId();
         org.setParentId(p+1);
         
-        System.out.println("\n\n\nCopy");
         DBSystemInfo cpy = copier.copy(org);
         assertEquals(org.getInnerId(),cpy.getInnerId());        
         assertEquals(p,cpy.getParentId());
         assertNotSame(org,cpy);
-        
-        //fail("ON purpose");
-        /*
-        UserAccount user = fixture.demoUser;
-        user.getGroups().forEach(entityManager::persist);
-        
-        user = entityManager.persistAndFlush(user);
-        
-        DBSystemInfo org = SystemDomTestBuilder.makeDBSystemInfo(SystemDomTestBuilder.makeSystemInfo());
-        org.getAcl().setCreator(user);
-        org.getAcl().setOwner(user);
-        org.getAcl().setSuperOwner(user);
-        
-        org = entityManager.persistAndFlush(org);
-        
-        
-        
-        DBSystemInfo cpy = copier.copy(org);
-        assertNotSame(org,cpy);
-        assertEquals(org.getInnerId(),cpy.getInnerId());
-                */
+
     }
 }

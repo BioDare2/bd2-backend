@@ -770,29 +770,31 @@ public class UsersHandlerTest {
     
     @Test
     public void makesActivationTokenThatUnlocksTheAccount() throws UsersHandler.AccountHandlingException {
+
+	UserAccount user;
+	UserToken token;
         
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class, fixtures.demoUser1.getId());
-        UserToken token = handler.makeActivationToken(user);
-        
-        em.getTransaction().begin();
-        em.persist(token);
-        user.setLocked(true);
-        em.getTransaction().commit();
-        
+	try (EntityManager em = emf.createEntityManager()) {
+
+	    user = em.find(UserAccount.class, fixtures.demoUser1.getId());
+	    token = handler.makeActivationToken(user);
+	    
+	    em.getTransaction().begin();
+	    em.persist(token);
+	    user.setLocked(true);
+	    em.getTransaction().commit();
+        }
         
         BioDare2User resp = handler.activateAccount(token.getToken());
         assertNotNull(resp);
         assertEquals(user.getLogin(),resp.getLogin());
+
+	try (EntityManager em = emf.createEntityManager()) {
         
-        em = emf.createEntityManager();
-        //em.getTransaction().begin();        
-        user = em.find(UserAccount.class, fixtures.demoUser1.getId());
-        //em.refresh(user);
-        assertFalse(user.isLocked());
-        assertEquals(LocalDate.now(),user.getActivationDate());
-        //em.getTransaction().rollback();
-        
+	    user = em.find(UserAccount.class, fixtures.demoUser1.getId());
+	    assertFalse(user.isLocked());
+	    assertEquals(LocalDate.now(),user.getActivationDate());
+        }
     }
     
     @Test
@@ -833,73 +835,6 @@ public class UsersHandlerTest {
         expired = tokens.findByExpiringBefore(LocalDateTime.now());
         assertTrue(expired.isEmpty());
     }
-    
-    /*
-    @Test
-    @Ignore("Different implementation")
-    @Deprecated
-    public void generatesActivationTokenThatUnlocksTheAccount() throws UsersHandler.AccountHandlingException {
-        
-        EntityManager em = emf.createEntityManager();
-        UserAccount user = em.find(UserAccount.class, fixtures.demoUser1.getId());
-        em.getTransaction().begin();
-        user.setLocked(true);
-        em.getTransaction().commit();
-        
-        String token = handler.getActivationToken(user);
-        assertNotNull(token);
-        
-        BioDare2User resp = handler.activateAccount(token);
-        assertNotNull(resp);
-        assertEquals(user.getLogin(),resp.getLogin());
-        
-        em.getTransaction().begin();
-        em.refresh(user);
-        assertFalse(user.isLocked());
-        assertEquals(LocalDate.now(),user.getActivationDate());
-        em.getTransaction().rollback();
-    }
-    
-    @Test
-    public void encodeAndDecodeTokenWorksInPair() {
-        ActivationToken token = new ActivationToken();
-        token.login = "Ala";
-        token.email = "ma@kota";
-        
-        String msg = handler.encodeToken(token);
-        assertNotNull(msg);
-        ActivationToken res = handler.decodeToken(msg);
-        assertNotNull(res);
-        assertEquals(token.login,res.login);
-        assertEquals(token.email,res.email);
-        assertEquals(token.expiration,res.expiration);
-    }
-    
-    @Test
-    @Ignore
-    @Deprecated
-    public void doesNotActiateOnExpiredTokens2() throws UsersHandler.AccountHandlingException {
-        
-        UserAccount user = fixtures.demoUser;
-        ActivationToken token = new ActivationToken();
-        token.email =user.getEmail();
-        token.login= user.getLogin();
-        
-        String msg = handler.encodeToken(token);
-        
-        assertNotNull(handler.activateAccount(msg));
-        
-        token.expiration = token.expiration.minusDays(2);
-        msg = handler.encodeToken(token);
-        try {
-            handler.activateAccount(msg);
-            fail("Exception expected");
-        } catch (UsersHandler.AccountHandlingException e) {};
-        
-    }    
-    
-    
-    */
     
     @Test
     public void sendsActivationEmail() throws UsersHandler.AccountHandlingException {
@@ -1087,9 +1022,4 @@ public class UsersHandlerTest {
         
         
     }  
-    
-  
-    
-
-    
 }

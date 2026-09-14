@@ -233,29 +233,29 @@ public class UserAccountTest {
     @Test
     public void independentContextWorks() {
         
-        EntityManager em2 = EMF.createEntityManager();
-        UserAccount p2 = new UserAccount();
-        p2.login = "PITest4";
-        p2.firstName = "PI";
-        p2.lastName = "Test";
-        p2.setEmail("cos@cos.pl");
-        p2.password = "xxx";
-        p2.setInstitution("University of Edinburgh");  
-        p2.setSupervisor(p2);        
-        em2.getTransaction().begin();
-        em2.persist(p2);
+        try (EntityManager em2 = EMF.createEntityManager()) {
+	    UserAccount p2 = new UserAccount();
+	    p2.login = "PITest4";
+	    p2.firstName = "PI";
+	    p2.lastName = "Test";
+	    p2.setEmail("cos@cos.pl");
+	    p2.password = "xxx";
+	    p2.setInstitution("University of Edinburgh");  
+	    p2.setSupervisor(p2);        
+	    em2.getTransaction().begin();
+	    em2.persist(p2);
         
-        assertNotNull(p2.getId());
+	    assertNotNull(p2.getId());
         
         
-        UserAccount pi = testEM.find(UserAccount.class, p2.getId());
-        assertNull(pi);
+	    UserAccount pi = testEM.find(UserAccount.class, p2.getId());
+	    assertNull(pi);
         
-        em2.getTransaction().commit();
+	    em2.getTransaction().commit();
         
-        pi = testEM.find(UserAccount.class, p2.getId());
-        assertNotNull(pi);
-        
+	    pi = testEM.find(UserAccount.class, p2.getId());
+	    assertNotNull(pi);
+        }
     }
 
     
@@ -263,77 +263,78 @@ public class UserAccountTest {
     @Test
     public void retrievesCorrectRelations() {
         
-        EntityManager em2 = EMF.createEntityManager();
-        em2.getTransaction().begin();
+        try (EntityManager em2 = EMF.createEntityManager()) {
+	    em2.getTransaction().begin();
         
-        UserGroup g1 = new UserGroup();
-        g1.setName("g1ToWrite");
-        em2.persist(g1);
+	    UserGroup g1 = new UserGroup();
+	    g1.setName("g1ToWrite");
+	    em2.persist(g1);
         
-        UserGroup g2 = new UserGroup();
-        g2.setName("g2ToRead");
-        em2.persist(g2);
+	    UserGroup g2 = new UserGroup();
+	    g2.setName("g2ToRead");
+	    em2.persist(g2);
         
-        UserGroup g3 = new UserGroup();
-        g3.setName("g3Special");
-        g3.system = true;
-        em2.persist(g3);
+	    UserGroup g3 = new UserGroup();
+	    g3.setName("g3Special");
+	    g3.system = true;
+	    em2.persist(g3);
         
-        UserGroup g4 = new UserGroup();
-        g4.setName("g4NotUsed");
-        g4.system = true;
-        em2.persist(g4);        
+	    UserGroup g4 = new UserGroup();
+	    g4.setName("g4NotUsed");
+	    g4.system = true;
+	    em2.persist(g4);        
         
-        UserAccount pi = new UserAccount();
-        pi.login = "PITest5";
-        pi.firstName = "PI";
-        pi.lastName = "Test";
-        pi.setEmail("cos@cos.pl");
-        pi.password = "xxx";
-        pi.setInstitution("University of Edinburgh");  
-        pi.setSupervisor(pi);
+	    UserAccount pi = new UserAccount();
+	    pi.login = "PITest5";
+	    pi.firstName = "PI";
+	    pi.lastName = "Test";
+	    pi.setEmail("cos@cos.pl");
+	    pi.password = "xxx";
+	    pi.setInstitution("University of Edinburgh");  
+	    pi.setSupervisor(pi);
         
-        pi.addGroup(g1);
-        pi.addGroup(g2);
-        pi.addGroup(g3);
+	    pi.addGroup(g1);
+	    pi.addGroup(g2);
+	    pi.addGroup(g3);
         
-        pi.addDefaultToWrite(g1);
-        pi.addDefaultToRead(g2);
+	    pi.addDefaultToWrite(g1);
+	    pi.addDefaultToRead(g2);
         
-        em2.persist(pi);
+	    em2.persist(pi);
         
-        String sql = "SELECT COUNT(g) FROM UserAccount u INNER JOIN u.groups g WHERE u.id IN ("+pi.getId()+")";
-        System.out.println(sql);
-        TypedQuery<Long> query = testEM.getEntityManager().createQuery(sql, Long.class);
-        assertEquals(0L,query.getSingleResult().longValue()); 
+	    String sql = "SELECT COUNT(g) FROM UserAccount u INNER JOIN u.groups g WHERE u.id IN ("+pi.getId()+")";
+	    System.out.println(sql);
+	    TypedQuery<Long> query = testEM.getEntityManager().createQuery(sql, Long.class);
+	    assertEquals(0L,query.getSingleResult().longValue()); 
         
-        em2.getTransaction().commit();
+	    em2.getTransaction().commit();
         
-        UserAccount acc = testEM.find(UserAccount.class,pi.getId());
-        assertNotNull(acc);
-        assertEquals(2L,query.getSingleResult().longValue());
+	    UserAccount acc = testEM.find(UserAccount.class,pi.getId());
+	    assertNotNull(acc);
+	    assertEquals(2L,query.getSingleResult().longValue());
         
-        sql = "SELECT COUNT(g) FROM UserAccount u INNER JOIN u.systemGroups g WHERE u.id IN ("+pi.getId()+")";
-        System.out.println(sql);
-        query = testEM.getEntityManager().createQuery(sql, Long.class);
-        assertEquals(1L,query.getSingleResult().longValue());         
+	    sql = "SELECT COUNT(g) FROM UserAccount u INNER JOIN u.systemGroups g WHERE u.id IN ("+pi.getId()+")";
+	    System.out.println(sql);
+	    query = testEM.getEntityManager().createQuery(sql, Long.class);
+	    assertEquals(1L,query.getSingleResult().longValue());         
         
-        assertTrue(acc.getDefaultToWrite().contains(g1));
-        assertTrue(acc.getDefaultToRead().contains(g2));
-        //assertEquals(g3, acc.getSystemGroups().stream().filter(g -> g.isSystem()).findFirst().get());
+	    assertTrue(acc.getDefaultToWrite().contains(g1));
+	    assertTrue(acc.getDefaultToRead().contains(g2));
+	    //assertEquals(g3, acc.getSystemGroups().stream().filter(g -> g.isSystem()).findFirst().get());
         
-        assertTrue(acc.getGroups().contains(g1));
-        assertTrue(acc.getGroups().contains(g2));
-        assertTrue(acc.getSystemGroups().contains(g3));
+	    assertTrue(acc.getGroups().contains(g1));
+	    assertTrue(acc.getGroups().contains(g2));
+	    assertTrue(acc.getSystemGroups().contains(g3));
         
 
         
-        em2.getTransaction().begin();
-        em2.remove(g1);
-        em2.remove(g2);
-        em2.remove(g3);
-        em2.remove(pi);
-        em2.getTransaction().commit();
+	    em2.getTransaction().begin();
+	    em2.remove(g1);
+	    em2.remove(g2);
+	    em2.remove(g3);
+	    em2.remove(pi);
+	    em2.getTransaction().commit();
+	}
     }
     
     //@Transactional
