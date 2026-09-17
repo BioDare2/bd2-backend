@@ -1,0 +1,1 @@
+import{Zr as w,b as E}from"./chunk-aZK1wy9b.js";import{o as ee}from"./chunk-DsLQh9Qn.js";import{R as it}from"./main-GHXDNWEP.js";var m=(()=>{class t{constructor(o){this.dialog=o}show(o){this.dialog.open(it,{data:{docName:o}})}static{this.ɵfac=function(n){return new(n||t)(E(ee))}}static{this.ɵprov=w({token:t,factory:t.ɵfac,providedIn:`root`})}}return t})();export{m as t};
